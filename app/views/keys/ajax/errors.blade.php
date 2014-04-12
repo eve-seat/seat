@@ -1,0 +1,2 @@
+
+@include('layouts.components.flash')

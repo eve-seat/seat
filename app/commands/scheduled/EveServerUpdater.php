@@ -1,0 +1,63 @@
+<?php
+
+namespace Seat\Commands\Scheduled;
+
+use Indatus\Dispatcher\ScheduledCommand;
+use Indatus\Dispatcher\Schedulable;
+use Indatus\Dispatcher\Drivers\Cron\Scheduler;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
+
+use Seat\EveApi;
+use Seat\EveApi\Account;
+
+class EveServerUpdater extends ScheduledCommand {
+
+	/**
+	 * The console command name.
+	 *
+	 * @var string
+	 */
+	protected $name = 'seatscheduled:api-update-server';
+
+	/**
+	 * The console command description.
+	 *
+	 * @var string
+	 */
+	protected $description = 'Updates Eve Server Related Information.';
+
+	/**
+	 * Create a new command instance.
+	 *
+	 * @return void
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
+	/**
+	 * When a command should run
+	 *
+	 * @param Scheduler $scheduler
+	 * @return \Indatus\Dispatcher\Schedulable
+	 */
+	public function schedule(Schedulable $scheduler)
+	{
+		return $scheduler->setSchedule('*/5', '*', '*', '*', '*');
+	}
+
+	/**
+	 * Execute the console command.
+	 *
+	 * @return mixed
+	 */
+	public function fire()
+	{
+
+		// Server APIs
+		$jobID = \Queue::push('Seat\EveQueues\Full\Server', array());
+		\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => 0, 'api' => 'ServerStatus', 'scope' => 'Server', 'status' => 'Queued'));
+	}
+}
