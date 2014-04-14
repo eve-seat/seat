@@ -22,7 +22,7 @@ Starbase Details View
 ![Starbase Details View](http://i.imgur.com/2OOmKkI.png)
 
 ### Installation ###
-Refer to the `docs/` directory for installation instructions
+Refer to the `docs/` directory for installation instructions. It is suggested that you checkout the latest release that can be found [here](https://github.com/eve-seat/seat/releases).
 
 ### Todo ###
 There really is a TON of stuff that still needs to be done:
