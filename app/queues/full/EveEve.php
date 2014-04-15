@@ -56,7 +56,7 @@ class Eve {
         } catch (\Exception $e) {
 
             $job_record->status = 'Error';
-            $job_record->output = 'Last status: ' . $job_record->output . ' Error: ' . $e->getCode() . ': ' . $e->getMessage() . ' in file ' . $e->getFile() . ' in line ' . $e->getLine();
+            $job_record->output = 'Last status: ' . $job_record->output . ' Error: ' . $e->getCode() . ': ' . $e->getMessage();
             $job_record->save();
 
             $job->delete();
