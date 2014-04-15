@@ -277,4 +277,75 @@ class CorporationController extends BaseController {
 			->with('item_contents', $shuffled_contents)
 			->with('tower_states', $tower_states);
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getListLedgers()
+	|--------------------------------------------------------------------------
+	|
+	| Get a list of the corporations that we can display ledgers for
+	|
+	*/
+
+	public function getListLedgers()
+	{
+
+		$corporations = DB::table('account_apikeyinfo')
+			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->where('account_apikeyinfo.type', 'Corporation')
+			->get();
+
+		return View::make('corporation.ledger.listledger')
+			->with('corporations', $corporations);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getLedgerSummary()
+	|--------------------------------------------------------------------------
+	|
+	| Display a worporation Wallet Journal
+	|
+	*/
+
+	public function getLedgerSummary($corporationID)
+	{
+
+		// Get the month/year data
+		$available_dates = DB::table('corporation_walletjournal')
+			->select(DB::raw('DISTINCT(MONTH(date)) AS month, YEAR(date) AS year'))
+			->orderBy(DB::raw('year, month'), 'desc')
+			->get();
+
+		// Parse the available dates and sort the array
+		$ledger_dates = array();
+		foreach ($available_dates as $date)
+			$ledger_dates[] = Carbon\Carbon::createFromDate($date->year, $date->month)->toDateString();
+		
+		arsort($ledger_dates);
+
+		// Get some data for the global ledger prepared
+
+		// Current Corporation Wallet Balances
+		$wallet_balances = DB::table('corporation_accountbalance')
+			->join('corporation_corporationsheet_walletdivisions', 'corporation_accountbalance.accountKey', '=', 'corporation_corporationsheet_walletdivisions.accountKey')
+			->where('corporation_accountbalance.corporationID', $corporationID)
+			->get();
+
+		// The overall corporation ledger
+		$ledger = DB::table('corporation_walletjournal')
+			->select(DB::raw('refTypeName, SUM(amount) total'))
+			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->leftJoin('corporation_corporationsheet_walletdivisions', 'corporation_walletjournal.accountKey', '=', 'corporation_corporationsheet_walletdivisions.accountKey') // such name much wow
+			->where('corporation_walletjournal.corporationID', $corporationID)
+			->groupBy('corporation_walletjournal.refTypeID')
+			->orderBy('eve_reftypes.refTypeName', 'asc')
+			->get();
+
+		return View::make('corporation.ledger.ledger')
+			->with('ledger_dates', $ledger_dates)
+			->with('wallet_balances', $wallet_balances)
+			->with('ledger', $ledger)
+			;
+	}
 }
