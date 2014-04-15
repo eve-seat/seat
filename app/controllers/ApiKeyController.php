@@ -299,4 +299,30 @@ class ApiKeyController extends BaseController {
 		}
 
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getEnableKey()
+	|--------------------------------------------------------------------------
+	|
+	| Re-enables a disabled key
+	|
+	*/
+
+	public function getEnableKey($keyID)
+	{
+
+		// Get the full key and vCode
+		$key = SeatKey::where('keyID', $keyID)->first();
+
+		if (!$key)
+			App::abord(404);
+
+		$key->isOk = 1;
+		$key->save();
+
+		return Redirect::action('ApiKeyController@getDetail', array('keyID' => $keyID))
+			->with('success', 'Key has been re-enabled');
+
+	}
 }
