@@ -47,7 +47,7 @@ class SeatAPIFindSickKeys extends Command {
 			$this->line('Characters on this key:');
 
 			foreach (\EveAccountAPIKeyInfoCharacters::where('keyID', '=', $key->keyID)->get() as $character) {
-				$this->line($characterName);
+				$this->line($character->characterName);
 			}
 		}
 	}
