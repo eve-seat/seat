@@ -63,7 +63,7 @@
                     @if ($key_information->isOk == 1)
                     	Key is OK
                     @else
-                    	Key is NOT ok
+                    	Key is NOT ok <a href="{{ action('ApiKeyController@getEnableKey', array('keyID' => $key_information->keyID )) }}" class="btn btn-success btn-xs pull-right"><i class="fa fa-refresh"></i> Re-enable Key</a>
                     @endif
                 </p>
             </div>
@@ -116,7 +116,8 @@
                     <button class="btn btn-success btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
                 </div>
             </div>
-            <div class="box-body no-padding">
+            @if (count($recent_jobs) > 0)
+                <div class="box-body no-padding">
 				<table class="table table-condensed table-hover">
 				    <tbody>
 				    	<tr>
@@ -145,6 +146,10 @@
 						@endforeach
 					</tbody>
 				</table>
+            @else
+                <div class="box-body">
+                No recent jobs have been run for this key
+            @endif
             </div><!-- /.box-body -->
         </div><!-- /.box -->
         <div id="job-result">
@@ -165,35 +170,40 @@
                     <button class="btn btn-warning btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
                 </div>
             </div>
-            <div class="box-body no-padding">
-				<table class="table table-condensed table-hover">
-				    <tbody>
-				    	<tr>
-					        <th>Scheduled</th>
-					        <th>Access Mask</th>
-					        <th>API</th>
-					        <th>Scope</th>
-					        <th></th>
-					    </tr>
-					    @foreach ($key_bans as $ban)
-						    <tr>
-						        <td>
-						        	<span data-toggle="tooltip" title="" data-original-title="{{ $ban->created_at }}">
-				                		{{ Carbon\Carbon::parse($ban->created_at)->diffForHumans() }}
-				                	</span>
-				                </td>
-						        <td>{{ $ban->accessMask }}</td>
-						        <td>{{ $ban->api }}</td>
-						        <td>{{ $ban->scope }}</td>
-						        <td>
-						        	@if (strlen($ban->reason) > 0)
-							        	<i class="fa fa-bullhorn pull-right" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ $ban->reason }}" data-trigger="hover"></i>
-							        @endif
-						        </td>
-						    </tr>
-						@endforeach
-					</tbody>
-				</table>
+            @if (count($key_bans) > 0)
+                <div class="box-body no-padding">
+    				<table class="table table-condensed table-hover">
+    				    <tbody>
+    				    	<tr>
+    					        <th>Scheduled</th>
+    					        <th>Access Mask</th>
+    					        <th>API</th>
+    					        <th>Scope</th>
+    					        <th></th>
+    					    </tr>
+    					    @foreach ($key_bans as $ban)
+    						    <tr>
+    						        <td>
+    						        	<span data-toggle="tooltip" title="" data-original-title="{{ $ban->created_at }}">
+    				                		{{ Carbon\Carbon::parse($ban->created_at)->diffForHumans() }}
+    				                	</span>
+    				                </td>
+    						        <td>{{ $ban->accessMask }}</td>
+    						        <td>{{ $ban->api }}</td>
+    						        <td>{{ $ban->scope }}</td>
+    						        <td>
+    						        	@if (strlen($ban->reason) > 0)
+    							        	<i class="fa fa-bullhorn pull-right" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ $ban->reason }}" data-trigger="hover"></i>
+    							        @endif
+    						        </td>
+    						    </tr>
+    						@endforeach
+    					</tbody>
+    				</table>
+            @else
+                <div class="box-body">
+                    No banned calls for this key
+            @endif
             </div><!-- /.box-body -->
         </div><!-- /.box -->
     </div><!-- /.col -->

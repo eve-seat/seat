@@ -30,10 +30,26 @@ class APIKeyInfo extends BaseApi {
 
 		} catch (\Pheal\Exceptions\APIException $e) {
 
-			// If we cant get key information, just disable they key as its probably
-			// not valid
-			BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
-		    return;
+			// If we cant get key information, just disable the key as its probably
+			// not valid...
+
+			// ... unless its actually *not* invalid but the API server is sick.
+			// Think we'll just check if the error we got is one in an array we have
+			// of ones we can 'safely' ignore. Typically temp errors.
+			$ignore_error_codes = array(
+				520 => 'Unexpected failure accessing database.'
+			);
+
+			// Check if we should ignore or disable
+			if (!in_array($e->getCode(), $ignore_error_codes)) {
+
+				BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
+				return;
+
+			} else {
+
+			    return;
+			}
 		    
 		} catch (\Pheal\Exceptions\PhealException $e) {
 

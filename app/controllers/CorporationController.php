@@ -277,4 +277,160 @@ class CorporationController extends BaseController {
 			->with('item_contents', $shuffled_contents)
 			->with('tower_states', $tower_states);
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getListLedgers()
+	|--------------------------------------------------------------------------
+	|
+	| Get a list of the corporations that we can display ledgers for
+	|
+	*/
+
+	public function getListLedgers()
+	{
+
+		$corporations = DB::table('account_apikeyinfo')
+			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->where('account_apikeyinfo.type', 'Corporation')
+			->get();
+
+		return View::make('corporation.ledger.listledger')
+			->with('corporations', $corporations);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getLedgerSummary()
+	|--------------------------------------------------------------------------
+	|
+	| Display a corporation Wallet Journal
+	|
+	*/
+
+	public function getLedgerSummary($corporationID)
+	{
+
+		// Get the month/year data
+		$available_dates = DB::table('corporation_walletjournal')
+			->select(DB::raw('DISTINCT(MONTH(date)) AS month, YEAR(date) AS year'))
+			->orderBy(DB::raw('year, month'), 'desc')
+			->get();
+
+		// Parse the available dates and sort the array
+		$ledger_dates = array();
+		foreach ($available_dates as $date)
+			$ledger_dates[] = Carbon\Carbon::createFromDate($date->year, $date->month)->toDateString();
+		
+		arsort($ledger_dates);
+
+		// Get some data for the global ledger prepared
+
+		// Current Corporation Wallet Balances
+		$wallet_balances = DB::table('corporation_accountbalance')
+			->join('corporation_corporationsheet_walletdivisions', 'corporation_accountbalance.accountKey', '=', 'corporation_corporationsheet_walletdivisions.accountKey')
+			->where('corporation_accountbalance.corporationID', $corporationID)
+			->get();
+
+		// The overall corporation ledger
+		$ledger = DB::table('corporation_walletjournal')
+			->select(DB::raw('refTypeName, SUM(amount) total'))
+			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->leftJoin('corporation_corporationsheet_walletdivisions', 'corporation_walletjournal.accountKey', '=', 'corporation_corporationsheet_walletdivisions.accountKey') // such name much wow
+			->where('corporation_walletjournal.corporationID', $corporationID)
+			->groupBy('corporation_walletjournal.refTypeID')
+			->orderBy('eve_reftypes.refTypeName', 'asc')
+			->get();
+
+		// Tax contributions
+		$bounty_tax = DB::table('corporation_walletjournal')
+			->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->whereIn('corporation_walletjournal.refTypeID', array(17,85)) // Ref type ids: 17: Bounty Prize; 85: Bounty Prizes
+			->where('corporation_walletjournal.corporationID', $corporationID)
+			->groupBy('corporation_walletjournal.ownerName2')
+			->orderBy('total', 'desc')
+			->get();
+		$pi_tax = DB::table('corporation_walletjournal')
+			->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->whereIn('corporation_walletjournal.refTypeID', array(96,97,98)) // Ref type ids: 96: Planetary Import Tax; 97: Planetary Export Tax; 98: Planetary Construction
+			->where('corporation_walletjournal.corporationID', $corporationID)
+			->groupBy('corporation_walletjournal.ownerName2')
+			->orderBy('total', 'desc')
+			->get();
+
+		return View::make('corporation.ledger.ledger')
+			->with('corporationID', $corporationID)
+			->with('ledger_dates', $ledger_dates)
+			->with('wallet_balances', $wallet_balances)
+			->with('ledger', $ledger)
+			->with('bounty_tax', $bounty_tax)
+			->with('pi_tax', $pi_tax);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getLedgerMonth()
+	|--------------------------------------------------------------------------
+	|
+	| Display a corporation Wallet Journal for a specific date
+	|
+	| Very large amount of code re-use here and in getLedgerSummary() so need
+	| look at avoiding this.
+	|
+	*/
+
+	public function getLedgerMonth($corporationID, $date)
+	{
+
+		// TODO: Add check to ensure corporation exists
+
+		// Parse the date
+		$month = Carbon\Carbon::parse($date)->month;
+		$year = Carbon\Carbon::parse($date)->year;
+
+		// The overall corporation ledger
+		$ledger = DB::table('corporation_walletjournal')
+			->select(DB::raw('refTypeName, SUM(amount) total'))
+			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->leftJoin('corporation_corporationsheet_walletdivisions', 'corporation_walletjournal.accountKey', '=', 'corporation_corporationsheet_walletdivisions.accountKey') // such name much wow
+			->where(DB::raw('MONTH(date)'), $month)
+			->where(DB::raw('YEAR(date)'), $year)
+			->where('corporation_walletjournal.corporationID', $corporationID)
+			->groupBy('corporation_walletjournal.refTypeID')
+			->orderBy('eve_reftypes.refTypeName', 'asc')
+			->get();
+
+			// WHERE MONTH(`date`) = :month AND YEAR(`date`)
+
+		// Tax contributions
+		$bounty_tax = DB::table('corporation_walletjournal')
+			->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->whereIn('corporation_walletjournal.refTypeID', array(17,85)) // Ref type ids: 17: Bounty Prize; 85: Bounty Prizes
+			->where(DB::raw('MONTH(date)'), $month)
+			->where(DB::raw('YEAR(date)'), $year)		
+			->where('corporation_walletjournal.corporationID', $corporationID)
+			->groupBy('corporation_walletjournal.ownerName2')
+			->orderBy('total', 'desc')
+			->get();
+		$pi_tax = DB::table('corporation_walletjournal')
+			->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->whereIn('corporation_walletjournal.refTypeID', array(96,97,98)) // Ref type ids: 96: Planetary Import Tax; 97: Planetary Export Tax; 98: Planetary Construction
+			->where(DB::raw('MONTH(date)'), $month)
+			->where(DB::raw('YEAR(date)'), $year)			
+			->where('corporation_walletjournal.corporationID', $corporationID)
+			->groupBy('corporation_walletjournal.ownerName2')
+			->orderBy('total', 'desc')
+			->get();
+
+		return View::make('corporation.ledger.ajax.ledgermonth')
+			->with('corporationID', $corporationID)
+			->with('date', $date)
+			->with('ledger', $ledger)
+			->with('bounty_tax', $bounty_tax)
+			->with('pi_tax', $pi_tax);
+	}
 }

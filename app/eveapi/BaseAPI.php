@@ -244,8 +244,6 @@ class BaseApi {
 
 		\Cache::put('api_lock_' . $hash, '_locked_', Carbon::now()->addMinutes(60));
 
-		// print 'Locked ' . $api . ' with hash ' . $hash;
-
 		return $hash;
 	}
 
@@ -264,7 +262,6 @@ class BaseApi {
 		$hash = BaseApi::makeCallHash($api, $scope, $owner);
 
 		if (\Cache::has('api_lock_' . $hash)) {
-			// print 'Api ' . $api . ' is still locked';
 			return true;
 		}
 		else {
@@ -283,7 +280,6 @@ class BaseApi {
 
 	public static function unlockCall($hash)
 	{
-		// print 'Unlocked ' . $hash;
 		\Cache::forget('api_lock_' . $hash);
 	}
 

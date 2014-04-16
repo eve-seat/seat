@@ -67,9 +67,19 @@ class MemberTracking extends BaseApi {
 		// checkDbCache will return true if this is the case
 		if (!BaseApi::checkDbCache($scope, $api, $member_tracking->cached_until, $corporationID)) {
 
-			foreach ($member_tracking->members as $member) {
 
-				//TODO: Start an array to delete old members
+			// Get a list of the current corporation members. Once we are done with the member
+			// updates, we will just go and delete the members that are left in this array, assuming
+			// that they are  no longer in this corporation.
+			$existing_members = array();
+			foreach (\EveCorporationMemberTracking::where('corporationID', $corporationID)->get() as $member)
+				$existing_members[] = $member->characterID;
+
+			// Flip the array so that the keys are the characterID's
+			$existing_members = array_flip($existing_members);
+
+			// Process the results from the API call
+			foreach ($member_tracking->members as $member) {
 
 				$member_data = \EveCorporationMemberTracking::where('characterID', '=', $member->characterID)
 					->where('corporationID', '=', $corporationID)
@@ -95,7 +105,14 @@ class MemberTracking extends BaseApi {
 				$member_data->grantableRoles = $member->grantableRoles;
 
 				$member_data->save();
+
+				// Remove this member from the existing members
+				unset($existing_members[$member->characterID]);
 			}
+
+			// Next, remove the members that were not in the API call.
+			if (count($existing_members) > 0)
+				\EveCorporationMemberTracking::whereIn('characterID', array_keys($existing_members))->delete();
 
 			// Update the cached_until time in the database for this api call
 			BaseApi::setDbCache($scope, $api, $member_tracking->cached_until, $corporationID);

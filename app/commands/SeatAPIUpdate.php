@@ -43,6 +43,8 @@ class SeatAPIUpdate extends Command {
 	public function fire()
 	{
 
+		\Log::info('Started command ' . $this->name, array('src' => __CLASS__));
+
 		// Server APIs
 		$jobID = \Queue::push('Seat\EveQueues\Full\Server', array());
 		\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => 0, 'api' => 'ServerStatus', 'scope' => 'Server', 'status' => 'Queued'));
@@ -55,12 +57,14 @@ class SeatAPIUpdate extends Command {
 		$jobID = \Queue::push('Seat\EveQueues\Full\Eve', array());
 		\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => 0, 'api' => 'Eve', 'scope' => 'Eve', 'status' => 'Queued'));
 
+		\Log::info('Starting job submissions for all keys', array('src' => __CLASS__));
+
 		// Get the keys, and process them
 		foreach (\SeatKey::where('isOk', '=', 1)->get() as $key) {
 
 			$access = EveApi\BaseApi::determineAccess($key->keyID);
 			if (!isset($access['type'])) {
-				print 'Unable to determine type for key ' . $key->keyID . PHP_EOL;
+				\Log::error('Unable to determine type for key ' . $key->keyID, array('src' => __CLASS__));
 				continue;
 			}
 

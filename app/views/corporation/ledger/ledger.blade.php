@@ -1,0 +1,215 @@
+@extends('layouts.masterLayout')
+
+@section('html_title', 'Corporation Ledger')
+
+@section('page_content')
+
+<div class="row">
+	<div class="col-md-3">
+
+		<div style="margin-top: 15px;">
+		    <ul class="nav nav-pills nav-stacked" id="available-ledgers">
+		        <li class="header">Summarized Ledger</li>
+			        <li class="active"><a href="{{ action('CorporationController@getLedgerSummary', array('corporationID' => $corporationID)) }}"><i class="fa fa-calendar-o"></i> Today ( {{ Carbon\Carbon::now()->toDateString() }} )</a></li>
+		        <li class="header">Available Ledgers</li>
+		        @foreach ($ledger_dates as $ledger_date)
+			        <li>
+			        	<a href="#" id="ledger" a-date="{{ $ledger_date }}">
+			        		<i class="fa fa-calendar-o"></i> {{ Carbon\Carbon::parse($ledger_date)->year }}-{{ Carbon\Carbon::parse($ledger_date)->month }}
+			        	</a>
+			        </li>
+			    @endforeach
+		    </ul>
+		</div>
+
+	</div>
+
+	<div class="col-md-9">
+
+		<!-- ajax responses will get pushed into this span -->
+		<span id="ledger-result">
+
+			<div class="nav-tabs-custom">
+			    <ul class="nav nav-tabs">
+			        <li class="active"><a href="#tab_summaries" data-toggle="tab">Summaries</a></li>
+			        <li><a href="#tab_tax_contributors" data-toggle="tab">Tax Contributors</a></li>
+			    </ul>
+			    <div class="tab-content">
+			        <div class="tab-pane active" id="tab_summaries">
+
+						{{-- wallet division balances --}}
+						<div class="box box-solid box-primary">
+						    <div class="box-header">
+						        <h3 class="box-title">Corporation Account Balances</h3>
+						        <div class="box-tools pull-right">
+						            <button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+						            <button class="btn btn-primary btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+						        </div>
+						    </div>
+						    <div class="box-body no-padding">
+								<table class="table table-condensed table-hover">
+								    <tbody>
+								    	<tr>
+									        <th>Account ID</th>
+									        <th>Wallet Division Name</th>
+									        <th>Balance</th>
+									    </tr>
+									    @foreach ($wallet_balances as $wallet_division)
+										    <tr>
+										        <td>{{ $wallet_division->accountID }}</td>
+										        <td>{{ $wallet_division->description }}</td>
+										        <td><b>{{ number_format($wallet_division->balance, 2, '.', ' ') }}</b> ISK</td>
+										    </tr>
+									    @endforeach
+									</tbody>
+								</table>
+						    </div><!-- /.box-body -->
+						</div>
+
+						{{-- wallet ledger --}}
+						<div class="box box-solid box-success">
+						    <div class="box-header">
+						        <h3 class="box-title">Global Wallet Ledger</h3>
+								<div class="box-tools pull-right">
+								    <button class="btn btn-success btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+								    <button class="btn btn-success btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+								</div>
+						    </div>
+						    <div class="box-body no-padding">
+								<table class="table table-condensed table-hover">
+								    <tbody>
+								    	<tr>
+									        <th>Transaction Type</th>
+									        <th>Amount</th>
+									    </tr>
+									    @foreach ($ledger as $entry)
+										    <tr>
+										        <td>{{ $entry->refTypeName }}</td>
+										        <td>
+										        	<b>
+										        	@if ($entry->total < 0)
+											        	<span class="text-red">{{ number_format($entry->total, 2, '.', ' ') }} ISK</span>
+											        @else
+											        	{{ number_format($entry->total, 2, '.', ' ') }} ISK
+											        @endif
+												    </b>
+										        </td>
+										    </tr>
+									    @endforeach
+									</tbody>
+								</table>
+						    </div><!-- /.box-body -->
+						</div> <!-- ./box -->
+			        </div><!-- /.tab-pane -->
+
+			        <div class="tab-pane" id="tab_tax_contributors">
+
+
+			        	{{-- tax breakdowns --}}
+
+						<div class="nav-tabs-custom">
+						    <ul class="nav nav-tabs">
+						        <li class="active"><a href="#tab_tax_bounties" data-toggle="tab">Bounty Prizes</a></li>
+						        <li><a href="#tab_tax_pi" data-toggle="tab">Planetary Interaction</a></li>
+						    </ul>
+						    <div class="tab-content">
+						        <div class="tab-pane active" id="tab_tax_bounties">
+
+									{{-- bounty tax --}}
+									@if (count($bounty_tax) > 0)
+										<div class="box box-solid box-primary">
+										    <div class="box-header">
+										        <h3 class="box-title">Tax Contributions for Bounty Prizes</h3>
+										    </div>
+										    <div class="box-body no-padding">
+												<table class="table table-condensed table-hover">
+												    <tbody>
+												    	<tr>
+													        <th>Contributor</th>
+													        <th>Contribution Total</th>
+													    </tr>
+													    @foreach ($bounty_tax as $entry)
+														    <tr>
+														        <td>
+														        	<a href="{{ action('CharacterController@getView', array('characterID' => $entry->ownerID2 )) }}">
+														        		<img src='http://image.eveonline.com/Character/{{ $entry->ownerID2 }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+														        		{{ $entry->ownerName2 }}
+														        	</a>
+														        </td>
+														        <td> <b> {{ number_format($entry->total, 2, '.', ' ') }} ISK </b> </td>
+														    </tr>
+													    @endforeach
+													</tbody>
+												</table>
+										    </div><!-- /.box-body -->
+										</div> <!-- ./box -->
+									@else
+										<p class="lead">No Tax Contributor Information Available</p>
+									@endif
+
+						        </div><!-- /.tab-pane -->
+						        <div class="tab-pane" id="tab_tax_pi">
+
+									{{-- pi tax --}}
+									@if (count($pi_tax) > 0)
+										<div class="box box-solid box-primary">
+										    <div class="box-header">
+										        <h3 class="box-title">Tax Contributions for Planetary Interaction</h3>
+										    </div>
+										    <div class="box-body no-padding">
+												<table class="table table-condensed table-hover">
+												    <tbody>
+												    	<tr>
+													        <th>Contributor</th>
+													        <th>Contribution Total</th>
+													    </tr>
+													    @foreach ($pi_tax as $entry)
+														    <tr>
+														        <td>
+														        	<a href="{{ action('CharacterController@getView', array('characterID' => $entry->ownerID2 )) }}">
+														        		<img src='http://image.eveonline.com/Character/{{ $entry->ownerID2 }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+														        		{{ $entry->ownerName2 }}
+														        	</a>
+														        </td>
+														        <td> <b> {{ number_format($entry->total, 2, '.', ' ') }} ISK </b> </td>
+														    </tr>
+													    @endforeach
+													</tbody>
+												</table>
+										    </div><!-- /.box-body -->
+										</div> <!-- ./box -->
+									@else
+										<p class="lead">No Tax Contributor Information Available</p>
+									@endif
+
+						        </div><!-- /.tab-pane -->
+						    </div><!-- /.tab-content -->
+
+						</div> <!-- ./nav-tabs -->
+			        </div><!-- /.tab-pane -->
+			    </div><!-- /.tab-content -->
+			</div>
+
+		</span> <!-- ./result-span -->
+
+	</div> <!-- ./col-md-9 -->
+</div> <!-- ./row -->
+@stop
+
+@section('javascript')
+<script type="text/javascript">
+
+	// Call the monthly ledger
+	$('a#ledger').click(function() {
+
+	    $('ul#available-ledgers li.active').removeClass('active');
+	    $(this).closest('li').addClass('active');
+
+	    $('#ledger-result')
+	    	.html('<br><i class="fa fa-cog fa fa-spin"></i> Loading Ledger...')
+	    	.load("{{ action('CorporationController@getLedgerMonth', array('corporationID' => $corporationID )) }}" + "/" + $(this).attr('a-date'));
+
+	});
+
+</script>
+@stop

@@ -2,9 +2,10 @@
 
 namespace Seat\Commands\Scheduled;
 
-use Indatus\Dispatcher\ScheduledCommand;
-use Indatus\Dispatcher\Schedulable;
+use Indatus\Dispatcher\Scheduling\ScheduledCommand;
+use Indatus\Dispatcher\Scheduling\Schedulable;
 use Indatus\Dispatcher\Drivers\Cron\Scheduler;
+
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -55,6 +56,9 @@ class EveMapUpdater extends ScheduledCommand {
 	 */
 	public function fire()
 	{
+		
+		\Log::info('Started command ' . $this->name, array('src' => __CLASS__));
+
 		$jobID = \Queue::push('Seat\EveQueues\Full\Map', array());
 		\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => 0, 'api' => 'Map', 'scope' => 'Eve', 'status' => 'Queued'));
 	}

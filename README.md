@@ -24,6 +24,9 @@ Starbase Details View
 ### Installation ###
 Refer to the `docs/` directory for installation instructions. It is suggested that you checkout the latest release that can be found [here](https://github.com/eve-seat/seat/releases).
 
+### Upgrading ###
+Please refer to the UPGRADING guide in `docs/UPDGRADING.md`
+
 ### Todo ###
 There really is a TON of stuff that still needs to be done:
 
@@ -45,4 +48,4 @@ You can get hold of me via Twitter [@qu1ckkkk](https://twitter.com/qu1ckkkk), in
   [1]: http://laravel.com/
 
 ### Legal ###
-EVE Online and the EVE logo are the registered trademarks of CCP hf. All rights are reserved worldwide. All other trademarks are the property of their respective owners. EVE Online, the EVE logo, EVE and all associated logos and designs are the intellectual property of CCP hf. All artwork, screenshots, characters, vehicles, storylines, world facts or other recognizable features of the intellectual property relating to these trademarks are likewise the intellectual property of CCP hf. CCP hf. has granted permission to DOTLAN EveMaps to use EVE Online and all associated logos and designs for promotional and information purposes on its website but does not endorse, and is not in any way affiliated with, DOTLAN EveMaps. CCP is in no way responsible for the content on or functioning of this website, nor can it be liable for any damage arising from the use of this website.
+EVE Online and the EVE logo are the registered trademarks of CCP hf. All rights are reserved worldwide. All other trademarks are the property of their respective owners. EVE Online, the EVE logo, EVE and all associated logos and designs are the intellectual property of CCP hf. All artwork, screenshots, characters, vehicles, storylines, world facts or other recognizable features of the intellectual property relating to these trademarks are likewise the intellectual property of CCP hf.
