@@ -51,7 +51,7 @@ class HelperController extends BaseController {
 			$pheal = new Pheal();
 
 			// Loop over the ids for a max of 30 ids, and resolve the names
-			foreach (array_chunk($ids, 30) as $resolvable) {
+			foreach (array_chunk($ids, 15) as $resolvable) {
 
 				// Attempt actual API lookups
 				try {
