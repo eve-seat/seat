@@ -55,6 +55,9 @@ class EveCorporationUpdater extends ScheduledCommand {
 	 */
 	public function fire()
 	{
+		
+		\Log::info('Started command ' . $this->name, array('src' => __CLASS__));
+
 		// Get the keys, and process them
 		foreach (\SeatKey::where('isOk', '=', 1)->get() as $key) {
 

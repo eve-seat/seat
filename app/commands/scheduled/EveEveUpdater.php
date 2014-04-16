@@ -55,6 +55,9 @@ class EveEveUpdater extends ScheduledCommand {
 	 */
 	public function fire()
 	{
+		
+		\Log::info('Started command ' . $this->name, array('src' => __CLASS__));
+
 		// Eve APIs
 		$jobID = \Queue::push('Seat\EveQueues\Full\Eve', array());
 		\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => 0, 'api' => 'Eve', 'scope' => 'Eve', 'status' => 'Queued'));
