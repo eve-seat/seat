@@ -126,7 +126,12 @@
 													    </tr>
 													    @foreach ($bounty_tax as $entry)
 														    <tr>
-														        <td>{{ $entry->ownerName2 }}</td>
+														        <td>
+														        	<a href="{{ action('CharacterController@getView', array('characterID' => $entry->ownerID2 )) }}">
+														        		<img src='http://image.eveonline.com/Character/{{ $entry->ownerID2 }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+														        		{{ $entry->ownerName2 }}
+														        	</a>
+														        </td>
 														        <td> <b> {{ number_format($entry->total, 2, '.', ' ') }} ISK </b> </td>
 														    </tr>
 													    @endforeach
@@ -156,7 +161,12 @@
 													    </tr>
 													    @foreach ($pi_tax as $entry)
 														    <tr>
-														        <td>{{ $entry->ownerName2 }}</td>
+														        <td>
+														        	<a href="{{ action('CharacterController@getView', array('characterID' => $entry->ownerID2 )) }}">
+														        		<img src='http://image.eveonline.com/Character/{{ $entry->ownerID2 }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+														        		{{ $entry->ownerName2 }}
+														        	</a>
+														        </td>
 														        <td> <b> {{ number_format($entry->total, 2, '.', ' ') }} ISK </b> </td>
 														    </tr>
 													    @endforeach
