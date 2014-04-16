@@ -1,6 +1,6 @@
 @extends('layouts.masterLayout')
 
-@section('html_title', 'Mail Timeline')
+@section('html_title', 'Read Mail')
 
 @section('page_content')
 
