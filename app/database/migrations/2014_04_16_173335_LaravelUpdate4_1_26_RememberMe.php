@@ -14,7 +14,7 @@ class LaravelUpdate4126RememberMe extends Migration {
 	{
 		Schema::table('seat_users', function(Blueprint $table)
 		{
-			$table->string('remember_me', 100)->nullable();
+			$table->string('remember_token', 100)->nullable();
 		});
 	}
 
@@ -27,7 +27,7 @@ class LaravelUpdate4126RememberMe extends Migration {
 	{
 		Schema::table('seat_users', function(Blueprint $table)
 		{
-			$table->dropColumn('remember_me');
+			$table->dropColumn('remember_token');
 		});
 	}
 
