@@ -2,9 +2,10 @@
 
 namespace Seat\Commands\Scheduled;
 
-use Indatus\Dispatcher\ScheduledCommand;
-use Indatus\Dispatcher\Schedulable;
+use Indatus\Dispatcher\Scheduling\ScheduledCommand;
+use Indatus\Dispatcher\Scheduling\Schedulable;
 use Indatus\Dispatcher\Drivers\Cron\Scheduler;
+
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
