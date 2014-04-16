@@ -8,12 +8,16 @@
 	<div class="col-md-3">
 
 		<div style="margin-top: 15px;">
-		    <ul class="nav nav-pills nav-stacked">
+		    <ul class="nav nav-pills nav-stacked" id="available-ledgers">
 		        <li class="header">Summarized Ledger</li>
-			        <li class="active"><a href="#"><i class="fa fa-calendar-o"></i> Today ( {{ Carbon\Carbon::now()->toDateString() }} )</a></li>
+			        <li class="active"><a href="{{ action('CorporationController@getLedgerSummary', array('corporationID' => $corporationID)) }}"><i class="fa fa-calendar-o"></i> Today ( {{ Carbon\Carbon::now()->toDateString() }} )</a></li>
 		        <li class="header">Available Ledgers</li>
 		        @foreach ($ledger_dates as $ledger_date)
-			        <li><a href="#"><i class="fa fa-calendar-o"></i> {{ Carbon\Carbon::parse($ledger_date)->year }}-{{ Carbon\Carbon::parse($ledger_date)->month }}</a></li>
+			        <li>
+			        	<a href="#" id="ledger" a-date="{{ $ledger_date }}">
+			        		<i class="fa fa-calendar-o"></i> {{ Carbon\Carbon::parse($ledger_date)->year }}-{{ Carbon\Carbon::parse($ledger_date)->month }}
+			        	</a>
+			        </li>
 			    @endforeach
 		    </ul>
 		</div>
@@ -190,4 +194,22 @@
 
 	</div> <!-- ./col-md-9 -->
 </div> <!-- ./row -->
+@stop
+
+@section('javascript')
+<script type="text/javascript">
+
+	// Call the monthly ledger
+	$('a#ledger').click(function() {
+
+	    $('ul#available-ledgers li.active').removeClass('active');
+	    $(this).closest('li').addClass('active');
+
+	    $('#ledger-result')
+	    	.html('<br><i class="fa fa-cog fa fa-spin"></i> Loading Ledger...')
+	    	.load("{{ action('CorporationController@getLedgerMonth', array('corporationID' => $corporationID )) }}" + "/" + $(this).attr('a-date'));
+
+	});
+
+</script>
 @stop
