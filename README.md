@@ -24,6 +24,9 @@ Starbase Details View
 ### Installation ###
 Refer to the `docs/` directory for installation instructions. It is suggested that you checkout the latest release that can be found [here](https://github.com/eve-seat/seat/releases).
 
+### Upgrading ###
+Please refer to the UPGRADING guide in `docs/UPDGRADING.md`
+
 ### Todo ###
 There really is a TON of stuff that still needs to be done:
 
