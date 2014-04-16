@@ -342,10 +342,29 @@ class CorporationController extends BaseController {
 			->orderBy('eve_reftypes.refTypeName', 'asc')
 			->get();
 
+		// Tax contributions
+		$bounty_tax = DB::table('corporation_walletjournal')
+			->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->whereIn('corporation_walletjournal.refTypeID', array(17,85)) // Ref type ids: 17: Bounty Prize; 85: Bounty Prizes
+			->where('corporation_walletjournal.corporationID', $corporationID)
+			->groupBy('corporation_walletjournal.ownerName2')
+			->orderBy('total', 'desc')
+			->get();
+		$pi_tax = DB::table('corporation_walletjournal')
+			->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->whereIn('corporation_walletjournal.refTypeID', array(96,97,98)) // Ref type ids: 96: Planetary Import Tax; 97: Planetary Export Tax; 98: Planetary Construction
+			->where('corporation_walletjournal.corporationID', $corporationID)
+			->groupBy('corporation_walletjournal.ownerName2')
+			->orderBy('total', 'desc')
+			->get();
+
 		return View::make('corporation.ledger.ledger')
 			->with('ledger_dates', $ledger_dates)
 			->with('wallet_balances', $wallet_balances)
 			->with('ledger', $ledger)
-			;
+			->with('bounty_tax', $bounty_tax)
+			->with('pi_tax', $pi_tax);
 	}
 }
