@@ -177,6 +177,50 @@ class CharacterController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getSearchSkills()
+	|--------------------------------------------------------------------------
+	|
+	| Calculate the daily wallet balance delta for the last 30 days and return
+	| the results as a json response
+	|
+	*/
+
+	public function getSearchSkills()
+	{
+
+		return View::make('character.skillsearch.search');
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| postSearchSkills()
+	|--------------------------------------------------------------------------
+	|
+	| Calculate the daily wallet balance delta for the last 30 days and return
+	| the results as a json response
+	|
+	*/
+
+	public function postSearchSkills()
+	{
+
+		// Ensure we actually got an array...
+		if (!is_array(Input::get('skills')))
+			App::abort(404);
+
+		$filter = DB::table('character_charactersheet_skills')
+			->join('account_apikeyinfo_characters', 'character_charactersheet_skills.characterID', '=', 'account_apikeyinfo_characters.characterID')
+			->join('invTypes', 'character_charactersheet_skills.typeID', '=', 'invTypes.typeID')
+			->whereIn('character_charactersheet_skills.typeID', array_values(Input::get('skills')))
+			->orderBy('invTypes.typeName')
+			->get();
+
+		return View::make('character.skillsearch.ajax.result')
+			->with('filter', $filter);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getWalletDelta()
 	|--------------------------------------------------------------------------
 	|
