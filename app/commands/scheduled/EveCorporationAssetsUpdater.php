@@ -46,7 +46,7 @@ class EveCorporationAssetsUpdater extends ScheduledCommand {
 	 */
 	public function schedule(Schedulable $scheduler)
 	{
-		return $scheduler->setSchedule('*', '*/8', '*', '*', '*');
+		return $scheduler->setSchedule('0', '*/8', '*', '*', '*');
 	}
 
 	/**
