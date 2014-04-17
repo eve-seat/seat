@@ -19,6 +19,7 @@ Artisan::add(new \Seat\Commands\SeatAPIFindKeyByName);
 Artisan::add(new \Seat\Commands\SeatAPIFindNameByKey);
 Artisan::add(new \Seat\Commands\SeatAPIFindSickKeys);
 Artisan::add(new \Seat\Commands\SeatAPIDeleteKey);
+Artisan::add(new \Seat\Commands\SeatAddKey);
 
 // Scheduled SeAT Commands
 Artisan::add(new \Seat\Commands\Scheduled\EveCharacterUpdater);
