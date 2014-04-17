@@ -9,13 +9,6 @@
     </div>
 @endif
 
-@if (!is_object($status_info))
-	<div class="callout callout-danger">
-        <h4><i class="fa fa-warning"></i> <b>Error:</b> Unable to get Account Status <small>/account/AccountStatus.xml.aspx</small></h4>
-        <p>The error was: <b>{{ $key_info['error'] }}</b></p>
-    </div>
-@endif
-
 {{-- process db existance check --}}
 @if ($existance > 0)
 	<div class="callout callout-warning">

@@ -113,7 +113,21 @@ class ApiKeyController extends BaseController {
 					$key_info = $pheal->accountScope->APIKeyInfo();
 
 				} catch (\Pheal\Exceptions\PhealException $e) {
-					$key_info = array('error' => $e->getCode() . ': ' . $e->getMessage());
+
+					return View::make('keys.ajax.errors')
+						->withErrors(array('error' => $e->getCode() . ': ' . $e->getMessage()));
+				}
+
+				// Here, based on the type of key, we will either call some further information,
+				// or just display what we have learned so far.
+				if ($key_info->key->type == 'Corporation') {
+
+					// Just return the view for corporation keys
+					return View::make('keys.ajax.corporation')
+						->with('keyID', Input::get('keyID'))
+						->with('vCode', Input::get('vCode'))
+						->with('key_info', $key_info)
+						->with('existance', SeatKey::where('keyID', Input::get('keyID'))->count());
 				}
 
 				// Get API Account Status Information
@@ -121,14 +135,16 @@ class ApiKeyController extends BaseController {
 					$status_info = $pheal->accountScope->AccountStatus();
 
 				} catch (\Pheal\Exceptions\PhealException $e) {
-					$status_info = array('error' => $e->getCode() . ': ' . $e->getMessage());
+
+					return View::make('keys.ajax.errors')
+						->withErrors(array('error' => $e->getCode() . ': ' . $e->getMessage()));
 				}
 
 				// TODO: Think about adding a entry to the cache to mark a particular key as
 				// valid
 
 				// Return the view
-				return View::make('keys.ajax.check')
+				return View::make('keys.ajax.character')
 					->with('keyID', Input::get('keyID'))
 					->with('vCode', Input::get('vCode'))
 					->with('key_info', $key_info)
