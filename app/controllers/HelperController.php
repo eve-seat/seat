@@ -107,4 +107,24 @@ class HelperController extends BaseController {
 
 		return Response::json($skills);
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAvailableSkills()
+	|--------------------------------------------------------------------------
+	|
+	| Return the currently available skills as a json object
+	|
+	*/
+
+	public function getAvailableItems()
+	{
+
+		$items = DB::table('invTypes')
+			->select(DB::raw('typeID as id'), DB::raw('typeName as text'))
+			->where('typeName', 'like', '%' . Input::get('q') . '%')
+			->get();
+
+		return Response::json($items);
+	}
 }
