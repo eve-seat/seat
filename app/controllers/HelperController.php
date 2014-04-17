@@ -75,4 +75,56 @@ class HelperController extends BaseController {
 		// With all the work out of the way, return the $return array as Json
 		return Response::json($return);
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAvailableSkills()
+	|--------------------------------------------------------------------------
+	|
+	| Return the currently available skills as a json object
+	|
+	*/
+
+	public function getAvailableSkills()
+	{
+
+		// Get the skills from the database
+		$skills = DB::table('invTypes')
+			->select(DB::raw('typeId as id'), DB::raw('typeName as text'))
+			->whereIn('groupID', function($groupQuery) {
+
+				$groupQuery->select('groupID')
+					->from('invGroups')
+					->whereIn('categoryID', function($categoryQuery) {
+
+						$categoryQuery->select('categoryID')
+							->from('invCategories')
+							->where('categoryName', 'skill');
+					});
+			})
+			->orderBy('typeName', 'asc')
+			->get();
+
+		return Response::json($skills);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAvailableSkills()
+	|--------------------------------------------------------------------------
+	|
+	| Return the currently available skills as a json object
+	|
+	*/
+
+	public function getAvailableItems()
+	{
+
+		$items = DB::table('invTypes')
+			->select(DB::raw('typeID as id'), DB::raw('typeName as text'))
+			->where('typeName', 'like', '%' . Input::get('q') . '%')
+			->get();
+
+		return Response::json($items);
+	}
 }

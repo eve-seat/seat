@@ -177,6 +177,116 @@ class CharacterController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getSearchSkills()
+	|--------------------------------------------------------------------------
+	|
+	| Return a view to search character skills
+	|
+	*/
+
+	public function getSearchSkills()
+	{
+
+		return View::make('character.skillsearch.search');
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| postSearchSkills()
+	|--------------------------------------------------------------------------
+	|
+	| Search for characters that have certain skills injected & their leverls
+	|
+	*/
+
+	public function postSearchSkills()
+	{
+
+		// Ensure we actually got an array...
+		if (!is_array(Input::get('skills')))
+			App::abort(404);
+
+		$filter = DB::table('character_charactersheet_skills')
+			->join('account_apikeyinfo_characters', 'character_charactersheet_skills.characterID', '=', 'account_apikeyinfo_characters.characterID')
+			->join('invTypes', 'character_charactersheet_skills.typeID', '=', 'invTypes.typeID')
+			->whereIn('character_charactersheet_skills.typeID', array_values(Input::get('skills')))
+			->orderBy('invTypes.typeName')
+			->get();
+
+		return View::make('character.skillsearch.ajax.result')
+			->with('filter', $filter);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getSearchAssets()
+	|--------------------------------------------------------------------------
+	|
+	| Return a view to search character assets
+	|
+	*/
+
+	public function getSearchAssets()
+	{
+
+		return View::make('character.assetsearch.search');
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| postSearchAssets()
+	|--------------------------------------------------------------------------
+	|
+	| Search for characters that have certain assets
+	|
+	*/
+
+	public function postSearchAssets()
+	{
+
+		if (!is_array(Input::get('items')))
+			App::abort(404);
+
+		// Seriously need to fix up this shit SQL, but not sure how to get this
+		// into Fluent correctly yet...
+
+		// Create a parameter list for use in our query
+		$plist = ':id_'.implode(',:id_', array_keys(Input::get('items')));
+		// Prepare the arguement list for the parameters list
+		$parms = array_combine(explode(",", $plist), Input::get('items'));
+
+		$assets = DB::select(
+			"SELECT *, CASE
+				when a.locationID BETWEEN 66000000 AND 66014933 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.locationID-6000001)
+				when a.locationID BETWEEN 66014934 AND 67999999 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.locationID-6000000)
+				when a.locationID BETWEEN 60014861 AND 60014928 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.locationID)
+				when a.locationID BETWEEN 60000000 AND 61000000 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.locationID)
+				when a.locationID>=61000000 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.locationID)
+				else (SELECT m.itemName FROM mapDenormalize AS m
+					WHERE m.itemID=a.locationID) end
+					AS location,a.locationId AS locID FROM `character_assetlist` AS a
+					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
+					JOIN `account_apikeyinfo_characters` on `account_apikeyinfo_characters`.`characterID` = a.`characterID`
+					WHERE `invTypes`.`typeID` IN ( $plist ) ORDER BY location",
+			$parms	
+		);
+
+		return View::make('character.assetsearch.ajax.result')
+			->with('assets', $assets);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getWalletDelta()
 	|--------------------------------------------------------------------------
 	|
