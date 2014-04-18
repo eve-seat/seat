@@ -35,15 +35,15 @@
 							<li><b>Name: </b>{{ $character->characterName }}</li>
 							<li><b>Corp: </b>{{ $character->corporationName }}</li>
 							<li>
+								@if (strlen($character->trainingEndTime) > 0)
+									<b>Training Ends: </b> {{ Carbon\Carbon::parse($character->trainingEndTime)->diffForHumans() }}
+								@endif
+							</li>
+							<li>
 								@if ($character->isOk == 1)
 									<span class="text-green"><i class="fa fa-check"></i> Key Ok</span>
 								@else
 									<span class="text-red"><i class="fa fa-times"></i> Key not Ok</span>
-								@endif
-							</li>
-							<li>
-								@if (strlen($character->trainingEndTime) > 0)
-									<b>Training Ends: </b> {{ Carbon\Carbon::parse($character->trainingEndTime)->diffForHumans() }}
 								@endif
 							</li>
 						</ul>
