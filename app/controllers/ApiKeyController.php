@@ -39,7 +39,7 @@ class ApiKeyController extends BaseController {
 	{
 
 		$keys = DB::table('seat_keys')
-			->select('seat_keys.keyID', 'seat_keys.isOk', 'account_apikeyinfo.accessMask', 'account_apikeyinfo.type', 'account_apikeyinfo.expires')
+			->select('seat_keys.keyID', 'seat_keys.isOk', 'seat_keys.lastError', 'account_apikeyinfo.accessMask', 'account_apikeyinfo.type', 'account_apikeyinfo.expires')
 			->leftJoin('account_apikeyinfo', 'seat_keys.keyID', '=', 'account_apikeyinfo.keyID')
 			->get();
 
@@ -51,6 +51,7 @@ class ApiKeyController extends BaseController {
 
 				'keyID' => $key->keyID,
 				'isOk' => $key->isOk,
+				'lastError' => $key->lastError,
 				'accessMask' => $key->accessMask,
 				'type' => $key->type,
 				'expires' => $key->expires,
@@ -240,7 +241,7 @@ class ApiKeyController extends BaseController {
 	{
 
 		$key_information = DB::table('seat_keys')
-			->select('seat_keys.keyID', 'seat_keys.isOk', 'account_apikeyinfo.accessMask', 'account_apikeyinfo.type', 'account_apikeyinfo.expires')
+			->select('seat_keys.keyID', 'seat_keys.isOk', 'seat_keys.lastError', 'account_apikeyinfo.accessMask', 'account_apikeyinfo.type', 'account_apikeyinfo.expires')
 			->leftJoin('account_apikeyinfo', 'seat_keys.keyID', '=', 'account_apikeyinfo.keyID')
 			->where('seat_keys.keyID', $keyID)
 			->first();
@@ -335,6 +336,7 @@ class ApiKeyController extends BaseController {
 			App::abord(404);
 
 		$key->isOk = 1;
+		$key->lastError = null;
 		$key->save();
 
 		return Redirect::action('ApiKeyController@getDetail', array('keyID' => $keyID))

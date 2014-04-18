@@ -52,6 +52,11 @@
 		                    @else
 		                    	No known characters for this keyID, maybe its still updating or entirely invalid/expired.
 		                    @endif
+		                    <span class="pull-right">
+					        	@if (strlen($key['lastError']) > 0)
+						        	<i class="fa fa-bullhorn pull-right" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ $key['lastError'] }}" data-trigger="hover"></i>
+						        @endif
+		                    </span>
 	                    </td>
 	                    <td>
 							<div class="btn-group">
