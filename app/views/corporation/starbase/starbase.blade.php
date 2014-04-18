@@ -4,6 +4,65 @@
 
 @section('page_content')
 
+{{-- starbase summaries in a table. yeah, couldnt avoid this table --}}
+<div class="row">
+	<div class="col-md-12">
+
+		<div class="box box-solid box-primary">
+		    <div class="box-header">
+		        <h3 class="box-title">Starbase Summaries ({{ count($starbases) }})</h3>
+		        <div class="box-tools pull-right">
+		            <button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		            <button class="btn btn-primary btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+		        </div>
+		    </div>
+		    <div class="box-body no-padding">
+		    	<div class="row">
+		    		{{-- split the summaries into 2 tables next to each other --}}
+		    		@foreach (array_chunk($starbases, count($starbases) / 2) as $starbase)
+			    		<div class="col-md-6">
+
+
+					        <table class="table table-condensed table-hover">
+					            <tbody>
+					            	<tr>
+						                <th>Location</th>
+						                <th>Name</th>
+						                <th>Type</th>
+						                <th>Fuel Blocks</th>
+						                <th>State</th>
+						                <th></th>
+						            </tr>
+					            	@foreach ($starbase as $details)
+							            <tr>
+
+											{{-- find the starbases name in the $item_locations array --}}	
+											{{--*/$posname = null/*--}}
+											@foreach ($item_locations[$details->moonID] as $name_finder)
+												@if ($name_finder['itemID'] == $details->itemID)
+													{{--*/$posname = $name_finder['itemName']/*--}}
+												@endif
+											@endforeach
+
+							                <td>{{ $details->itemName }}</td>
+							                <td>{{ $posname }}</td>
+							                <td>{{ $details->typeName }}</td>
+							                <td>{{ $details->fuelBlocks }}</td>
+							                <td>{{ $tower_states[$details->state] }}</td>
+							                <td><a href="#{{ $details->itemID }}"><i class="fa fa-anchor" data-toggle="tooltip" title="" data-original-title="Details"></i></a></td>
+							            </tr>
+						            @endforeach
+						        </tbody>
+						    </table>
+			    		</div>
+			    	@endforeach
+		    	</div> <!-- ./row -->
+		    </div><!-- /.box-body -->
+		</div>
+
+	</div>
+</div>
+
 	@foreach (array_chunk($starbases, 3) as $starbase)
 
 		<div class="row">
@@ -22,7 +81,7 @@
 				<div class="col-md-4">
 					<div class="nav-tabs-custom">
 					    <ul class="nav nav-tabs">
-					        <li class="active"><a href="#tab_1{{ $details->itemID }}" data-toggle="tab">Tower Info</a></li>
+					        <li class="active"><a href="#tab_1{{ $details->itemID }}" data-toggle="tab" id="{{ $details->itemID }}">Tower Info</a></li>
 					        <li><a href="#tab_2{{ $details->itemID }}" data-toggle="tab">Module Details @if (isset($item_locations[$details->moonID])) ({{ count($item_locations[$details->moonID]) }}) @endif</a></li>
 					    </ul>
 					    <div class="tab-content">
