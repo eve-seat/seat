@@ -50,7 +50,6 @@
                 </a>
                 <ul class="treeview-menu">
                     <li><a href="{{ action('CharacterController@getAll') }}"><i class="fa fa-angle-double-right"></i> All Characters</a></li>
-                    <li><a href="#"><i class="fa fa-angle-double-right"></i> Clone Overview</a></li>
                     <li><a href="{{ action('MailController@getSubjects') }}"><i class="fa fa-angle-double-right"></i> Mail Subjects</a></li>                                
                     <li><a href="{{ action('MailController@getTimeline') }}"><i class="fa fa-angle-double-right"></i> Mail Timeline</a></li>                                
                     <li><a href="{{ action('CharacterController@getSearchAssets') }}"><i class="fa fa-angle-double-right"></i> Asset Search</a></li>
