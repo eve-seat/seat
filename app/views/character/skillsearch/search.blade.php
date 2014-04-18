@@ -4,24 +4,19 @@
 
 @section('page_content')
 
-
-
 	{{ Form::open(array('class' => 'form-horizontal')) }}
 		<fieldset>
 
 			<!-- Prepended text-->
 			<div class="form-group">
 			  <label class="col-md-4 control-label" for="searchinput"></label>
-			  <div class="col-md-4">
 			    <div class="input-group">
 			      {{ Form::text('searchinput', null, array('id' => 'searchinput', 'class' => 'form-control'), 'required', 'autofocus') }}
 			    </div>
-			  </div>
 			</div>
 
 		</fieldset>
 	{{ Form::close() }}
-
 
 	<!-- results box -->
 	<div class="box" id="result-box" style="display: none;">
@@ -49,6 +44,7 @@
 
 		$("#searchinput").select2({
 		    multiple: true,
+		    width: "350",
 		    placeholder: "Start typing to filter for skills.",
 		    data:function() { return { text:'text', results: skillList }; },
 		});

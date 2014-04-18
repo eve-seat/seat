@@ -12,11 +12,9 @@
 			<!-- Prepended text-->
 			<div class="form-group">
 			  <label class="col-md-4 control-label" for="searchinput"></label>
-			  <div class="col-md-4">
 			    <div class="input-group">
 			      {{ Form::text('searchinput', null, array('id' => 'searchinput', 'class' => 'form-control'), 'required', 'autofocus') }}
 			    </div>
-			  </div>
 			</div>
 
 		</fieldset>
@@ -43,6 +41,7 @@
 		// Search for asset types to search for... lol
 		$('#searchinput').select2({
 			multiple: true,
+			width: "350",
 			placeholder: "Search for assets",
 			minimumInputLength: 3,
 			ajax: {
