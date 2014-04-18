@@ -225,16 +225,32 @@ class CorporationController extends BaseController {
 		foreach ($bay_sizes as $bay)
 			$shuffled_bays[$bay->typeID] = array('fuelBay' => $bay->capacity, 'strontBay' => $bay->valueFloat);
 
-		// Next, lets see which of this corporations' towers appear to be anchored in sov holding systems.
-		// TODO: Check that the sov holder is actually the alliance the corporation is in
-		$sov_towers = array_flip(DB::table('corporation_starbaselist')
-			->select('itemID')
-			->whereIn('locationID', function($location) {
-				$location->select('solarSystemID')
-					->from('map_sovereignty')
-					->where('factionID', 0);
-			})->where('corporationID', $corporationID)
-			->lists('itemID'));
+		// Figure out the allianceID of the corporation in question so that we can determine whether their
+		// towers are in sov systems
+		$alliance_id = DB::table('corporation_corporationsheet')
+			->where('corporationID', $corporationID)
+			->pluck('allianceID');
+
+		// Check if the alliance_id was actually determined. If so, do the sov_towers loop, else
+		// we just set the array empty
+		if ($alliance_id) {
+
+			// Lets see which of this corporations' towers appear to be anchored in sov holding systems.
+			$sov_towers = array_flip(DB::table('corporation_starbaselist')
+				->select('itemID')
+				->whereIn('locationID', function($location) use ($alliance_id) {
+
+					$location->select('solarSystemID')
+						->from('map_sovereignty')
+						->where('factionID', 0)
+						->where('allianceID', $alliance_id);
+				})->where('corporationID', $corporationID)
+				->lists('itemID'));
+		} else {
+
+			// We will just have an empty array then
+			$sov_towers = array();
+		}
 
 		// Lets get all of the item locations for this corporation and sort it out into a workable
 		// array that can just be referenced and looped in the view. We will use the mapID as the

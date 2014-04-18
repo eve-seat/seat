@@ -34,6 +34,101 @@
 				                	<span class="label label-warning pull-right">{{ $tower_states[$details->state] }}</span>
 				                @endif
 
+				                {{--
+				                	so here we need to determine the time left for the tower fuel.
+									This is just my old code copied and pasted, so chances are there is some logic flaw somewhere.
+
+									An important thing to note here. I am escaping the template comments in order to do these calculations.
+									It will probably be better to move this hax to the controller sometime.
+
+									Note about the fuel usage calculations.
+									---
+
+									There are 3 tower sizes. Small, Medium and Large. ie:
+
+									- Amarr Control Tower
+									- Amarr Control Tower Medium 
+									- Amarr Control Tower Small
+
+									Fuel usage is calculated by based on wether the tower is anchored in sov or non sov space. [1] ie.
+
+									== No SOV Usage
+									- 40 Blocks a hour => Amarr Control Tower
+									- 20 Blocks a hour => Amarr Control Tower Medium 
+									- 10 Blocks a hour => Amarr Control Tower Small
+
+									== SOV Usage
+									- 30 Blocks a hour => Amarr Control Tower
+									- 15 Blocks a hour => Amarr Control Tower Medium 
+									- 7 Blocks a hour => Amarr Control Tower Small
+
+									Time2hardcode this shit
+
+									[1] https://wiki.eveonline.com/en/wiki/Starbase#Fuel_Usage
+
+									Start escape
+									------------
+									*/
+
+									// Set some base usage values ...
+
+									$usage = 0;
+									$stront_usage =0;
+
+									// ... fuel for non sov towers ...
+
+									$large_usage = 40;
+									$medium_usage = 20;
+									$small_usage = 10;
+
+									// ... and sov towers
+
+									$sov_large_usage = 30;
+									$sov_medium_usage = 15;
+									$sov_small_usage = 8;
+
+									// Stront usage
+
+									$stront_large = 400;
+									$stront_medium = 200;
+									$stront_small = 100;
+
+									// basically, here we check if the names Small/Medium exists in the tower name. Then,
+									// if the tower is in the sov_tower array, set the value for usage
+
+									if (strpos($details->typeName, 'Small') !== false) {
+
+										$stront_usage = $stront_small;
+
+										if (array_key_exists($details->itemID, $sov_towers))
+											$usage = $sov_small_usage;
+										else
+											$usage = $small_usage;
+
+									} elseif (strpos($details->typeName, 'Medium') !== false) {
+
+										$stront_usage = $stront_medium;
+
+										if (array_key_exists($details->itemID, $sov_towers))
+											$usage = $sov_medium_usage;
+										else
+											$usage = $medium_usage;
+
+									} else {
+
+										$stront_usage = $stront_large;
+
+										if (array_key_exists($details->itemID, $sov_towers))
+											$usage = $sov_large_usage;
+										else
+											$usage = $large_usage;	
+									}
+										
+									/*
+									End the escape
+									--------------
+				                --}}
+
 								<ul class="list-unstyled">
 								    <li>Name: <b>{{ $posname }}</b></li>
 								    <li>Type: <b>{{ $details->typeName }}</b></li>
@@ -41,6 +136,30 @@
 								    <li>Alliance Access: <b> @if($details->allowAllianceMembers==1)Yes @else No @endif</b></li>
 								    <li>Current State Since: <b> {{ $details->stateTimeStamp }}</b> ({{ Carbon\Carbon::parse($details->stateTimeStamp)->diffForHumans() }})</li>
 								    <li>Online Since: <b> {{ $details->onlineTimeStamp }}</b> ({{ Carbon\Carbon::parse($details->onlineTimeStamp)->diffForHumans() }})</li>
+								    <br>
+								    <li>
+								    	<b>Fuel Left: </b>
+								    	{{ $details->fuelBlocks }} blocks 
+								    	(
+								    		@ {{ $usage }} blocks/h, it will go offline
+
+								    		{{-- determine if the time left is less than 3 days --}}
+								    		@if ( Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->lte(Carbon\Carbon::now()->addDays(3)))
+									    		<b><span class="text-red">{{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->diffForHumans() }}</span></b>
+								    		@else
+									    		<b>{{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->diffForHumans() }}</b>
+								    		@endif
+								    	)
+								    	<i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated offline at {{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->toDateTimeString() }}"></i>
+								    </li>
+								    <li>
+								    	<b>Stront Left:</b>
+								    	{{ $details->strontium }} units
+								    	(
+								    		@ {{ $stront_usage }} units/h, it should stay reinforced for <b>{{ round($details->strontium / $stront_usage) }}</b> hours
+								    	)
+								    	<i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated reinforced until {{ Carbon\Carbon::now()->addHours($details->strontium / $stront_usage)->toDateTimeString() }}"></i>
+								    </li>
 								</ul>
 				                </p>
 				               	{{-- tower specific information --}} 
@@ -48,9 +167,16 @@
 								<table class="table table-condensed">
 								    <tbody>
 								    	<tr>
+									        <th>
+									        	{{-- check if the towers id is part of the sov_towers array --}}
+									        	@if (array_key_exists($details->itemID, $sov_towers))
+										        	<span class="text-green">Reduced Fuel Usage</span>
+										        @else
+										        	<span class="text-red">Full Fuel Usage</span>
+										        @endif
+									        </th>
+									        <th>Fuel Details</th>
 									        <th></th>
-									        <th>Fuel Information</th>
-									        <th style="width: 40px"></th>
 									    </tr>
 									    <tr>
 									        <td>
