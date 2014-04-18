@@ -278,7 +278,7 @@ class CharacterController extends BaseController {
 					AS location,a.locationId AS locID FROM `character_assetlist` AS a
 					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
 					JOIN `account_apikeyinfo_characters` on `account_apikeyinfo_characters`.`characterID` = a.`characterID`
-					WHERE `invTypes`.`typeID` IN ( $plist ) GROUP BY a.locationId ORDER BY location",
+					WHERE `invTypes`.`typeID` IN ( $plist ) GROUP BY a.itemID ORDER BY location",
 			$parms	
 		);
 
