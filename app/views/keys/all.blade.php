@@ -61,7 +61,7 @@
 	                    <td>
 							<div class="btn-group">
 								<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $key['keyID'])) }}" class="btn btn-default btn-xs"><i class="fa fa-cog"></i> Key Details</a>
-								<a href="#" class="btn btn-danger btn-xs"><i class="fa fa-times"></i> Delete</a>
+								<a href="{{ action('ApiKeyController@getDeleteKey', array('keyID' => $key['keyID'])) }}" class="btn btn-danger btn-xs confirmlink"><i class="fa fa-times"></i> Delete</a>
 							</div>
 	                    </td>
 	                </tr>

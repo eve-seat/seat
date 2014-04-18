@@ -343,4 +343,32 @@ class ApiKeyController extends BaseController {
 			->with('success', 'Key has been re-enabled');
 
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getDeleteKey()
+	|--------------------------------------------------------------------------
+	|
+	| Deletes a key form the database
+	|
+	*/
+
+	public function getDeleteKey($keyID)
+	{
+
+		// Get the full key and vCode
+		$key = SeatKey::where('keyID', $keyID)->first();
+
+		if (!$key)
+			App::abord(404);
+
+		$key->delete();
+
+		// Delete the information that we have for this key too
+		\EveAccountAPIKeyInfo::where('keyID', $keyID)->delete();
+
+		return Redirect::action('ApiKeyController@getAll')
+			->with('success', 'Key has been deleted');
+
+	}
 }
