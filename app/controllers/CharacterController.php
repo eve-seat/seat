@@ -89,6 +89,10 @@ class CharacterController extends BaseController {
 			->orderBy('invTypes.typeName')
 			->get();
 
+		// print '<pre>';
+		// print_r($character_skills_information);
+		// die();
+
 		// Lastly, create an array that is easy to loop over in the template to display
 		// the data
 		// TODO: Look at the possibility of lists() and specifying the groupID as key
@@ -104,6 +108,11 @@ class CharacterController extends BaseController {
                 'level' => $value->level
             );
 		}
+
+		// print '<pre>';
+		// print_r($character_skills);
+		// die();
+
 
 		$wallet_journal = DB::table('character_walletjournal')
 			->join('eve_reftypes', 'character_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
