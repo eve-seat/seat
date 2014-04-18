@@ -18,6 +18,7 @@ class CharacterController extends BaseController {
 			->leftJoin('seat_keys', 'account_apikeyinfo_characters.keyID', '=', 'seat_keys.keyID')
 			->join('character_charactersheet', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
 			->join('character_skillintraining', 'account_apikeyinfo_characters.characterID', '=', 'character_skillintraining.characterID')
+			->groupBy('account_apikeyinfo_characters.characterID')
 			->get();
 
 		return View::make('character.all')
