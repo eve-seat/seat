@@ -558,7 +558,9 @@
                                 <div class="box-header">
                                     <h3 class="box-title">Wallet Transactions ({{ count($wallet_transactions) }})</h3>
                                     <div class="box-tools">
-                                    	<button class="btn btn-x pull-right">View Full Journal</button> 
+                                    	<a href="{{ action('CharacterController@getFullWalletTransactions', array('characterID' => $character->characterID)) }}" class="btn btn-default btn-sm pull-right">
+                                    		<i class="fa fa-money"></i> View Full Transactions
+                                    	</a>
                                     </div>
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">

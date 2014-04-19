@@ -178,10 +178,10 @@ class CharacterController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
-	| getSearchSkills()
+	| getFullWalletJournal()
 	|--------------------------------------------------------------------------
 	|
-	| Return a view to search character skills
+	| Display the full recorded wallet journal for a character
 	|
 	*/
 
@@ -202,6 +202,33 @@ class CharacterController extends BaseController {
 			->with('character_name', $character_name)
 			->with('characterID', $characterID)
 			->with('wallet_journal', $wallet_journal);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getFullWalletTransactions()
+	|--------------------------------------------------------------------------
+	|
+	| Display the full recorded wallet transactions for a character
+	|
+	*/
+
+	public function getFullWalletTransactions($characterID)
+	{
+
+		$character_name = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->pluck('characterName');
+
+		$wallet_transactions = DB::table('character_wallettransactions')
+			->where('characterID', $characterID)
+			->orderBy('transactionDateTime', 'desc')
+			->paginate(50);
+
+		return View::make('character.wallettransactions.view')
+			->with('character_name', $character_name)
+			->with('characterID', $characterID)
+			->with('wallet_transactions', $wallet_transactions);
 	}
 
 	/*
