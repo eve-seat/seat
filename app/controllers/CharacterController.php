@@ -233,6 +233,34 @@ class CharacterController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getFullMail()
+	|--------------------------------------------------------------------------
+	|
+	| Display the full list of mail for the character
+	|
+	*/
+
+	public function getFullMail($characterID)
+	{
+
+		$character_name = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->pluck('characterName');
+
+		$mail = DB::table('character_mailmessages')
+			->join('character_mailbodies', 'character_mailmessages.messageID', '=', 'character_mailbodies.messageID')
+			->where('character_mailmessages.characterID', $characterID)
+			->orderBy('character_mailmessages.sentDate', 'desc')
+			->paginate(100);
+
+		return View::make('character.mail.view')
+			->with('character_name', $character_name)
+			->with('characterID', $characterID)
+			->with('mail', $mail);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getSearchSkills()
 	|--------------------------------------------------------------------------
 	|

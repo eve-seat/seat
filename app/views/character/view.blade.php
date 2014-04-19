@@ -606,6 +606,11 @@
 	            			<div class="box">
                                 <div class="box-header">
                                     <h3 class="box-title">Mail ({{ count($mail) }})</h3>
+                                    <div class="box-tools">
+                                    	<a href="{{ action('CharacterController@getFullMail', array('characterID' => $character->characterID)) }}" class="btn btn-default btn-sm pull-right">
+                                    		<i class="fa fa-envelope-o"></i> All Mail
+                                    	</a>
+                                    </div>                                    
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
 							        <table class="table table-hover table-condensed">
