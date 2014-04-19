@@ -19,7 +19,7 @@
                     <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                 </a>
             </li>
-            <li class="treeview">
+            <li class="treeview @if (Request::is('api-key/*')) active @endif">
                 <a href="#">
                     <i class="fa fa-folder-open-o"></i> <span>Key Management</span>
                     <i class="fa fa-angle-left pull-right"></i>
@@ -29,7 +29,7 @@
                     <li><a href="{{ action('ApiKeyController@getAll') }}"><i class="fa fa-angle-double-right"></i> List All Keys</a></li>
                 </ul>
             </li>
-            <li class="treeview">
+            <li class="treeview @if (Request::is('corporation/*')) active @endif">
                 <a href="#">
                     <i class="fa  fa-group"></i> <span>Corporations</span>
                     <i class="fa fa-angle-left pull-right"></i>
@@ -43,7 +43,7 @@
                     <li><a href="{{ action('CorporationController@getListMemberTracking') }}"><i class="fa fa-angle-double-right"></i> Member Tracking</a></li>
                 </ul>
             </li>
-            <li class="treeview">
+            <li class="treeview @if (Request::is('character/*')) active @endif">
                 <a href="#">
                     <i class="fa fa-user"></i> <span>Characters</span>
                     <i class="fa fa-angle-left pull-right"></i>
@@ -56,7 +56,7 @@
                     <li><a href="{{ action('CharacterController@getSearchSkills') }}"><i class="fa fa-angle-double-right"></i> Skill Search</a></li>
                 </ul>
             </li>
-            <li class="treeview">
+            <li class="treeview @if (Request::is('debug/*')) active @endif">
                 <a href="#">
                     <i class="fa fa-gear"></i> <span>Other</span>
                     <i class="fa fa-angle-left pull-right"></i>
