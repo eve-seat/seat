@@ -299,13 +299,9 @@
 		                <div class="col-md-6">
 
 
-							<div class="box box-solid box-primary">
+							<div class="box box-solid">
 							    <div class="box-header">
 							        <h3 class="box-title">Spaceship Command Skills</h3>
-							        <div class="box-tools pull-right">
-							            <button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
-							            <button class="btn btn-primary btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
-							        </div>
 							    </div>
 
 							    <div class="box-body">
