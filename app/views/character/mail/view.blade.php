@@ -1,6 +1,6 @@
 @extends('layouts.masterLayout')
 
-@section('html_title', 'Mail Subjects')
+@section('html_title', 'Character Mail Subjects')
 
 @section('page_content')
 
@@ -9,7 +9,13 @@
 
 		<div class="box">
 		    <div class="box-header">
-		        <h3 class="box-title">All Mail By Subject</h3>
+		        <h3 class="box-title">
+                    All Mail for:
+                    <a href="{{ action('CharacterController@getView', array('characterID' => $characterID)) }}">
+                        <img src='http://image.eveonline.com/Character/{{ $characterID }}_32.jpg' class='img-circle'>
+                    </a>
+                    {{ $character_name }}
+                </h3>
 		        <div class="box-tools">
 		            <ul class="pagination pagination-sm no-margin pull-right">
 						{{ $mail->links() }}

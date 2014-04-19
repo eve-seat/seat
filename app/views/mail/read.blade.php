@@ -26,7 +26,11 @@
                 <h4 class="box-title">
                 	<i class="fa fa-envelope-o"></i> {{ $message->title }}
                     	<small>
-                    		<b>From:</b> {{ $message->senderName }} sent about {{ Carbon\Carbon::parse($message->sentDate)->diffForHumans() }}
+                    		<b>From:</b>
+                    		<a href="{{ action('CharacterController@getView', array('characterID' => $message->senderID)) }}">
+                    			<img src='http://image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+                    		</a>
+                    		{{ $message->senderName }} sent about {{ Carbon\Carbon::parse($message->sentDate)->diffForHumans() }}
                     			@ {{ $message->sentDate }}
                     		 |
 
@@ -42,6 +46,9 @@
                     		@if (strlen($message->toCharacterIDs) > 0 && count(explode(',', $message->toCharacterIDs)) > 0)
 	                    		<b>To Characters:</b>
 	                    			@foreach (explode(',', $message->toCharacterIDs) as $characterID)
+			                    		<a href="{{ action('CharacterController@getView', array('characterID' => $characterID)) }}">
+			                    			<img src='http://image.eveonline.com/Character/{{ $characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+			                    		</a>
 	                    				<span rel="id-to-name">{{ $characterID }}</span>
 	                    			@endforeach
 	                    	@endif

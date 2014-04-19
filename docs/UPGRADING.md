@@ -45,7 +45,7 @@ Generating optimized class loader
 * Regenerate the composer autoload classes:
 
 ```bash
-$ /var/www/vhosts/seat/composer.phar update
+$ /var/www/vhosts/seat/composer.phar dump-autoload
 Generating autoload files
 ```
 
@@ -59,7 +59,7 @@ Migrated: 2014_04_16_173335_LaravelUpdate4_1_26_RememberMe  # will show 'Nothing
 * Bring the application out of maintenance mode:
 
 ```bash
-$ php artisan down
+$ php artisan up
 Application is now live.
 ```
 

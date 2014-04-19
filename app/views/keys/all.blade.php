@@ -52,11 +52,16 @@
 		                    @else
 		                    	No known characters for this keyID, maybe its still updating or entirely invalid/expired.
 		                    @endif
+		                    <span class="pull-right">
+					        	@if (strlen($key['lastError']) > 0)
+						        	<i class="fa fa-bullhorn pull-right" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ $key['lastError'] }}" data-trigger="hover"></i>
+						        @endif
+		                    </span>
 	                    </td>
 	                    <td>
 							<div class="btn-group">
 								<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $key['keyID'])) }}" class="btn btn-default btn-xs"><i class="fa fa-cog"></i> Key Details</a>
-								<a href="#" class="btn btn-danger btn-xs"><i class="fa fa-times"></i> Delete</a>
+								<a href="{{ action('ApiKeyController@getDeleteKey', array('keyID' => $key['keyID'])) }}" class="btn btn-danger btn-xs confirmlink"><i class="fa fa-times"></i> Delete</a>
 							</div>
 	                    </td>
 	                </tr>

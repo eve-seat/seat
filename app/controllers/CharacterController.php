@@ -18,6 +18,7 @@ class CharacterController extends BaseController {
 			->leftJoin('seat_keys', 'account_apikeyinfo_characters.keyID', '=', 'seat_keys.keyID')
 			->join('character_charactersheet', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
 			->join('character_skillintraining', 'account_apikeyinfo_characters.characterID', '=', 'character_skillintraining.characterID')
+			->groupBy('account_apikeyinfo_characters.characterID')
 			->get();
 
 		return View::make('character.all')
@@ -177,6 +178,89 @@ class CharacterController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getFullWalletJournal()
+	|--------------------------------------------------------------------------
+	|
+	| Display the full recorded wallet journal for a character
+	|
+	*/
+
+	public function getFullWalletJournal($characterID)
+	{
+
+		$character_name = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->pluck('characterName');
+
+		$wallet_journal = DB::table('character_walletjournal')
+			->join('eve_reftypes', 'character_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->where('characterID', $characterID)
+			->orderBy('date', 'desc')
+			->paginate(50);
+
+		return View::make('character.walletjournal.view')
+			->with('character_name', $character_name)
+			->with('characterID', $characterID)
+			->with('wallet_journal', $wallet_journal);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getFullWalletTransactions()
+	|--------------------------------------------------------------------------
+	|
+	| Display the full recorded wallet transactions for a character
+	|
+	*/
+
+	public function getFullWalletTransactions($characterID)
+	{
+
+		$character_name = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->pluck('characterName');
+
+		$wallet_transactions = DB::table('character_wallettransactions')
+			->where('characterID', $characterID)
+			->orderBy('transactionDateTime', 'desc')
+			->paginate(50);
+
+		return View::make('character.wallettransactions.view')
+			->with('character_name', $character_name)
+			->with('characterID', $characterID)
+			->with('wallet_transactions', $wallet_transactions);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getFullMail()
+	|--------------------------------------------------------------------------
+	|
+	| Display the full list of mail for the character
+	|
+	*/
+
+	public function getFullMail($characterID)
+	{
+
+		$character_name = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->pluck('characterName');
+
+		$mail = DB::table('character_mailmessages')
+			->join('character_mailbodies', 'character_mailmessages.messageID', '=', 'character_mailbodies.messageID')
+			->where('character_mailmessages.characterID', $characterID)
+			->orderBy('character_mailmessages.sentDate', 'desc')
+			->paginate(100);
+
+		return View::make('character.mail.view')
+			->with('character_name', $character_name)
+			->with('characterID', $characterID)
+			->with('mail', $mail);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getSearchSkills()
 	|--------------------------------------------------------------------------
 	|
@@ -211,6 +295,7 @@ class CharacterController extends BaseController {
 			->join('invTypes', 'character_charactersheet_skills.typeID', '=', 'invTypes.typeID')
 			->whereIn('character_charactersheet_skills.typeID', array_values(Input::get('skills')))
 			->orderBy('invTypes.typeName')
+			->groupBy('character_charactersheet_skills.characterID')
 			->get();
 
 		return View::make('character.skillsearch.ajax.result')
@@ -277,7 +362,7 @@ class CharacterController extends BaseController {
 					AS location,a.locationId AS locID FROM `character_assetlist` AS a
 					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
 					JOIN `account_apikeyinfo_characters` on `account_apikeyinfo_characters`.`characterID` = a.`characterID`
-					WHERE `invTypes`.`typeID` IN ( $plist ) ORDER BY location",
+					WHERE `invTypes`.`typeID` IN ( $plist ) GROUP BY a.`characterID` ORDER BY location",
 			$parms	
 		);
 

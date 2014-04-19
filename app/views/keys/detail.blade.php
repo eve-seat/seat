@@ -63,7 +63,7 @@
                     @if ($key_information->isOk == 1)
                     	Key is OK
                     @else
-                    	Key is NOT ok <a href="{{ action('ApiKeyController@getEnableKey', array('keyID' => $key_information->keyID )) }}" class="btn btn-success btn-xs pull-right"><i class="fa fa-refresh"></i> Re-enable Key</a>
+                    	Key is NOT ok <a href="{{ action('ApiKeyController@getEnableKey', array('keyID' => $key_information->keyID )) }}" class="btn btn-success btn-xs pull-right" data-container="body" data-toggle="popover" data-placement="left" data-content="{{ $key_information->lastError }}" data-trigger="hover"><i class="fa fa-refresh"></i> Re-enable Key</a>
                     @endif
                 </p>
             </div>

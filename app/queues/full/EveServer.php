@@ -9,6 +9,10 @@ class Server {
 
     public function fire($job, $data) {
         
+        // For issue #12, we are going to add a short delay before the processing start.
+        // I am honestly not sure what is going on, so this is step one in debugging
+        sleep(10);
+
 		$job_record = \SeatQueueInformation::where('jobID', '=', $job->getJobId())->first();
 
         // Check that we have a valid jobid

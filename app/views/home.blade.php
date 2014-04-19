@@ -9,16 +9,20 @@
         <a href="{{ action('ApiKeyController@getNewKey') }}" type="button" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i> Add a new API Key</a>
         <a href="{{ action('ApiKeyController@getAll') }}" type="button" class="btn btn-success btn-lg"><i class="fa fa-list"></i> List All Keys</a>
     </div>
-    <div class="col-md-4">
-        <dl class="dl-horizontal">
-            <dt>Server Online</dt>
-            <dd>{{ $server->serverOpen }}</dd>
-            <dt>Online Players</dt>
-            <dd>{{ $server->onlinePlayers }}</dd>
-            <dt>Last Checked</dt>
-            <dd>{{ Carbon\Carbon::parse($server->currentTime)->diffForHumans() }}</dd>
-        </dl>
-    </div>
+
+    {{-- check if the server information is available and display iy --}}
+    @if (isset($server))
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>Server Online</dt>
+                <dd>{{ $server->serverOpen }}</dd>
+                <dt>Online Players</dt>
+                <dd>{{ $server->onlinePlayers }}</dd>
+                <dt>Last Checked</dt>
+                <dd>{{ Carbon\Carbon::parse($server->currentTime)->diffForHumans() }}</dd>
+            </dl>
+        </div>
+    @endif
 </div>
 
 <hr>

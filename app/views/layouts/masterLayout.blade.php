@@ -73,6 +73,8 @@
         <script src="{{ URL::asset('assets/js/jquery-2.1.0.min.js') }}"></script>
         <!-- Bootstrap -->
         <script src="{{ URL::asset('assets/js/bootstrap.min.js') }}" type="text/javascript"></script> 
+        <!-- Bootbox -->
+        <script src="{{ URL::asset('assets/js/bootbox.min.js') }}" type="text/javascript"></script>
         <!-- AdminLTE App -->
         <script src="{{ URL::asset('assets/js/app.js') }}" type="text/javascript"></script>
         <!-- highcharts -->
