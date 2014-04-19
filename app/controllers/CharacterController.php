@@ -295,6 +295,7 @@ class CharacterController extends BaseController {
 			->join('invTypes', 'character_charactersheet_skills.typeID', '=', 'invTypes.typeID')
 			->whereIn('character_charactersheet_skills.typeID', array_values(Input::get('skills')))
 			->orderBy('invTypes.typeName')
+			->groupBy('character_charactersheet_skills.characterID')
 			->get();
 
 		return View::make('character.skillsearch.ajax.result')
@@ -361,7 +362,7 @@ class CharacterController extends BaseController {
 					AS location,a.locationId AS locID FROM `character_assetlist` AS a
 					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
 					JOIN `account_apikeyinfo_characters` on `account_apikeyinfo_characters`.`characterID` = a.`characterID`
-					WHERE `invTypes`.`typeID` IN ( $plist ) ORDER BY location",
+					WHERE `invTypes`.`typeID` IN ( $plist ) GROUP BY a.`characterID` ORDER BY location",
 			$parms	
 		);
 
