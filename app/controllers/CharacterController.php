@@ -185,6 +185,34 @@ class CharacterController extends BaseController {
 	|
 	*/
 
+	public function getFullWalletJournal($characterID)
+	{
+
+		$character_name = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->pluck('characterName');
+
+		$wallet_journal = DB::table('character_walletjournal')
+			->join('eve_reftypes', 'character_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->where('characterID', $characterID)
+			->orderBy('date', 'desc')
+			->paginate(50);
+
+		return View::make('character.walletjournal.view')
+			->with('character_name', $character_name)
+			->with('characterID', $characterID)
+			->with('wallet_journal', $wallet_journal);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getSearchSkills()
+	|--------------------------------------------------------------------------
+	|
+	| Return a view to search character skills
+	|
+	*/
+
 	public function getSearchSkills()
 	{
 
