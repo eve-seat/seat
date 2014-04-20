@@ -159,7 +159,11 @@ class CharacterController extends BaseController {
 					WHERE a.`characterID` = ? ORDER BY location',
 			array($characterID)
 		);
-	
+
+		// Character contact list
+		$contact_list = DB::table('character_contactlist')
+			->where('characterID', $characterID)
+			->get();
 
 		// Finally, give all this to the view to handle
 		return View::make('character.view')
@@ -173,6 +177,7 @@ class CharacterController extends BaseController {
 			->with('wallet_journal', $wallet_journal)
 			->with('mail', $mail)
 			->with('notifications', $notifications)
+			->with('contact_list', $contact_list)
 			->with('assets', $assets);
 	}
 

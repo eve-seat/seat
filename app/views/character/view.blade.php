@@ -97,6 +97,7 @@
 	            <li class=""><a href="#mail" data-toggle="tab">Mail</a></li>
 	            <li class=""><a href="#notifications" data-toggle="tab">Notifications</a></li>
 	            <li class=""><a href="#assets" data-toggle="tab">Assets</a></li>
+	            <li class=""><a href="#contacts" data-toggle="tab">Contacts</a></li>
 	            <li class="pull-right">
 	            	<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" class="text-muted" data-toggle="tooltip" title="" data-placement="top" data-original-title="API Key Details">
 	            		<i class="fa fa-gear"></i>
@@ -778,7 +779,58 @@
 		            </div> <!-- ./row -->
 	            </div><!-- /.tab-pane -->
 
+	            {{-- character contacts --}}
+	            <div class="tab-pane" id="contacts">
+	            	<div class="row">
+	            		<div class="col-md-12">
+	            			<div class="box">
+                                <div class="box-header">
+                                    <h3 class="box-title">Contact List ({{ count($contact_list) }})</h3>
+                                </div><!-- /.box-header -->
+                                <div class="box-body no-padding">
+                                	<div class="row">
+                                		@foreach (array_chunk($contact_list, count($contact_list) / 6) as $list)
 
+                                			<div class="col-md-2">
+										        <table class="table table-hover table-condensed">
+										            <tbody>
+											            <tr>
+											                <th>Name</th>
+											                <th>Standing</th>
+											            </tr>
+
+														@foreach ($list as $contact)
+												            <tr>
+												                <td>
+										                    		<a href="{{ action('CharacterController@getView', array('characterID' => $contact->contactID)) }}">
+										                    			<img src='http://image.eveonline.com/Character/{{ $contact->contactID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+										                    			{{ $contact->contactName }}
+										                    		</a>
+												                </td>
+												                <td>
+												                	@if ($contact->standing == 0)
+												                		{{ $contact->standing }}
+												                	@elseif ($contact->standing > 0)
+													                	<span class="text-green">{{ $contact->standing }}</span>
+													                @else
+													                	<span class="text-red">{{ $contact->standing }}</span>
+													                @endif
+												                </td>
+												            </tr>
+														@endforeach
+
+										        	</tbody>
+										        </table>
+										    </div> <!-- ./col-md-2 -->
+
+                                		@endforeach
+                                	</div><!-- ./row -->
+
+                                </div><!-- /.box-body -->
+                            </div>
+		                </div> <!-- ./col-md-12 -->
+		            </div> <!-- ./row -->
+	            </div><!-- /.tab-pane -->
 
 	        </div><!-- /.tab-content -->
 	    </div><!-- nav-tabs-custom -->
