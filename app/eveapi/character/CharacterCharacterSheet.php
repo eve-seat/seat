@@ -85,10 +85,49 @@ class CharacterSheet extends BaseApi {
 				$new_data->cloneSkillPoints = $character_sheet->cloneSkillPoints;
 				$new_data->balance = $character_sheet->balance;
 				$new_data->intelligence = $character_sheet->attributes->intelligence;
+				if(isset($character_sheet->attributeEnhancers->intelligenceBonus)){
+					$new_data->intelligenceAugmentatorName = $character_sheet->attributeEnhancers->intelligenceBonus->augmentatorName;
+					$new_data->intelligenceAugmentatorValue = $character_sheet->attributeEnhancers->intelligenceBonus->augmentatorValue;
+				} else {
+					$new_data->intelligenceAugmentatorName = null;
+					$new_data->intelligenceAugmentatorValue = null;
+				}
+
 				$new_data->memory = $character_sheet->attributes->memory;
+				if(isset($character_sheet->attributeEnhancers->memoryBonus)){
+					$new_data->memoryAugmentatorName = $character_sheet->attributeEnhancers->memoryBonus->augmentatorName;
+					$new_data->memoryAugmentatorValue = $character_sheet->attributeEnhancers->memoryBonus->augmentatorValue;
+				} else {
+					$new_data->memoryAugmentatorName = null;
+					$new_data->memoryAugmentatorValue = null;
+				}
+
 				$new_data->charisma = $character_sheet->attributes->charisma;
+				if(isset($character_sheet->attributeEnhancers->charismaBonus)){
+					$new_data->charismaAugmentatorName = $character_sheet->attributeEnhancers->charismaBonus->augmentatorName;
+					$new_data->charismaAugmentatorValue = $character_sheet->attributeEnhancers->charismaBonus->augmentatorValue;
+				} else {
+					$new_data->charismaAugmentatorName = null;
+					$new_data->charismaAugmentatorValue = null;
+				}
+
 				$new_data->perception = $character_sheet->attributes->perception;
+				if(isset($character_sheet->attributeEnhancers->perceptionBonus)){
+					$new_data->perceptionAugmentatorName = $character_sheet->attributeEnhancers->perceptionBonus->augmentatorName;
+					$new_data->perceptionAugmentatorValue = $character_sheet->attributeEnhancers->perceptionBonus->augmentatorValue;
+				} else {
+					$new_data->perceptionAugmentatorName = null;
+					$new_data->perceptionAugmentatorValue = null;
+				}
+
 				$new_data->willpower = $character_sheet->attributes->willpower;
+				if(isset($character_sheet->attributeEnhancers->willpowerBonus)){
+					$new_data->willpowerAugmentatorName = $character_sheet->attributeEnhancers->willpowerBonus->augmentatorName;
+					$new_data->willpowerAugmentatorValue = $character_sheet->attributeEnhancers->willpowerBonus->augmentatorValue;
+				} else {
+					$new_data->willpowerAugmentatorName = null;
+					$new_data->willpowerAugmentatorValue = null;
+				}
 				$new_data->save();
 
 				// Update the characters skills
