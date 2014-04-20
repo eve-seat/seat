@@ -673,7 +673,12 @@
 									                		{{ Carbon\Carbon::parse($message->sentDate)->diffForHumans() }}
 									                	</span>
 									                </td>
-									                <td>{{ $message->senderName }}</td>
+									                <td>
+							                    		<a href="{{ action('CharacterController@getView', array('characterID' => $message->senderID)) }}">
+							                    			<img src='http://image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+							                    		</a>
+									                	{{ $message->senderName }}
+									                </td>
 									                <td>
 												    	@if (strlen($message->toCorpOrAllianceID) > 0)
 													    	<b>{{ count(explode(',', $message->toCorpOrAllianceID)) }}</b> Corporation(s) / Alliance(s)
