@@ -75,7 +75,26 @@ Edit the fowlling files:
     - database.php  
     - cache.php  
     
-####  7. Install & Configure supervisord ####
+#### 7. Run the SeAT database migrations & seeds ####
+SeAT has all of the database schemas stored in 'migration' scripts in `app/database/migrations`. Run them with:
+
+```bash
+$ php artisan migrate
+Migrated: 2014_04_20_121149_add_augmentationinfo
+```
+
+You should see a relatively large list appear as all the migrations run.
+
+We also need to seed the database with some 'static' data, such as the default `admin` user etc. Run them with
+
+```bash
+$ php artisan db:seed
+Seeded: UserTableSeeder
+Seeded: EveApiCalllistTableSeeder
+Seeded: EveNotificationTypesSeeder
+```
+    
+####  8. Install & Configure supervisord ####
 Supervisor will be used to keep the workers alive that need to process API jobs. The amount of workers that you start I guess depends on how many keys you have to process. For me, 4 workers seem to work just fine. Set it up by running:  
     - `yum install supervisor`  
     - `chkconfig supervisord on`  
@@ -96,12 +115,12 @@ seat4          RUNNING    pid 23582, uptime 1 day, 0:18:27
 
 SeAT should now process jobs that enter the job queue.
 
-####  8. Setup cron ####
+####  9. Setup cron ####
 Setup the cronjob for SeAT. This job should run as a user that has access to SeAT's location:
   - `crontab -e`  
   - Paste this line: `* * * * * php <path to artisan> scheduled:run 1>> /dev/null 2>&1`
 
-#### 9. Security #####
+#### 10. Security #####
 The web interface has a default password of `seat!admin` and it is *highly* reccomended that you change this using the `seat:reset` artisan command:
 
 ```bash
