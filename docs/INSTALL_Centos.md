@@ -17,6 +17,13 @@ SeAT was developed for Linux and has been tested to work fine on CentOS. Chances
 ### Installation ###
 The following installation assumes you are using CentOS. For the Debian/Ubuntu folk, most of the `yum install` commands will probably end up being things like `apt-get install`.
 
+For CentOS, the EPEL repository is needed for Redis and supervisod, so download and install it with the following 2 commands:
+
+```bash
+$ EPEL=epel-release-6-8.noarch.rpm && BASEARCH=$(uname -i)
+$ wget http://dl.fedoraproject.org/pub/epel/6/$BASEARCH/$EPEL -O $EPEL && yum localinstall -y $EPEL && rm -f $EPEL
+```
+
 #### 1. Install & Configure MySQL ####
 For CentOS, installation is pretty simple:
 As `root`, run:
