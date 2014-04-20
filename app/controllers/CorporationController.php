@@ -192,6 +192,9 @@ class CorporationController extends BaseController {
 				'corporation_starbaselist.stateTimeStamp',
 				'corporation_starbaselist.onlineTimeStamp',
 				'corporation_starbaselist.onlineTimeStamp',
+				'corporation_starbasedetail.useStandingsFrom',
+				'corporation_starbasedetail.onAggression',
+				'corporation_starbasedetail.onCorporationWar',
 				'corporation_starbasedetail.allowCorporationMembers',
 				'corporation_starbasedetail.allowAllianceMembers',
 				'corporation_starbasedetail.fuelBlocks',
@@ -200,7 +203,8 @@ class CorporationController extends BaseController {
 				'invTypes.typeName',
 				'mapDenormalize.itemName',
 				'invNames.itemName',
-				'map_sovereignty.solarSystemName'
+				'map_sovereignty.solarSystemName',
+				'corporation_starbasedetail.updated_at'
 			)
 			->join('corporation_starbasedetail', 'corporation_starbaselist.itemID', '=', 'corporation_starbasedetail.itemID')
 			->join('mapDenormalize', 'corporation_starbaselist.locationID', '=', 'mapDenormalize.itemID')
