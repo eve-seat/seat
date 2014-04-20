@@ -49,10 +49,9 @@ class Jumps extends BaseApi {
 				$system_data->solarSystemID	= $solarSystem->solarSystemID;
 				$system_data->shipJumps 	= $solarSystem->shipJumps;
 				$system_data->save();
-
+			}
 				// Update the cached_until time in the database for this api call
 				BaseApi::setDbCache($scope, $api, $jumps->cached_until);
-			}
 		}
 		return $jumps;
 	}
