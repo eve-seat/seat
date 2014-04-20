@@ -49,10 +49,10 @@ class ErrorList extends BaseApi {
 				$error_data->errorCode	= $error->errorCode;
 				$error_data->errorText = $error->errorText;
 				$error_data->save();
-
+			}
 				// Update the cached_until time in the database for this api call
 				BaseApi::setDbCache($scope, $api, $error_list->cached_until);
-			}
+			
 		}
 		return $error_list;
 	}
