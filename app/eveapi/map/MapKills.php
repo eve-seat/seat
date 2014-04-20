@@ -51,10 +51,10 @@ class Kills extends BaseApi {
 				$system_data->factionKills 	= $solarSystem->factionKills;
 				$system_data->podKills 		= $solarSystem->podKills;
 				$system_data->save();
-
+			}
 				// Update the cached_until time in the database for this api call
 				BaseApi::setDbCache($scope, $api, $kills->cached_until);
-			}
+			
 		}
 		return $kills;
 	}
