@@ -52,10 +52,9 @@ class ConquerableStationList extends BaseApi {
 				$outpost_data->corporationID = $outpost->corporationID;
 				$outpost_data->corporationName = $outpost->corporationName;
 				$outpost_data->save();
-
+			}
 				// Update the cached_until time in the database for this api call
 				BaseApi::setDbCache($scope, $api, $station_list->cached_until);
-			}
 		}
 		return $station_list;
 	}
