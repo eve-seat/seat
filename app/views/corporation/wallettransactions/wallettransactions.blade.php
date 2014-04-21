@@ -20,13 +20,14 @@
                 <table class="table table-condensed table-hover">
                     <tbody>
                         <tr>
+                            {{-- todo here: populate the corporation wallet division too --}}
                             <th>Date</th>
-                            <th>Wallet Division</th>
+                            <th>#</th>
                             <th>Type</th>
-                            <th>Owner1 Name</th>
-                            <th>Owner2 Name</th>
                             <th>Amount</th>
-                            <th>Balance</th>
+                            <th>Client</th>
+                            <th>Type</th>
+                            <th>Station Name</th>
                         </tr>
                         @foreach ($wallet_transactions as $e)
                             <tr @if ($e->transactionType == 'buy')class="danger" @endif>
@@ -36,8 +37,11 @@
                                 	</span>
                                 </td>
                                 <td>{{ $e->quantity }}</td>
-                                <td>{{ $e->typeName }}</td>
-                                <td>{{ number_format($e->price, 2, '.', ' ') }} </td>
+                                <td>
+                                    <img src='http://image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
+                                    {{ $e->typeName }}
+                                </td>
+                                <td>{{ number_format($e->price, 2, '.', ' ') }} ISK</td>
                                 <td>{{ $e->clientName }}</td>
                                 <td>{{ $e->transactionType }}</td>
                                 <td>{{ $e->stationName }}</td>
