@@ -163,12 +163,12 @@ class CharacterController extends BaseController {
 		
 		// Query Asset content from character_assetlist_contents DB and sum the quantity for not getting a long list of item
 		$assets_contents = DB::table(DB::raw('character_assetlist_contents as a'))
-        ->select(DB::raw('*'), DB::raw('SUM(a.quantity) as sumquantity'))
-        ->leftJoin('invTypes', 'a.typeID', '=', 'invTypes.typeID')
-        ->leftJoin('invGroups', 'invTypes.groupID', '=', 'invGroups.groupID')
-        ->where('a.characterID', $characterID)
-        ->groupBy(DB::raw('a.itemID, a.typeID'))
-        ->get();
+			->select(DB::raw('*'), DB::raw('SUM(a.quantity) as sumquantity'))
+			->leftJoin('invTypes', 'a.typeID', '=', 'invTypes.typeID')
+			->leftJoin('invGroups', 'invTypes.groupID', '=', 'invGroups.groupID')
+			->where('a.characterID', $characterID)
+			->groupBy(DB::raw('a.itemID, a.typeID'))
+			->get();
 		
 		// Lastly, create an array that is easy to loop over in the template to display
 		// the data
