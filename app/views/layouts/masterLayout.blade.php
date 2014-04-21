@@ -9,6 +9,12 @@
             @endif SeAT
         </title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+
+        <!-- Pace Loader - Load this guy asap to start indicating 'loading' -->
+        <script src="{{ URL::asset('assets/js/pace.min.js') }}" type="text/javascript"></script>
+        <!-- Pace style -->
+        <link href="{{ URL::asset('assets/css/pace.css') }}" rel="stylesheet" type="text/css">
+
         <!-- bootstrap 3.0.2 -->
         <link href="{{ URL::asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
         <!-- font Awesome -->
