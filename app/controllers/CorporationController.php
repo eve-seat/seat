@@ -149,6 +149,115 @@ class CorporationController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getListAssets()
+	|--------------------------------------------------------------------------
+	|
+	| Get a list of the corporations that we can display Member Tracking for
+	|
+	*/
+
+	public function getListAssets()
+	{
+
+		$corporations = DB::table('account_apikeyinfo')
+			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->where('account_apikeyinfo.type', 'Corporation')
+			->get();
+
+		return View::make('corporation.assets.listasset')
+			->with('corporations', $corporations);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAssets()
+	|--------------------------------------------------------------------------
+	|
+	| Display a corporations Members and related API Key Information
+	|
+	*/
+
+	public function getAssets($corporationID)
+	{
+
+		$corporation_name = DB::table('account_apikeyinfo_characters')
+			->where('corporationID', $corporationID)
+			->first();
+
+		// try and move this shit to a query builder / eloquent version... :<
+		$assets = DB::select(
+		    "SELECT *,
+		        CASE
+		          when a.locationID BETWEEN 66000000 AND 66014933 then
+		            (SELECT s.stationName FROM staStations AS s
+		              WHERE s.stationID=a.locationID-6000001)
+		          when a.locationID BETWEEN 66014934 AND 67999999 then
+		            (SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+		              WHERE c.stationID=a.locationID-6000000)
+		          when a.locationID BETWEEN 60014861 AND 60014928 then
+		            (SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+		              WHERE c.stationID=a.locationID)
+		          when a.locationID BETWEEN 60000000 AND 61000000 then
+		            (SELECT s.stationName FROM staStations AS s
+		              WHERE s.stationID=a.locationID)
+		          when a.locationID>=61000000 then
+		            (SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+		              WHERE c.stationID=a.locationID)
+		          else (SELECT m.itemName FROM mapDenormalize AS m
+		            WHERE m.itemID=a.locationID) end
+		        AS location,a.locationId AS locID FROM `corporation_assetlist` AS a
+				LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
+				LEFT JOIN `invGroups` ON `invTypes`.`groupID` = `invGroups`.`groupID`
+				WHERE a.`corporationID` = ?
+		        ORDER BY location",
+			array($corporationID)
+		);
+
+		// Query Asset content from corporation_assetlist_contents DB and sum the quantity for not getting a long list of item
+		$assets_contents = DB::table(DB::raw('corporation_assetlist_contents as a'))
+			->select(DB::raw('*'), DB::raw('SUM(a.quantity) as sumquantity'))
+			->leftJoin('invTypes', 'a.typeID', '=', 'invTypes.typeID')
+			->leftJoin('invGroups', 'invTypes.groupID', '=', 'invGroups.groupID')
+			->where('a.corporationID', $corporationID)
+			->groupBy(DB::raw('a.itemID, a.typeID'))
+			->get();
+
+		// Lastly, create an array that is easy to loop over in the template to display
+		// the data
+		$assets_list = array();
+		$assets_count = 0; //start counting item
+		foreach ($assets as $key => $value) {
+			$assets_list[$value->location][$value->itemID] =  array(
+				'quantity' => $value->quantity,
+				'typeID' => $value->typeID,
+				'typeName' => $value->typeName,
+				'groupName' => $value->groupName
+			);
+			$assets_count++;
+			foreach( $assets_contents as $contents){
+				if ($value->itemID == $contents->itemID){ // check what parent content item has
+					// create a sub array 'contents' and put content item info in
+					$assets_list[$value->location][$contents->itemID]['contents'][] = array(
+						'quantity' => $contents->sumquantity,
+						'typeID' => $contents->typeID,
+						'typeName' => $contents->typeName,
+						'groupName' => $contents->groupName
+					);
+				$assets_count++;
+				}
+			}
+		}
+
+		return View::make('corporation.assets.assets')
+			->with('corporation_name', $corporation_name)
+			->with('assets', $assets)
+			->with('assets_list', $assets_list)
+			->with('assets_contents', $assets_contents)
+			->with('assets_count', $assets_count);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getListStarBase()
 	|--------------------------------------------------------------------------
 	|
