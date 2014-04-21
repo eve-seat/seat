@@ -773,7 +773,7 @@
 											</div>
 											<div class="box-body no-padding">	
 												<div class="row">
-													@foreach (array_chunk($assets, ceil(count($assets) / 2)) as $column)
+													@foreach (array_chunk($assets, (count($assets) / 2) > 1 ? count($assets) / 2 : 2) as $column)
 														<div class="col-md-6">
 															<table class="table table-hover table-condensed">
 															<tbody>
@@ -852,7 +852,7 @@
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
                                 	<div class="row">
-                                		@foreach (array_chunk($contact_list, ceil(count($contact_list) / 6)) as $list)
+                                		@foreach (array_chunk($contact_list, (count($contact_list) / 6) > 1 ? count($contact_list) / 6 : 6) as $list)
 
                                 			<div class="col-md-2">
 										        <table class="table table-hover table-condensed">
