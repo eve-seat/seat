@@ -760,9 +760,7 @@
 									<h3 class="box-title">Assets ({{ $assets_Count }})</h3>
 								</div><!-- /.box-header -->
 								<div class="box-body no-padding">
-								
 									@foreach ($assets_List as $location => $assets)
-									
 										<div class="box box-solid box-primary">
 											<div class="box-header">
 												<h3 class="box-title">{{ $location }} ({{ count($assets) }})</h3>
@@ -777,7 +775,7 @@
 															<table class="table table-hover table-condensed">
 															<tbody>
 																<tr>
-																	<th style="width: 30px">#</th>
+																	<th style="width: 40px">#</th>
 																	<th style="width: 50%" colspan="2">Type</th>
 																	<th>Group</th>
 																	<th style="width: 50px"></th>
@@ -786,9 +784,9 @@
 																@foreach ($column as $asset)
 																	<tbody style="border-top:0px solid #FFF">
 																		<tr class="item-container">
-																			<td>{{ $asset['quantity'] }}</td>
+																			<td>{{ App\Services\Helpers\Helpers::formatBigNumber($asset['quantity']) }}</td>
 																			<td colspan="2">
-																				<span data-toggle="tooltip" title="" data-original-title="{{ $asset['typeName'] }}">
+																				<span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['quantity'], 0, '.', ' ') }} x {{ $asset['typeName'] }}">
 																					<img src='http://image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
 																					{{ str_limit($asset['typeName'], 35, $end = '...') }} {{ isset($asset['contents']) ? "(". count($asset['contents']) . ")" : "" }}
 																				</span>
@@ -809,10 +807,10 @@
 																		<tbody style="border-top:0px solid #FFF" class="tbodycontent">
 																			@foreach ($asset['contents'] as $content)
 																				<tr class="hidding">
-																					<td>{{ $content['quantity'] }}</td>
+																					<td>{{ App\Services\Helpers\Helpers::formatBigNumber($content['quantity']) }}</td>
 																					<td style="width: 18px;"></td>
 																					<td>
-																						<span data-toggle="tooltip" title="" data-original-title="{{ $content['typeName'] }}">
+																						<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}">
 																							<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
 																							{{ str_limit($content['typeName'], 30, $end = '...') }}
 																						</span>
@@ -827,8 +825,7 @@
 																			@endforeach
 																		</tbody>
 																	@endif
-																@endforeach	
-															
+																@endforeach
 															</table>
 														</div> <!-- /.col-md-6 -->
 													@endforeach 
