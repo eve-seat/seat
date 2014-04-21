@@ -22,7 +22,7 @@
 		    <div class="box-body no-padding">
 		    	<div class="row">
 		    		{{-- split the summaries into 2 tables next to each other --}}
-		    		@foreach (array_chunk($starbases, (count($starbases) / 2) > 1 ? count($starbases) / 2 : 2 ) as $starbase)
+		    		@foreach (array_chunk($starbases, ceil(count($starbases) / 2)) as $starbase)
 			    		<div class="col-md-6">
 
 
