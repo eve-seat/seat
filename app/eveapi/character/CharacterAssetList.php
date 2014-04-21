@@ -96,7 +96,7 @@ class AssetList extends BaseApi {
 
 							$content_data->characterID = $characterID;
 							$content_data->itemID = $asset_data->itemID;
-							$content_data->typeID = $content->itemID;
+							$content_data->typeID = $content->typeID;
 							$content_data->quantity = $content->quantity;
 							$content_data->flag = $content->flag;
 							$content_data->singleton = $content->singleton;

@@ -4,6 +4,9 @@
 
 @section('page_content')
 
+{{-- open a empty form to get a crsf token --}}
+{{ Form::open(array()) }} {{ Form::close() }}
+
 {{-- starbase summaries in a table. yeah, couldnt avoid this table --}}
 <div class="row">
 	<div class="col-md-12">
@@ -19,7 +22,7 @@
 		    <div class="box-body no-padding">
 		    	<div class="row">
 		    		{{-- split the summaries into 2 tables next to each other --}}
-		    		@foreach (array_chunk($starbases, count($starbases) / 2) as $starbase)
+		    		@foreach (array_chunk($starbases, (count($starbases) / 2) > 1 ? count($starbases) / 2 : 2) as $starbase)
 			    		<div class="col-md-6">
 
 
@@ -82,11 +85,12 @@
 					<div class="nav-tabs-custom">
 					    <ul class="nav nav-tabs">
 					        <li class="active"><a href="#tab_1{{ $details->itemID }}" data-toggle="tab" id="{{ $details->itemID }}">Tower Info</a></li>
-					        <li><a href="#tab_2{{ $details->itemID }}" data-toggle="tab">Module Details @if (isset($item_locations[$details->moonID])) ({{ count($item_locations[$details->moonID]) }}) @endif</a></li>
+					        <li><a href="#tab_2{{ $details->itemID }}" data-toggle="tab">Tower Configuration</a></li>
+					        <li><a href="#tab_3{{ $details->itemID }}" data-toggle="tab">Module Details @if (isset($item_locations[$details->moonID])) ({{ count($item_locations[$details->moonID]) }}) @endif</a></li>
 					    </ul>
 					    <div class="tab-content">
 					        <div class="tab-pane active" id="tab_1{{ $details->itemID }}">
-					            <h4>{{ $details->itemName }}</h4>
+					            <h4><b>{{ $details->itemName }}</b></h4>
 				                @if ($details->state == 4)
 				                	<span class="label label-success pull-right">{{ $tower_states[$details->state] }}</span>
 				                @else
@@ -223,7 +227,7 @@
 				                </p>
 				               	{{-- tower specific information --}} 
 				                {{-- stront is 3m3 a unit, fuel is 5m3  unit, this is why me multiply the quantities when calculating the bay usage --}}
-								<table class="table table-condensed">
+								<table class="table table-condensed table-hover">
 								    <tbody>
 								    	<tr>
 									        <th>
@@ -264,14 +268,23 @@
 									</tbody>
 								</table>
 					        </div><!-- /.tab-pane -->
+
+					        {{-- tower configuration --}}
+					        <div class="tab-pane" id="tab_2{{ $details->itemID }}">
+					        	<h4>Configuration:</h4>
+								<ul class="list-unstyled">
+								    <li>Use Standings From: <b><span rel="id-to-name">{{ $details->useStandingsFrom }}</span></b></li>
+								    <li>On Agression: <b> @if ($details->onAggression == 1)Yes @else No @endif</b></li>
+								    <li>On Corporation War: <b> @if ($details->onCorporationWar == 1) Yes @else No @endif</b></li>
+								    <li>Last Updated: <b> {{ $details->updated_at }}</b> ({{ Carbon\Carbon::parse($details->updated_at)->diffForHumans() }})</li>
+								</ul>
+					        </div><!-- /.tab-pane -->
 					        
 					        {{-- tower module information --}}
-					        <div class="tab-pane" id="tab_2{{ $details->itemID }}">
-								<table class="table table-condensed">
+					        <div class="tab-pane" id="tab_3{{ $details->itemID }}">
+					        	<h4>Modules Detail:</h4>
+								<table class="table table-condensed table-hover">
 								    <tbody>
-								    	<tr>
-									        <th>Module Type</th>
-									    </tr>
 									    @foreach ($item_locations[$details->moonID] as $item)
 										    <tr>
 										        <td><b>{{ $item['itemName'] }}</b></td>
@@ -296,3 +309,43 @@
 
 @stop
 
+@section('javascript')
+	<script>
+		$( document ).ready(function() {
+		  var items = [];
+		  var arrays = [], size = 250;
+
+		  $('[rel="id-to-name"]').each( function(){
+		     //add item to array
+		     items.push( $(this).text() );       
+		  });
+
+		  var items = $.unique( items );
+
+		  while (items.length > 0)
+		      arrays.push(items.splice(0, size));
+
+		  $.each(arrays, function( index, value ) {
+
+		    $.ajax({
+		        type: 'POST',
+		        url: "{{ action('HelperController@postResolveNames') }}",
+		        data: { 
+		            'ids': value.join(',')
+		        },
+		        success: function(result){
+		            $.each(result, function(id, name) {
+
+		              $("span:contains('" + id + "')").html(name);
+		            })
+		        },
+		        error: function(xhr, textStatus, errorThrown){
+		           console.log(xhr);
+		           console.log(textStatus);
+		           console.log(errorThrown); 
+		        }
+		    });
+		  });
+		});
+	</script>
+@stop

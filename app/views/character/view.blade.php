@@ -97,6 +97,7 @@
 	            <li class=""><a href="#mail" data-toggle="tab">Mail</a></li>
 	            <li class=""><a href="#notifications" data-toggle="tab">Notifications</a></li>
 	            <li class=""><a href="#assets" data-toggle="tab">Assets</a></li>
+	            <li class=""><a href="#contacts" data-toggle="tab">Contacts</a></li>
 	            <li class="pull-right">
 	            	<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" class="text-muted" data-toggle="tooltip" title="" data-placement="top" data-original-title="API Key Details">
 	            		<i class="fa fa-gear"></i>
@@ -218,9 +219,49 @@
 		                            <div class="box-tools pull-right">
 		                            </div>
 		                        </div>
-		                        <div class="box-body">
-		                        	Soon™
-		                        </div><!-- /.box-body -->
+		                        	<div class="box-body">
+										<dl>
+											<dt>Intelligence</dt>
+											<dd>@if(!$character->intelligenceAugmentatorValue)
+													<span class="text-orange"><i class="fa fa-exclamation"></i> {{ $character->intelligenceAugmentatorValue + $character->intelligence }}</span>
+												@else
+													<span class="text-green"><i class="fa fa-check"></i> {{ $character->intelligenceAugmentatorValue + $character->intelligence }}</span>
+												@endif
+												{{ $character->intelligenceAugmentatorName }} (17 Base + {{ $character->intelligenceAugmentatorValue ? $character->intelligenceAugmentatorValue : 0}} implant + {{ $character->intelligence -17 }} remap)</dd>
+
+											<dt>Memory</dt>
+											<dd>@if(!$character->memoryAugmentatorValue)
+													<span class="text-orange"><i class="fa fa-exclamation"></i> {{ $character->memoryAugmentatorValue + $character->memory }}</span>
+												@else
+													<span class="text-green"><i class="fa fa-check"></i> {{ $character->memoryAugmentatorValue + $character->memory }}</span>
+												@endif
+												{{ $character->memoryAugmentatorName }} (17 Base + {{ $character->memoryAugmentatorValue ? $character->memoryAugmentatorValue : 0}} implant + {{ $character->memory -17 }} remap)</dd>
+
+											<dt>Perception</dt>
+											<dd>@if(!$character->perceptionAugmentatorValue)
+													<span class="text-orange"><i class="fa fa-exclamation"></i> {{ $character->perceptionAugmentatorValue + $character->perception }}</span>
+												@else
+													<span class="text-green"><i class="fa fa-check"></i> {{ $character->perceptionAugmentatorValue + $character->perception }}</span>
+												@endif
+												{{ $character->perceptionAugmentatorName }} (17 Base + {{ $character->perceptionAugmentatorValue ? $character->perceptionAugmentatorValue : 0}} implant + {{ $character->perception -17 }} remap)</dd>
+
+											<dt>Willpower</dt>
+											<dd>@if(!$character->willpowerAugmentatorValue)
+													<span class="text-orange"><i class="fa fa-exclamation"></i> {{ $character->willpowerAugmentatorValue + $character->willpower }}</span>
+												@else
+													<span class="text-green"><i class="fa fa-check"></i> {{ $character->willpowerAugmentatorValue + $character->willpower }}</span>
+												@endif
+												{{ $character->willpowerAugmentatorName }} (17 Base + {{ $character->willpowerAugmentatorValue ? $character->willpowerAugmentatorValue : 0}} implant + {{ $character->willpower -17 }} remap)</dd>
+
+											<dt>Charisma</dt>
+											<dd>@if(!$character->charismaAugmentatorValue)
+													<span class="text-orange"><i class="fa fa-exclamation"></i> {{ $character->charismaAugmentatorValue + $character->charisma }}</span>
+												@else
+													<span class="text-green"><i class="fa fa-check"></i> {{ $character->charismaAugmentatorValue + $character->charisma }}</span>
+												@endif
+												{{ $character->charismaAugmentatorName }} (17 Base + {{ $character->charismaAugmentatorValue ? $character->charismaAugmentatorValue : 0 }} implant + {{ $character->charisma -17 }} remap)</dd>
+										</dl>
+									</div><!-- /.box-body -->
 		                    </div><!-- /.box -->
 
 		                </div> <!-- ./col-md-6 -->
@@ -568,12 +609,12 @@
 					                    <tbody>
 					                        <tr>
 					                            <th>Date</th>
-					                            <th>Wallet Division</th>
+					                            <th>#</th>
 					                            <th>Type</th>
-					                            <th>Owner1 Name</th>
-					                            <th>Owner2 Name</th>
 					                            <th>Amount</th>
-					                            <th>Balance</th>
+					                            <th>Client</th>
+					                            <th>Type</th>
+					                            <th>Station Name</th>
 					                        </tr>
 					                        @foreach ($wallet_transactions as $e)
 					                            <tr @if ($e->transactionType == 'buy')class="danger" @endif>
@@ -583,8 +624,11 @@
 					                                	</span>
 					                                </td>
 					                                <td>{{ $e->quantity }}</td>
-					                                <td>{{ $e->typeName }}</td>
-					                                <td>{{ number_format($e->price, 2, '.', ' ') }} </td>
+					                                <td>
+					                                	<img src='http://image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
+					                                	{{ $e->typeName }}
+					                                </td>
+					                                <td>{{ number_format($e->price, 2, '.', ' ') }} ISK</td>
 					                                <td>{{ $e->clientName }}</td>
 					                                <td>{{ $e->transactionType }}</td>
 					                                <td>{{ $e->stationName }}</td>
@@ -632,7 +676,12 @@
 									                		{{ Carbon\Carbon::parse($message->sentDate)->diffForHumans() }}
 									                	</span>
 									                </td>
-									                <td>{{ $message->senderName }}</td>
+									                <td>
+							                    		<a href="{{ action('CharacterController@getView', array('characterID' => $message->senderID)) }}">
+							                    			<img src='http://image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+							                    		</a>
+									                	{{ $message->senderName }}
+									                </td>
 									                <td>
 												    	@if (strlen($message->toCorpOrAllianceID) > 0)
 													    	<b>{{ count(explode(',', $message->toCorpOrAllianceID)) }}</b> Corporation(s) / Alliance(s)
@@ -705,40 +754,146 @@
 	            </div><!-- /.tab-pane -->
 
 
-	            {{-- character assets --}}
-	            <div class="tab-pane" id="assets">
+	            	{{-- character assets --}}
+				<div class="tab-pane" id="assets">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="box">
+								<div class="box-header">
+									<h3 class="box-title">Assets ({{ $assets_Count }})</h3>
+								</div><!-- /.box-header -->
+								<div class="box-body no-padding">
+									@foreach ($assets_List as $location => $assets)
+										<div class="box box-solid box-primary">
+											<div class="box-header">
+												<h3 class="box-title">{{ $location }} ({{ count($assets) }})</h3>
+												<div class="box-tools pull-right">
+													<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
+												</div>
+											</div>
+											<div class="box-body no-padding">	
+												<div class="row">
+													@foreach (array_chunk($assets, (count($assets) / 2) > 1 ? count($assets) / 2 : 2) as $column)
+														<div class="col-md-6">
+															<table class="table table-hover table-condensed">
+															<tbody>
+																<tr>
+																	<th style="width: 40px">#</th>
+																	<th style="width: 50%" colspan="2">Type</th>
+																	<th>Group</th>
+																	<th style="width: 50px"></th>
+																</tr>
+															</tbody>
+																@foreach ($column as $asset)
+																	<tbody style="border-top:0px solid #FFF">
+																		<tr class="item-container">
+																			<td>{{ App\Services\Helpers\Helpers::formatBigNumber($asset['quantity']) }}</td>
+																			<td colspan="2">
+																				<span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['quantity'], 0, '.', ' ') }} x {{ $asset['typeName'] }}">
+																					<img src='http://image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																					{{ str_limit($asset['typeName'], 35, $end = '...') }} {{ isset($asset['contents']) ? "(". count($asset['contents']) . ")" : "" }}
+																				</span>
+																			</td>
+																			<td>
+																				<span data-toggle="tooltip" title="" data-original-title="{{ $asset['groupName'] }}">
+																					{{ str_limit($asset['groupName'], 40, $end = '...') }}
+																				</span>
+																			</td>
+																			@if(isset($asset['contents']))
+																				<td style="text-align: right"><i class="fa fa-plus viewcontent" style="cursor: pointer;"></i></td>
+																			@else
+																				<td></td>
+																			@endif
+																		</tr>
+																	</tbody>
+																	@if(isset($asset['contents']))
+																		<tbody style="border-top:0px solid #FFF" class="tbodycontent">
+																			@foreach ($asset['contents'] as $content)
+																				<tr class="hidding">
+																					<td>{{ App\Services\Helpers\Helpers::formatBigNumber($content['quantity']) }}</td>
+																					<td style="width: 18px;"></td>
+																					<td>
+																						<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}">
+																							<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																							{{ str_limit($content['typeName'], 30, $end = '...') }}
+																						</span>
+																					</td>
+																					<td>
+																						<span data-toggle="tooltip" title="" data-original-title="{{ $content['groupName'] }}">
+																							{{ str_limit($content['groupName'], 25, $end = '...') }}
+																						</span>
+																					</td>
+																					<td></td>
+																				</tr>
+																			@endforeach
+																		</tbody>
+																	@endif
+																@endforeach
+															</table>
+														</div> <!-- /.col-md-6 -->
+													@endforeach 
+												</div> <!-- /.row -->
+											</div><!-- /.box-body -->
+										</div> <!-- ./box -->
+									@endforeach	
+								</div><!-- /.box-body -->
+							</div><!-- /.box -->
+						</div> <!-- ./col-md-12 -->
+					</div> <!-- ./row -->
+				</div><!-- /.tab-pane -->
+
+	            {{-- character contacts --}}
+	            <div class="tab-pane" id="contacts">
 	            	<div class="row">
 	            		<div class="col-md-12">
 	            			<div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">Assets ({{ count($assets) }})</h3>
+                                    <h3 class="box-title">Contact List ({{ count($contact_list) }})</h3>
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
-							        <table class="table table-hover table-condensed">
-							            <tbody>
-								            <tr>
-								                <th style="width: 10px">#</th>
-								                <th>Type</th>
-								                <th>Location</th>
-								            </tr>
+                                	<div class="row">
+                                		@foreach (array_chunk($contact_list, (count($contact_list) / 6) > 1 ? count($contact_list) / 6 : 6) as $list)
 
-											@foreach ($assets as $asset)
-									            <tr>
-									                <td>{{ $asset->quantity }}</td>
-									                <td>{{ $asset->typeName }}</td>
-									                <td>{{ $asset->location }}</td>
-									            </tr>
-											@endforeach
+                                			<div class="col-md-2">
+										        <table class="table table-hover table-condensed">
+										            <tbody>
+											            <tr>
+											                <th>Name</th>
+											                <th>Standing</th>
+											            </tr>
 
-							        	</tbody>
-							        </table>
+														@foreach ($list as $contact)
+												            <tr>
+												                <td>
+										                    		<a href="{{ action('CharacterController@getView', array('characterID' => $contact->contactID)) }}">
+										                    			<img src='http://image.eveonline.com/Character/{{ $contact->contactID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+										                    			{{ $contact->contactName }}
+										                    		</a>
+												                </td>
+												                <td>
+												                	@if ($contact->standing == 0)
+												                		{{ $contact->standing }}
+												                	@elseif ($contact->standing > 0)
+													                	<span class="text-green">{{ $contact->standing }}</span>
+													                @else
+													                	<span class="text-red">{{ $contact->standing }}</span>
+													                @endif
+												                </td>
+												            </tr>
+														@endforeach
+
+										        	</tbody>
+										        </table>
+										    </div> <!-- ./col-md-2 -->
+
+                                		@endforeach
+                                	</div><!-- ./row -->
+
                                 </div><!-- /.box-body -->
                             </div>
 		                </div> <!-- ./col-md-12 -->
 		            </div> <!-- ./row -->
 	            </div><!-- /.tab-pane -->
-
-
 
 	        </div><!-- /.tab-content -->
 	    </div><!-- nav-tabs-custom -->
@@ -748,8 +903,27 @@
 
 @section('javascript')
 <script type="text/javascript">
-	$(function () {
+	// First Hide all contents. Not very clean to add a fake class.. TODO: Think another way to do this
+	$(".tbodycontent").hide(); 
+	// on button click. Not very clean to add a fake class.. TODO: Think another way to do this
+	$(".viewcontent").on("click", function( event ){ 
+		// get the tbody tag direct after the button
+		var contents = $(this).closest( "tbody").next( "tbody" ); 
+		// Show or hide
+		contents.toggle();
 
+		// some code for stylish
+		if (contents.is(":visible")){
+			$(this).removeClass('fa-plus').addClass('fa-minus');
+			$(this).closest("tr").css( "background-color", "#EBEBEB" ); // change the background color of container (for easy see where we are)
+			contents.css( "background-color", "#EBEBEB" ); // change the background color of content (for easy see where we are)
+		} else {
+			$(this).removeClass('fa-minus').addClass('fa-plus'); 
+			$(this).closest("tr").css( "background-color", "#FFFFFF" ); // reset the background color on container when we hide content
+		}
+	});
+	
+	$(function () {
 		// TODO: Fix this stupid graphs width
 		var options = { chart: {
 			renderTo: 'chart',

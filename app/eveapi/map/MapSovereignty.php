@@ -52,10 +52,9 @@ class Sovereignty extends BaseApi {
 				$system_data->solarSystemName 	= $solarSystem->solarSystemName;
 				$system_data->corporationID 		= $solarSystem->corporationID;
 				$system_data->save();
-
+			}
 				// Update the cached_until time in the database for this api call
 				BaseApi::setDbCache($scope, $api, $sovereignty->cached_until);
-			}
 		}
 
 		return $sovereignty;

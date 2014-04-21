@@ -11,8 +11,7 @@
 |
 */
 
-Route::group(array('prefix' => 'account'), function()
-{
+Route::group(array('prefix' => 'account'), function() {
 
     Route::controller('user', 'UserController');
     Route::controller('password', 'RemindersController');
@@ -27,7 +26,11 @@ Route::group(array('before' => 'auth|csrf'), function() {
 
 	Route::controller('api-key', 'ApiKeyController');
     Route::controller('dashboard', 'DashboardController');
-    Route::controller('mail', 'MailController');
+
+    Route::group(array('prefix' => 'character'), function() {
+        Route::controller('mail', 'MailController');
+    });
+
     Route::controller('character', 'CharacterController');
     Route::controller('corporation', 'CorporationController');
     Route::controller('queue', 'QueueController');

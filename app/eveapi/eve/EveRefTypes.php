@@ -49,10 +49,9 @@ class RefTypes extends BaseApi {
 				$type_data->refTypeID	= $ref_type->refTypeID;
 				$type_data->refTypeName = $ref_type->refTypeName;
 				$type_data->save();
-
+			}
 				// Update the cached_until time in the database for this api call
 				BaseApi::setDbCache($scope, $api, $ref_types->cached_until);
-			}
 		}
 		return $ref_types;
 	}

@@ -59,12 +59,32 @@ class StarbaseDetail extends BaseApi {
 
 				// In the odd chance that we get a old/invalid ID, catch only that error
 				// else go boom
-				if ($e->getCode() <> 114)
-					throw $e;
+				if ($e->getCode() == 114) {
+
+					\Log::error('API Exception caught but continuing. Error: ' . $e->getCode() . ': ' . $e->getMessage(), array('src' => __CLASS__));
+					continue;
+				}
+
+				// I suspect that there is a caching specific thing here that I don't understand. I know
+				// this is a bad thing, but for now, just continue when this occurs, and write a entry
+				// to the application log about it.
+				//
+				// Error: 221: Illegal page request! Please verify the access granted by the key you are using!
+				// ^~~~ this after we just got the starbase list... :(
+				if ($e->getCode() == 221) {
+
+					\Log::error('API Exception caught but continuing. Error: ' . $e->getCode() . ': ' . $e->getMessage(), array('src' => __CLASS__));
+					continue;
+				}
+
+				// Lastly, go boom as something out of the ordinary is wrong.
+				throw $e;
 
 			} catch (\Pheal\Exceptions\PhealException $e) {
 
-				throw $e;
+				// Lets add some information to the original exception and raise it
+				$new_error = $e->getMessage() . ' - Current starbaseID: ' . $starbase->itemID;
+				throw new Exception($new_error, $e->getCode());
 			}
 
 			// Update the details

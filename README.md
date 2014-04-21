@@ -1,6 +1,6 @@
 ## SeAT - Simple (or Stupid) EVE Online API Tool ##
 
-# *This is very much BETA software with a ton of things not yet implemented. USE AT YOUR OWN RISK* #
+## *This is very much BETA software with a ton of things not yet implemented. USE AT YOUR OWN RISK* ##
 
 ### Introduction ###
 SeAT attempts to be a EVE Online™ Corporation Management Tool written in PHP using the [Laravel][1] Framework driven by a MySQL database.  
@@ -30,12 +30,12 @@ Please refer to the UPGRADING guide in `docs/UPDGRADING.md`
 ### Todo ###
 There really is a TON of stuff that still needs to be done:
 
-- Corporation Wallet Ledger
-- Asset Search
-- Skill Search
-- Clone Overview
+- ~~Corporation Wallet Ledger~~
+- ~~Asset Search~~
+- ~~Skill Search~~
+- ~~Clone Overview~~
 - Character Interactions (ie Player Tradings, Mails etc.)
-- Starbase Fuel Time Left calculations as well as Silo input/output end etas.
+- ~~Starbase Fuel Time Left calculations~~ as well as Silo input/output end etas.
 - Corporation Sheets with Member Security Roles view
 
 There is a metric ton of information pulled via the API that is not yet exposed on the web front end... so *lots* to do still :)

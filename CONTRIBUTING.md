@@ -6,7 +6,7 @@ If changes are needed due to vendor packages, please supply a link to the accomp
 
 ## Getting Started
 
-* Make sure you have the latest `dev` version. Rebase your fork with with the origins `seat/dev` if needed.
+* Make sure you have the latest `dev` version. Rebase your fork with with the origins `seat/dev` if needed. See [this link](http://stackoverflow.com/questions/3903817/pull-new-updates-from-original-github-repository-into-forked-github-repository) on how to keep your fork up to date.
 * Submit your pull requests to `seat/dev` from the topic branch of your fork.
 * Ensure that all your commits are descriptive enough to understand what they are either:
     * fixing
