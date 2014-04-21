@@ -156,10 +156,46 @@ class CharacterController extends BaseController {
 					WHERE m.itemID=a.locationID) end
 					AS location,a.locationId AS locID FROM `character_assetlist` AS a
 					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
+					LEFT JOIN `invGroups` ON `invTypes`.`groupID` = `invGroups`.`groupID`
 					WHERE a.`characterID` = ? ORDER BY location',
 			array($characterID)
 		);
-
+		
+		// Query Asset content from character_assetlist_contents DB and sum the quantity for not getting a long list of item
+		$assets_contents = DB::table(DB::raw('character_assetlist_contents as a'))
+			->select(DB::raw('*'), DB::raw('SUM(a.quantity) as sumquantity'))
+			->leftJoin('invTypes', 'a.typeID', '=', 'invTypes.typeID')
+			->leftJoin('invGroups', 'invTypes.groupID', '=', 'invGroups.groupID')
+			->where('a.characterID', $characterID)
+			->groupBy(DB::raw('a.itemID, a.typeID'))
+			->get();
+		
+		// Lastly, create an array that is easy to loop over in the template to display
+		// the data
+		$assets_List = array();
+		$assets_Count = 0; //start counting item
+		foreach ($assets as $key => $value) {
+			$assets_List[$value->location][$value->itemID] =  array(
+				'quantity' => $value->quantity,
+				'typeID' => $value->typeID,
+				'typeName' => $value->typeName,
+				'groupName' => $value->groupName
+			);
+			$assets_Count++;
+			foreach( $assets_contents as $contents){
+				if ($value->itemID == $contents->itemID){ // check what parent content item has
+					// create a sub array 'contents' and put content item info in
+					$assets_List[$value->location][$contents->itemID]['contents'][] = array(
+						'quantity' => $contents->sumquantity,
+						'typeID' => $contents->typeID,
+						'typeName' => $contents->typeName,
+						'groupName' => $contents->groupName
+					);
+				$assets_Count++;
+				}
+			}
+		}
+			
 		// Character contact list
 		$contact_list = DB::table('character_contactlist')
 			->where('characterID', $characterID)
@@ -178,7 +214,9 @@ class CharacterController extends BaseController {
 			->with('mail', $mail)
 			->with('notifications', $notifications)
 			->with('contact_list', $contact_list)
-			->with('assets', $assets);
+			->with('assets_List', $assets_List)
+			->with('assets_Count', $assets_Count)
+			->with('assets', $assets); // leave this just in case
 	}
 
 	/*

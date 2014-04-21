@@ -751,38 +751,96 @@
 	            </div><!-- /.tab-pane -->
 
 
-	            {{-- character assets --}}
-	            <div class="tab-pane" id="assets">
-	            	<div class="row">
-	            		<div class="col-md-12">
-	            			<div class="box">
-                                <div class="box-header">
-                                    <h3 class="box-title">Assets ({{ count($assets) }})</h3>
-                                </div><!-- /.box-header -->
-                                <div class="box-body no-padding">
-							        <table class="table table-hover table-condensed">
-							            <tbody>
-								            <tr>
-								                <th style="width: 10px">#</th>
-								                <th>Type</th>
-								                <th>Location</th>
-								            </tr>
-
-											@foreach ($assets as $asset)
-									            <tr>
-									                <td>{{ $asset->quantity }}</td>
-									                <td>{{ $asset->typeName }}</td>
-									                <td>{{ $asset->location }}</td>
-									            </tr>
-											@endforeach
-
-							        	</tbody>
-							        </table>
-                                </div><!-- /.box-body -->
-                            </div>
-		                </div> <!-- ./col-md-12 -->
-		            </div> <!-- ./row -->
-	            </div><!-- /.tab-pane -->
+	            	{{-- character assets --}}
+				<div class="tab-pane" id="assets">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="box">
+								<div class="box-header">
+									<h3 class="box-title">Assets ({{ $assets_Count }})</h3>
+								</div><!-- /.box-header -->
+								<div class="box-body no-padding">
+								
+									@foreach ($assets_List as $location => $assets)
+									
+										<div class="box box-solid box-primary">
+											<div class="box-header">
+												<h3 class="box-title">{{ $location }} ({{ count($assets) }})</h3>
+												<div class="box-tools pull-right">
+													<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
+												</div>
+											</div>
+											<div class="box-body no-padding">	
+												<div class="row">
+													@foreach (array_chunk($assets, ceil(count($assets) / 2)) as $column)
+														<div class="col-md-6">
+															<table class="table table-hover table-condensed">
+															<tbody>
+																<tr>
+																	<th style="width: 30px">#</th>
+																	<th style="width: 50%" colspan="2">Type</th>
+																	<th>Group</th>
+																	<th style="width: 50px"></th>
+																</tr>
+															</tbody>
+																@foreach ($column as $asset)
+																	<tbody style="border-top:0px solid #FFF">
+																		<tr class="item-container">
+																			<td>{{ $asset['quantity'] }}</td>
+																			<td colspan="2">
+																				<span data-toggle="tooltip" title="" data-original-title="{{ $asset['typeName'] }}">
+																					<img src='http://image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																					{{ str_limit($asset['typeName'], 35, $end = '...') }} {{ isset($asset['contents']) ? "(". count($asset['contents']) . ")" : "" }}
+																				</span>
+																			</td>
+																			<td>
+																				<span data-toggle="tooltip" title="" data-original-title="{{ $asset['groupName'] }}">
+																					{{ str_limit($asset['groupName'], 40, $end = '...') }}
+																				</span>
+																			</td>
+																			@if(isset($asset['contents']))
+																				<td style="text-align: right"><i class="fa fa-plus viewcontent" style="cursor: pointer;"></i></td>
+																			@else
+																				<td></td>
+																			@endif
+																		</tr>
+																	</tbody>
+																	@if(isset($asset['contents']))
+																		<tbody style="border-top:0px solid #FFF" class="tbodycontent">
+																			@foreach ($asset['contents'] as $content)
+																				<tr class="hidding">
+																					<td>{{ $content['quantity'] }}</td>
+																					<td style="width: 18px;"></td>
+																					<td>
+																						<span data-toggle="tooltip" title="" data-original-title="{{ $content['typeName'] }}">
+																							<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																							{{ str_limit($content['typeName'], 30, $end = '...') }}
+																						</span>
+																					</td>
+																					<td>
+																						<span data-toggle="tooltip" title="" data-original-title="{{ $content['groupName'] }}">
+																							{{ str_limit($content['groupName'], 25, $end = '...') }}
+																						</span>
+																					</td>
+																					<td></td>
+																				</tr>
+																			@endforeach
+																		</tbody>
+																	@endif
+																@endforeach	
+															
+															</table>
+														</div> <!-- /.col-md-6 -->
+													@endforeach 
+												</div> <!-- /.row -->
+											</div><!-- /.box-body -->
+										</div> <!-- ./box -->
+									@endforeach	
+								</div><!-- /.box-body -->
+							</div><!-- /.box -->
+						</div> <!-- ./col-md-12 -->
+					</div> <!-- ./row -->
+				</div><!-- /.tab-pane -->
 
 	            {{-- character contacts --}}
 	            <div class="tab-pane" id="contacts">
@@ -845,8 +903,27 @@
 
 @section('javascript')
 <script type="text/javascript">
-	$(function () {
+	// First Hide all contents. Not very clean to add a fake class.. TODO: Think another way to do this
+	$(".tbodycontent").hide(); 
+	// on button click. Not very clean to add a fake class.. TODO: Think another way to do this
+	$(".viewcontent").on("click", function( event ){ 
+		// get the tbody tag direct after the button
+		var contents = $(this).closest( "tbody").next( "tbody" ); 
+		// Show or hide
+		contents.toggle();
 
+		// some code for stylish
+		if (contents.is(":visible")){
+			$(this).removeClass('fa-plus').addClass('fa-minus');
+			$(this).closest("tr").css( "background-color", "#EBEBEB" ); // change the background color of container (for easy see where we are)
+			contents.css( "background-color", "#EBEBEB" ); // change the background color of content (for easy see where we are)
+		} else {
+			$(this).removeClass('fa-minus').addClass('fa-plus'); 
+			$(this).closest("tr").css( "background-color", "#FFFFFF" ); // reset the background color on container when we hide content
+		}
+	});
+	
+	$(function () {
 		// TODO: Fix this stupid graphs width
 		var options = { chart: {
 			renderTo: 'chart',
