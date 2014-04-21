@@ -757,22 +757,22 @@
 						<div class="col-md-12">
 							<div class="box">
 								<div class="box-header">
-									<h3 class="box-title">Assets ({{ $assets_Count['all'] }})</h3>
+									<h3 class="box-title">Assets ({{ $assets_Count }})</h3>
 								</div><!-- /.box-header -->
 								<div class="box-body no-padding">
 								
-									@foreach ($assets_List as $location => $asset)
+									@foreach ($assets_List as $location => $assets)
 									
 										<div class="box box-solid box-primary">
 											<div class="box-header">
-												<h3 class="box-title">{{ $location }} ({{ count($asset) }})</h3>
+												<h3 class="box-title">{{ $location }} ({{ count($assets) }})</h3>
 												<div class="box-tools pull-right">
 													<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
 												</div>
 											</div>
 											<div class="box-body no-padding">	
 												<div class="row">
-													@foreach (array_chunk($asset, ceil(count($asset) / 2)) as $c)
+													@foreach (array_chunk($assets, ceil(count($assets) / 2)) as $column)
 														<div class="col-md-6">
 															<table class="table table-hover table-condensed">
 															<tbody>
@@ -783,43 +783,43 @@
 																	<th style="width: 50px"></th>
 																</tr>
 															</tbody>
-																@foreach ($c as $a)
+																@foreach ($column as $asset)
 																	<tbody style="border-top:0px solid #FFF">
 																		<tr class="item-container">
-																			<td>{{ $a['quantity'] }}</td>
+																			<td>{{ $asset['quantity'] }}</td>
 																			<td colspan="2">
-																				<span data-toggle="tooltip" title="" data-original-title="{{ $a['typeName'] }}">
-																					<img src='http://image.eveonline.com/Type/{{ $a['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
-																					{{ str_limit($a['typeName'], 35, $end = '...') }} {{ isset($a['contents']) ? "(". count($a['contents']) . ")" : "" }}
+																				<span data-toggle="tooltip" title="" data-original-title="{{ $asset['typeName'] }}">
+																					<img src='http://image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																					{{ str_limit($asset['typeName'], 35, $end = '...') }} {{ isset($asset['contents']) ? "(". count($asset['contents']) . ")" : "" }}
 																				</span>
 																			</td>
 																			<td>
-																				<span data-toggle="tooltip" title="" data-original-title="{{ $a['groupName'] }}">
-																					{{ str_limit($a['groupName'], 40, $end = '...') }}
+																				<span data-toggle="tooltip" title="" data-original-title="{{ $asset['groupName'] }}">
+																					{{ str_limit($asset['groupName'], 40, $end = '...') }}
 																				</span>
 																			</td>
-																			@if(isset($a['contents']))
+																			@if(isset($asset['contents']))
 																				<td style="text-align: right"><i class="fa fa-plus viewcontent" style="cursor: pointer;"></i></td>
 																			@else
 																				<td></td>
 																			@endif
 																		</tr>
 																	</tbody>
-																	@if(isset($a['contents']))
+																	@if(isset($asset['contents']))
 																		<tbody style="border-top:0px solid #FFF" class="tbodycontent">
-																			@foreach ($a['contents'] as $c)
+																			@foreach ($asset['contents'] as $content)
 																				<tr class="hidding">
-																					<td>{{ $c['quantity'] }}</td>
+																					<td>{{ $content['quantity'] }}</td>
 																					<td style="width: 18px;"></td>
 																					<td>
-																						<span data-toggle="tooltip" title="" data-original-title="{{ $c['typeName'] }}">
-																							<img src='http://image.eveonline.com/Type/{{ $c['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
-																							{{ str_limit($c['typeName'], 30, $end = '...') }}
+																						<span data-toggle="tooltip" title="" data-original-title="{{ $content['typeName'] }}">
+																							<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																							{{ str_limit($content['typeName'], 30, $end = '...') }}
 																						</span>
 																					</td>
 																					<td>
-																						<span data-toggle="tooltip" title="" data-original-title="{{ $c['groupName'] }}">
-																							{{ str_limit($c['groupName'], 25, $end = '...') }}
+																						<span data-toggle="tooltip" title="" data-original-title="{{ $content['groupName'] }}">
+																							{{ str_limit($content['groupName'], 25, $end = '...') }}
 																						</span>
 																					</td>
 																					<td></td>

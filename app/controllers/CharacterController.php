@@ -162,20 +162,18 @@ class CharacterController extends BaseController {
 		);
 		
 		// Query Asset content from character_assetlist_contents DB and sum the quantity for not getting a long list of item
-		$assets_contents = DB::select(
-			'SELECT *, sum(a.quantity) as sumquantity
-			FROM character_assetlist_contents AS a
-			LEFT JOIN invTypes ON a.typeID = invTypes.typeID
-			LEFT JOIN invGroups ON invTypes.groupID = invGroups.groupID
-			WHERE a.`characterID` = ?
-			GROUP BY a.itemID, a.typeID',
-			array($characterID)
-		);
+		$assets_contents = DB::table(DB::raw('character_assetlist_contents as a'))
+        ->select(DB::raw('*'), DB::raw('SUM(a.quantity) as sumquantity'))
+        ->leftJoin('invTypes', 'a.typeID', '=', 'invTypes.typeID')
+        ->leftJoin('invGroups', 'invTypes.groupID', '=', 'invGroups.groupID')
+        ->where('a.characterID', $characterID)
+        ->groupBy(DB::raw('a.itemID, a.typeID'))
+        ->get();
 		
 		// Lastly, create an array that is easy to loop over in the template to display
 		// the data
 		$assets_List = array();
-		$assets_Count['all'] = 0; //start counting item
+		$assets_Count = 0; //start counting item
 		foreach ($assets as $key => $value) {
 			$assets_List[$value->location][$value->itemID] =  array(
 				'quantity' => $value->quantity,
@@ -183,7 +181,7 @@ class CharacterController extends BaseController {
 				'typeName' => $value->typeName,
 				'groupName' => $value->groupName
 			);
-			$assets_Count['all']++;
+			$assets_Count++;
 			foreach( $assets_contents as $contents){
 				if ($value->itemID == $contents->itemID){ // check what parent content item has
 					// create a sub array 'contents' and put content item info in
@@ -193,13 +191,11 @@ class CharacterController extends BaseController {
 						'typeName' => $contents->typeName,
 						'groupName' => $contents->groupName
 					);
-				$assets_Count['all']++;
+				$assets_Count++;
 				}
 			}
 		}
-		
-		
-		
+			
 		// Character contact list
 		$contact_list = DB::table('character_contactlist')
 			->where('characterID', $characterID)
