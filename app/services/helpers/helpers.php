@@ -28,4 +28,37 @@ class Helpers {
 		// If we can not find the skill, then it is 0
 		return 0;
     }
+
+	/*
+	|--------------------------------------------------------------------------
+	| processAccessMask()
+	|--------------------------------------------------------------------------
+	|
+	| Run through the api calllist, checking which calls a accessmask has
+	| access to
+	|
+	*/
+
+	public static function processAccessMask($mask, $type) {
+
+		// Prepare the return array
+		$return = array();
+
+		// Loop over the call list, populating the array, based on the type
+		if ($type == 'Corporation') {
+
+			// Loop over the call list, populating the array
+			foreach (\EveApiCalllist::where('type', 'Corporation')->get() as $call)
+				$return[$call->name] = (int)$call->accessMask & (int)$mask ? 'true' : 'false';
+
+		} else {
+
+			// Loop over the call list, populating the array
+			foreach (\EveApiCalllist::where('type', 'Character')->get() as $call)
+				$return[$call->name] = (int)$call->accessMask & (int)$mask ? 'true' : 'false';
+		}
+
+		// Return the populated array
+		return $return;
+    }
 }

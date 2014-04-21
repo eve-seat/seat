@@ -39,10 +39,10 @@
         <div class="small-box bg-maroon">
             <div class="inner">
                 <h3>
-                    {{ count($key_characters) }}
+                    {{ $key_information->accessMask }}
                 </h3>
                 <p>
-                    Characters on key
+                    Access Mask
                 </p>
             </div>
         </div>
@@ -104,6 +104,39 @@
                 @endif
             </div><!-- /.box-body -->
         </div><!-- /.box -->
+
+        {{-- access mask details --}}
+        <div class="box box-solid box-info">
+            <div class="box-header">
+                <h3 class="box-title">Key Access Mask Breakdown</h3>
+                <div class="box-tools pull-right">
+                    <button class="btn btn-info btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-info btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+            <div class="box-body no-padding">
+                <table class="table table-condensed table-hover">
+                    <tbody>
+                        <tr>
+                            <th>Endpoint</th>
+                            <th>Access</th>
+                        </tr>
+                        @foreach (App\Services\Helpers\Helpers::processAccessMask($key_information->accessMask, $key_information->type) as $endpoint => $access)
+                            <tr>
+                                <td>{{ $endpoint }}</td>
+                                <td>
+                                    @if ($access == 'true')
+                                        <span class="text-green">{{ $access }}</span>
+                                    @else
+                                        <span class="text-red">{{ $access }}</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div><!-- /.box-body -->
+        </div><!-- ./box -->
     </div><!-- /.col -->
 
     <div class="col-md-4">
