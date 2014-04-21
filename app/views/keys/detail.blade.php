@@ -13,6 +13,7 @@
                 </h3>
                 <p>
                     Key ID
+                    <a class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#vcode-modal"><i class="fa fa-circle-o"></i> Reveal vCode</a>
                 </p>
             </div>
         </div>
@@ -241,6 +242,21 @@
         </div><!-- /.box -->
     </div><!-- /.col -->
 </div>
+
+<!-- vCode reveal modal -->
+<div class="modal fade" id="vcode-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-eye"></i> Full vCode</h4>
+            </div>
+            <div class="modal-body">
+                <p class="text-center"><b>{{ $key_information->vCode }}</b></p>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 @stop
 
