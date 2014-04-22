@@ -1,4 +1,5 @@
 *
 !required_sde
 !update_sde.sh
+!update_sde_deb.sh
 !.gitignore
