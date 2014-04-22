@@ -19,7 +19,7 @@ The following installation assumes you are using Ubuntu. This installation was d
 The very first step should be to ensure that you are up to date. Run `apt-get update`
 
 ### Tutorial! ###
-A tutorial showing the full installation is available here: soon™
+A tutorial showing the full installation is available here: https://asciinema.org/a/9065
 
 #### 1. Install & Configure MySQL ####
 As `root`, run:  
