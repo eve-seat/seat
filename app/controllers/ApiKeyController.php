@@ -374,4 +374,22 @@ class ApiKeyController extends BaseController {
 			->with('success', 'Key has been deleted');
 
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getRemoveBan()
+	|--------------------------------------------------------------------------
+	|
+	| Removes a ban that has been imposed on a key for a specific API call
+	|
+	*/
+
+	public function getRemoveBan($id)
+	{
+
+		\EveBannedCall::where('id', $id)
+			->delete();
+
+		return Response::json();
+	}
 }

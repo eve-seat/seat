@@ -230,6 +230,7 @@
     							        	<i class="fa fa-bullhorn pull-right" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ $ban->reason }}" data-trigger="hover"></i>
     							        @endif
     						        </td>
+                                    <td><i class="fa fa-times" id="remove-ban" a-ban-id="{{ $ban->id }}" data-toggle="tooltip" title="" data-original-title="Remove Ban"></i></td>
     						    </tr>
     						@endforeach
     					</tbody>
@@ -285,5 +286,24 @@
 			}
 		});
 	});
+
+    // Ajax Ban Removal
+    $("i#remove-ban").click(function() {
+
+        // Start rotating the icom indicating loading
+        $(this).addClass('fa-spin');
+
+        // Set the parent variable
+        var parent = $(this).parent().parent();
+
+        // Call the ajax and remove the row from the dom
+        $.ajax({
+            type: 'get',
+            url: "{{ action('ApiKeyController@getRemoveBan') }}/" + $(this).attr('a-ban-id'),
+            success: function() {
+                parent.remove();
+            }
+        });
+    });
 </script>
 @stop
