@@ -30,8 +30,8 @@ function ask {
 		fi
 
 		case "$REPLY" in
-			Y*|y*) return 0 ;;
-			N*|n*) return 1 ;;
+			Y*|y*) echo 0 && break;;
+			N*|n*) echo 1 && break;;
 		esac
 
 	done
@@ -44,7 +44,7 @@ DUMPS="required_sde"
 TEMP=/tmp/SeAT-$(date | md5sum | awk '{ print $1 }')
 AUTO_IMPORT=$(ask "Automatically import required SQL files?" N)
 
-if [ AUTO_IMPORT ]; then
+if [ "$AUTO_IMPORT" -eq 0 ]; then
 	read -p "Enter database user: " DB_USR
 	read -s -p "Enter database password: " DB_PSS
 	echo ""
@@ -84,7 +84,7 @@ while read p; do
 	bzip2 -d $TEMP/$p.$EXTENTION.bz2
 done < $DUMPS
 
-if [ AUTO_IMPORT ]; then
+if [ "$AUTO_IMPORT" -eq 0 ]; then
 	# Import the files into the MySQL server
 	echo "Importing the SQL files into MySQL..."
 	cat $TEMP/*.sql | mysql -u $DB_USR --password=$DB_PSS -h $DB_SRV $DB_NAME
