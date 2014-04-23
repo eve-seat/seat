@@ -95,7 +95,7 @@ class Contracts extends BaseApi {
 					$new_data->endStationID = $contract->endStationID;
 					$new_data->type = $contract->type;
 					$new_data->status = $contract->status;
-					$new_data->title = $contract->title;
+					$new_data->title = (strlen($contract->title) > 0 ? $contract->title : null);
 					$new_data->forCorp = $contract->forCorp;
 					$new_data->availability = $contract->availability;
 					$new_data->dateIssued = $contract->dateIssued;

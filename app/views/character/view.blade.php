@@ -904,7 +904,7 @@
 	            		<div class="col-md-12">
 	            			<div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">Contract List ({{ count($contractsCourier) +  count($contractsOther)}})</h3>
+                                    <h3 class="box-title">Contract List ({{ count($contracts_courier) +  count($contracts_other)}})</h3>
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
                                 	<div class="row">
@@ -912,7 +912,7 @@
 										<div class="col-md-6">
 											<div class="box box-solid box-primary">
 												<div class="box-header">
-													<h3 class="box-title">Courier ({{ count($contractsCourier) }})</h3>
+													<h3 class="box-title">Courier ({{ count($contracts_courier) }})</h3>
 													<div class="box-tools pull-right">
 														<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
 													</div>
@@ -932,26 +932,16 @@
 																</tbody>
 															</table>
 															{{-- Loop over contracts courier and display --}}
-															@foreach ($contractsCourier as $contract)
+															@foreach ($contracts_courier as $contract)
 																<table class="table table-hover table-condensed">
 																	<tbody style="border-top:0px solid #FFF">
 																		<tr class="item-container">
 																			<td style="width: 200px">
-																				{{-- Little Hacks to get the good portrait (Character or Corporation) --}}
-																				@if(($contract['issuerID'] > 90000000 && $contract['issuerID'] < 98000000)  || $contract['issuerID'] > 100000000)
-																					<img src='http://image.eveonline.com/Character/{{ $contract['issuerID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
-																				@else
-																					<img src='http://image.eveonline.com/Corporation/{{ $contract['issuerID'] }}_64.png' class='img-circle' style='width: 18px;height: 18px;'>
-																				@endif
+																				<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['issuerID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
 																				<span rel="id-to-name">{{ $contract['issuerID'] }}</span>
 																			</td>
 																			<td style="width: 200px">
-																				{{-- Little Hacks to get the good portrait (Character or Corporation) --}}
-																				@if(($contract['assigneeID'] > 90000000 && $contract['assigneeID'] < 98000000)  || $contract['assigneeID'] > 100000000)
-																					<img src='http://image.eveonline.com/Character/{{ $contract['assigneeID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
-																				@else
-																					<img src='http://image.eveonline.com/Corporation/{{ $contract['assigneeID'] }}_64.png' class='img-circle' style='width: 18px;height: 18px;'>
-																				@endif
+																				<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['assigneeID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
 																				<span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
 																			</td>
 																			<td>{{ $contract['type'] }}</td>
@@ -985,6 +975,12 @@
 																				 ({{ number_format($contract['volume'], 2, '.', ' ') }} m<sup>3</sup>)
 																			</span>
 																		</li>
+																		@if(isset($contract['title']))
+																			<li>
+																				<i class="fa fa-bullhorn" data-original-title=" {{ $contract['title'] }}" title="" data-toggle="tooltip"></i> 
+																				Title: <b>{{ str_limit($contract['title'], 100, $end = '...') }}</b>
+																			</li>
+																		@endif
 																		<li>
 																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateIssued'] }}" title="" data-toggle="tooltip"></i> 
 																			Issued <b>{{ Carbon\Carbon::parse($contract['dateIssued'])->diffForHumans() }}</b>
@@ -1000,7 +996,9 @@
 																		@if(isset($contract['dateAccepted']))
 																		<li>
 																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateAccepted'] }}" title="" data-toggle="tooltip"></i> 
-																			Accepted <b>{{ Carbon\Carbon::parse($contract['dateAccepted'])->diffForHumans() }}</b>
+																			Accepted <b>{{ Carbon\Carbon::parse($contract['dateAccepted'])->diffForHumans() }}</b> 
+																			by <img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['acceptorID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'> 
+																			<b><span rel="id-to-name">{{ $contract['acceptorID'] }}</span></b>
 																		</li>
 																		@endif
 																		{{-- If a contract is completed we show the date else nothing --}}
@@ -1030,7 +1028,7 @@
 										<div class="col-md-6">
 											<div class="box box-solid box-primary">
 												<div class="box-header">
-													<h3 class="box-title">Item Exchange & Auction ({{ count($contractsOther) }})</h3>
+													<h3 class="box-title">Item Exchange & Auction ({{ count($contracts_other) }})</h3>
 													<div class="box-tools pull-right">
 														<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
 													</div>
@@ -1050,26 +1048,16 @@
 																</tbody>
 															</table>
 															{{-- Loop over other contracts and display --}}
-															@foreach ($contractsOther as $contract)
+															@foreach ($contracts_other as $contract)
 																<table class="table table-hover table-condensed">
 																	<tbody style="border-top:0px solid #FFF">
 																		<tr class="item-container">
 																			<td style="width: 200px">
-																				{{-- Little Hacks to get the good portrait (Character or Corporation) --}}
-																				@if(($contract['issuerID'] > 90000000 && $contract['issuerID'] < 98000000)  || $contract['issuerID'] > 100000000)
-																					<img src='http://image.eveonline.com/Character/{{ $contract['issuerID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
-																				@else
-																					<img src='http://image.eveonline.com/Corporation/{{ $contract['issuerID'] }}_64.png' class='img-circle' style='width: 18px;height: 18px;'>
-																				@endif
+																				<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['issuerID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
 																				<span rel="id-to-name">{{ $contract['issuerID'] }}</span>
 																			</td>
 																			<td style="width: 200px">
-																				{{-- Little Hacks to get the good portrait (Character or Corporation) --}}
-																				@if(($contract['assigneeID'] > 90000000 && $contract['assigneeID'] < 98000000)  || $contract['assigneeID'] > 100000000)
-																					<img src='http://image.eveonline.com/Character/{{ $contract['assigneeID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
-																				@else
-																					<img src='http://image.eveonline.com/Corporation/{{ $contract['assigneeID'] }}_64.png' class='img-circle' style='width: 18px;height: 18px;'>
-																				@endif
+																				<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['assigneeID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
 																				<span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
 																			</td>
 																			<td>{{ $contract['type'] }}</td>
@@ -1093,9 +1081,15 @@
 																		<li>
 																			<i class="fa fa-map-marker"></i> 
 																			<span data-toggle="tooltip" title="" data-original-title="{{ $contract['startlocation'] }}">
-																				<b>{{ str_limit($contract['startlocation'], 50, $end = '...') }}</b>
+																				<b>{{ str_limit($contract['startlocation'], 100, $end = '...') }}</b>
 																			</span>
 																		</li>
+																		@if(isset($contract['title']))
+																			<li>
+																				<i class="fa fa-bullhorn" data-original-title=" {{ $contract['title'] }}" title="" data-toggle="tooltip"></i> 
+																				Title: <b>{{ str_limit($contract['title'], 100, $end = '...') }}</b>
+																			</li>
+																		@endif
 																		<li>
 																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateIssued'] }}" title="" data-toggle="tooltip"></i> 
 																			Issued <b>{{ Carbon\Carbon::parse($contract['dateIssued'])->diffForHumans() }}</b>
@@ -1111,12 +1105,18 @@
 																		@if(isset($contract['dateCompleted']))
 																			<li>
 																				<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateCompleted'] }}" title="" data-toggle="tooltip"></i> 
-																				Completed <b>{{ Carbon\Carbon::parse($contract['dateCompleted'])->diffForHumans() }}</b>
+																				Completed <b>{{ Carbon\Carbon::parse($contract['dateCompleted'])->diffForHumans() }}</b> 
+																				by <img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['acceptorID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'> 
+																				<b><span rel="id-to-name">{{ $contract['acceptorID'] }}</span></b>
 																			</li>
 																		@endif
 																		<li>
 																			<i class="fa fa-money"></i> 
-																			<b>{{ number_format($contract['price'], 2, '.', ' ') }}</b> isk
+																			Buyer will get <b><span class="text-green">{{ number_format($contract['reward'], 2, '.', ' ') }}</span></b> isk
+																		</li>
+																		<li>
+																			<i class="fa fa-money"></i> 
+																			Buyer will pay <b><span class="text-red">{{ number_format($contract['price'], 2, '.', ' ') }}</span></b> isk
 																		</li>
 																		{{-- If the contract is an auction we display the buyout price --}}
 																		@if($contract['type'] == 'Auction')
@@ -1127,16 +1127,42 @@
 																		@endif
 																		{{-- Check if contract has contents --}}
 																		@if(isset($contract['contents']) && count($contract['contents']) > 0)
-																			<li> <i class="fa fa-paperclip"></i> Contents
-																				<ul>
-																					{{-- Loop over contents and display item in contract --}}
-																					@foreach($contract['contents'] as $content)
+																			<li> <i class="fa fa-paperclip"></i> Contents</li>
+																			<li>
+																				<div class="col-md-6">
+																					<ul>
 																						<li style="list-style:none;">
-																							<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
-																							{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}
+																						<span class="text-green"><b>Buyer will get</b></span>
 																						</li>
-																					@endforeach
-																				</ul>
+																						{{-- Loop over contents and display item in contract --}}
+																						@foreach($contract['contents'] as $content)
+																							<li style="list-style:none;">
+																								{{-- Check if it's a item request or not --}}
+																								@if($content['included'] == 1)
+																									<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																									<span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
+																								@endif
+																							</li>
+																						@endforeach
+																					</ul>
+																				</div>
+																				<div class="col-md-6">
+																					<ul>
+																						<li style="list-style:none;">
+																						<span class="text-red"><b>Buyer will pay</b></span>
+																						</li>
+																						{{-- Loop over contents and display item requested in contract --}}
+																						@foreach($contract['contents'] as $content)
+																							<li style="list-style:none;">
+																								{{-- Check if it's a item request or not --}}
+																								@if($content['included'] == 0)
+																									<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																									<span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
+																								@endif
+																							</li>
+																						@endforeach
+																					</ul>
+																				</div>
 																			</li>
 																		@endif
 																	</ul>

@@ -254,18 +254,20 @@ class CharacterController extends BaseController {
 			->get();
 		
 		// Create 2 array for seperate Courier and Other Contracts
-		$contractsCourier = array();
-		$contractsOther = array();
+		$contracts_courier = array();
+		$contracts_other = array();
 		
 		// Loops the contracts list and fill arrays
 		foreach ($contract_list as $key => $value) {
 			if($value->type == 'Courier'){
-				$contractsCourier[$value->contractID] =  array(
+				$contracts_courier[$value->contractID] =  array(
 					'contractID' => $value->contractID,
 					'issuerID' => $value->issuerID,
 					'assigneeID' => $value->assigneeID,
+					'acceptorID' => $value->acceptorID,
 					'type' => $value->type,
 					'status' => $value->status,
+					'title' => $value->title,
 					'dateIssued' => $value->dateIssued,
 					'dateExpired' => $value->dateExpired,
 					'dateAccepted' => $value->dateAccepted,
@@ -277,15 +279,18 @@ class CharacterController extends BaseController {
 					'endlocation' => $value->endlocation
 				);
 			} else {
-				$contractsOther[$value->contractID] =  array(
+				$contracts_other[$value->contractID] =  array(
 					'contractID' => $value->contractID,
 					'issuerID' => $value->issuerID,
 					'assigneeID' => $value->assigneeID,
+					'acceptorID' => $value->acceptorID,
 					'type' => $value->type,
 					'status' => $value->status,
+					'title' => $value->title,
 					'dateIssued' => $value->dateIssued,
 					'dateExpired' => $value->dateExpired,
 					'dateCompleted' => $value->dateCompleted,
+					'reward' => $value->reward, // for "Buyer will get" isk
 					'price' => $value->price,
 					'buyout' => $value->buyout,
 					'startlocation' => $value->startlocation
@@ -296,10 +301,11 @@ class CharacterController extends BaseController {
 			foreach( $contract_list_item as $contents){
 				if ($value->contractID == $contents->contractID){ // check what parent content item has
 					// create a sub array 'contents' and put content item info in
-					$contractsOther[$value->contractID]['contents'][] = array(
+					$contracts_other[$value->contractID]['contents'][] = array(
 						'quantity' => $contents->quantity,
 						'typeID' => $contents->typeID,
-						'typeName' => $contents->typeName
+						'typeName' => $contents->typeName,
+						'included' => $contents->included // for "buyer will pay" item
 					);
 				
 				}
@@ -321,8 +327,8 @@ class CharacterController extends BaseController {
 			->with('contact_list', $contact_list)
 			->with('assets_List', $assets_List)
 			->with('assets_Count', $assets_Count)
-			->with('contractsCourier', $contractsCourier)
-			->with('contractsOther', $contractsOther)
+			->with('contracts_courier', $contracts_courier)
+			->with('contracts_other', $contracts_other)
 			->with('assets', $assets); // leave this just in case
 	}
 
