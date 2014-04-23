@@ -4,6 +4,8 @@
 
 @section('page_content')
 
+{{-- open a empty form to get a crsf token --}}
+{{ Form::open(array()) }} {{ Form::close() }}
 
 <div class="row">
     <div class="col-md-12">
@@ -98,6 +100,7 @@
 	            <li class=""><a href="#notifications" data-toggle="tab">Notifications</a></li>
 	            <li class=""><a href="#assets" data-toggle="tab">Assets</a></li>
 	            <li class=""><a href="#contacts" data-toggle="tab">Contacts</a></li>
+	            <li class=""><a href="#contracts" data-toggle="tab">Contracts</a></li>
 	            <li class="pull-right">
 	            	<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" class="text-muted" data-toggle="tooltip" title="" data-placement="top" data-original-title="API Key Details">
 	            		<i class="fa fa-gear"></i>
@@ -894,11 +897,253 @@
 		                </div> <!-- ./col-md-12 -->
 		            </div> <!-- ./row -->
 	            </div><!-- /.tab-pane -->
-
+				
+	            {{-- character contracts --}}
+	            <div class="tab-pane" id="contracts">
+	            	<div class="row">
+	            		<div class="col-md-12">
+	            			<div class="box">
+                                <div class="box-header">
+                                    <h3 class="box-title">Contract List ({{ count($contractsCourier) +  count($contractsOther)}})</h3>
+                                </div><!-- /.box-header -->
+                                <div class="box-body no-padding">
+                                	<div class="row">
+										<div class="col-md-6">
+											<div class="box box-solid box-primary">
+												<div class="box-header">
+													<h3 class="box-title">Courier ({{ count($contractsCourier) }})</h3>
+													<div class="box-tools pull-right">
+														<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
+													</div>
+												</div>
+												<div class="box-body no-padding">	
+													<div class="row">
+														<div class="col-md-12">
+															<table class="table table-condensed">
+																<tbody>
+																	<tr>
+																		<th style="width: 200px">Issuer</th>
+																		<th style="width: 200px">Assignee</th>
+																		<th>type</th>
+																		<th style="width: 30px">Status</th>
+																		<th style="width: 30px"></th>
+																	</tr>
+																</tbody>
+															</table>
+															@foreach ($contractsCourier as $contract)
+																<table class="table table-hover table-condensed">
+																	<tbody style="border-top:0px solid #FFF">
+																		<tr class="item-container">
+																			<td style="width: 200px">
+																				{{-- Little Hacks to get the good portrait (Character or Corporation) --}}
+																				@if(($contract['issuerID'] > 90000000 && $contract['issuerID'] < 98000000)  || $contract['issuerID'] > 100000000)
+																					<img src='http://image.eveonline.com/Character/{{ $contract['issuerID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+																				@else
+																					<img src='http://image.eveonline.com/Corporation/{{ $contract['issuerID'] }}_64.png' class='img-circle' style='width: 18px;height: 18px;'>
+																				@endif
+																				<span rel="id-to-name">{{ $contract['issuerID'] }}</span>
+																			</td>
+																			<td style="width: 200px">
+																				{{-- Little Hacks to get the good portrait (Character or Corporation) --}}
+																				@if(($contract['assigneeID'] > 90000000 && $contract['assigneeID'] < 98000000)  || $contract['assigneeID'] > 100000000)
+																					<img src='http://image.eveonline.com/Character/{{ $contract['assigneeID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+																				@else
+																					<img src='http://image.eveonline.com/Corporation/{{ $contract['assigneeID'] }}_64.png' class='img-circle' style='width: 18px;height: 18px;'>
+																				@endif
+																				<span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
+																			</td>
+																			<td>{{ $contract['type'] }}</td>
+																			<td style="width: 30px">
+																				@if($contract['status'] == 'Completed')
+																					<span class="text-green" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-check"></i></span>
+																				@elseif($contract['status'] == 'inProgress')
+																					<span class="text-blue" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-truck"></i></span>
+																				@elseif($contract['status'] == 'Outstanding')
+																					<span class="text-orange" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-clock-o"></i></span>
+																				@else
+																					<span class="text-red" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-times"></i></span>
+																				@endif
+																			</td>
+																			<td style="text-align: right; width: 30px"><i class="fa fa-plus viewcontent contracts" style="cursor: pointer;"></i></td>
+																		</tr>
+																	</tbody>
+																</table>
+																<div class="col-md-12 tbodycontent">
+																	<ul class="list-unstyled">
+																		<li>
+																			<i class="fa fa-flag-checkered"></i> 
+																			<span data-toggle="tooltip" title="" data-original-title="{{ $contract['startlocation'] }}">
+																				<b>{{ str_limit($contract['startlocation'], 50, $end = '...') }}</b>
+																			</span> >> 
+																			<span data-toggle="tooltip" title="" data-original-title="{{ $contract['endlocation'] }}">
+																				<b>{{ str_limit($contract['endlocation'], 50, $end = '...') }}</b>
+																			</span>
+																			<span>
+																				 ({{ number_format($contract['volume'], 2, '.', ' ') }} m<sup>3</sup>)
+																			</span>
+																		</li>
+																		<li>
+																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateIssued'] }}" title="" data-toggle="tooltip"></i> 
+																			Issued <b>{{ Carbon\Carbon::parse($contract['dateIssued'])->diffForHumans() }}</b>
+																		</li>
+																		
+																		@if(!isset($contract['dateCompleted']))
+																		<li>
+																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateExpired'] }}" title="" data-toggle="tooltip"></i> 
+																			Expire in <b>{{ Carbon\Carbon::parse($contract['dateExpired'])->diffForHumans() }}</b>
+																		</li>	
+																		@endif
+																		@if(isset($contract['dateAccepted']))
+																		<li>
+																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateAccepted'] }}" title="" data-toggle="tooltip"></i> 
+																			Accepted <b>{{ Carbon\Carbon::parse($contract['dateAccepted'])->diffForHumans() }}</b>
+																		</li>
+																		@endif
+																		@if(isset($contract['dateCompleted']))
+																		<li>
+																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateCompleted'] }}" title="" data-toggle="tooltip"></i> 
+																			Completed <b>{{ Carbon\Carbon::parse($contract['dateCompleted'])->diffForHumans() }}</b>
+																		</li>
+																		@endif
+																		
+																		<li>
+																			<i class="fa fa-money"></i> 
+																			<b>{{ number_format($contract['reward'], 2, '.', ' ') }}</b> isk in reward
+																		</li>
+																		<li>
+																			<i class="fa fa-money"></i> 
+																			<b>{{ number_format($contract['collateral'], 2, '.', ' ') }}</b> isk in collateral
+																		</li>
+																	</ul>
+																</div><!-- ./col-md-12 -->
+															@endforeach
+														</div><!-- ./col-md-12 -->
+													</div><!-- ./raw -->
+												</div><!-- ./box-body -->
+											</div><!-- ./box -->
+										</div> <!-- ./col-md-12 -->
+										
+										<div class="col-md-6">
+											<div class="box box-solid box-primary">
+												<div class="box-header">
+													<h3 class="box-title">Item Exchange & Auction ({{ count($contractsOther) }})</h3>
+													<div class="box-tools pull-right">
+														<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
+													</div>
+												</div>
+												<div class="box-body no-padding">	
+													<div class="row">
+														<div class="col-md-12">
+															<table class="table table-hover table-condensed">
+																<tbody>
+																	<tr>
+																		<th style="width: 200px">Issuer</th>
+																		<th style="width: 200px">Assignee</th>
+																		<th>type</th>
+																		<th style="width: 30px">Status</th>
+																		<th style="width: 30px"></th>
+																	</tr>
+																</tbody>
+															</table>
+															@foreach ($contractsOther as $contract)
+																<table class="table table-hover table-condensed">
+																	<tbody style="border-top:0px solid #FFF">
+																		<tr class="item-container">
+																			<td style="width: 200px">
+																				{{-- Little Hacks to get the good portrait (Character or Corporation) --}}
+																				@if(($contract['issuerID'] > 90000000 && $contract['issuerID'] < 98000000)  || $contract['issuerID'] > 100000000)
+																					<img src='http://image.eveonline.com/Character/{{ $contract['issuerID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+																				@else
+																					<img src='http://image.eveonline.com/Corporation/{{ $contract['issuerID'] }}_64.png' class='img-circle' style='width: 18px;height: 18px;'>
+																				@endif
+																				<span rel="id-to-name">{{ $contract['issuerID'] }}</span>
+																			</td>
+																			<td style="width: 200px">
+																				{{-- Little Hacks to get the good portrait (Character or Corporation) --}}
+																				@if(($contract['assigneeID'] > 90000000 && $contract['assigneeID'] < 98000000)  || $contract['assigneeID'] > 100000000)
+																					<img src='http://image.eveonline.com/Character/{{ $contract['assigneeID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+																				@else
+																					<img src='http://image.eveonline.com/Corporation/{{ $contract['assigneeID'] }}_64.png' class='img-circle' style='width: 18px;height: 18px;'>
+																				@endif
+																				<span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
+																			</td>
+																			<td>{{ $contract['type'] }}</td>
+																			<td style="width: 30px">
+																				@if($contract['status'] == 'Completed')
+																					<span class="text-green" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-check"></i></span>
+																				@elseif($contract['status'] == 'Outstanding')
+																					<span class="text-orange" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-clock-o"></i></span>
+																				@else
+																					<span class="text-red" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-times"></i></span>
+																				@endif
+																			</td>
+																			<td style="text-align: right; width: 30px"><i class="fa fa-plus viewcontent contracts" style="cursor: pointer;"></i></td>
+																		</tr>
+																	</tbody>
+																</table>
+																<div class="col-md-12 tbodycontent">
+																	<ul class="list-unstyled">
+																		<li>
+																			<i class="fa fa-map-marker"></i> 
+																			<span data-toggle="tooltip" title="" data-original-title="{{ $contract['startlocation'] }}">
+																				<b>{{ str_limit($contract['startlocation'], 50, $end = '...') }}</b>
+																			</span>
+																		</li>
+																		<li>
+																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateIssued'] }}" title="" data-toggle="tooltip"></i> 
+																			Issued <b>{{ Carbon\Carbon::parse($contract['dateIssued'])->diffForHumans() }}</b>
+																		</li>
+																		
+																		@if(!isset($contract['dateCompleted']))
+																			<li>
+																				<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateExpired'] }}" title="" data-toggle="tooltip"></i> 
+																				Expire in <b>{{ Carbon\Carbon::parse($contract['dateExpired'])->diffForHumans() }}</b>
+																			</li>	
+																		@endif
+																		@if(isset($contract['dateCompleted']))
+																			<li>
+																				<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateCompleted'] }}" title="" data-toggle="tooltip"></i> 
+																				Completed <b>{{ Carbon\Carbon::parse($contract['dateCompleted'])->diffForHumans() }}</b>
+																			</li>
+																		@endif
+																		<li>
+																			<i class="fa fa-money"></i> 
+																			<b>{{ number_format($contract['price'], 2, '.', ' ') }}</b> isk
+																		</li>
+																		@if($contract['type'] == 'Auction')
+																			<li>
+																				<i class="fa fa-money"></i> 
+																				<b>{{ number_format($contract['buyout'], 2, '.', ' ') }}</b> isk buyout
+																			</li>
+																		@endif
+																		<li> <i class="fa fa-paperclip"></i> Contents
+																			<ul>
+																				@foreach($contract['contents'] as $content)
+																					<li style="list-style:none;">
+																						<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																						{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}
+																					</li>
+																				@endforeach
+																			</ul>
+																		</li>
+																	</ul>
+																</div><!-- ./col-md-12 -->
+															@endforeach
+														</div><!-- ./col-md-12 -->
+													</div><!-- ./row -->
+												</div><!-- ./box-body -->
+											</div><!-- ./box -->
+										</div> <!-- ./col-md-12 -->
+                                	</div><!-- ./row -->
+                                </div><!-- /.box-body -->
+                            </div><!-- ./box -->
+		                </div> <!-- ./col-md-12 -->
+		            </div> <!-- ./row -->
+	            </div><!-- /.tab-pane -->
 	        </div><!-- /.tab-content -->
 	    </div><!-- nav-tabs-custom -->
-	</div>    
-</div>
+	</div><!-- ./col-md-12 -->  
+</div><!-- ./row -->
 @stop
 
 @section('javascript')
@@ -907,8 +1152,15 @@
 	$(".tbodycontent").hide(); 
 	// on button click. Not very clean to add a fake class.. TODO: Think another way to do this
 	$(".viewcontent").on("click", function( event ){ 
-		// get the tbody tag direct after the button
-		var contents = $(this).closest( "tbody").next( "tbody" ); 
+		// get the tag direct after the button
+		if($(this).hasClass('contracts')){
+			// if we are in Contracts view, we check the next Div Tag
+			var contents = $(this).closest( "table").next( "div" ); 
+		} else {
+			// if we are in Asset view, we check the next Tbody tag
+			var contents = $(this).closest( "tbody").next( "tbody" ); 
+		}
+		
 		// Show or hide
 		contents.toggle();
 
@@ -964,6 +1216,42 @@
 			options.series[0].data = deltas;
 
 			var chart = new Highcharts.Chart(options);
+		});
+	});
+	$( document ).ready(function() {
+		var items = [];
+		var arrays = [], size = 250;
+
+		$('[rel="id-to-name"]').each( function(){
+		//add item to array
+			items.push( $(this).text() );
+		});
+
+		var items = $.unique( items );
+
+		while (items.length > 0)
+			arrays.push(items.splice(0, size));
+
+		$.each(arrays, function( index, value ) {
+
+			$.ajax({
+				type: 'POST',
+				url: "{{ action('HelperController@postResolveNames') }}",
+				data: {
+					'ids': value.join(',')
+				},
+				success: function(result){
+					$.each(result, function(id, name) {
+
+						$("span:contains('" + id + "')").html(name);
+					})
+				},
+				error: function(xhr, textStatus, errorThrown){
+					console.log(xhr);
+					console.log(textStatus);
+					console.log(errorThrown);
+				}
+			});
 		});
 	});
 </script>

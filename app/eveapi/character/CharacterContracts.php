@@ -89,6 +89,7 @@ class Contracts extends BaseApi {
 					$new_data->contractID = $contract->contractID;
 					$new_data->issuerID = $contract->issuerID;
 					$new_data->issuerCorpID = $contract->issuerCorpID;
+					$new_data->assigneeID = $contract->assigneeID;
 					$new_data->acceptorID = $contract->acceptorID;
 					$new_data->startStationID = $contract->startStationID;
 					$new_data->endStationID = $contract->endStationID;
@@ -130,10 +131,9 @@ class Contracts extends BaseApi {
 							throw $e;
 						}
 
-						// Loop over the items and save it
-						$items = new \EveCharacterContractsItems;
-
+						// Loop over the items in contracts and save it
 						foreach ($contracts_items->itemList as $item) {
+							$items = new \EveCharacterContractsItems;
 
 							$items->characterID = $characterID;
 							$items->contractID = $contract->contractID;
