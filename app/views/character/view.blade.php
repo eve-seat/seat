@@ -908,6 +908,7 @@
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
                                 	<div class="row">
+										{{-- Building box for courier contracts --}}
 										<div class="col-md-6">
 											<div class="box box-solid box-primary">
 												<div class="box-header">
@@ -930,6 +931,7 @@
 																	</tr>
 																</tbody>
 															</table>
+															{{-- Loop over contracts courier and display --}}
 															@foreach ($contractsCourier as $contract)
 																<table class="table table-hover table-condensed">
 																	<tbody style="border-top:0px solid #FFF">
@@ -968,6 +970,7 @@
 																		</tr>
 																	</tbody>
 																</table>
+																{{-- Add additionnal information for the contracts and give a specific class (tbodycontent) for toggle it --}}
 																<div class="col-md-12 tbodycontent">
 																	<ul class="list-unstyled">
 																		<li>
@@ -986,26 +989,27 @@
 																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateIssued'] }}" title="" data-toggle="tooltip"></i> 
 																			Issued <b>{{ Carbon\Carbon::parse($contract['dateIssued'])->diffForHumans() }}</b>
 																		</li>
-																		
+																		{{-- Add a conditionnal check. If a contract is not completed we show the expiration date else nothing --}}
 																		@if(!isset($contract['dateCompleted']))
 																		<li>
 																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateExpired'] }}" title="" data-toggle="tooltip"></i> 
 																			Expire in <b>{{ Carbon\Carbon::parse($contract['dateExpired'])->diffForHumans() }}</b>
 																		</li>	
 																		@endif
+																		{{-- If a contract is accepted we show the date else nothing --}}
 																		@if(isset($contract['dateAccepted']))
 																		<li>
 																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateAccepted'] }}" title="" data-toggle="tooltip"></i> 
 																			Accepted <b>{{ Carbon\Carbon::parse($contract['dateAccepted'])->diffForHumans() }}</b>
 																		</li>
 																		@endif
+																		{{-- If a contract is completed we show the date else nothing --}}
 																		@if(isset($contract['dateCompleted']))
 																		<li>
 																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateCompleted'] }}" title="" data-toggle="tooltip"></i> 
 																			Completed <b>{{ Carbon\Carbon::parse($contract['dateCompleted'])->diffForHumans() }}</b>
 																		</li>
 																		@endif
-																		
 																		<li>
 																			<i class="fa fa-money"></i> 
 																			<b>{{ number_format($contract['reward'], 2, '.', ' ') }}</b> isk in reward
@@ -1022,7 +1026,7 @@
 												</div><!-- ./box-body -->
 											</div><!-- ./box -->
 										</div> <!-- ./col-md-12 -->
-										
+										{{-- Building box for other contracts like Itemexchange and auction --}}
 										<div class="col-md-6">
 											<div class="box box-solid box-primary">
 												<div class="box-header">
@@ -1045,6 +1049,7 @@
 																	</tr>
 																</tbody>
 															</table>
+															{{-- Loop over other contracts and display --}}
 															@foreach ($contractsOther as $contract)
 																<table class="table table-hover table-condensed">
 																	<tbody style="border-top:0px solid #FFF">
@@ -1068,6 +1073,7 @@
 																				<span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
 																			</td>
 																			<td>{{ $contract['type'] }}</td>
+																			{{-- Check the status and display icon for this status --}}
 																			<td style="width: 30px">
 																				@if($contract['status'] == 'Completed')
 																					<span class="text-green" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-check"></i></span>
@@ -1081,6 +1087,7 @@
 																		</tr>
 																	</tbody>
 																</table>
+																{{-- Add additionnal information for the contracts and give a specific class (tbodycontent) for toggle it --}}
 																<div class="col-md-12 tbodycontent">
 																	<ul class="list-unstyled">
 																		<li>
@@ -1093,13 +1100,14 @@
 																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateIssued'] }}" title="" data-toggle="tooltip"></i> 
 																			Issued <b>{{ Carbon\Carbon::parse($contract['dateIssued'])->diffForHumans() }}</b>
 																		</li>
-																		
+																		{{-- If the contract is not completed, we display the expiration date else nothing --}}
 																		@if(!isset($contract['dateCompleted']))
 																			<li>
 																				<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateExpired'] }}" title="" data-toggle="tooltip"></i> 
 																				Expire in <b>{{ Carbon\Carbon::parse($contract['dateExpired'])->diffForHumans() }}</b>
 																			</li>	
 																		@endif
+																		{{-- If the contract is completed we display the date --}}
 																		@if(isset($contract['dateCompleted']))
 																			<li>
 																				<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateCompleted'] }}" title="" data-toggle="tooltip"></i> 
@@ -1110,22 +1118,27 @@
 																			<i class="fa fa-money"></i> 
 																			<b>{{ number_format($contract['price'], 2, '.', ' ') }}</b> isk
 																		</li>
+																		{{-- If the contract is an auction we display the buyout price --}}
 																		@if($contract['type'] == 'Auction')
 																			<li>
 																				<i class="fa fa-money"></i> 
 																				<b>{{ number_format($contract['buyout'], 2, '.', ' ') }}</b> isk buyout
 																			</li>
 																		@endif
-																		<li> <i class="fa fa-paperclip"></i> Contents
-																			<ul>
-																				@foreach($contract['contents'] as $content)
-																					<li style="list-style:none;">
-																						<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
-																						{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}
-																					</li>
-																				@endforeach
-																			</ul>
-																		</li>
+																		{{-- Check if contract has contents --}}
+																		@if(isset($contract['contents']) && count($contract['contents']) > 0)
+																			<li> <i class="fa fa-paperclip"></i> Contents
+																				<ul>
+																					{{-- Loop over contents and display item in contract --}}
+																					@foreach($contract['contents'] as $content)
+																						<li style="list-style:none;">
+																							<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																							{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}
+																						</li>
+																					@endforeach
+																				</ul>
+																			</li>
+																		@endif
 																	</ul>
 																</div><!-- ./col-md-12 -->
 															@endforeach
