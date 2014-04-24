@@ -68,24 +68,32 @@ class Helpers {
 	|--------------------------------------------------------------------------
 	|
 	| Format a number to condesed format with suffix
-	| 
 	|
 	*/
 	
-	public static function formatBigNumber($n) {
+	public static function formatBigNumber($number) {
+
         // first strip any formatting;
-        $n = (0+str_replace(",","",$n));
+        $number = (0 + str_replace(',', '', $number));
        
         // is this a number?
-        if(!is_numeric($n)) return false;
+        if(!is_numeric($number))
+        	return false;
        
         // now filter it;
-        if($n>1000000000000) return round(($n/1000000000000),1).'t';
-        else if($n>1000000000) return round(($n/1000000000),1).'b';
-        else if($n>1000000) return round(($n/1000000),1).'m';
-        else if($n>1000) return round(($n/1000),1).'k';
+        if($number > 1000000000000)
+        	return round(($number / 1000000000000), 1) . 't';
+
+        else if($number > 1000000000)
+        	return round(($number / 1000000000), 1) . 'b';
+
+        else if($number > 1000000)
+        	return round(($number / 1000000), 1) . 'm';
+
+        else if($number > 1000)
+        	return round(($number / 1000), 1) . 'k';
        
-        return number_format($n);
+        return number_format($number);
     }
 	
 	/*
@@ -106,14 +114,21 @@ class Helpers {
 	
 	public static function generateEveImage($id, $size) {
 	
- 		if($id > 90000000 && $id < 98000000){
-			return 'http://image.eveonline.com/Character/'.$id.'_'.$size.'.jpg';
-		} elseif($id > 98000000 && $id < 99000000){
-			return 'http://image.eveonline.com/Corporation/'.$id.'_'.$size.'.png';
-		} elseif($id > 99000000 && $id < 100000000){
-			return 'http://image.eveonline.com/Alliance/'.$id.'_'.$size.'.png';
+ 		if($id > 90000000 && $id < 98000000) {
+
+			return 'http://image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
+
+		} elseif($id > 98000000 && $id < 99000000) {
+
+			return 'http://image.eveonline.com/Corporation/' . $id . '_' . $size . '.png';
+
+		} elseif($id > 99000000 && $id < 100000000) {
+
+			return 'http://image.eveonline.com/Alliance/' . $id . '_' . $size . '.png';
+
 		} else {
-			return 'http://image.eveonline.com/Character/'.$id.'_'.$size.'.jpg';
+
+			return 'http://image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
 		}
 	}
 }

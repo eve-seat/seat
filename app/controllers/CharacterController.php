@@ -161,7 +161,7 @@ class CharacterController extends BaseController {
 			array($characterID)
 		);
 		
-		// Query Asset content from character_assetlist_contents DB and sum the quantity for not getting a long list of item
+		// Get assets contents and sum the quantity
 		$assets_contents = DB::table(DB::raw('character_assetlist_contents as a'))
 			->select(DB::raw('*'), DB::raw('SUM(a.quantity) as sumquantity'))
 			->leftJoin('invTypes', 'a.typeID', '=', 'invTypes.typeID')
@@ -170,28 +170,32 @@ class CharacterController extends BaseController {
 			->groupBy(DB::raw('a.itemID, a.typeID'))
 			->get();
 		
-		// Lastly, create an array that is easy to loop over in the template to display
-		// the data
-		$assets_List = array();
-		$assets_Count = 0; //start counting item
+		// Create an array that is easy to loop over in the template to display the data
+		$assets_list = array();
+		$assets_count = 0; //start counting items
+
 		foreach ($assets as $key => $value) {
-			$assets_List[$value->location][$value->itemID] =  array(
+
+			$assets_list[$value->location][$value->itemID] =  array(
 				'quantity' => $value->quantity,
 				'typeID' => $value->typeID,
 				'typeName' => $value->typeName,
 				'groupName' => $value->groupName
 			);
-			$assets_Count++;
-			foreach( $assets_contents as $contents){
-				if ($value->itemID == $contents->itemID){ // check what parent content item has
+			$assets_count++;
+
+			foreach( $assets_contents as $contents) {
+
+				if ($value->itemID == $contents->itemID) { // check what parent content item has
+
 					// create a sub array 'contents' and put content item info in
-					$assets_List[$value->location][$contents->itemID]['contents'][] = array(
+					$assets_list[$value->location][$contents->itemID]['contents'][] = array(
 						'quantity' => $contents->sumquantity,
 						'typeID' => $contents->typeID,
 						'typeName' => $contents->typeName,
 						'groupName' => $contents->groupName
 					);
-				$assets_Count++;
+					$assets_count++;
 				}
 			}
 		}
@@ -259,7 +263,9 @@ class CharacterController extends BaseController {
 		
 		// Loops the contracts list and fill arrays
 		foreach ($contract_list as $key => $value) {
-			if($value->type == 'Courier'){
+
+			if($value->type == 'Courier') {
+
 				$contracts_courier[$value->contractID] =  array(
 					'contractID' => $value->contractID,
 					'issuerID' => $value->issuerID,
@@ -278,7 +284,9 @@ class CharacterController extends BaseController {
 					'startlocation' => $value->startlocation,
 					'endlocation' => $value->endlocation
 				);
+
 			} else {
+
 				$contracts_other[$value->contractID] =  array(
 					'contractID' => $value->contractID,
 					'issuerID' => $value->issuerID,
@@ -298,8 +306,10 @@ class CharacterController extends BaseController {
 			}
 			
 			// Loop the Item in contracts and add it to his parent
-			foreach( $contract_list_item as $contents){
-				if ($value->contractID == $contents->contractID){ // check what parent content item has
+			foreach( $contract_list_item as $contents) {
+
+				if ($value->contractID == $contents->contractID) { // check what parent content item has
+
 					// create a sub array 'contents' and put content item info in
 					$contracts_other[$value->contractID]['contents'][] = array(
 						'quantity' => $contents->quantity,
@@ -307,7 +317,6 @@ class CharacterController extends BaseController {
 						'typeName' => $contents->typeName,
 						'included' => $contents->included // for "buyer will pay" item
 					);
-				
 				}
 			}
 		}
@@ -325,8 +334,8 @@ class CharacterController extends BaseController {
 			->with('mail', $mail)
 			->with('notifications', $notifications)
 			->with('contact_list', $contact_list)
-			->with('assets_List', $assets_List)
-			->with('assets_Count', $assets_Count)
+			->with('assets_list', $assets_list)
+			->with('assets_count', $assets_count)
 			->with('contracts_courier', $contracts_courier)
 			->with('contracts_other', $contracts_other)
 			->with('assets', $assets); // leave this just in case
