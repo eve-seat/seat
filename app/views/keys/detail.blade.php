@@ -272,10 +272,10 @@
 			url: "{{ action('ApiKeyController@getUpdateJob', array('keyID' => $key_information->keyID)) }}", 
 			success: function(data) {
 				if (data.state == 'error') {
-					$("div#job-result").html('An error occured when trying to schedule a update job for this key. The applicatin logs may be able to tell you why.');
+					$("div#job-result").html('An error occured when trying to schedule a update job for this key. The application logs may be able to tell you why.');
 				}
 				if (data.state == 'existing') {
-					$("div#job-result").html('An existing queued update job for this keyID is presend with jobID ' + data.jobID);
+					$("div#job-result").html('An existing queued update job for this keyID is present with jobID ' + data.jobID);
 				}
 				if (data.state == 'new') {
 					$("div#job-result").html('A new update job was scheduled with jobID ' + data.jobID);
