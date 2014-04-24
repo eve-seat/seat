@@ -180,6 +180,7 @@
 					            <th>API</th>
 					            <th>Created</th>
 					            <th>Updated</th>
+					            <th></th>
 					        </tr>
 					        @foreach ($db_queue as $queue)
 						        <tr>
@@ -189,6 +190,7 @@
 						            <td>{{ $queue->output }}</td>
 						            <td>{{ Carbon\Carbon::parse($queue->created_at)->diffForHumans() }}</td>
 						            <td>{{ Carbon\Carbon::parse($queue->updated_at)->diffForHumans() }}</td>
+						            <td><i class="fa fa-times" id="delete-queue" a-queue-id="{{ $queue->id }}" data-toggle="tooltip" title="" data-original-title="Delete Queued Job"></i></td>
 						        </tr>
 						    @endforeach
 						</tbody>
@@ -227,6 +229,26 @@
 				}
 			});
 		});
+		
+		// Ajax Error Messages Deletion
+		$("i#delete-queue").click(function() {
+
+			// Start rotating the icom indicating loading
+			$(this).addClass('fa-spin');
+
+			// Set the parent variable
+			var parent = $(this).parent().parent();
+
+			// Call the ajax and remove the row from the dom
+			$.ajax({
+				type: 'get',
+				url: "{{ action('QueueController@getDeleteQueuedJob') }}/" + $(this).attr('a-queue-id'),
+				success: function() {
+					parent.remove();
+				}
+			});
+		});
+
 
 		// variable to hold request
 		var request;
