@@ -98,4 +98,23 @@ class QueueController extends BaseController {
 
 		return Response::json();
 	}
+	
+		/*
+	|--------------------------------------------------------------------------
+	| getDeleteQueuedJob()
+	|--------------------------------------------------------------------------
+	|
+	| Removes a Job record that is in a queued state
+	|
+	*/
+
+	public function getDeleteQueuedJob($id)
+	{
+
+		\SeatQueueInformation::where('status','Queued')
+			->where('id', $id)
+			->delete();
+
+		return Response::json();
+	}
 }
