@@ -274,7 +274,7 @@
 					        	<h4>Configuration:</h4>
 								<ul class="list-unstyled">
 								    <li>Use Standings From: <b><span rel="id-to-name">{{ $details->useStandingsFrom }}</span></b></li>
-								    <li>On Agression: <b> @if ($details->onAggression == 1)Yes @else No @endif</b></li>
+								    <li>On Aggression: <b> @if ($details->onAggression == 1)Yes @else No @endif</b></li>
 								    <li>On Corporation War: <b> @if ($details->onCorporationWar == 1) Yes @else No @endif</b></li>
 								    <li>Last Updated: <b> {{ $details->updated_at }}</b> ({{ Carbon\Carbon::parse($details->updated_at)->diffForHumans() }})</li>
 								</ul>
