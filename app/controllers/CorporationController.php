@@ -141,6 +141,7 @@ class CorporationController extends BaseController {
 			->leftJoin(DB::raw('account_apikeyinfo as ap'), 'k.keyID', '=', 'ap.keyID')
 			->where('cmt.corporationID', $corporationID)
 			->orderBy('cmt.name', 'asc')
+			->groupBy('cmt.characterID')
 			->get();
 
 		return View::make('corporation.membertracking.membertracking')
