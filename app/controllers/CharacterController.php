@@ -200,7 +200,118 @@ class CharacterController extends BaseController {
 		$contact_list = DB::table('character_contactlist')
 			->where('characterID', $characterID)
 			->get();
-
+		
+		// Character contract list
+		// Not a clean Query. TODO: Find another way
+		$contract_list = DB::select(
+			'SELECT *, CASE
+				when a.startStationID BETWEEN 66000000 AND 66014933 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.startStationID-6000001)
+				when a.startStationID BETWEEN 66014934 AND 67999999 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.startStationID-6000000)
+				when a.startStationID BETWEEN 60014861 AND 60014928 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.startStationID)
+				when a.startStationID BETWEEN 60000000 AND 61000000 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.startStationID)
+				when a.startStationID>=61000000 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.startStationID)
+				else (SELECT m.itemName FROM mapDenormalize AS m
+					WHERE m.itemID=a.startStationID) end
+				AS startlocation,
+				CASE
+				when a.endStationID BETWEEN 66000000 AND 66014933 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.endStationID-6000001)
+				when a.endStationID BETWEEN 66014934 AND 67999999 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.endStationID-6000000)
+				when a.endStationID BETWEEN 60014861 AND 60014928 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.endStationID)
+				when a.endStationID BETWEEN 60000000 AND 61000000 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.endStationID)
+				when a.endStationID>=61000000 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.endStationID)
+				else (SELECT m.itemName FROM mapDenormalize AS m
+					WHERE m.itemID=a.endStationID) end
+				AS endlocation 
+				FROM `character_contracts` AS a
+					WHERE a.`characterID` = ?',
+			array($characterID)
+		);
+		
+		// Character contract item
+		$contract_list_item = DB::table('character_contracts_items')
+			->leftJoin('invTypes', 'character_contracts_items.typeID', '=', 'invTypes.typeID')
+			->where('characterID', $characterID)
+			->get();
+		
+		// Create 2 array for seperate Courier and Other Contracts
+		$contracts_courier = array();
+		$contracts_other = array();
+		
+		// Loops the contracts list and fill arrays
+		foreach ($contract_list as $key => $value) {
+			if($value->type == 'Courier'){
+				$contracts_courier[$value->contractID] =  array(
+					'contractID' => $value->contractID,
+					'issuerID' => $value->issuerID,
+					'assigneeID' => $value->assigneeID,
+					'acceptorID' => $value->acceptorID,
+					'type' => $value->type,
+					'status' => $value->status,
+					'title' => $value->title,
+					'dateIssued' => $value->dateIssued,
+					'dateExpired' => $value->dateExpired,
+					'dateAccepted' => $value->dateAccepted,
+					'dateCompleted' => $value->dateCompleted,
+					'reward' => $value->reward,
+					'volume' => $value->volume,
+					'collateral' => $value->collateral,
+					'startlocation' => $value->startlocation,
+					'endlocation' => $value->endlocation
+				);
+			} else {
+				$contracts_other[$value->contractID] =  array(
+					'contractID' => $value->contractID,
+					'issuerID' => $value->issuerID,
+					'assigneeID' => $value->assigneeID,
+					'acceptorID' => $value->acceptorID,
+					'type' => $value->type,
+					'status' => $value->status,
+					'title' => $value->title,
+					'dateIssued' => $value->dateIssued,
+					'dateExpired' => $value->dateExpired,
+					'dateCompleted' => $value->dateCompleted,
+					'reward' => $value->reward, // for "Buyer will get" isk
+					'price' => $value->price,
+					'buyout' => $value->buyout,
+					'startlocation' => $value->startlocation
+				);
+			}
+			
+			// Loop the Item in contracts and add it to his parent
+			foreach( $contract_list_item as $contents){
+				if ($value->contractID == $contents->contractID){ // check what parent content item has
+					// create a sub array 'contents' and put content item info in
+					$contracts_other[$value->contractID]['contents'][] = array(
+						'quantity' => $contents->quantity,
+						'typeID' => $contents->typeID,
+						'typeName' => $contents->typeName,
+						'included' => $contents->included // for "buyer will pay" item
+					);
+				
+				}
+			}
+		}
+		
 		// Finally, give all this to the view to handle
 		return View::make('character.view')
 			->with('character', $character)
@@ -216,6 +327,8 @@ class CharacterController extends BaseController {
 			->with('contact_list', $contact_list)
 			->with('assets_List', $assets_List)
 			->with('assets_Count', $assets_Count)
+			->with('contracts_courier', $contracts_courier)
+			->with('contracts_other', $contracts_other)
 			->with('assets', $assets); // leave this just in case
 	}
 
