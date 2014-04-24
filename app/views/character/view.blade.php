@@ -56,23 +56,23 @@
                             	@if (count($other_characters) > 0)
 					                @foreach ($other_characters as $alt)
 						                <div class="row">
-											<div class="col-md-2">
-												<a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}">
-													<img src="http://image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
-												</a>
-											</div>
-											<div class="col-md-5">
-												<ul class="list-unstyled">
-													<li><b>Name: </b>{{ $alt->characterName }}</li>
-													<li><b>Corp: </b>{{ $alt->corporationName }}</li>
-													<li>
-														@if (strlen($alt->trainingEndTime) > 0)
-															<b>Training Ends: </b> {{ Carbon\Carbon::parse($alt->trainingEndTime)->diffForHumans() }}
-														@endif
-													</li>
-												</ul>
-											</div>
-										</div><!-- ./row -->
+						               		<a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}" style="color:inherit;">
+						                		<div class="col-md-2">
+											<img src="http://image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
+										</div>
+										<div class="col-md-5">
+											<ul class="list-unstyled">
+												<li><b>Name: </b>{{ $alt->characterName }}</li>
+												<li><b>Corp: </b>{{ $alt->corporationName }}</li>
+												<li>
+													@if (strlen($alt->trainingEndTime) > 0)
+														<b>Training Ends: </b> {{ Carbon\Carbon::parse($alt->trainingEndTime)->diffForHumans() }}
+													@endif
+												</li>
+											</ul>
+										</div>
+									</a>
+								</div><!-- ./row -->
 					                @endforeach
 					            @else
 					            	No other known characters on this key.

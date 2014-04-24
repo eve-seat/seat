@@ -17,9 +17,9 @@
             <ul class="nav navbar-nav">
                 <!-- Tasks: style can be found in dropdown.less -->
                 <li class="dropdown tasks-menu">
-                    <a href="{{ action('QueueController@getStatus') }}" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Errored Jobs">
-                        <i class="fa fa-exclamation"></i>
-                        <span class="label label-danger" id="error_count">0</span>
+                    <a href="{{ action('QueueController@getStatus') }}" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Queued Jobs">
+                        <i class="fa fa-truck"></i>
+                        <span class="label label-success" id="queue_count">0</span>
                     </a>
                 </li>
                 <li class="dropdown tasks-menu">
@@ -29,9 +29,9 @@
                     </a>
                 </li>
                 <li class="dropdown tasks-menu">
-                    <a href="{{ action('QueueController@getStatus') }}" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Queued Jobs">
-                        <i class="fa fa-truck"></i>
-                        <span class="label label-success" id="queue_count">0</span>
+                    <a href="{{ action('QueueController@getStatus') }}" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Errored Jobs">
+                        <i class="fa fa-exclamation"></i>
+                        <span class="label label-danger" id="error_count">0</span>
                     </a>
                 </li>
                 <!-- User Account: style can be found in dropdown.less -->
