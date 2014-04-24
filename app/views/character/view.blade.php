@@ -941,8 +941,12 @@
 																				<span rel="id-to-name">{{ $contract['issuerID'] }}</span>
 																			</td>
 																			<td style="width: 200px">
-																				<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['assigneeID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
-																				<span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
+																				@if ($contract['assigneeID'] <> 0)
+																					<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['assigneeID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+																					<span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
+																				@else
+																					Unknown Assignee
+																				@endif
 																			</td>
 																			<td>{{ $contract['type'] }}</td>
 																			<td style="width: 30px">
@@ -1057,8 +1061,12 @@
 																				<span rel="id-to-name">{{ $contract['issuerID'] }}</span>
 																			</td>
 																			<td style="width: 200px">
-																				<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['assigneeID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
-																				<span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
+																				@if ($contract['assigneeID'] <> 0)
+																					<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['assigneeID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+																					<span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
+																				@else
+																					Unknown Assignee
+																				@endif
 																			</td>
 																			<td>{{ $contract['type'] }}</td>
 																			{{-- Check the status and display icon for this status --}}
