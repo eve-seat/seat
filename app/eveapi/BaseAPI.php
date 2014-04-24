@@ -104,6 +104,8 @@ class BaseApi {
 	public static function banCall($api, $scope, $owner = 0, $accessMask = 0, $reason = null)
 	{
 
+		\Log::warning('Processing a ban request for api: ' . $api . ' scope: ' . $scope . ' owner: ' . $owner, array('src' => __CLASS__));
+
 		// Check if we should retreive the current access mask
 		if ($accessMask == 0)
 			$accessMask = \EveAccountAPIKeyInfo::where('keyID', '=', $owner)->pluck('accessMask');
@@ -111,19 +113,27 @@ class BaseApi {
 		// Generate a hash with which to ID this call
 		$hash = BaseApi::makeCallHash($api, $scope, $owner . $accessMask);
 
-		// We will give each call 2 tries. After the 2nd attempt, we actually action the ban
-		$banned = \EveBannedCall::where('hash', '=', $hash)->first();	
+		// Check the cache if a ban has been recorded
+		if (!\Cache::has('call_ban_grace_count_' . $hash)) {
 
-		// Check if a entry exists for this key
-		if (!\Cache::has('call_blacklist_' . $hash)) {
-
-			// Add the entry and return.
-			\Cache::forever('call_blacklist_' . $hash, 'blacklisted');
+			// Record the new ban, getting the grance period from the seat config and return
+			\Cache::put('call_ban_grace_count_' . $hash, 0, \Config::get('seat.ban_grace'));
 			return;
 
+		} else {
+
+			// Check if we have reached the limit for the allowed bad calls from the config
+			if (\Cache::get('call_ban_grace_count_' . $hash) < \Config::get('seat.ban_limit') - 1) {
+
+				// Add another one to the amount of failed calls and return
+				\Cache::increment('call_ban_grace_count_' . $hash);
+				return;
+			}
 		}
 
-		// We _should_ get here when the entire truth block above this fails, meaning a blacklisted entry was entered before
+		\Log::warning('Ban limit reached. Actioning ban for api: ' . $api . ' scope: ' . $scope . ' owner: ' . $owner, array('src' => __CLASS__));
+
+		// We _should_ only get here once the ban limit has been reached
 		$banned = \EveBannedCall::where('hash', '=', $hash)->first();	
 		if (!$banned)
 			$banned = new \EveBannedCall;
@@ -136,7 +146,6 @@ class BaseApi {
 		$banned->reason = $reason;
 		$banned->save();
 
-		// Log this ban
 	}
 
 	/*
