@@ -742,9 +742,7 @@
 									                <td>{{ $note->senderName }}</td>
 									                <td><b>{{ $note->description }}</b></td>
 									                <td><b>{{ str_limit($note->text, 80, $end = '...') }}</b></td>
-									                <td>
-									                	{{ HTML::linkAction('MailController@getRead', 'Permalink', array('messageID' => $message->messageID ), array('class' => 'btn btn-primary btn-xs pull-right')) }}
-									                </td>
+									                <td></td>
 									            </tr>
 											@endforeach
 
