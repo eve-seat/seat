@@ -499,6 +499,22 @@ class CorporationController extends BaseController {
 		foreach ($bay_sizes as $bay)
 			$shuffled_bays[$bay->typeID] = array('fuelBay' => $bay->capacity, 'strontBay' => $bay->valueFloat);
 
+		// When calculating *actual* silo capacity, we need to keep in mind that certain towers have bonusses
+		// to silo cargo capacity, like amarr & gallente towers do now. Get the applicable bonusses
+		$tower_bay_bonuses = DB::table('dgmTypeAttributes')
+			->select('typeID', 'valueFloat')
+			->where('attributeID', 757)		// From dgmAttributeTypes, 757 = controlTowerSiloCapacityBonus
+			->get();
+
+		// Reshuffle the tower_bay_bonuses into a workable array for the view
+		$tower_cargo_bonusses = array();
+		foreach ($tower_bay_bonuses as $bonus)
+			$tower_cargo_bonusses[$bonus->typeID] = $bonus->valueFloat;
+
+		// Not all modules are bonnussed in size. As far as I can tell, it only seems to be coupling arrays and
+		// silos that benefit from the silo bay size bonus. Set an array with these type ids
+		$cargo_size_bonusable_modules = array(14343, 17982);	// Silo, Coupling Array
+
 		// Figure out the allianceID of the corporation in question so that we can determine whether their
 		// towers are in sov systems
 		$alliance_id = DB::table('corporation_corporationsheet')
@@ -528,15 +544,26 @@ class CorporationController extends BaseController {
 
 		// Lets get all of the item locations for this corporation and sort it out into a workable
 		// array that can just be referenced and looped in the view. We will use the mapID as the
-		// key in the resulting array to be able to associate the item to a tower
+		// key in the resulting array to be able to associate the item to a tower.
+		//
+		// We will 
 		$item_locations = DB::table('corporation_assetlist_locations')
-			->where('corporationID', $corporationID)
+			->leftJoin('corporation_assetlist', 'corporation_assetlist_locations.itemID', '=', 'corporation_assetlist.itemID')
+			->leftJoin('invTypes', 'corporation_assetlist.typeID', '=', 'invTypes.typeID')
+			->where('corporation_assetlist_locations.corporationID', $corporationID)
 			->get();
 
 		// Shuffle the results
 		$shuffled_locations = array();
 		foreach ($item_locations as $location)
-			$shuffled_locations[$location->mapID][] = array('itemID' => $location->itemID, 'itemName' => $location->itemName, 'mapName' => $location->mapName);
+			$shuffled_locations[$location->mapID][] = array(
+				'itemID' => $location->itemID,
+				'typeID' => $location->typeID,
+				'typeName' => $location->typeName,
+				'itemName' => $location->itemName,
+				'mapName' => $location->mapName,
+				'capacity' => $location->capacity
+			);
 
 		// We will do a similar shuffle for the assetlist contents. First get them, and shuffle.
 		// The key for this array will be the itemID as there may be multiple 'things' in a 'thing'
@@ -548,7 +575,11 @@ class CorporationController extends BaseController {
 		// Shuffle the results
 		$shuffled_contents = array();
 		foreach ($item_contents as $contents)
-			$shuffled_contents[$contents->itemID][] = array('quantity' => $contents->quantity, 'name' => $contents->typeName);
+			$shuffled_contents[$contents->itemID][] = array(
+				'quantity' => $contents->quantity,
+				'name' => $contents->typeName,
+				'volume' => $contents->volume
+			);
 
 		// Define the tower states. See http://3rdpartyeve.net/eveapi/APIv2_Corp_StarbaseList_XML
 		$tower_states = array(
@@ -562,6 +593,8 @@ class CorporationController extends BaseController {
 		return View::make('corporation.starbase.starbase')
 			->with('starbases', $starbases)
 			->with('bay_sizes', $shuffled_bays)
+			->with('tower_cargo_bonusses', $tower_cargo_bonusses)
+			->with('cargo_size_bonusable_modules', $cargo_size_bonusable_modules)
 			->with('sov_towers', $sov_towers)
 			->with('item_locations', $shuffled_locations)
 			->with('item_contents', $shuffled_contents)

@@ -25,7 +25,6 @@
 		    		@foreach (array_chunk($starbases, (count($starbases) / 2) > 1 ? count($starbases) / 2 : 2) as $starbase)
 			    		<div class="col-md-6">
 
-
 					        <table class="table table-condensed table-hover">
 					            <tbody>
 					            	<tr>
@@ -251,7 +250,7 @@
 									                <div class="progress-bar progress-bar-primary" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
 									            </div>
 									        </td>
-									        <td><span class="badge bg-blue">{{ round((($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
+									        <td><span class="badge bg-blue pull-right">{{ round((($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
 									    </tr>
 									    <tr>
 									        <td>
@@ -263,7 +262,7 @@
 									                <div class="progress-bar progress-bar-success" style="width: {{ (($details->strontium * 3) / $bay_sizes[$details->typeID]['strontBay']) * 100 }}%"></div>
 									            </div>
 									        </td>
-									        <td><span class="badge bg-green">{{ round((($details->strontium * 3) / $bay_sizes[$details->typeID]['strontBay']) * 100,0) }}%</span></td>
+									        <td><span class="badge bg-green pull-right">{{ round((($details->strontium * 3) / $bay_sizes[$details->typeID]['strontBay']) * 100,0) }}%</span></td>
 									    </tr>
 									</tbody>
 								</table>
@@ -286,16 +285,66 @@
 								<table class="table table-condensed table-hover">
 								    <tbody>
 									    @foreach ($item_locations[$details->moonID] as $item)
-										    <tr>
-										        <td><b>{{ $item['itemName'] }}</b></td>
-										        <td>
-										        	@if (isset($item_contents[$item['itemID']]))
-											        	@foreach ($item_contents[$item['itemID']] as $contents)
-											        		<b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
-											        	@endforeach
-											        @endif
-										        </td>
-										    </tr>
+
+									    	{{-- 
+									    		a quick check is done here to ensure that the tower type id and the module type id is
+									    		not the same. there is no need to show the towers details here too as it is already
+									    		covered in the Tower Info block, together with the fuel usage information.
+
+									    		If we are not at a tower, continue
+									    	--}}
+									    	@if ($item['typeID'] <> $details->typeID)
+											    <tr>
+											        <td>
+											        	<b>{{ $item['typeName'] }}</b>
+
+											        	{{-- if the module has been given a name, show it --}}
+											        	@if ($item['typeName'] <> $item['itemName'])
+												        	<small class="text-muted">{{ $item['itemName'] }}</small>
+												       	@endif
+												    </td>
+											        <td>
+											        	{{-- 
+											        		Here we will count the total m3 for everything in this module.
+											        		We will start off by making the total_size 0, and then adding the
+											        		volume of the item inside the module to it.
+											        	--}}
+											        	{{-- */ $total_size = 0 /* --}}
+											        	@if (isset($item_contents[$item['itemID']]))
+
+												        	@foreach ($item_contents[$item['itemID']] as $contents)
+
+												        		<b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
+												        		{{-- add the volume --}}
+												        		{{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}
+												        	@endforeach
+												        @endif
+
+												       	{{-- check if there is a capacity larger that 0. Some modules, like hardners have 0 capacity --}} 
+											        	@if ($item['capacity'] > 0)
+
+											        		{{-- 
+											        			Some Silos have bonusses to silo capacity, so lets take that into account here.
+											        			If a silo/coupling array is bonusable, add the bonus to the total capacity
+											        		--}}
+											        		@if (array_key_exists($details->typeID, $tower_cargo_bonusses) && (in_array($item['typeID'], $cargo_size_bonusable_modules)))
+
+											        			<span class="badge pull-right">
+												        			{{ round(($total_size / ( $item['capacity'] *= (1 + $tower_cargo_bonusses[$details->typeID] / 100))) * 100) }}%
+												        		</span>
+
+											        		@else 	{{-- We have a non bonused module --}}
+
+											        			<span class="badge pull-right">
+														        	{{ $percentage = round( ($total_size / $item['capacity']) * 100) }}%
+														        </span>
+
+														    @endif
+												        @endif											        
+											        </td>
+											    </tr>
+											@endif
+
 										@endforeach
 									</tbody>
 								</table>
