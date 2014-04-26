@@ -49,7 +49,8 @@ class CorporationController extends BaseController {
 
 		return View::make('corporation.walletjournal.walletjournal')
 			->with('wallet_journal', $wallet_journal)
-			->with('corporation_name', $corporation_name);
+			->with('corporation_name', $corporation_name)
+			->with('corporationID', $corporationID);
 	}
 
 	/*
@@ -773,5 +774,28 @@ class CorporationController extends BaseController {
 			->with('ledgers', $ledgers)
 			->with('bounty_tax', $bounty_tax)
 			->with('pi_tax', $pi_tax);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getWalletDelta()
+	|--------------------------------------------------------------------------
+	|
+	| Calculate the daily wallet balance delta for the last 30 days and return
+	| the results as a json response
+	|
+	*/
+
+	public function getWalletDelta($corporationID)
+	{
+
+		$wallet_daily_delta = DB::table('corporation_walletjournal')
+			->select(DB::raw('DATE(`date`) as day, IFNULL( SUM( amount ), 0 ) AS daily_delta'))
+			->whereRaw('date BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) and NOW()')
+			->where('corporationID', $corporationID)
+			->groupBy('day')
+			->get();
+
+		return Response::json($wallet_daily_delta);
 	}
 }

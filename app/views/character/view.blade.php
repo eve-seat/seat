@@ -93,14 +93,14 @@
 	    <div class="nav-tabs-custom">
 	        <ul class="nav nav-tabs">
 	            <li class="active"><a href="#character_sheet" data-toggle="tab">Character Sheet</a></li>
-	            <li class=""><a href="#character_skills" data-toggle="tab">Character Skills</a></li>
-	            <li class=""><a href="#wallet_journal" data-toggle="tab">Wallet Journal</a></li>
-	            <li class=""><a href="#wallet_transactions" data-toggle="tab">Wallet Transactions</a></li>
-	            <li class=""><a href="#mail" data-toggle="tab">Mail</a></li>
-	            <li class=""><a href="#notifications" data-toggle="tab">Notifications</a></li>
-	            <li class=""><a href="#assets" data-toggle="tab">Assets</a></li>
-	            <li class=""><a href="#contacts" data-toggle="tab">Contacts</a></li>
-	            <li class=""><a href="#contracts" data-toggle="tab">Contracts</a></li>
+	            <li><a href="#character_skills" data-toggle="tab">Character Skills</a></li>
+	            <li id="journal_graph"><a href="#wallet_journal" data-toggle="tab">Wallet Journal</a></li>
+	            <li><a href="#wallet_transactions" data-toggle="tab">Wallet Transactions</a></li>
+	            <li><a href="#mail" data-toggle="tab">Mail</a></li>
+	            <li><a href="#notifications" data-toggle="tab">Notifications</a></li>
+	            <li><a href="#assets" data-toggle="tab">Assets</a></li>
+	            <li><a href="#contacts" data-toggle="tab">Contacts</a></li>
+	            <li><a href="#contracts" data-toggle="tab">Contracts</a></li>
 	            <li class="pull-right">
 	            	<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" class="text-muted" data-toggle="tooltip" title="" data-placement="top" data-original-title="API Key Details">
 	            		<i class="fa fa-gear"></i>
@@ -1233,7 +1233,8 @@
 		}
 	});
 	
-	$(function () {
+	// $(function () {
+	$("li#journal_graph").click(function() {
 		// TODO: Fix this stupid graphs width
 		var options = { chart: {
 			renderTo: 'chart',
@@ -1274,6 +1275,10 @@
 			options.series[0].data = deltas;
 
 			var chart = new Highcharts.Chart(options);
+
+			// Trigger a fake resize to get the chart to calculate the width
+			// correctly
+			$(window).trigger('resize');
 		});
 	});
 	$( document ).ready(function() {
