@@ -246,7 +246,7 @@
 									        	Fuel Blocks
 									        </td>
 									        <td>
-									            <div class="progress xs">
+									            <div class="progress">
 									                <div class="progress-bar progress-bar-primary" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
 									            </div>
 									        </td>
@@ -258,7 +258,7 @@
 									        	Strontium
 									        </td>
 									        <td>
-									            <div class="progress xs">
+									            <div class="progress">
 									                <div class="progress-bar progress-bar-success" style="width: {{ (($details->strontium * 3) / $bay_sizes[$details->typeID]['strontBay']) * 100 }}%"></div>
 									            </div>
 									        </td>
