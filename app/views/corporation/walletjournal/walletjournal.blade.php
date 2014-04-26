@@ -25,6 +25,7 @@
                             <th>Type</th>
                             <th>Owner1 Name</th>
                             <th>Owner2 Name</th>
+                            <th>ArgName 1</th>
                             <th>Amount</th>
                             <th>Balance</th>
                         </tr>
@@ -37,8 +38,15 @@
                                 </td>
                                 <td>{{ $e->description }}</td>
                                 <td>{{ $e->refTypeName }}</td>
-                                <td>{{ $e->ownerName1 }}</td>
-                                <td>{{ $e->ownerName2 }}</td>
+                                <td>
+                                    <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->ownerID1, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                                    {{ $e->ownerName1 }}
+                                </td>
+                                <td>
+                                    <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->ownerID2, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                                    {{ $e->ownerName2 }}
+                                </td>
+                                <td>{{ $e->argName1 }}</td>
                                 <td>
                                 	@if ($e->amount < 0)
                                     	<span class="text-red">{{ number_format($e->amount, 2, '.', ' ') }}</span>
