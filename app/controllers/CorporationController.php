@@ -637,6 +637,7 @@ class CorporationController extends BaseController {
 		// Get the month/year data
 		$available_dates = DB::table('corporation_walletjournal')
 			->select(DB::raw('DISTINCT(MONTH(date)) AS month, YEAR(date) AS year'))
+			->where('corporationID', $corporationID)
 			->orderBy(DB::raw('year, month'), 'desc')
 			->get();
 
@@ -652,18 +653,28 @@ class CorporationController extends BaseController {
 		// Current Corporation Wallet Balances
 		$wallet_balances = DB::table('corporation_accountbalance')
 			->join('corporation_corporationsheet_walletdivisions', 'corporation_accountbalance.accountKey', '=', 'corporation_corporationsheet_walletdivisions.accountKey')
+			->where('corporation_corporationsheet_walletdivisions.corporationID', $corporationID)
 			->where('corporation_accountbalance.corporationID', $corporationID)
 			->get();
 
-		// The overall corporation ledger
-		$ledger = DB::table('corporation_walletjournal')
-			->select(DB::raw('refTypeName, SUM(amount) total'))
-			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
-			->leftJoin('corporation_corporationsheet_walletdivisions', 'corporation_walletjournal.accountKey', '=', 'corporation_corporationsheet_walletdivisions.accountKey') // such name much wow
-			->where('corporation_walletjournal.corporationID', $corporationID)
-			->groupBy('corporation_walletjournal.refTypeID')
-			->orderBy('eve_reftypes.refTypeName', 'asc')
-			->get();
+		// The overall corporation ledger. We will loop over the wallet divisions
+		// and get the ledger calculated for each
+		$ledgers = array();
+
+		foreach (EveCorporationCorporationSheetWalletDivisions::where('corporationID', $corporationID)->get() as $division) {
+
+			$ledgers[$division->accountKey] = array(
+				'divisionName' => $division->description,
+				'ledger' => DB::table('corporation_walletjournal')
+					->select('refTypeName', DB::raw('sum(`amount`) `total`'))
+					->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+					->where('corporation_walletjournal.accountKey', $division->accountKey)
+					->where('corporation_walletjournal.corporationID', $corporationID)
+					->groupBy('corporation_walletjournal.refTypeID')
+					->orderBy('refTypeName')
+					->get()
+			);
+		}
 
 		// Tax contributions
 		$bounty_tax = DB::table('corporation_walletjournal')
@@ -687,7 +698,7 @@ class CorporationController extends BaseController {
 			->with('corporationID', $corporationID)
 			->with('ledger_dates', $ledger_dates)
 			->with('wallet_balances', $wallet_balances)
-			->with('ledger', $ledger)
+			->with('ledgers', $ledgers)
 			->with('bounty_tax', $bounty_tax)
 			->with('pi_tax', $pi_tax);
 	}
@@ -713,19 +724,26 @@ class CorporationController extends BaseController {
 		$month = Carbon\Carbon::parse($date)->month;
 		$year = Carbon\Carbon::parse($date)->year;
 
-		// The overall corporation ledger
-		$ledger = DB::table('corporation_walletjournal')
-			->select(DB::raw('refTypeName, SUM(amount) total'))
-			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
-			->leftJoin('corporation_corporationsheet_walletdivisions', 'corporation_walletjournal.accountKey', '=', 'corporation_corporationsheet_walletdivisions.accountKey') // such name much wow
-			->where(DB::raw('MONTH(date)'), $month)
-			->where(DB::raw('YEAR(date)'), $year)
-			->where('corporation_walletjournal.corporationID', $corporationID)
-			->groupBy('corporation_walletjournal.refTypeID')
-			->orderBy('eve_reftypes.refTypeName', 'asc')
-			->get();
+		// The overall corporation ledger. We will loop over the wallet divisions
+		// and get the ledger calculated for each
+		$ledgers = array();
 
-			// WHERE MONTH(`date`) = :month AND YEAR(`date`)
+		foreach (EveCorporationCorporationSheetWalletDivisions::where('corporationID', $corporationID)->get() as $division) {
+
+			$ledgers[$division->accountKey] = array(
+				'divisionName' => $division->description,
+				'ledger' => DB::table('corporation_walletjournal')
+					->select('refTypeName', DB::raw('sum(`amount`) `total`'))
+					->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+					->where('corporation_walletjournal.accountKey', $division->accountKey)
+					->where(DB::raw('MONTH(date)'), $month)
+					->where(DB::raw('YEAR(date)'), $year)
+					->where('corporation_walletjournal.corporationID', $corporationID)
+					->groupBy('corporation_walletjournal.refTypeID')
+					->orderBy('refTypeName')
+					->get()
+			);
+		}
 
 		// Tax contributions
 		$bounty_tax = DB::table('corporation_walletjournal')
@@ -752,7 +770,7 @@ class CorporationController extends BaseController {
 		return View::make('corporation.ledger.ajax.ledgermonth')
 			->with('corporationID', $corporationID)
 			->with('date', $date)
-			->with('ledger', $ledger)
+			->with('ledgers', $ledgers)
 			->with('bounty_tax', $bounty_tax)
 			->with('pi_tax', $pi_tax);
 	}
