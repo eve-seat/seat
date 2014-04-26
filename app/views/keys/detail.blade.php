@@ -230,6 +230,7 @@
     							        	<i class="fa fa-bullhorn pull-right" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ $ban->reason }}" data-trigger="hover"></i>
     							        @endif
     						        </td>
+                                    <td><i class="fa fa-times" id="remove-ban" a-ban-id="{{ $ban->id }}" data-toggle="tooltip" title="" data-original-title="Remove Ban"></i></td>
     						    </tr>
     						@endforeach
     					</tbody>
@@ -271,10 +272,10 @@
 			url: "{{ action('ApiKeyController@getUpdateJob', array('keyID' => $key_information->keyID)) }}", 
 			success: function(data) {
 				if (data.state == 'error') {
-					$("div#job-result").html('An error occured when trying to schedule a update job for this key. The applicatin logs may be able to tell you why.');
+					$("div#job-result").html('An error occured when trying to schedule a update job for this key. The application logs may be able to tell you why.');
 				}
 				if (data.state == 'existing') {
-					$("div#job-result").html('An existing queued update job for this keyID is presend with jobID ' + data.jobID);
+					$("div#job-result").html('An existing queued update job for this keyID is present with jobID ' + data.jobID);
 				}
 				if (data.state == 'new') {
 					$("div#job-result").html('A new update job was scheduled with jobID ' + data.jobID);
@@ -285,5 +286,24 @@
 			}
 		});
 	});
+
+    // Ajax Ban Removal
+    $("i#remove-ban").click(function() {
+
+        // Start rotating the icom indicating loading
+        $(this).addClass('fa-spin');
+
+        // Set the parent variable
+        var parent = $(this).parent().parent();
+
+        // Call the ajax and remove the row from the dom
+        $.ajax({
+            type: 'get',
+            url: "{{ action('ApiKeyController@getRemoveBan') }}/" + $(this).attr('a-ban-id'),
+            success: function() {
+                parent.remove();
+            }
+        });
+    });
 </script>
 @stop

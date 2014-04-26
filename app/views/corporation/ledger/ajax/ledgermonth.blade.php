@@ -17,28 +17,62 @@
 					</div>
 			    </div>
 			    <div class="box-body no-padding">
-					<table class="table table-condensed table-hover">
-					    <tbody>
-					    	<tr>
-						        <th>Transaction Type</th>
-						        <th>Amount</th>
-						    </tr>
-						    @foreach ($ledger as $entry)
-							    <tr>
-							        <td>{{ $entry->refTypeName }}</td>
-							        <td>
-							        	<b>
-							        	@if ($entry->total < 0)
-								        	<span class="text-red">{{ number_format($entry->total, 2, '.', ' ') }} ISK</span>
-								        @else
-								        	{{ number_format($entry->total, 2, '.', ' ') }} ISK
-								        @endif
-									    </b>
-							        </td>
-							    </tr>
+			    	
+				    {{-- account ledgers --}}
+					<div class="nav-tabs-custom">
+					    <ul class="nav nav-tabs">
+					    	<br>
+
+					    	{{--*/ $active = 1 /* Would LOVE a way to do this more cleanly!--}}
+					    	@foreach ($ledgers as $accountKey => $ledger)
+					    		@if ($active == 1)
+							        <li class="active"><a href="#ledger{{ $accountKey }}" data-toggle="tab">{{ $ledger['divisionName'] }}</a></li>
+							        {{--*/ $active = 0 /*--}}
+							    @else
+							        <li><a href="#ledger{{ $accountKey }}" data-toggle="tab">{{ $ledger['divisionName'] }}</a></li>
+							    @endif
 						    @endforeach
-						</tbody>
-					</table>
+					    </ul>
+					    <div class="tab-content">
+
+					    	{{--*/ $active = 1 /* Would LOVE a way to do this more cleanly!--}}
+					    	@foreach ($ledgers as $accountKey => $ledger)
+
+					    		@if ($active == 1)
+							        <div class="tab-pane active" id="ledger{{ $accountKey }}">
+						        	{{--*/ $active = 0 /*--}}
+							    @else
+							        <div class="tab-pane" id="ledger{{ $accountKey }}">
+							    @endif
+									<table class="table table-condensed table-hover">
+									    <tbody>
+									    	<tr>
+										        <th>Transaction Type</th>
+										        <th>Amount</th>
+										    </tr>
+
+										    @foreach ($ledger['ledger'] as $entry)
+											    <tr>
+											        <td>{{ $entry->refTypeName }}</td>
+											        <td>
+											        	<b>
+											        	@if ($entry->total < 0)
+												        	<span class="text-red">{{ number_format($entry->total, 2, '.', ' ') }} ISK</span>
+												        @else
+												        	{{ number_format($entry->total, 2, '.', ' ') }} ISK
+												        @endif
+													    </b>
+											        </td>
+											    </tr>
+										    @endforeach
+										</tbody>
+									</table>
+						        </div><!-- /.tab-pane -->
+						    @endforeach
+
+					    </div><!-- /.tab-content -->
+					</div>
+
 			    </div><!-- /.box-body -->
 			</div> <!-- ./box -->
         </div><!-- /.tab-pane -->

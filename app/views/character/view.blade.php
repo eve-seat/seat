@@ -4,6 +4,8 @@
 
 @section('page_content')
 
+{{-- open a empty form to get a crsf token --}}
+{{ Form::open(array()) }} {{ Form::close() }}
 
 <div class="row">
     <div class="col-md-12">
@@ -54,23 +56,23 @@
                             	@if (count($other_characters) > 0)
 					                @foreach ($other_characters as $alt)
 						                <div class="row">
-											<div class="col-md-2">
-												<a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}">
-													<img src="http://image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
-												</a>
-											</div>
-											<div class="col-md-5">
-												<ul class="list-unstyled">
-													<li><b>Name: </b>{{ $alt->characterName }}</li>
-													<li><b>Corp: </b>{{ $alt->corporationName }}</li>
-													<li>
-														@if (strlen($alt->trainingEndTime) > 0)
-															<b>Training Ends: </b> {{ Carbon\Carbon::parse($alt->trainingEndTime)->diffForHumans() }}
-														@endif
-													</li>
-												</ul>
-											</div>
-										</div><!-- ./row -->
+						               		<a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}" style="color:inherit;">
+						                		<div class="col-md-2">
+											<img src="http://image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
+										</div>
+										<div class="col-md-5">
+											<ul class="list-unstyled">
+												<li><b>Name: </b>{{ $alt->characterName }}</li>
+												<li><b>Corp: </b>{{ $alt->corporationName }}</li>
+												<li>
+													@if (strlen($alt->trainingEndTime) > 0)
+														<b>Training Ends: </b> {{ Carbon\Carbon::parse($alt->trainingEndTime)->diffForHumans() }}
+													@endif
+												</li>
+											</ul>
+										</div>
+									</a>
+								</div><!-- ./row -->
 					                @endforeach
 					            @else
 					            	No other known characters on this key.
@@ -91,13 +93,14 @@
 	    <div class="nav-tabs-custom">
 	        <ul class="nav nav-tabs">
 	            <li class="active"><a href="#character_sheet" data-toggle="tab">Character Sheet</a></li>
-	            <li class=""><a href="#character_skills" data-toggle="tab">Character Skills</a></li>
-	            <li class=""><a href="#wallet_journal" data-toggle="tab">Wallet Journal</a></li>
-	            <li class=""><a href="#wallet_transactions" data-toggle="tab">Wallet Transactions</a></li>
-	            <li class=""><a href="#mail" data-toggle="tab">Mail</a></li>
-	            <li class=""><a href="#notifications" data-toggle="tab">Notifications</a></li>
-	            <li class=""><a href="#assets" data-toggle="tab">Assets</a></li>
-	            <li class=""><a href="#contacts" data-toggle="tab">Contacts</a></li>
+	            <li><a href="#character_skills" data-toggle="tab">Character Skills</a></li>
+	            <li id="journal_graph"><a href="#wallet_journal" data-toggle="tab">Wallet Journal</a></li>
+	            <li><a href="#wallet_transactions" data-toggle="tab">Wallet Transactions</a></li>
+	            <li><a href="#mail" data-toggle="tab">Mail</a></li>
+	            <li><a href="#notifications" data-toggle="tab">Notifications</a></li>
+	            <li><a href="#assets" data-toggle="tab">Assets</a></li>
+	            <li><a href="#contacts" data-toggle="tab">Contacts</a></li>
+	            <li><a href="#contracts" data-toggle="tab">Contracts</a></li>
 	            <li class="pull-right">
 	            	<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" class="text-muted" data-toggle="tooltip" title="" data-placement="top" data-original-title="API Key Details">
 	            		<i class="fa fa-gear"></i>
@@ -565,6 +568,7 @@
 	                                            <th>Type</th>
 	                                            <th>Owner1 Name</th>
 	                                            <th>Owner2 Name</th>
+	                                            <th>ArgName 1</th>
 	                                            <th>Amount</th>
 	                                            <th>Balance</th>
 	                                        </tr>
@@ -576,8 +580,15 @@
 		                                            	</span>
 		                                            </td>
 		                                            <td>{{ $e->refTypeName }}</td>
-		                                            <td>{{ $e->ownerName1 }}</td>
-		                                            <td>{{ $e->ownerName2 }}</td>
+		                                            <td>
+		                                            	<img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->ownerID1, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+		                                            	{{ $e->ownerName1 }}
+		                                            </td>
+		                                            <td>
+		                                            	<img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->ownerID2, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+		                                            	{{ $e->ownerName2 }}
+		                                            </td>
+		                                            <td>{{ $e->argName1 }}</td>
 		                                            <td>{{ number_format($e->amount, 2, '.', ' ') }}</td>
 		                                            <td>{{ number_format($e->balance, 2, '.', ' ') }}</td>
 		                                        </tr>
@@ -739,9 +750,7 @@
 									                <td>{{ $note->senderName }}</td>
 									                <td><b>{{ $note->description }}</b></td>
 									                <td><b>{{ str_limit($note->text, 80, $end = '...') }}</b></td>
-									                <td>
-									                	{{ HTML::linkAction('MailController@getRead', 'Permalink', array('messageID' => $message->messageID ), array('class' => 'btn btn-primary btn-xs pull-right')) }}
-									                </td>
+									                <td></td>
 									            </tr>
 											@endforeach
 
@@ -754,16 +763,16 @@
 	            </div><!-- /.tab-pane -->
 
 
-	            	{{-- character assets --}}
+	            {{-- character assets --}}
 				<div class="tab-pane" id="assets">
 					<div class="row">
 						<div class="col-md-12">
 							<div class="box">
 								<div class="box-header">
-									<h3 class="box-title">Assets ({{ $assets_Count }})</h3>
+									<h3 class="box-title">Assets ({{ $assets_count }})</h3>
 								</div><!-- /.box-header -->
 								<div class="box-body no-padding">
-									@foreach ($assets_List as $location => $assets)
+									@foreach ($assets_list as $location => $assets)
 										<div class="box box-solid box-primary">
 											<div class="box-header">
 												<h3 class="box-title">{{ $location }} ({{ count($assets) }})</h3>
@@ -894,11 +903,305 @@
 		                </div> <!-- ./col-md-12 -->
 		            </div> <!-- ./row -->
 	            </div><!-- /.tab-pane -->
+				
+	            {{-- character contracts --}}
+	            <div class="tab-pane" id="contracts">
+	            	<div class="row">
+	            		<div class="col-md-12">
+	            			<div class="box">
+                                <div class="box-header">
+                                    <h3 class="box-title">Contract List ({{ count($contracts_courier) +  count($contracts_other)}})</h3>
+                                </div><!-- /.box-header -->
+
+                                <div class="box-body no-padding">
+                                	<div class="row">
+
+										{{-- Building box for contracts like Itemexchange and auction --}}
+										<div class="col-md-6">
+											<div class="box box-solid box-primary">
+												<div class="box-header">
+													<h3 class="box-title">Item Exchange &amp; Auction ({{ count($contracts_other) }})</h3>
+													<div class="box-tools pull-right">
+														<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
+													</div>
+												</div>
+												<div class="box-body no-padding">	
+													<div class="row">
+														<div class="col-md-12">
+															<table class="table table-hover table-condensed">
+																<tbody>
+																	<tr>
+																		<th style="width: 200px">Issuer</th>
+																		<th style="width: 200px">Assignee</th>
+																		<th>type</th>
+																		<th style="width: 30px">Status</th>
+																		<th style="width: 30px"></th>
+																	</tr>
+																</tbody>
+															</table>
+															{{-- Loop over other contracts and display --}}
+															@foreach ($contracts_other as $contract)
+																<table class="table table-hover table-condensed">
+																	<tbody style="border-top:0px solid #FFF">
+																		<tr class="item-container">
+																			<td style="width: 200px">
+																				<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['issuerID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+																				<span rel="id-to-name">{{ $contract['issuerID'] }}</span>
+																			</td>
+																			<td style="width: 200px">
+																				@if ($contract['assigneeID'] <> 0)
+																					<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['assigneeID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+																					<span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
+																				@else
+																					Unknown Assignee
+																				@endif
+																			</td>
+																			<td>{{ $contract['type'] }}</td>
+																			{{-- Check the status and display icon for this status --}}
+																			<td style="width: 30px">
+																				@if($contract['status'] == 'Completed')
+																					<span class="text-green" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-check"></i></span>
+																				@elseif($contract['status'] == 'Outstanding')
+																					<span class="text-orange" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-clock-o"></i></span>
+																				@else
+																					<span class="text-red" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-times"></i></span>
+																				@endif
+																			</td>
+																			<td style="text-align: right; width: 30px"><i class="fa fa-plus viewcontent contracts" style="cursor: pointer;"></i></td>
+																		</tr>
+																	</tbody>
+																</table>
+																{{-- Add additionnal information for the contracts and give a specific class (tbodycontent) for toggle it --}}
+																<div class="col-md-12 tbodycontent">
+																	<ul class="list-unstyled">
+																		<li>
+																			<i class="fa fa-map-marker"></i> 
+																			<span data-toggle="tooltip" title="" data-original-title="{{ $contract['startlocation'] }}">
+																				<b>{{ str_limit($contract['startlocation'], 100, $end = '...') }}</b>
+																			</span>
+																		</li>
+																		@if(isset($contract['title']) && strlen($contract['title']) > 0)
+																			<li>
+																				<i class="fa fa-bullhorn" data-original-title=" {{ $contract['title'] }}" title="" data-toggle="tooltip"></i> 
+																				Title: <b>{{ str_limit($contract['title'], 100, $end = '...') }}</b>
+																			</li>
+																		@endif
+																		<li>
+																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateIssued'] }}" title="" data-toggle="tooltip"></i> 
+																			Issued: <b>{{ Carbon\Carbon::parse($contract['dateIssued'])->diffForHumans() }}</b>
+																		</li>
+																		{{-- If the contract is not completed, we display the expiration date else nothing --}}
+																		@if(!isset($contract['dateCompleted']))
+																			<li>
+																				<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateExpired'] }}" title="" data-toggle="tooltip"></i> 
+																				Expires: <b>{{ Carbon\Carbon::parse($contract['dateExpired'])->diffForHumans() }}</b>
+																			</li>	
+																		@endif
+																		{{-- If the contract is completed we display the date --}}
+																		@if(isset($contract['dateCompleted']))
+																			<li>
+																				<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateCompleted'] }}" title="" data-toggle="tooltip"></i> 
+																				Completed: <b>{{ Carbon\Carbon::parse($contract['dateCompleted'])->diffForHumans() }}</b> 
+																				by <img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['acceptorID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'> 
+																				<b><span rel="id-to-name">{{ $contract['acceptorID'] }}</span></b>
+																			</li>
+																		@endif
+																		<li>
+																			<i class="fa fa-money"></i> 
+																			Buyer will get <b><span class="text-green">{{ number_format($contract['reward'], 2, '.', ' ') }}</span></b> ISK
+																		</li>
+																		<li>
+																			<i class="fa fa-money"></i> 
+																			Buyer will pay <b><span class="text-red">{{ number_format($contract['price'], 2, '.', ' ') }}</span></b> ISK
+																		</li>
+																		{{-- If the contract is an auction we display the buyout price --}}
+																		@if($contract['type'] == 'Auction')
+																			<li>
+																				<i class="fa fa-money"></i> 
+																				<b>{{ number_format($contract['buyout'], 2, '.', ' ') }}</b> ISK buyout
+																			</li>
+																		@endif
+																		{{-- Check if contract has contents --}}
+																		@if(isset($contract['contents']) && count($contract['contents']) > 0)
+																			<li> <i class="fa fa-paperclip"></i> Contents</li>
+																			<li>
+																				<div class="col-md-6">
+																					<ul>
+																						<li style="list-style:none;">
+																						<span class="text-green"><b>Buyer will get</b></span>
+																						</li>
+																						{{-- Loop over contents and display item in contract --}}
+																						@foreach($contract['contents'] as $content)
+																							<li style="list-style:none;">
+																								{{-- Check if it's a item request or not --}}
+																								@if($content['included'] == 1)
+																									<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																									<span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
+																								@endif
+																							</li>
+																						@endforeach
+																					</ul>
+																				</div>
+																				<div class="col-md-6">
+																					<ul>
+																						<li style="list-style:none;">
+																						<span class="text-red"><b>Buyer will pay</b></span>
+																						</li>
+																						{{-- Loop over contents and display item requested in contract --}}
+																						@foreach($contract['contents'] as $content)
+																							<li style="list-style:none;">
+																								{{-- Check if it's a item request or not --}}
+																								@if($content['included'] == 0)
+																									<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																									<span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
+																								@endif
+																							</li>
+																						@endforeach
+																					</ul>
+																				</div>
+																			</li>
+																		@endif
+																	</ul>
+																</div><!-- ./col-md-12 -->
+															@endforeach
+														</div><!-- ./col-md-12 -->
+													</div><!-- ./row -->
+												</div><!-- ./box-body -->
+											</div><!-- ./box -->
+										</div> <!-- ./col-md-6 -->
+
+										{{-- Building box for courier contracts --}}
+										<div class="col-md-6">
+											<div class="box box-solid box-primary">
+												<div class="box-header">
+													<h3 class="box-title">Courier ({{ count($contracts_courier) }})</h3>
+													<div class="box-tools pull-right">
+														<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
+													</div>
+												</div>
+												<div class="box-body no-padding">	
+													<div class="row">
+														<div class="col-md-12">
+															<table class="table table-condensed">
+																<tbody>
+																	<tr>
+																		<th style="width: 200px">Issuer</th>
+																		<th style="width: 200px">Assignee</th>
+																		<th>type</th>
+																		<th style="width: 30px">Status</th>
+																		<th style="width: 30px"></th>
+																	</tr>
+																</tbody>
+															</table>
+															{{-- Loop over contracts courier and display --}}
+															@foreach ($contracts_courier as $contract)
+																<table class="table table-hover table-condensed">
+																	<tbody style="border-top:0px solid #FFF">
+																		<tr class="item-container">
+																			<td style="width: 200px">
+																				<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['issuerID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+																				<span rel="id-to-name">{{ $contract['issuerID'] }}</span>
+																			</td>
+																			<td style="width: 200px">
+																				@if ($contract['assigneeID'] <> 0)
+																					<img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['assigneeID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+																					<span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
+																				@else
+																					Unknown Assignee
+																				@endif
+																			</td>
+																			<td>{{ $contract['type'] }}</td>
+																			<td style="width: 30px">
+																				@if($contract['status'] == 'Completed')
+																					<span class="text-green" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-check"></i></span>
+																				@elseif($contract['status'] == 'inProgress')
+																					<span class="text-blue" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-truck"></i></span>
+																				@elseif($contract['status'] == 'Outstanding')
+																					<span class="text-orange" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-clock-o"></i></span>
+																				@else
+																					<span class="text-red" data-toggle="tooltip" title="" data-original-title="{{ $contract['status'] }}"><i style="cursor: pointer" class="fa fa-times"></i></span>
+																				@endif
+																			</td>
+																			<td style="text-align: right; width: 30px"><i class="fa fa-plus viewcontent contracts" style="cursor: pointer;"></i></td>
+																		</tr>
+																	</tbody>
+																</table>
+																{{-- Add additionnal information for the contracts and give a specific class (tbodycontent) for toggle it --}}
+																<div class="col-md-12 tbodycontent">
+																	<ul class="list-unstyled">
+																		<li>
+																			<i class="fa fa-flag-checkered"></i> 
+																			<span data-toggle="tooltip" title="" data-original-title="{{ $contract['startlocation'] }}">
+																				<b>{{ str_limit($contract['startlocation'], 50, $end = '...') }}</b>
+																			</span> >> 
+																			<span data-toggle="tooltip" title="" data-original-title="{{ $contract['endlocation'] }}">
+																				<b>{{ str_limit($contract['endlocation'], 50, $end = '...') }}</b>
+																			</span>
+																			<span>
+																				 ({{ number_format($contract['volume'], 2, '.', ' ') }} m<sup>3</sup>)
+																			</span>
+																		</li>
+																		@if(isset($contract['title']) && strlen($contract['title']) > 0)
+																			<li>
+																				<i class="fa fa-bullhorn" data-original-title=" {{ $contract['title'] }}" title="" data-toggle="tooltip"></i> 
+																				Title: <b>{{ str_limit($contract['title'], 100, $end = '...') }}</b>
+																			</li>
+																		@endif
+																		<li>
+																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateIssued'] }}" title="" data-toggle="tooltip"></i> 
+																			Issued: <b>{{ Carbon\Carbon::parse($contract['dateIssued'])->diffForHumans() }}</b>
+																		</li>
+																		{{-- Add a conditionnal check. If a contract is not completed we show the expiration date else nothing --}}
+																		@if(!isset($contract['dateCompleted']))
+																		<li>
+																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateExpired'] }}" title="" data-toggle="tooltip"></i> 
+																			Expires: <b>{{ Carbon\Carbon::parse($contract['dateExpired'])->diffForHumans() }}</b>
+																		</li>	
+																		@endif
+																		{{-- If a contract is accepted we show the date else nothing --}}
+																		@if(isset($contract['dateAccepted']))
+																		<li>
+																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateAccepted'] }}" title="" data-toggle="tooltip"></i> 
+																			Accepted: <b>{{ Carbon\Carbon::parse($contract['dateAccepted'])->diffForHumans() }}</b> 
+																			by <img src='{{ App\Services\Helpers\Helpers::generateEveImage($contract['acceptorID'], 32) }}' class='img-circle' style='width: 18px;height: 18px;'> 
+																			<b><span rel="id-to-name">{{ $contract['acceptorID'] }}</span></b>
+																		</li>
+																		@endif
+																		{{-- If a contract is completed we show the date else nothing --}}
+																		@if(isset($contract['dateCompleted']))
+																		<li>
+																			<i class="fa fa-clock-o" data-original-title=" {{ $contract['dateCompleted'] }}" title="" data-toggle="tooltip"></i> 
+																			Completed: <b>{{ Carbon\Carbon::parse($contract['dateCompleted'])->diffForHumans() }}</b>
+																		</li>
+																		@endif
+																		<li>
+																			<i class="fa fa-money"></i> 
+																			<b>{{ number_format($contract['reward'], 2, '.', ' ') }}</b> ISK in reward
+																		</li>
+																		<li>
+																			<i class="fa fa-money"></i> 
+																			<b>{{ number_format($contract['collateral'], 2, '.', ' ') }}</b> ISK in collateral
+																		</li>
+																	</ul>
+																</div><!-- ./col-md-12 -->
+															@endforeach
+														</div><!-- ./col-md-12 -->
+													</div><!-- ./row -->
+												</div><!-- ./box-body -->
+											</div><!-- ./box -->
+										</div> <!-- ./col-md-6 -->
+
+                                	</div><!-- ./row -->
+                                </div><!-- /.box-body -->
+                            </div><!-- ./box -->
+		                </div> <!-- ./col-md-12 -->
+		            </div> <!-- ./row -->
+	            </div><!-- /.tab-pane -->
 
 	        </div><!-- /.tab-content -->
 	    </div><!-- nav-tabs-custom -->
-	</div>    
-</div>
+	</div><!-- ./col-md-12 -->  
+</div><!-- ./row -->
 @stop
 
 @section('javascript')
@@ -907,8 +1210,15 @@
 	$(".tbodycontent").hide(); 
 	// on button click. Not very clean to add a fake class.. TODO: Think another way to do this
 	$(".viewcontent").on("click", function( event ){ 
-		// get the tbody tag direct after the button
-		var contents = $(this).closest( "tbody").next( "tbody" ); 
+		// get the tag direct after the button
+		if($(this).hasClass('contracts')){
+			// if we are in Contracts view, we check the next Div Tag
+			var contents = $(this).closest( "table").next( "div" ); 
+		} else {
+			// if we are in Asset view, we check the next Tbody tag
+			var contents = $(this).closest( "tbody").next( "tbody" ); 
+		}
+		
 		// Show or hide
 		contents.toggle();
 
@@ -923,7 +1233,8 @@
 		}
 	});
 	
-	$(function () {
+	// $(function () {
+	$("li#journal_graph").click(function() {
 		// TODO: Fix this stupid graphs width
 		var options = { chart: {
 			renderTo: 'chart',
@@ -964,6 +1275,46 @@
 			options.series[0].data = deltas;
 
 			var chart = new Highcharts.Chart(options);
+
+			// Trigger a fake resize to get the chart to calculate the width
+			// correctly
+			$(window).trigger('resize');
+		});
+	});
+	$( document ).ready(function() {
+		var items = [];
+		var arrays = [], size = 250;
+
+		$('[rel="id-to-name"]').each( function(){
+		//add item to array
+			items.push( $(this).text() );
+		});
+
+		var items = $.unique( items );
+
+		while (items.length > 0)
+			arrays.push(items.splice(0, size));
+
+		$.each(arrays, function( index, value ) {
+
+			$.ajax({
+				type: 'POST',
+				url: "{{ action('HelperController@postResolveNames') }}",
+				data: {
+					'ids': value.join(',')
+				},
+				success: function(result){
+					$.each(result, function(id, name) {
+
+						$("span:contains('" + id + "')").html(name);
+					})
+				},
+				error: function(xhr, textStatus, errorThrown){
+					console.log(xhr);
+					console.log(textStatus);
+					console.log(errorThrown);
+				}
+			});
 		});
 	});
 </script>

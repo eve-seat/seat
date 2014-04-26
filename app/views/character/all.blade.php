@@ -25,29 +25,29 @@
 		@foreach(array_chunk($characters, 4) as $character_row)
 			<div class="row">
 				@foreach($character_row as $character)
-					<div class="col-md-1">
-						<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}">
+					<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}" style="color:inherit;">
+						<div class="col-md-1">
 							<img src="http://image.eveonline.com/Character/{{ $character->characterID }}_64.jpg" class="img-circle">
-						</a>
-					</div>
-					<div class="col-md-2">
-						<ul class="list-unstyled">
-							<li><b>Name: </b>{{ $character->characterName }}</li>
-							<li><b>Corp: </b>{{ $character->corporationName }}</li>
-							<li>
-								@if (strlen($character->trainingEndTime) > 0)
-									<b>Training Ends: </b> {{ Carbon\Carbon::parse($character->trainingEndTime)->diffForHumans() }}
-								@endif
-							</li>
-							<li>
-								@if ($character->isOk == 1)
-									<span class="text-green"><i class="fa fa-check"></i> Key Ok</span>
-								@else
-									<span class="text-red"><i class="fa fa-times"></i> Key not Ok</span>
-								@endif
-							</li>
-						</ul>
-					</div>
+						</div>
+						<div class="col-md-2">
+							<ul class="list-unstyled">
+								<li><b>Name: </b>{{ $character->characterName }}</li>
+								<li><b>Corp: </b>{{ $character->corporationName }}</li>
+								<li>
+									@if (strlen($character->trainingEndTime) > 0)
+										<b>Training Ends: </b> {{ Carbon\Carbon::parse($character->trainingEndTime)->diffForHumans() }}
+									@endif
+								</li>
+								<li>
+									@if ($character->isOk == 1)
+										<span class="text-green"><i class="fa fa-check"></i> Key Ok</span>
+									@else
+										<span class="text-red"><i class="fa fa-times"></i> Key not Ok</span>
+									@endif
+								</li>
+							</ul>
+						</div>
+					</a>
 				@endforeach	
 			</div>
 			<hr>

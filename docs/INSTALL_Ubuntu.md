@@ -15,28 +15,17 @@ Installing SeAT *should* be relatively simple. At a high level, the main require
 SeAT was developed for Linux and has been tested to work fine on CentOS. Chances are you could get it going pretty easily on many other Linux distros, so feel free to contribute docs with install guides. As far as windows support goes... well....
 
 ### Installation ###
-The following installation assumes you are using CentOS. For the Debian/Ubuntu folk, most of the `yum install` commands will probably end up being things like `apt-get install`. A seperate guide for Debian / Ubuntu folk will come soon™
-
-For CentOS, the EPEL repository is needed for Redis and supervisod, so download and install it with the following 2 commands:
-
-```bash
-$ EPEL=epel-release-6-8.noarch.rpm && BASEARCH=$(uname -i)
-$ wget http://dl.fedoraproject.org/pub/epel/6/$BASEARCH/$EPEL -O $EPEL && yum localinstall -y $EPEL && rm -f $EPEL
-```
-
-*note* If you dont have the `wget` command, just install it with `yum install wget -y`
-
+The following installation assumes you are using Ubuntu. This installation was done on Ubuntu 14.04 however I beleive a Debian install will be pretty much the same no?
+The very first step should be to ensure that you are up to date. Run `apt-get update`
 
 ### Tutorial! ###
-A tutorial showing the full installation is available here: https://asciinema.org/a/9057
+A tutorial showing the full installation is available here: https://asciinema.org/a/9065
 
 #### 1. Install & Configure MySQL ####
-For CentOS, installation is pretty simple:
 As `root`, run:  
-    - `yum install mysql-server`  
-    - `chkconfig mysqld on`  
+    - `apt-get install mysql-server`. When prompted, type a secure root password  
     - `/etc/init.d/mysqld start`  
-    - `mysql_secure_installation`, choosing a strong password for your `root` mysql user  
+    - `mysql_secure_installation`  
 
 Next, we will add a user for SeAT and configure a password for it.
 As any user, run:  
@@ -45,27 +34,25 @@ As any user, run:
     - `grant all on seat.* to seat@localhost identified by 'securepassword';`  
     - Press `crtl`+`d` to log out of the prompt.  
 
-#### 2. Install & Configure PHP / Apache ####
+#### 2. Install PHP / Apache ####
 PHP & MySQL is pretty easy too:  
-    - `yum install httpd php php-mysql php-cli php-mcrypt php-process`  
-    - `chkconfig httpd on`  
-    - `/etc/init.d/httpd start`  
+    - `apt-get install apache2 php5 php5-cli php5-mcrypt php5-mysql php5-curl`  
+    - Enable the php mcrypt and modrewrite modules by running `php5enmod mcrypt && a2enmod rewrite`
+    - `/etc/init.d/apache2 restart`  
     
-#### 3. Install & Configure Redis ####
+#### 3. Install Redis ####
 Same thing for Redis  
-    - `yum install redis`  
-    - `chkconfig redis on`  
-    - `/etc/init.d/redis start`  
+    - `apt-get install redis-server`  
     
 #### 4. Get SeAT ####
 Finally, we can get to the SeAT stuff itself. You are going to want to clone the repository. As this is a Git repository, make sure you have `git` installed.  
-    - `yum install git`  
+    - `apt-get install git`  
 
-Next, clone the respoitory somwhere on disk. I'll reccomend `/var/www`:  
+Next, clone the respoitory somewhere on disk. I'll reccomend `/var/www`:  
     - `cd /var/www`  
     - `git clone https://github.com/eve-seat/seat.git`  
     - Checkout the latest SeAT version found [here](https://github.com/eve-seat/seat/tags) with `git checkout tags/v0.5` (v0.5 is current latest)  
-    - Ensure that your webserver owns all of the content with: `chown -R apache:apache /var/www/seat`
+    - Ensure that your webserver owns all of the content with: `chown -R www-data:www-data /var/www/seat`
     - `sudo chmod -R guo+w app/storage` to ensure that the web server can write to the storage location  
 
 After seat is downloaded, we need to get composer to help us install the applications dependencies and generate autoload files:  
@@ -77,9 +64,9 @@ After seat is downloaded, we need to get composer to help us install the applica
 Again, assuming you used `/var/www`, a tool to download the required static data exports can be found in `/var/www/seat/evesde/update_sde.sh`.
 This tool can be run with:  
     - `cd /var/www/seat/evesde`  
-    - `sh update_sde.sh`  
+    - `sh update_sde.sh` (the script will probably error with 'update_sde.sh: 34: update_sde.sh: +: not found. Don't worry, progress reporting us just broken the rest is fine :<)  
 
-Once it completes the downloads, a directory with a name starting with `SeAT-` will be located in `/tmp` on your machine. This directory containts static data that can just be imported into your database. The command will look something like:
+Once it completes the downloads, a directory with a name starting with `SeAT-` will be located in `/tmp` on your machine. This directory contains static data that can just be imported into your database. The command will look something like:
 
 `cat /var/SeAT-109831-39871098278970987/*.sql | mysql -u seat -p seat`
 
@@ -90,7 +77,7 @@ SeAT configuration lives in `app/config`. Assuming you cloned to `/var/www`, the
 
 Edit the fowlling files:  
     - database.php (set your configured username/password)  
-    - cache.php  
+    - app.php  
     
 #### 7. Run the SeAT database migrations & seeds ####
 SeAT has all of the database schemas stored in 'migration' scripts in `app/database/migrations`. Run them with:
@@ -113,32 +100,44 @@ Seeded: EveNotificationTypesSeeder
     
 ####  8. Install & Configure supervisord ####
 Supervisor will be used to keep the workers alive that need to process API jobs. The amount of workers that you start I guess depends on how many keys you have to process. For me, 4 workers seem to work just fine. Set it up by running:  
-    - `yum install supervisor`  
-    - `chkconfig supervisord on`  
+    - `apt-get install supervisor`  
 
-We now have to configure the actual workers. We go this by adding `program` configuration blocks to `/etc/supervisord.conf`. A sample configuration for this block is located in `docs/` and can simply be added to the bottom of the existing configuration file. Note that the sample has the program defined as `[program:seat1]`. If you want to run 4 workers, you need to add this to the `supervisord.conf` *4* times. So you will have 4 blocks with incrementing numbers ie. `[program:seat1]`, `[program:seat2]`, `[program:seat3]` & `[program:seat4]`.
+We now have to configure the actual workers. We do this by adding a new configuration file to `/etc/supervisor/conf.d/` called `seat.conf`. A sample configuration for this block is located in `docs/` and can be used as a boilerplate for your install.
+For Ubuntu, we can make use of the numprocs value available in supervisor 3, so, our sample configuration will look like this:
 
-Once this is done, save the file and start supervisord with `/etc/init.d/supervisord start`.
+```bash
+[program:seat]
+command=/usr/bin/php /var/www/seat/artisan queue:listen --timeout=3600 --tries 1
+process_name = %(program_name)s-80%(process_num)02d
+stdout_logfile = /var/log/seat-80%(process_num)02d.log
+stdout_logfile_maxbytes=100MB
+stdout_logfile_backups=10
+numprocs=4
+directory=/var/www/seat
+stopwaitsecs=600
+user=www-data
+```
+Once this is done, save the file and restart supervisord with `/etc/init.d/supervisor restart`.
 
 You can checkup on the status of the workers with `supervisorctl status`:
 
 ```
 [root@server ~]# supervisorctl status
-seat1          RUNNING    pid 23583, uptime 1 day, 0:18:27
-seat2          RUNNING    pid 23584, uptime 1 day, 0:18:27
-seat3          RUNNING    pid 23585, uptime 1 day, 0:18:27
-seat4          RUNNING    pid 23582, uptime 1 day, 0:18:27
+seat:seat-8000                   RUNNING    pid 6996, uptime 0:00:07
+seat:seat-8001                   RUNNING    pid 6995, uptime 0:00:07
+seat:seat-8002                   RUNNING    pid 6998, uptime 0:00:07
+seat:seat-8003                   RUNNING    pid 6997, uptime 0:00:07
 ```
 
 SeAT should now process jobs that enter the job queue.
 
 ####  9. Setup cron ####
 Setup the cronjob for SeAT. This job should run as a user that has access to SeAT's location:
-  - `crontab -e`  
+  - `crontab -e -u www-data`  
   - Paste this line: `* * * * * php <path to artisan> scheduled:run 1>> /dev/null 2>&1`
 
 #### 10. Security #####
-The web interface has a default password of `seat!admin` and it is *highly* reccomended that you change this using the `seat:reset` artisan command:
+The web interface has a default password of `seat!admin` and it is *highly* recommended that you change this using the `seat:reset` artisan command:
 
 ```bash
 $ php artisan seat:reset
@@ -165,25 +164,25 @@ If you are not going to use virtual hosting, the easiest to get going will proba
 
 
 ##### The VirtualHost setup #####
-Getting the virtual host setup is as simple as creating a new configuration file (i usually call it the domain.conf), and modifying it to match your setup. Everywhere you see `your.domain`, it needs to be substituted to your actual domain:
+Getting the virtual host setup is as simple as creating a new configuration file for it, and modifying it to match your setup. Everywhere you see `your.domain`, it needs to be substituted to your actual domain:
 
-First we will prepare SeAT. We create the directory `/var/www/html/your.domain`. Next we symlink the SeAT public directory here `ln -s /var/www/seat/public /var/www/html/your.domain/seat`.
+First we will prepare SeAT. We create the directory `/var/www/your.domain`. Next we symlink the SeAT public directory here `ln -s /var/www/seat/public /var/www/your.domain/seat`.
 
 With that done, we continue to configure Apache for our VirtualHost:  
 
-   - `cd /etc/httpd/conf.d`
-   - Create a file `your.domain.conf`
+   - `cd /etc/apache2/sites-available/`
+   - Create a file `001-seat.conf`
    - Edit the file and add the following contents:
 
 ```bash
 <VirtualHost *:80>
     ServerAdmin webmaster@your.domain
-    DocumentRoot "/var/www/html/your.domain"
+    DocumentRoot "/var/www/your.domain"
     ServerName your.domain
     ServerAlias www.your.domain
-    ErrorLog "logs/your.domain-error_log"
-    CustomLog "logs/your.domain-access_log" common
-    <Directory "/var/www/html/your.domain">
+  ErrorLog ${APACHE_LOG_DIR}/your.domain-error.log
+  CustomLog ${APACHE_LOG_DIR}/your.domain-access.log combined
+    <Directory "/var/www/your.domain">
         AllowOverride All
         Order allow,deny
         Allow from all
@@ -191,7 +190,12 @@ With that done, we continue to configure Apache for our VirtualHost:
 </VirtualHost>
 ```
 
-   - Softrestart Apache: `apachectl graceful`
+Lastly, we enable this site by symlinking it to `sites-enabled`:  
+
+   - `cd /etc/apache2/sites-enabled`  
+   - `ln -s ../sites-available/001-seat.conf 001-seat.conf`  
+
+Lastly, restart apache `/etc/init.d/apache2 restart`
 
 SeAT *should* now be available at http://your.domain/seat
 

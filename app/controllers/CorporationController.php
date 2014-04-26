@@ -49,7 +49,8 @@ class CorporationController extends BaseController {
 
 		return View::make('corporation.walletjournal.walletjournal')
 			->with('wallet_journal', $wallet_journal)
-			->with('corporation_name', $corporation_name);
+			->with('corporation_name', $corporation_name)
+			->with('corporationID', $corporationID);
 	}
 
 	/*
@@ -141,6 +142,7 @@ class CorporationController extends BaseController {
 			->leftJoin(DB::raw('account_apikeyinfo as ap'), 'k.keyID', '=', 'ap.keyID')
 			->where('cmt.corporationID', $corporationID)
 			->orderBy('cmt.name', 'asc')
+			->groupBy('cmt.characterID')
 			->get();
 
 		return View::make('corporation.membertracking.membertracking')
@@ -258,6 +260,166 @@ class CorporationController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getListContracts()
+	|--------------------------------------------------------------------------
+	|
+	| Get a list of the corporations that we can display Member Tracking for
+	|
+	*/
+
+	public function getListContracts()
+	{
+
+		$corporations = DB::table('account_apikeyinfo')
+			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->where('account_apikeyinfo.type', 'Corporation')
+			->get();
+
+		return View::make('corporation.contracts.listcontract')
+			->with('corporations', $corporations);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getContracts()
+	|--------------------------------------------------------------------------
+	|
+	| Display a corporations Members and related API Key Information
+	|
+	*/
+
+	public function getContracts($corporationID)
+	{
+
+
+		$corporation_name = DB::table('account_apikeyinfo_characters')
+			->where('corporationID', $corporationID)
+			->first();
+
+		// Contract list
+		$contract_list = DB::select(
+			'SELECT *, CASE
+				when a.startStationID BETWEEN 66000000 AND 66014933 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.startStationID-6000001)
+				when a.startStationID BETWEEN 66014934 AND 67999999 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.startStationID-6000000)
+				when a.startStationID BETWEEN 60014861 AND 60014928 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.startStationID)
+				when a.startStationID BETWEEN 60000000 AND 61000000 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.startStationID)
+				when a.startStationID>=61000000 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.startStationID)
+				else (SELECT m.itemName FROM mapDenormalize AS m
+					WHERE m.itemID=a.startStationID) end
+				AS startlocation,
+				CASE
+				when a.endStationID BETWEEN 66000000 AND 66014933 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.endStationID-6000001)
+				when a.endStationID BETWEEN 66014934 AND 67999999 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.endStationID-6000000)
+				when a.endStationID BETWEEN 60014861 AND 60014928 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.endStationID)
+				when a.endStationID BETWEEN 60000000 AND 61000000 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.endStationID)
+				when a.endStationID>=61000000 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.endStationID)
+				else (SELECT m.itemName FROM mapDenormalize AS m
+					WHERE m.itemID=a.endStationID) end
+				AS endlocation 
+				FROM `corporation_contracts` AS a
+					WHERE a.`corporationID` = ?',
+			array($corporationID)
+		);
+		
+		// Character contract item
+		$contract_list_item = DB::table('corporation_contracts_items')
+			->leftJoin('invTypes', 'corporation_contracts_items.typeID', '=', 'invTypes.typeID')
+			->where('corporationID', $corporationID)
+			->get();
+		
+		// Create 2 array for seperate Courier and Other Contracts
+		$contracts_courier = array();
+		$contracts_other = array();
+		
+		// Loops the contracts list and fill arrays
+		foreach ($contract_list as $key => $value) {
+
+			if($value->type == 'Courier') {
+
+				$contracts_courier[$value->contractID] =  array(
+					'contractID' => $value->contractID,
+					'issuerID' => $value->issuerID,
+					'assigneeID' => $value->assigneeID,
+					'acceptorID' => $value->acceptorID,
+					'type' => $value->type,
+					'status' => $value->status,
+					'title' => $value->title,
+					'dateIssued' => $value->dateIssued,
+					'dateExpired' => $value->dateExpired,
+					'dateAccepted' => $value->dateAccepted,
+					'dateCompleted' => $value->dateCompleted,
+					'reward' => $value->reward,
+					'volume' => $value->volume,
+					'collateral' => $value->collateral,
+					'startlocation' => $value->startlocation,
+					'endlocation' => $value->endlocation
+				);
+
+			} else {
+
+				$contracts_other[$value->contractID] =  array(
+					'contractID' => $value->contractID,
+					'issuerID' => $value->issuerID,
+					'assigneeID' => $value->assigneeID,
+					'acceptorID' => $value->acceptorID,
+					'type' => $value->type,
+					'status' => $value->status,
+					'title' => $value->title,
+					'dateIssued' => $value->dateIssued,
+					'dateExpired' => $value->dateExpired,
+					'dateCompleted' => $value->dateCompleted,
+					'reward' => $value->reward, // for "Buyer will get" isk
+					'price' => $value->price,
+					'buyout' => $value->buyout,
+					'startlocation' => $value->startlocation
+				);
+			}
+			
+			// Loop the Item in contracts and add it to his parent
+			foreach( $contract_list_item as $contents) {
+
+				if ($value->contractID == $contents->contractID) { // check what parent content item has
+
+					// create a sub array 'contents' and put content item info in
+					$contracts_other[$value->contractID]['contents'][] = array(
+						'quantity' => $contents->quantity,
+						'typeID' => $contents->typeID,
+						'typeName' => $contents->typeName,
+						'included' => $contents->included // for "buyer will pay" item
+					);
+				}
+			}
+		}
+		
+
+		return View::make('corporation.contracts.contracts')
+			->with('corporation_name', $corporation_name)
+			->with('contracts_courier', $contracts_courier)
+			->with('contracts_other', $contracts_other);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getListStarBase()
 	|--------------------------------------------------------------------------
 	|
@@ -338,6 +500,22 @@ class CorporationController extends BaseController {
 		foreach ($bay_sizes as $bay)
 			$shuffled_bays[$bay->typeID] = array('fuelBay' => $bay->capacity, 'strontBay' => $bay->valueFloat);
 
+		// When calculating *actual* silo capacity, we need to keep in mind that certain towers have bonusses
+		// to silo cargo capacity, like amarr & gallente towers do now. Get the applicable bonusses
+		$tower_bay_bonuses = DB::table('dgmTypeAttributes')
+			->select('typeID', 'valueFloat')
+			->where('attributeID', 757)		// From dgmAttributeTypes, 757 = controlTowerSiloCapacityBonus
+			->get();
+
+		// Reshuffle the tower_bay_bonuses into a workable array for the view
+		$tower_cargo_bonusses = array();
+		foreach ($tower_bay_bonuses as $bonus)
+			$tower_cargo_bonusses[$bonus->typeID] = $bonus->valueFloat;
+
+		// Not all modules are bonnussed in size. As far as I can tell, it only seems to be coupling arrays and
+		// silos that benefit from the silo bay size bonus. Set an array with these type ids
+		$cargo_size_bonusable_modules = array(14343, 17982);	// Silo, Coupling Array
+
 		// Figure out the allianceID of the corporation in question so that we can determine whether their
 		// towers are in sov systems
 		$alliance_id = DB::table('corporation_corporationsheet')
@@ -367,15 +545,26 @@ class CorporationController extends BaseController {
 
 		// Lets get all of the item locations for this corporation and sort it out into a workable
 		// array that can just be referenced and looped in the view. We will use the mapID as the
-		// key in the resulting array to be able to associate the item to a tower
+		// key in the resulting array to be able to associate the item to a tower.
+		//
+		// We will 
 		$item_locations = DB::table('corporation_assetlist_locations')
-			->where('corporationID', $corporationID)
+			->leftJoin('corporation_assetlist', 'corporation_assetlist_locations.itemID', '=', 'corporation_assetlist.itemID')
+			->leftJoin('invTypes', 'corporation_assetlist.typeID', '=', 'invTypes.typeID')
+			->where('corporation_assetlist_locations.corporationID', $corporationID)
 			->get();
 
 		// Shuffle the results
 		$shuffled_locations = array();
 		foreach ($item_locations as $location)
-			$shuffled_locations[$location->mapID][] = array('itemID' => $location->itemID, 'itemName' => $location->itemName, 'mapName' => $location->mapName);
+			$shuffled_locations[$location->mapID][] = array(
+				'itemID' => $location->itemID,
+				'typeID' => $location->typeID,
+				'typeName' => $location->typeName,
+				'itemName' => $location->itemName,
+				'mapName' => $location->mapName,
+				'capacity' => $location->capacity
+			);
 
 		// We will do a similar shuffle for the assetlist contents. First get them, and shuffle.
 		// The key for this array will be the itemID as there may be multiple 'things' in a 'thing'
@@ -387,7 +576,11 @@ class CorporationController extends BaseController {
 		// Shuffle the results
 		$shuffled_contents = array();
 		foreach ($item_contents as $contents)
-			$shuffled_contents[$contents->itemID][] = array('quantity' => $contents->quantity, 'name' => $contents->typeName);
+			$shuffled_contents[$contents->itemID][] = array(
+				'quantity' => $contents->quantity,
+				'name' => $contents->typeName,
+				'volume' => $contents->volume
+			);
 
 		// Define the tower states. See http://3rdpartyeve.net/eveapi/APIv2_Corp_StarbaseList_XML
 		$tower_states = array(
@@ -401,6 +594,8 @@ class CorporationController extends BaseController {
 		return View::make('corporation.starbase.starbase')
 			->with('starbases', $starbases)
 			->with('bay_sizes', $shuffled_bays)
+			->with('tower_cargo_bonusses', $tower_cargo_bonusses)
+			->with('cargo_size_bonusable_modules', $cargo_size_bonusable_modules)
 			->with('sov_towers', $sov_towers)
 			->with('item_locations', $shuffled_locations)
 			->with('item_contents', $shuffled_contents)
@@ -443,6 +638,7 @@ class CorporationController extends BaseController {
 		// Get the month/year data
 		$available_dates = DB::table('corporation_walletjournal')
 			->select(DB::raw('DISTINCT(MONTH(date)) AS month, YEAR(date) AS year'))
+			->where('corporationID', $corporationID)
 			->orderBy(DB::raw('year, month'), 'desc')
 			->get();
 
@@ -458,18 +654,28 @@ class CorporationController extends BaseController {
 		// Current Corporation Wallet Balances
 		$wallet_balances = DB::table('corporation_accountbalance')
 			->join('corporation_corporationsheet_walletdivisions', 'corporation_accountbalance.accountKey', '=', 'corporation_corporationsheet_walletdivisions.accountKey')
+			->where('corporation_corporationsheet_walletdivisions.corporationID', $corporationID)
 			->where('corporation_accountbalance.corporationID', $corporationID)
 			->get();
 
-		// The overall corporation ledger
-		$ledger = DB::table('corporation_walletjournal')
-			->select(DB::raw('refTypeName, SUM(amount) total'))
-			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
-			->leftJoin('corporation_corporationsheet_walletdivisions', 'corporation_walletjournal.accountKey', '=', 'corporation_corporationsheet_walletdivisions.accountKey') // such name much wow
-			->where('corporation_walletjournal.corporationID', $corporationID)
-			->groupBy('corporation_walletjournal.refTypeID')
-			->orderBy('eve_reftypes.refTypeName', 'asc')
-			->get();
+		// The overall corporation ledger. We will loop over the wallet divisions
+		// and get the ledger calculated for each
+		$ledgers = array();
+
+		foreach (EveCorporationCorporationSheetWalletDivisions::where('corporationID', $corporationID)->get() as $division) {
+
+			$ledgers[$division->accountKey] = array(
+				'divisionName' => $division->description,
+				'ledger' => DB::table('corporation_walletjournal')
+					->select('refTypeName', DB::raw('sum(`amount`) `total`'))
+					->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+					->where('corporation_walletjournal.accountKey', $division->accountKey)
+					->where('corporation_walletjournal.corporationID', $corporationID)
+					->groupBy('corporation_walletjournal.refTypeID')
+					->orderBy('refTypeName')
+					->get()
+			);
+		}
 
 		// Tax contributions
 		$bounty_tax = DB::table('corporation_walletjournal')
@@ -493,7 +699,7 @@ class CorporationController extends BaseController {
 			->with('corporationID', $corporationID)
 			->with('ledger_dates', $ledger_dates)
 			->with('wallet_balances', $wallet_balances)
-			->with('ledger', $ledger)
+			->with('ledgers', $ledgers)
 			->with('bounty_tax', $bounty_tax)
 			->with('pi_tax', $pi_tax);
 	}
@@ -519,19 +725,26 @@ class CorporationController extends BaseController {
 		$month = Carbon\Carbon::parse($date)->month;
 		$year = Carbon\Carbon::parse($date)->year;
 
-		// The overall corporation ledger
-		$ledger = DB::table('corporation_walletjournal')
-			->select(DB::raw('refTypeName, SUM(amount) total'))
-			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
-			->leftJoin('corporation_corporationsheet_walletdivisions', 'corporation_walletjournal.accountKey', '=', 'corporation_corporationsheet_walletdivisions.accountKey') // such name much wow
-			->where(DB::raw('MONTH(date)'), $month)
-			->where(DB::raw('YEAR(date)'), $year)
-			->where('corporation_walletjournal.corporationID', $corporationID)
-			->groupBy('corporation_walletjournal.refTypeID')
-			->orderBy('eve_reftypes.refTypeName', 'asc')
-			->get();
+		// The overall corporation ledger. We will loop over the wallet divisions
+		// and get the ledger calculated for each
+		$ledgers = array();
 
-			// WHERE MONTH(`date`) = :month AND YEAR(`date`)
+		foreach (EveCorporationCorporationSheetWalletDivisions::where('corporationID', $corporationID)->get() as $division) {
+
+			$ledgers[$division->accountKey] = array(
+				'divisionName' => $division->description,
+				'ledger' => DB::table('corporation_walletjournal')
+					->select('refTypeName', DB::raw('sum(`amount`) `total`'))
+					->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+					->where('corporation_walletjournal.accountKey', $division->accountKey)
+					->where(DB::raw('MONTH(date)'), $month)
+					->where(DB::raw('YEAR(date)'), $year)
+					->where('corporation_walletjournal.corporationID', $corporationID)
+					->groupBy('corporation_walletjournal.refTypeID')
+					->orderBy('refTypeName')
+					->get()
+			);
+		}
 
 		// Tax contributions
 		$bounty_tax = DB::table('corporation_walletjournal')
@@ -558,8 +771,31 @@ class CorporationController extends BaseController {
 		return View::make('corporation.ledger.ajax.ledgermonth')
 			->with('corporationID', $corporationID)
 			->with('date', $date)
-			->with('ledger', $ledger)
+			->with('ledgers', $ledgers)
 			->with('bounty_tax', $bounty_tax)
 			->with('pi_tax', $pi_tax);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getWalletDelta()
+	|--------------------------------------------------------------------------
+	|
+	| Calculate the daily wallet balance delta for the last 30 days and return
+	| the results as a json response
+	|
+	*/
+
+	public function getWalletDelta($corporationID)
+	{
+
+		$wallet_daily_delta = DB::table('corporation_walletjournal')
+			->select(DB::raw('DATE(`date`) as day, IFNULL( SUM( amount ), 0 ) AS daily_delta'))
+			->whereRaw('date BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) and NOW()')
+			->where('corporationID', $corporationID)
+			->groupBy('day')
+			->get();
+
+		return Response::json($wallet_daily_delta);
 	}
 }

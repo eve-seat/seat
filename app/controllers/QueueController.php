@@ -98,4 +98,38 @@ class QueueController extends BaseController {
 
 		return Response::json();
 	}
+	
+		/*
+	|--------------------------------------------------------------------------
+	| getDeleteQueuedJob()
+	|--------------------------------------------------------------------------
+	|
+	| Removes a Job record that is in a queued state
+	|
+	*/
+
+	public function getDeleteQueuedJob($id)
+	{
+
+		// Get the Redis JobID from the databse for this jib
+		$redis_job_id = \SeatQueueInformation::where('id', $id)->pluck('jobID');
+
+		// Connect to redis and loop over the queued jobs, looking for the job
+		$redis = new Predis\Client(array('host' => Config::get('database.redis.default.host'), 'port' => Config::get('database.redis.default.port')));
+
+		// Loop over the jobs in redis, looking for the one we want to delete
+		foreach ($redis->lrange('queues:default', 0, -1) as $redis_job) {
+
+			// Delete it if we match the jobID
+			if (strpos($redis_job, $redis_job_id))
+				$redis->lrem('queues:default', 0, $redis_job);
+		}
+
+		// Delete if from the database too
+		\SeatQueueInformation::where('status','Queued')
+			->where('id', $id)
+			->delete();
+
+		return Response::json();
+	}
 }

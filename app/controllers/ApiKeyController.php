@@ -39,8 +39,10 @@ class ApiKeyController extends BaseController {
 	{
 
 		$keys = DB::table('seat_keys')
-			->select('seat_keys.keyID', 'seat_keys.isOk', 'seat_keys.lastError', 'account_apikeyinfo.accessMask', 'account_apikeyinfo.type', 'account_apikeyinfo.expires')
+			->select('seat_keys.keyID', 'seat_keys.isOk', 'seat_keys.lastError', 'account_apikeyinfo.accessMask', 'account_apikeyinfo.type', 'account_apikeyinfo.expires', DB::raw('count(`banned_calls`.`ownerID`) bans'))
 			->leftJoin('account_apikeyinfo', 'seat_keys.keyID', '=', 'account_apikeyinfo.keyID')
+			->leftJoin('banned_calls', 'seat_keys.keyID', '=', 'banned_calls.ownerID')
+			->groupBy('seat_keys.keyID')
 			->get();
 
 		// Prepare the key information and characters for the view
@@ -52,6 +54,7 @@ class ApiKeyController extends BaseController {
 				'keyID' => $key->keyID,
 				'isOk' => $key->isOk,
 				'lastError' => $key->lastError,
+				'ban_count' => $key->bans,
 				'accessMask' => $key->accessMask,
 				'type' => $key->type,
 				'expires' => $key->expires,
@@ -370,5 +373,23 @@ class ApiKeyController extends BaseController {
 		return Redirect::action('ApiKeyController@getAll')
 			->with('success', 'Key has been deleted');
 
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getRemoveBan()
+	|--------------------------------------------------------------------------
+	|
+	| Removes a ban that has been imposed on a key for a specific API call
+	|
+	*/
+
+	public function getRemoveBan($id)
+	{
+
+		\EveBannedCall::where('id', $id)
+			->delete();
+
+		return Response::json();
 	}
 }

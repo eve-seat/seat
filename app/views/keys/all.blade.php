@@ -53,6 +53,9 @@
 		                    	No known characters for this keyID, maybe its still updating or entirely invalid/expired.
 		                    @endif
 		                    <span class="pull-right">
+                                @if ($key['ban_count'] > 0)
+                                    <span class="text-muted" data-toggle="tooltip" title="" data-original-title="{{ $key['ban_count'] }} banned API Call(s)">{{ $key['ban_count'] }}</span>
+                                @endif
 					        	@if (strlen($key['lastError']) > 0)
 						        	<i class="fa fa-bullhorn pull-right" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ $key['lastError'] }}" data-trigger="hover"></i>
 						        @endif
