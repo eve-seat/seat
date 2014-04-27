@@ -577,6 +577,7 @@ class CorporationController extends BaseController {
 		$shuffled_contents = array();
 		foreach ($item_contents as $contents)
 			$shuffled_contents[$contents->itemID][] = array(
+				'typeID' => $contents->typeID,
 				'quantity' => $contents->quantity,
 				'name' => $contents->typeName,
 				'volume' => $contents->volume

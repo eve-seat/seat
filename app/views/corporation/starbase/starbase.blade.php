@@ -28,9 +28,9 @@
 					        <table class="table table-condensed table-hover">
 					            <tbody>
 					            	<tr>
+						                <th>Type</th>
 						                <th>Location</th>
 						                <th>Name</th>
-						                <th>Type</th>
 						                <th>Fuel Blocks</th>
 						                <th>State</th>
 						                <th></th>
@@ -45,12 +45,20 @@
 													{{--*/$posname = $name_finder['itemName']/*--}}
 												@endif
 											@endforeach
-
+							                <td>
+							                	<img src='http://image.eveonline.com/Type/{{ $details->typeID }}_32.png' style='width: 18px;height: 18px;'>
+							                	{{ $details->typeName }}
+							                </td>
 							                <td>{{ $details->itemName }}</td>
-							                <td>{{ $posname }}</td>
-							                <td>{{ $details->typeName }}</td>
+							                <td><b>{{ $posname }}</b></td>
 							                <td>{{ $details->fuelBlocks }}</td>
-							                <td>{{ $tower_states[$details->state] }}</td>
+							                <td>
+								                @if ($details->state == 4)
+								                	<span class="label label-success pull-right">{{ $tower_states[$details->state] }}</span>
+								                @else
+								                	<span class="label label-warning pull-right">{{ $tower_states[$details->state] }}</span>
+								                @endif
+							                </td>
 							                <td><a href="#{{ $details->itemID }}"><i class="fa fa-anchor" data-toggle="tooltip" title="" data-original-title="Details"></i></a></td>
 							            </tr>
 						            @endforeach
@@ -237,13 +245,13 @@
 										        	<span class="text-red">Full Fuel Usage</span>
 										        @endif
 									        </th>
-									        <th>Fuel Details</th>
+									        <th>Fuel Reserve Details</th>
 									        <th></th>
 									    </tr>
 									    <tr>
 									        <td>
-									        	<b>{{ ($details->fuelBlocks * 5) }} / {{ $bay_sizes[$details->typeID]['fuelBay'] }}</b> m3 |
-									        	Fuel Blocks
+									        	<img src='http://image.eveonline.com/Type/4051_32.png' style='width: 18px;height: 18px;'>
+									        	<b>Fuel Blocks:</b> {{ ($details->fuelBlocks * 5) }} m3 / {{ $bay_sizes[$details->typeID]['fuelBay'] }} m3
 									        </td>
 									        <td>
 									            <div class="progress">
@@ -254,8 +262,9 @@
 									    </tr>
 									    <tr>
 									        <td>
-									        	<b>{{ ($details->strontium * 3) }} / {{ $bay_sizes[$details->typeID]['strontBay'] }}</b> m3 |
-									        	Strontium
+									        	<img src='http://image.eveonline.com/Type/16275_32.png' style='width: 18px;height: 18px;'>
+									        	<b>Strontium:</b> {{ ($details->strontium * 3) }} m3 / {{ $bay_sizes[$details->typeID]['strontBay'] }} m3
+									        	
 									        </td>
 									        <td>
 									            <div class="progress">
@@ -281,7 +290,7 @@
 					        
 					        {{-- tower module information --}}
 					        <div class="tab-pane" id="tab_3{{ $details->itemID }}">
-					        	<h4>Modules Detail:</h4>
+					        	<h4>Modules Detail: <small class="pull-right text-muted">% Full</small></h4>
 								<table class="table table-condensed table-hover">
 								    <tbody>
 									    @foreach ($item_locations[$details->moonID] as $item)
@@ -312,14 +321,30 @@
 											        	{{-- */ $total_size = 0 /* --}}
 											        	@if (isset($item_contents[$item['itemID']]))
 
-												        	@foreach ($item_contents[$item['itemID']] as $contents)
+											        		@if (count($item_contents[$item['itemID']]) > 1)
+												        		<ul class="list-unstyled">
+												        			<li class="nav-header text-muted pull-right">{{ count($item_contents[$item['itemID']]) }} Items</li>
+														        	@foreach ($item_contents[$item['itemID']] as $contents)
 
-												        		<b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
-												        		{{-- add the volume --}}
-												        		{{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}
-												        	@endforeach
+														        		<li>
+															        		<img src='http://image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+															        		<b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
+															        		{{-- add the volume --}}
+															        		{{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}
+															        	</li>
+														        	@endforeach
+														        </ul>
+														    @else
+															    @foreach ($item_contents[$item['itemID']] as $contents)
+																    <img src='http://image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+													        		<b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
+													        		{{-- add the volume --}}
+													        		{{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}													        		
+													        	@endforeach
+														    @endif
 												        @endif
-
+												    </td>
+												   	<td>
 												       	{{-- check if there is a capacity larger that 0. Some modules, like hardners have 0 capacity --}} 
 											        	@if ($item['capacity'] > 0)
 
@@ -328,17 +353,13 @@
 											        			If a silo/coupling array is bonusable, add the bonus to the total capacity
 											        		--}}
 											        		@if (array_key_exists($details->typeID, $tower_cargo_bonusses) && (in_array($item['typeID'], $cargo_size_bonusable_modules)))
-
-											        			<span class="badge pull-right">
+											        			<span class="pull-right">
 												        			{{ round(($total_size / ( $item['capacity'] *= (1 + $tower_cargo_bonusses[$details->typeID] / 100))) * 100) }}%
 												        		</span>
-
 											        		@else 	{{-- We have a non bonused module --}}
-
-											        			<span class="badge pull-right">
+											        			<span class="pull-right">
 														        	{{ $percentage = round( ($total_size / $item['capacity']) * 100) }}%
 														        </span>
-
 														    @endif
 												        @endif											        
 											        </td>
