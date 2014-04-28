@@ -290,7 +290,7 @@ class ApiKeyController extends BaseController {
 		$key = SeatKey::where('keyID', $keyID)->first();
 
 		if (!$key)
-			App::abord(404);
+			App::abort(404);
 
 		// Check that there is not already an outstanding job for this keyID
 		$queue_check = DB::table('queue_information')
@@ -336,7 +336,7 @@ class ApiKeyController extends BaseController {
 		$key = SeatKey::where('keyID', $keyID)->first();
 
 		if (!$key)
-			App::abord(404);
+			App::abort(404);
 
 		$key->isOk = 1;
 		$key->lastError = null;
@@ -363,7 +363,7 @@ class ApiKeyController extends BaseController {
 		$key = SeatKey::where('keyID', $keyID)->first();
 
 		if (!$key)
-			App::abord(404);
+			App::abort(404);
 
 		$key->delete();
 
