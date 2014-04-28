@@ -205,6 +205,44 @@
 	        </div><!-- /.box-body -->
 	    </div><!-- /.box -->
 	</div> <!-- ./ md-4 -->
+	<div class="col-md-12">
+	    <!-- Danger box -->
+	    <div class="box box-solid box-success">
+	        <div class="box-header">
+	            <h3 class="box-title">Job History (Last 10)</h3>
+	            <div class="box-tools pull-right">
+	            	<button class="btn btn-success btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+	            	<button class="btn btn-success btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+	            </div>
+	        </div>
+	        <div class="box-body no-padding">
+	        	@if (!empty($db_history))
+						<table class="table table-condensed">
+					    <tbody>
+					    	<tr>
+					            <th>Owner</th>
+					            <th>Scope</th>
+					            <th>API</th>
+					            <th>Status</th>
+					            <th>Updated at</th>
+					        </tr>
+					        @foreach ($db_history as $history)
+						        <tr>
+						            <td>{{ $history->ownerID }}</td>
+						            <td>{{ $history->scope }}</td>
+						            <td>{{ $history->api }}</td>
+						            <td>@if( $history->output == NULL ) Successful @else {{ $history->output }} @endif</td>
+						            <td>{{ Carbon\Carbon::parse($history->timestamp)->diffForHumans() }}</td>
+						        </tr>
+						    @endforeach
+						</tbody>
+					</table>
+	        	@else
+	        		<h3><i class="fa fa-check"></i> No Job Errors</h3>
+	        	@endif
+	        </div><!-- /.box-body -->
+	    </div><!-- /.box -->
+	</div> <!-- ./ md-12 -->
 </div>
 @stop
 
