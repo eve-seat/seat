@@ -206,7 +206,7 @@
 	    </div><!-- /.box -->
 	</div> <!-- ./ md-4 -->
 	<div class="col-md-12">
-	    <!-- Danger box -->
+	    <!-- Job History box -->
 	    <div class="box box-solid box-success">
 	        <div class="box-header">
 	            <h3 class="box-title">Job History (Last 10)</h3>
