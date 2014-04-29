@@ -62,11 +62,16 @@ class MailController extends BaseController {
 			->where('character_mailmessages.messageID', $messageID)
 			->first();
 
+		$recipients = DB::table('character_mailmessages')
+			->where('messageID', $messageID)
+			->lists('characterID');
+
 		if(count($message) <= 0)
 			return Redirect::action('MailController@getSubjects')
 				->withErrors('Invalid Message ID');
 
 		return View::make('mail.read')
-			->with('message', $message);
+			->with('message', $message)
+			->with('recipients', $recipients);
 	}
 }

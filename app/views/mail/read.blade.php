@@ -19,7 +19,7 @@
 {{ Form::open(array()) }} {{ Form::close() }}
 
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-9">
 
 		<div class="box">
 		    <div class="box-header">
@@ -86,6 +86,36 @@
             </div>
 		</div>
 
+	</div>
+	<div class="col-md-3">
+		<div class="box box-solid box-solid">
+			<div class="box-header">
+                <h3 class="box-title">Recipients</h3>
+                <div class="box-tools pull-right">
+                    <button class="btn btn-default btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-default btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+	        <div class="box-body no-padding">
+				<table class="table table-condensed">
+				    <tbody>
+						<tr>
+				            <th>Character Name</th>
+				        </tr>
+				        @foreach ($recipients as $recipient)
+						<tr>
+							<td>
+								<a href="{{ action('CharacterController@getView', array('characterID' => $recipient)) }}">
+									<img src='http://image.eveonline.com/Character/{{ $recipient }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+									<span rel="id-to-name">{{ $recipient }}</span>
+								</a>
+							</td>
+						</tr>
+					    @endforeach
+					</tbody>
+				</table>
+	        </div><!-- /.box-body -->
+		</div>
 	</div>
 </div>
 	
