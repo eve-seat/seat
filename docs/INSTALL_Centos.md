@@ -28,7 +28,8 @@ $ wget http://dl.fedoraproject.org/pub/epel/6/$BASEARCH/$EPEL -O $EPEL && yum lo
 
 
 ### Tutorial! ###
-A tutorial showing the full installation is available here: https://asciinema.org/a/9057
+A tutorial showing the full installation is available here: https://asciinema.org/a/9057  
+**NOTE:** The above tutorial does not include the SELinux stuff. **Don't** turn it off! Simply refer to section 10 below for the configuration steps.
 
 #### 1. Install & Configure MySQL ####
 For CentOS, installation is pretty simple:
@@ -156,6 +157,22 @@ You should regenerate the applications security key:
 $ php artisan key:generate
 Application key [YWIs6jkLtVRjhuAENP21KxW7FHD7M0LZ] set successfully.
 ``` 
+
+**SELinux**  
+This is a part that many people struggle with and as a result, they simply turn selinux off. This is bad, don't do it. SELinux can be configured as needed. To configure it to work with SeAT, you need to do 2 things.
+
+1) Ensure that your web content in `/var/www/seat` is laballed correctly. To do this, run (as root):
+```bash
+$ restorecon -Rv /var/www/seat
+```
+
+2) Next, we need to allow the apache process to make network connections. Allow this with (as root again):  
+```bash
+setsebool -P httpd_can_network_connect 1
+```
+
+Done! :)
+
 
 #### 11. Web Server ####
 In order to get the SeAT frontend running, we need to configure Apache to serve our SeAT installs `public` folder.  
