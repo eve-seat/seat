@@ -21,6 +21,7 @@ Artisan::add(new \Seat\Commands\SeatAPIFindSickKeys);
 Artisan::add(new \Seat\Commands\SeatAPIDeleteKey);
 Artisan::add(new \Seat\Commands\SeatAddKey);
 Artisan::add(new \Seat\Commands\SeatVersion);
+Artisan::add(new \Seat\Commands\SeatDiagnose);
 
 // Scheduled SeAT Commands
 Artisan::add(new \Seat\Commands\Scheduled\EveCharacterUpdater);
