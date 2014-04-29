@@ -40,8 +40,7 @@ class QueueController extends BaseController {
 		$db_working_count = \SeatQueueInformation::where('status', '=', 'Working')->count();
 		$db_working = \SeatQueueInformation::where('status', '=', 'Working')->get();
 
-		$db_history = \SeatQueueInformation::select('ownerID', 'api', 'scope', DB::raw('MAX(updated_at) as timestamp'), 'output')
-			->orderBy('timestamp', 'DESC')->groupBy('ownerID')->groupBy('scope')->take(10)->get();
+		$db_history = \SeatQueueInformation::orderBy('updated_at', 'desc')->take(25)->get();
 
 		return View::make('queue.status')
 			->with('redis_count', $redis_count)
