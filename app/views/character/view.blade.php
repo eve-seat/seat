@@ -619,13 +619,14 @@
 					                <table class="table table-condensed table-hover">
 					                    <tbody>
 					                        <tr>
-					                            <th>Date</th>
-					                            <th>#</th>
-					                            <th>Type</th>
-					                            <th>Amount</th>
-					                            <th>Client</th>
-					                            <th>Type</th>
-					                            <th>Station Name</th>
+												<th>Date</th>
+												<th>Type</th>
+												<th>#</th>
+												<th>Per Item</th>
+												<th>Total</th>
+												<th>Client</th>
+												<th>Type</th>
+												<th>Station Name</th>
 					                        </tr>
 					                        @foreach ($wallet_transactions as $e)
 					                            <tr @if ($e->transactionType == 'buy')class="danger" @endif>
@@ -634,12 +635,13 @@
 					                                		{{ Carbon\Carbon::parse($e->transactionDateTime)->diffForHumans() }}
 					                                	</span>
 					                                </td>
-					                                <td>{{ $e->quantity }}</td>
 					                                <td>
 					                                	<img src='http://image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
 					                                	{{ $e->typeName }}
 					                                </td>
+					                                <td>{{ $e->quantity }}</td>
 					                                <td>{{ number_format($e->price, 2, '.', ' ') }} ISK</td>
+					                                <td>{{ number_format($e->price * $e->quantity, 2, '.', ' ') }} ISK</td>
 					                                <td>{{ $e->clientName }}</td>
 					                                <td>{{ $e->transactionType }}</td>
 					                                <td>{{ $e->stationName }}</td>
