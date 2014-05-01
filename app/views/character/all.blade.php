@@ -38,6 +38,22 @@
 										<b>Training Ends: </b> {{ Carbon\Carbon::parse($character->trainingEndTime)->diffForHumans() }}
 									@endif
 								</li>
+								{{-- key information, if available --}}
+								@if (array_key_exists($character->characterID, $character_info))
+
+									{{-- skillpoints --}}
+									@if (!empty($character_info[$character->characterID]->skillPoints))
+										<li><b>Skillpoints:</b> {{ number_format($character_info[$character->characterID]->skillPoints, 0, '.', ' ') }}</li>
+									@endif
+									{{-- ship type --}}
+									@if (!empty($character_info[$character->characterID]->shipTypeName))
+										<li><b>Ship:</b> {{ $character_info[$character->characterID]->shipTypeName }}</li>
+									@endif
+									{{-- last location --}}
+									@if (!empty($character_info[$character->characterID]->lastKnownLocation))
+										<li><b>Last Location:</b> {{ $character_info[$character->characterID]->lastKnownLocation }}</li>
+									@endif
+								@endif
 								<li>
 									@if ($character->isOk == 1)
 										<span class="text-green"><i class="fa fa-check"></i> Key Ok</span>
