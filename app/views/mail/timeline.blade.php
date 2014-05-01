@@ -56,6 +56,7 @@
                     		@if (strlen($message->toCorpOrAllianceID) > 0 && count(explode(',', $message->toCorpOrAllianceID)) > 0)
 	                    		<b>To Corp/Alliance:</b>
 	                    			@foreach (explode(',', $message->toCorpOrAllianceID) as $corp_alliance)
+										<img src='{{ App\Services\Helpers\Helpers::generateEveImage($corp_alliance, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
 	                    				<span rel="id-to-name">{{ $corp_alliance }}</span>
 	                    			@endforeach
 	                    	@endif
