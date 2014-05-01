@@ -16,10 +16,13 @@ A 'job' can be defined as a set of categorized API calls to update certains part
 ### Screenshots ###
 
 Character View
-![Character View](http://i.imgur.com/yhsfWrb.png)
+![Character View](http://i.imgur.com/EV1G2NC.png)
+
+Key Details View
+![Key Details View](http://i.imgur.com/qL1X41M.png)
 
 Starbase Details View
-![Starbase Details View](http://i.imgur.com/2OOmKkI.png)
+![Starbase Details View](http://i.imgur.com/djeC4ui.png)
 
 ### Installation ###
 Refer to the `docs/` directory for installation instructions. It is suggested that you checkout the latest release that can be found [here](https://github.com/eve-seat/seat/releases).
