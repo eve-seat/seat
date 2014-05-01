@@ -39,7 +39,7 @@
 									@endif
 								</li>
 								{{-- key information, if available --}}
-								@if (array_key_exists($character->characterID, $character_info))
+								@if (!empty($character_info) && array_key_exists($character->characterID, $character_info))
 
 									{{-- skillpoints --}}
 									@if (!empty($character_info[$character->characterID]->skillPoints))
