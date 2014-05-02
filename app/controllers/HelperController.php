@@ -127,4 +127,24 @@ class HelperController extends BaseController {
 
 		return Response::json($items);
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAvailablePeople()
+	|--------------------------------------------------------------------------
+	|
+	| Return the currently available people by main names
+	|
+	*/
+
+	public function getAvailablePeople()
+	{
+
+		$people = DB::table('seat_people_main')
+			->select(DB::raw('personID as id'), DB::raw('characterName as text'))
+			->where('characterName', 'like', '%' . Input::get('q') . '%')
+			->get();
+
+		return Response::json($people);
+	}
 }
