@@ -17,7 +17,9 @@
 						<div class="box box-solid">
 						    <div class="box-header">
 						        <h3 class="box-title">
-						        	<img src='http://image.eveonline.com/Character/{{ $personData[0]['main']->characterID }}_32.jpg' class='img-circle'>
+									<a href="{{ action('CharacterController@getView', array('characterID' => $personData[0]['main']->characterID )) }}">
+										<img src='http://image.eveonline.com/Character/{{ $personData[0]['main']->characterID }}_32.jpg' class='img-circle'>
+									</a>
 						        	{{ $personData[0]['main']->characterName }}
 						        	<small class="text-muted">({{ count($personData) }} keys)</small>
 						        </h3>
@@ -32,7 +34,9 @@
 										</li>
 										@foreach($characterInfo['characters'] as $character)
 											<li>
-												<img src='http://image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+												<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}">
+													<img src='http://image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+												</a>
 												{{ $character->characterName }}
 												@if ($personData[0]['main']->characterID <> $character->characterID)
 													<a href="{{ action('ApiKeyController@getSetGroupMain', array('personid' => $personData[0]['personID'], 'characterid' => $character->characterID)) }}" class="pull-right">Set as Main</a>
@@ -68,7 +72,9 @@
 						</li>
 						@foreach ($characters as $character)
 							<li>
-								<img src='http://image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+								<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}">
+									<img src='http://image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+								</a>
 								{{ $character->characterName }}
 								<a href="{{ action('ApiKeyController@getNewGroup', array('characterID' => $character->characterID )) }}" class="pull-right">Use as Main for new Group</a>
 							</li>
