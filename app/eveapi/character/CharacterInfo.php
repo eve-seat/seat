@@ -32,7 +32,7 @@ class Info extends BaseApi {
 		// Next, start our loop over the characters and call Seat\EveApi\Eve\CharacterInfo
 		// to handle the character updating
 		foreach ($characters as $characterID)
-			\Seat\EveApi\Eve\CharacterInfo::Update($characterID, $keyID, $vCode);
+			\Seat\EveApi\Eve\CharacterInfo::Update((int)$characterID, $keyID, $vCode);
 
 		return null;
 	}
