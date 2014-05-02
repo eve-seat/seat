@@ -37,8 +37,27 @@
 								<li><b>Joined: </b>{{ Carbon\Carbon::parse($character->startDateTime)->diffForHumans() }}</li>
 								<li><b>Last Logon: </b>{{ Carbon\Carbon::parse($character->logonDateTime)->diffForHumans() }}</li>
 								<li><b>Last Logoff: </b>{{ Carbon\Carbon::parse($character->logoffDateTime)->diffForHumans() }}</li>
-								<li><b>Location: </b>{{ $character->location }}</li>
-								<li><b>Ship: </b>{{ $character->shipType }}</li>
+
+								{{-- key information, if available --}}
+								@if (!empty($member_info) && array_key_exists($character->characterID, $member_info))
+
+									{{-- skillpoints --}}
+									@if (!empty($member_info[$character->characterID]->skillPoints))
+										<li><b>Skillpoints:</b> {{ number_format($member_info[$character->characterID]->skillPoints, 0, '.', ' ') }}</li>
+									@endif
+									{{-- ship type --}}
+									@if (!empty($member_info[$character->characterID]->shipTypeName))
+										<li><b>Ship:</b> {{ $member_info[$character->characterID]->shipTypeName }}</li>
+									@endif
+									{{-- last location --}}
+									@if (!empty($member_info[$character->characterID]->lastKnownLocation))
+										<li><b>Last Location:</b> {{ $member_info[$character->characterID]->lastKnownLocation }}</li>
+									@endif
+								@else
+									{{-- use the information from the Corporation API --}}
+									<li><b>Location: </b>{{ $character->location }}</li>
+									<li><b>Ship: </b>{{ $character->shipType }}</li>
+								@endif
 								<li>
 									@if ($character->isOk == 1)
 										<span class="text-green"><i class="fa fa-check"></i> Key Ok</span>

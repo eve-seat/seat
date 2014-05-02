@@ -145,8 +145,14 @@ class CorporationController extends BaseController {
 			->groupBy('cmt.characterID')
 			->get();
 
+		// Set an array with the character info that we have
+		$member_info = null;
+		foreach (DB::table('eve_characterinfo')->get() as $character)
+			$member_info[$character->characterID] = $character;
+
 		return View::make('corporation.membertracking.membertracking')
-			->with('members', $members);
+			->with('members', $members)
+			->with('member_info', $member_info);
 	}
 
 	/*
