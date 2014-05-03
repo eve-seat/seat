@@ -91,7 +91,7 @@
                 		<div class="row">
                 			<div class="col-md-4">
                                 <a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}">
-                                    <img src="http://image.eveonline.com/Character/{{ $character->characterID }}_64.jpg" class="img-circle pull-right">
+                                    <img src="//image.eveonline.com/Character/{{ $character->characterID }}_64.jpg" class="img-circle pull-right">
                                 </a>
     		            	</div>
     		            	<div class="col-md-8">

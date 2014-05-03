@@ -45,7 +45,7 @@
 	                    	@if (isset($key['characters']))
 		                    	@foreach($key['characters'] as $char)
 		                    		<a href="{{ action('CharacterController@getView', array('characterID' => $char['characterID'])) }}">
-		                    			<img src='http://image.eveonline.com/Character/{{ $char['characterID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+		                    			<img src='//image.eveonline.com/Character/{{ $char['characterID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 		                    			{{ $char['characterName'] }}
 		                    		</a>
 		                    	@endforeach

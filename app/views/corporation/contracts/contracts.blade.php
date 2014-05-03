@@ -137,7 +137,7 @@
 																		<li style="list-style:none;">
 																			{{-- Check if it's a item request or not --}}
 																			@if($content['included'] == 1)
-																				<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																				<img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
 																				<span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
 																			@endif
 																		</li>
@@ -154,7 +154,7 @@
 																		<li style="list-style:none;">
 																			{{-- Check if it's a item request or not --}}
 																			@if($content['included'] == 0)
-																				<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																				<img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
 																				<span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
 																			@endif
 																		</li>

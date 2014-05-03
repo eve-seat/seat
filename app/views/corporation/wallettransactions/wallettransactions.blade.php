@@ -38,7 +38,7 @@
                                 	</span>
                                 </td>
                                 <td>
-                                    <img src='http://image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
+                                    <img src='//image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
                                     {{ $e->typeName }}
                                 </td>
                                 <td>{{ $e->quantity }}</td>

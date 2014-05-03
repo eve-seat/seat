@@ -88,7 +88,7 @@
     @foreach ($key_info->key->characters as $character)
           <div class="row">
             <div class="col-md-2">
-              <img src='http://image.eveonline.com/Character/{{ $character->characterID }}_128.jpg' class='img-thumbnail'>
+              <img src='//image.eveonline.com/Character/{{ $character->characterID }}_128.jpg' class='img-thumbnail'>
             </div>
             <div class="col-md-6">
               <blockquote>

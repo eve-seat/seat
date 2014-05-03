@@ -116,19 +116,19 @@ class Helpers {
 	
  		if($id > 90000000 && $id < 98000000) {
 
-			return 'http://image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
+			return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
 
 		} elseif($id > 98000000 && $id < 99000000) {
 
-			return 'http://image.eveonline.com/Corporation/' . $id . '_' . $size . '.png';
+			return '//image.eveonline.com/Corporation/' . $id . '_' . $size . '.png';
 
 		} elseif($id > 99000000 && $id < 100000000) {
 
-			return 'http://image.eveonline.com/Alliance/' . $id . '_' . $size . '.png';
+			return '//image.eveonline.com/Alliance/' . $id . '_' . $size . '.png';
 
 		} else {
 
-			return 'http://image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
+			return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
 		}
 	}
 }

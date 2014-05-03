@@ -75,7 +75,7 @@
         </div><!-- ./wrapper -->
 
         <!-- jQuery 2.0.2 -->
-        <!-- // <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script> -->
+        <!-- // <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script> -->
         <script src="{{ URL::asset('assets/js/jquery-2.1.0.min.js') }}"></script>
         <!-- Bootstrap -->
         <script src="{{ URL::asset('assets/js/bootstrap.min.js') }}" type="text/javascript"></script> 
@@ -84,7 +84,7 @@
         <!-- AdminLTE App -->
         <script src="{{ URL::asset('assets/js/app.js') }}" type="text/javascript"></script>
         <!-- highcharts -->
-        <script src="http://code.highcharts.com/highcharts.js"></script>
+        <script src="//code.highcharts.com/highcharts.js"></script>
         <!-- select2 -->
         <script src="{{ URL::asset('assets/js/select2.min.js') }}" type="text/javascript"></script>
 

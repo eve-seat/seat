@@ -18,7 +18,7 @@
 						    <div class="box-header">
 						        <h3 class="box-title">
 									<a href="{{ action('CharacterController@getView', array('characterID' => $personData[0]['main']->characterID )) }}">
-										<img src='http://image.eveonline.com/Character/{{ $personData[0]['main']->characterID }}_32.jpg' class='img-circle'>
+										<img src='//image.eveonline.com/Character/{{ $personData[0]['main']->characterID }}_32.jpg' class='img-circle'>
 									</a>
 						        	{{ $personData[0]['main']->characterName }}
 						        	<small class="text-muted">({{ count($personData) }} keys)</small>
@@ -35,7 +35,7 @@
 										@foreach($characterInfo['characters'] as $character)
 											<li>
 												<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}">
-													<img src='http://image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+													<img src='//image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 												</a>
 												{{ $character->characterName }}
 												@if ($personData[0]['main']->characterID <> $character->characterID)
@@ -73,7 +73,7 @@
 						@foreach ($characters as $character)
 							<li>
 								<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}">
-									<img src='http://image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+									<img src='//image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 								</a>
 								{{ $character->characterName }}
 								<a href="{{ action('ApiKeyController@getNewGroup', array('characterID' => $character->characterID )) }}" class="pull-right">Use as Main for new Group</a>

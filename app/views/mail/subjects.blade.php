@@ -38,7 +38,7 @@
 				                </td>
 				                <td>
 		                    		<a href="{{ action('CharacterController@getView', array('characterID' => $message->senderID)) }}">
-		                    			<img src='http://image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+		                    			<img src='//image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 		                    		</a>
 				                	{{ $message->senderName }}
 				                </td>
