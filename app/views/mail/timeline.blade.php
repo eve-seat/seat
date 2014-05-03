@@ -76,7 +76,11 @@
                     		@if (strlen($message->toListID) > 0 && count(explode(',', $message->toListID)) > 0)
 	                    		<b>To Mailing List:</b>
 	                    			@foreach (explode(',', $message->toListID) as $list)
-	                    				{{ $list }}
+	                    				@if(array_key_exists($list, $mailing_list_names))
+		                    				{{ $mailing_list_names[$list] }}
+		                    			@else
+		                    				Unknown Mailing List {{ $list }}
+		                    			@endif
 	                    			@endforeach
 	                    	@endif
 
