@@ -1,6 +1,6 @@
 ## SeAT - Simple (or Stupid) EVE Online API Tool ##
 
-## *This is very much BETA software with a ton of things not yet implemented. USE AT YOUR OWN RISK* ##
+##### *This is very much BETA software with a ton of things not yet implemented. USE AT YOUR OWN RISK* #####
 
 ### Introduction ###
 SeAT attempts to be a EVE Online™ Corporation Management Tool written in PHP using the [Laravel][1] Framework driven by a MySQL database.  
