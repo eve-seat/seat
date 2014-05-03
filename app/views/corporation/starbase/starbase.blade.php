@@ -46,7 +46,7 @@
 												@endif
 											@endforeach
 							                <td>
-							                	<img src='http://image.eveonline.com/Type/{{ $details->typeID }}_32.png' style='width: 18px;height: 18px;'>
+							                	<img src='//image.eveonline.com/Type/{{ $details->typeID }}_32.png' style='width: 18px;height: 18px;'>
 							                	{{ $details->typeName }}
 							                </td>
 							                <td>{{ $details->itemName }}</td>
@@ -250,7 +250,7 @@
 									    </tr>
 									    <tr>
 									        <td>
-									        	<img src='http://image.eveonline.com/Type/4051_32.png' style='width: 18px;height: 18px;'>
+									        	<img src='//image.eveonline.com/Type/4051_32.png' style='width: 18px;height: 18px;'>
 									        	<b>Fuel Blocks:</b> {{ ($details->fuelBlocks * 5) }} m3 / {{ $bay_sizes[$details->typeID]['fuelBay'] }} m3
 									        </td>
 									        <td>
@@ -262,7 +262,7 @@
 									    </tr>
 									    <tr>
 									        <td>
-									        	<img src='http://image.eveonline.com/Type/16275_32.png' style='width: 18px;height: 18px;'>
+									        	<img src='//image.eveonline.com/Type/16275_32.png' style='width: 18px;height: 18px;'>
 									        	<b>Strontium:</b> {{ ($details->strontium * 3) }} m3 / {{ $bay_sizes[$details->typeID]['strontBay'] }} m3
 									        	
 									        </td>
@@ -327,7 +327,7 @@
 														        	@foreach ($item_contents[$item['itemID']] as $contents)
 
 														        		<li>
-															        		<img src='http://image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+															        		<img src='//image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
 															        		<b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
 															        		{{-- add the volume --}}
 															        		{{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}
@@ -336,7 +336,7 @@
 														        </ul>
 														    @else
 															    @foreach ($item_contents[$item['itemID']] as $contents)
-																    <img src='http://image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																    <img src='//image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
 													        		<b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
 													        		{{-- add the volume --}}
 													        		{{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}													        		

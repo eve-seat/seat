@@ -19,7 +19,7 @@
             <div class="box-body">
             	<div class="row">
             		<div class="col-md-3">
-		                <img src='http://image.eveonline.com/Character/{{ $character->characterID }}_256.jpg' class='img-circle pull-right'>
+		                <img src='//image.eveonline.com/Character/{{ $character->characterID }}_256.jpg' class='img-circle pull-right'>
 		            </div>
 		            <div class="col-md-4">
                         <div class="box box-solid">
@@ -58,7 +58,7 @@
 						                <div class="row">
 						               		<a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}" style="color:inherit;">
 						                		<div class="col-md-2">
-											<img src="http://image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
+											<img src="//image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
 										</div>
 										<div class="col-md-5">
 											<ul class="list-unstyled">
@@ -700,7 +700,7 @@
 					                                	</span>
 					                                </td>
 					                                <td>
-					                                	<img src='http://image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
+					                                	<img src='//image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
 					                                	{{ $e->typeName }}
 					                                </td>
 					                                <td>{{ $e->quantity }}</td>
@@ -755,7 +755,7 @@
 									                </td>
 									                <td>
 							                    		<a href="{{ action('CharacterController@getView', array('characterID' => $message->senderID)) }}">
-							                    			<img src='http://image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+							                    			<img src='//image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 							                    		</a>
 									                	{{ $message->senderName }}
 									                </td>
@@ -865,7 +865,7 @@
 																			<td>{{ App\Services\Helpers\Helpers::formatBigNumber($asset['quantity']) }}</td>
 																			<td colspan="2">
 																				<span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['quantity'], 0, '.', ' ') }} x {{ $asset['typeName'] }}">
-																					<img src='http://image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																					<img src='//image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
 																					{{ str_limit($asset['typeName'], 35, $end = '...') }} {{ isset($asset['contents']) ? "(". count($asset['contents']) . ")" : "" }}
 																				</span>
 																			</td>
@@ -889,7 +889,7 @@
 																					<td style="width: 18px;"></td>
 																					<td>
 																						<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}">
-																							<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																							<img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
 																							{{ str_limit($content['typeName'], 30, $end = '...') }}
 																						</span>
 																					</td>
@@ -941,7 +941,7 @@
 												            <tr>
 												                <td>
 										                    		<a href="{{ action('CharacterController@getView', array('characterID' => $contact->contactID)) }}">
-										                    			<img src='http://image.eveonline.com/Character/{{ $contact->contactID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+										                    			<img src='//image.eveonline.com/Character/{{ $contact->contactID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 										                    			{{ $contact->contactName }}
 										                    		</a>
 												                </td>
@@ -1101,7 +1101,7 @@
 																							<li style="list-style:none;">
 																								{{-- Check if it's a item request or not --}}
 																								@if($content['included'] == 1)
-																									<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																									<img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
 																									<span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
 																								@endif
 																							</li>
@@ -1118,7 +1118,7 @@
 																							<li style="list-style:none;">
 																								{{-- Check if it's a item request or not --}}
 																								@if($content['included'] == 0)
-																									<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																									<img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
 																									<span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
 																								@endif
 																							</li>

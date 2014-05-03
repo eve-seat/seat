@@ -19,7 +19,7 @@
             <div class="box-body">
             	<div class="row">
             		<div class="col-md-3">
-		                <img src='http://image.eveonline.com/Character/{{ $character_info->characterID }}_256.jpg' class='img-circle pull-right'>
+		                <img src='//image.eveonline.com/Character/{{ $character_info->characterID }}_256.jpg' class='img-circle pull-right'>
 		            </div>
 		            <div class="col-md-4">
                         <div class="box box-solid">
