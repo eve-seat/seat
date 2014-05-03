@@ -290,7 +290,7 @@ class ApiKeyController extends BaseController {
 		$key = SeatKey::where('keyID', $keyID)->first();
 
 		if (!$key)
-			App::abord(404);
+			App::abort(404);
 
 		// Check that there is not already an outstanding job for this keyID
 		$queue_check = DB::table('queue_information')
@@ -336,7 +336,7 @@ class ApiKeyController extends BaseController {
 		$key = SeatKey::where('keyID', $keyID)->first();
 
 		if (!$key)
-			App::abord(404);
+			App::abort(404);
 
 		$key->isOk = 1;
 		$key->lastError = null;
@@ -363,7 +363,7 @@ class ApiKeyController extends BaseController {
 		$key = SeatKey::where('keyID', $keyID)->first();
 
 		if (!$key)
-			App::abord(404);
+			App::abort(404);
 
 		$key->delete();
 
@@ -391,5 +391,194 @@ class ApiKeyController extends BaseController {
 			->delete();
 
 		return Response::json();
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getPeople()
+	|--------------------------------------------------------------------------
+	|
+	| Get all of the API keys in the database together with the characters that
+	| are currently associated with it
+	|
+	*/
+
+	public function getPeople()
+	{
+
+		// Prepare the people information
+		$people = array();
+		foreach (\SeatPeople::all() as $person) {
+
+			// For every person, get the keyID and characters on that key
+			$people[$person->personID][] = array(
+
+				'personID' => $person->personID,
+				'keyID' => $person->keyID,
+				'characters' => EveAccountAPIKeyInfoCharacters::where('keyID', $person->keyID)->get(),
+				'main' => $person->main()->first()
+			);
+		}
+
+		// var_dump($people[1][0]['main']->characterName);die();
+
+		$unaffiliated_keys = DB::table('seat_keys')
+			// ->leftJoin('account_apikeyinfo_characters', 'seat_keys.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->whereNotIn('seat_keys.keyID', function($query) {
+
+				$query->from('seat_people')
+					->select('keyID')
+					->get();
+			})
+			->get();
+
+		// Prepare an array with all the key characters too
+		$unaffiliated = array();
+		foreach ($unaffiliated_keys as $key)
+			$unaffiliated[$key->keyID] = EveAccountAPIKeyInfoCharacters::where('keyID', $key->keyID)->get();
+
+		return View::make('keys.people')
+			->with(array('people' => $people))
+			->with(array('unaffiliated' => $unaffiliated));
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getNewGroup()
+	|--------------------------------------------------------------------------
+	|
+	| Create a New People Group from a characterID
+	|
+	*/
+
+	public function getNewGroup($characterID)
+	{
+
+		// First, off, start by checking that the key this characterID beongs to is
+		// not already assigned to another group, and that the characterID is actually
+		// valid
+		$character_key = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->pluck('keyID');
+
+		if (!$character_key || SeatPeople::where('keyID', $character_key)->first())
+			App::abort('404');
+
+		// Ok, so the key is not already affiliated with another person, so lets create
+		// a new person, and assign this key and main
+
+		$person = new SeatPeople;
+		$person->personID = DB::table('seat_people')->max('id') + 1;
+		$person->keyID = $character_key;
+		$person->save();
+
+		// Get the main information
+		$main = new SeatPeopleMain;
+		$main->characterID = $characterID;
+		$main->characterName = EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('characterName');
+		$person->main()->save($main);
+
+		return Redirect::action('ApiKeyController@getPeople')
+			->with('success', 'A new group was created with ' . $main->characterName . ' as the main character.');
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| postAddToGroup()
+	|--------------------------------------------------------------------------
+	|
+	| Add a keyID to a person group
+	|
+	*/
+
+	public function postAddToGroup()
+	{
+
+		// Lets do some quick checks to ensure that the key and person exist
+		if (!SeatPeople::where('personID', Input::get('personid'))->first() || !SeatKey::where('keyID', Input::get('affected-key'))->first())
+			return Redirect::action('ApiKeyController@getPeople')
+				->withErrors('Whatever you just tried simply wont work.');
+
+		// Next, we check that this keyID is not already part of a person.
+		if (SeatPeople::where('keyID', Input::get('affected-key'))->first())
+			return Redirect::action('ApiKeyController@getPeople')
+				->withErrors('This key is already part of a person...');
+
+		// Lastly, add the key to the person
+		$person = new SeatPeople;
+		$person->personID = Input::get('personid');
+		$person->keyID = Input::get('affected-key');
+		$person->save();
+
+		return Redirect::action('ApiKeyController@getPeople')
+			->with('success', 'Key ' . Input::get('affected-key') . ' has been added to person group ' . Input::get('personid'));
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getDeleteFromGroup()
+	|--------------------------------------------------------------------------
+	|
+	| Delete a keyID from a person group
+	|
+	*/
+
+	public function getDeleteFromGroup($keyID)
+	{
+
+		// Lets do some quick checks to ensure that the key exists
+		if (!SeatPeople::where('keyID', $keyID)->first())
+			return Redirect::action('ApiKeyController@getPeople')
+				->withErrors('Whatever you just tried simply wont work.');
+
+		// Get the personID so that we can check if the group is now empty
+		// and delete if needed
+		$personid = SeatPeople::where('keyID', $keyID)->pluck('personID');
+
+		// Perform the delete
+		SeatPeople::where('keyID', $keyID)->delete();
+
+		// Count the remainder of keys for this person. If its empty, delete everything.
+		if (SeatPeople::where('personID', $personid)->count() <= 0) {
+
+			SeatPeople::where('personID', $personid)->delete();
+			SeatPeopleMain::where('personID', $personid)->delete();
+		}
+
+		return Redirect::action('ApiKeyController@getPeople')
+			->with('success', 'Key ' . $keyID . ' has been delete from the person group');
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getSetGroupMain()
+	|--------------------------------------------------------------------------
+	|
+	| Set a new main for a group
+	|
+	*/
+
+	public function getSetGroupMain($personid, $characterid)
+	{
+
+		// Lets do some quick checks to ensure that the person exists
+		if (!SeatPeople::where('personID', $personid)->first())
+			return Redirect::action('ApiKeyController@getPeople')
+				->withErrors('Whatever you just tried simply wont work.');
+
+		// Delete the old main
+		SeatPeopleMain::where('personID', $personid)->delete();
+
+		$person = SeatPeople::with('main')->where('personID', $personid)->first();
+
+		// Get the main information
+		$main = new SeatPeopleMain;
+		$main->characterID = $characterid;
+		$main->characterName = EveAccountAPIKeyInfoCharacters::where('characterID', $characterid)->pluck('characterName');
+		$person->main()->save($main);
+		$person->save();
+
+		return Redirect::action('ApiKeyController@getPeople')
+			->with('success', 'Group has had its main updated to ' . $main->characterName);
 	}
 }

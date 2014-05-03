@@ -27,6 +27,7 @@
                 <ul class="treeview-menu">
                     <li><a href="{{ action('ApiKeyController@getNewKey') }}"><i class="fa fa-angle-double-right"></i> Add New Key</a></li>
                     <li><a href="{{ action('ApiKeyController@getAll') }}"><i class="fa fa-angle-double-right"></i> List All Keys</a></li>
+                    <li><a href="{{ action('ApiKeyController@getPeople') }}"><i class="fa fa-angle-double-right"></i> People</a></li>
                 </ul>
             </li>
             <li class="treeview @if (Request::is('corporation/*')) active @endif">

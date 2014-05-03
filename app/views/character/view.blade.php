@@ -112,7 +112,9 @@
 	            <div class="tab-pane active" id="character_sheet">
 
 	            	<div class="row">
+
 	            		<div class="col-md-6">
+
 
 			            	{{-- character information --}}
 		                    <div class="box box-solid box-primary">
@@ -183,8 +185,7 @@
 		                    </div><!-- /.box -->
 
 
-		                </div> <!-- ./col-md-6 -->
-	            		<div class="col-md-6">	                
+
 			            	{{-- key/account information --}}
 		                    <div class="box box-solid box-primary">
 		                        <div class="box-header">
@@ -268,6 +269,69 @@
 		                    </div><!-- /.box -->
 
 		                </div> <!-- ./col-md-6 -->
+
+	            		<div class="col-md-6">
+
+	            			{{-- if we have the character info from eve_characterinfo, dispaly that --}}
+	            			@if (!empty($character_info))
+
+				            	{{-- employment information --}}
+			                    <div class="box box-solid box-primary">
+			                        <div class="box-header">
+			                            <h3 class="box-title">Employment History ({{ count($employment_history) }})</h3>
+			                            <div class="box-tools pull-right">
+			                            </div>
+			                        </div>
+			                        <div class="box-body">
+			                        	<ul class="list-unstyled">
+			                        		@foreach($employment_history as $employment)
+			                        			<li>
+			                        				<img src='https://image.eveonline.com/Corporation/{{ $employment->corporationID }}_64.png' class='img-circle'>
+			                        				Joined <b><span rel="id-to-name">{{ $employment->corporationID }}</span></b> on {{ $employment->startDate }} ({{ Carbon\Carbon::parse($employment->startDate)->diffForHumans() }})
+			                        			</li>
+			                        		@endforeach
+			                        	</ul>
+			                        </div><!-- /.box-body -->
+			                    </div><!-- /.box -->
+
+				            	{{-- Ship & Location Information --}}
+			                    <div class="box box-solid box-primary">
+			                        <div class="box-header">
+			                            <h3 class="box-title">Ship, Location &amp; Other</h3>
+			                            <div class="box-tools pull-right">
+			                            </div>
+			                        </div>
+			                        <div class="box-body">
+			                        	<ul class="list-unstyled">
+											{{-- ship type --}}
+											@if (!empty($character_info->shipTypeName))
+												<li><b>Ship:</b> {{ $character_info->shipTypeName }} called '{{ $character_info->shipName }}'</li>
+											@endif
+											{{-- last location --}}
+											@if (!empty($character_info->lastKnownLocation))
+												<li><b>Last Location:</b> {{ $character_info->lastKnownLocation }}</li>
+											@endif
+											{{-- security status --}}
+											@if (!empty($character_info->securityStatus))
+												<li>
+													<b>Security Status:</b>
+													@if ($character_info->securityStatus < -5)
+														<span class="text-red">{{ $character_info->securityStatus }}</span>
+													@elseif ($character_info->securityStatus < -2)
+														<span class="text-yellow">{{ $character_info->securityStatus }}</span>
+													@else
+														<span class="text-green">{{ $character_info->securityStatus }}</span>
+													@endif
+												</li>
+											@endif
+			                        	</ul>
+			                        </div><!-- /.box-body -->
+			                    </div><!-- /.box -->
+
+			                @endif
+
+		                </div> <!-- ./col-md-6 -->
+
 	                </div> <!-- ./row -->
 
 	            </div><!-- /.tab-pane -->
@@ -619,13 +683,14 @@
 					                <table class="table table-condensed table-hover">
 					                    <tbody>
 					                        <tr>
-					                            <th>Date</th>
-					                            <th>#</th>
-					                            <th>Type</th>
-					                            <th>Amount</th>
-					                            <th>Client</th>
-					                            <th>Type</th>
-					                            <th>Station Name</th>
+												<th>Date</th>
+												<th>Type</th>
+												<th>#</th>
+												<th>Per Item</th>
+												<th>Total</th>
+												<th>Client</th>
+												<th>Type</th>
+												<th>Station Name</th>
 					                        </tr>
 					                        @foreach ($wallet_transactions as $e)
 					                            <tr @if ($e->transactionType == 'buy')class="danger" @endif>
@@ -634,12 +699,13 @@
 					                                		{{ Carbon\Carbon::parse($e->transactionDateTime)->diffForHumans() }}
 					                                	</span>
 					                                </td>
-					                                <td>{{ $e->quantity }}</td>
 					                                <td>
 					                                	<img src='http://image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
 					                                	{{ $e->typeName }}
 					                                </td>
+					                                <td>{{ $e->quantity }}</td>
 					                                <td>{{ number_format($e->price, 2, '.', ' ') }} ISK</td>
+					                                <td>{{ number_format($e->price * $e->quantity, 2, '.', ' ') }} ISK</td>
 					                                <td>{{ $e->clientName }}</td>
 					                                <td>{{ $e->transactionType }}</td>
 					                                <td>{{ $e->stationName }}</td>
@@ -1235,14 +1301,13 @@
 	
 	// $(function () {
 	$("li#journal_graph").click(function() {
-		// TODO: Fix this stupid graphs width
 		var options = { chart: {
 			renderTo: 'chart',
 			type: 'line',
 			zoomType: 'x',
 			},
 			title: {
-				text: '30 Day ISK Delta',
+				text: 'Daily ISK Delta',
 			},
 			xAxis: {
 				title: {
@@ -1268,7 +1333,7 @@
 
 			var deltas = [];
 			for (i in json) {
-				deltas.push([parseInt(json[i]['daily_delta'])]);
+				deltas.push([json[i]['day'], parseInt(json[i]['daily_delta'])]);
 			}
 
 			options.series[0].name = "Delta";

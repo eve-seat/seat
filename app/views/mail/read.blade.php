@@ -19,7 +19,7 @@
 {{ Form::open(array()) }} {{ Form::close() }}
 
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-9">
 
 		<div class="box">
 		    <div class="box-header">
@@ -38,6 +38,7 @@
                     		@if (strlen($message->toCorpOrAllianceID) > 0 && count(explode(',', $message->toCorpOrAllianceID)) > 0)
 	                    		<b>To Corp/Alliance:</b>
 	                    			@foreach (explode(',', $message->toCorpOrAllianceID) as $corp_alliance)
+										<img src='{{ App\Services\Helpers\Helpers::generateEveImage($corp_alliance, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
 	                    				<span rel="id-to-name">{{ $corp_alliance }}</span>
 	                    			@endforeach
 	                    	@endif
@@ -57,7 +58,11 @@
                     		@if (strlen($message->toListID) > 0 && count(explode(',', $message->toListID)) > 0)
 	                    		<b>To Mailing List:</b>
 	                    			@foreach (explode(',', $message->toListID) as $list)
-	                    				{{ $list }}
+	                    				@if(array_key_exists($list, $mailing_list_names))
+		                    				{{ $mailing_list_names[$list] }}
+		                    			@else
+		                    				Unknown Mailing List {{ $list }}
+		                    			@endif
 	                    			@endforeach
 	                    	@endif
 
@@ -86,6 +91,36 @@
             </div>
 		</div>
 
+	</div>
+	<div class="col-md-3">
+		<div class="box box-solid box-solid">
+			<div class="box-header">
+                <h3 class="box-title">Recipients</h3>
+                <div class="box-tools pull-right">
+                    <button class="btn btn-default btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-default btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+	        <div class="box-body no-padding">
+				<table class="table table-condensed">
+				    <tbody>
+						<tr>
+				            <th>Character Name</th>
+				        </tr>
+				        @foreach ($recipients as $recipient)
+						<tr>
+							<td>
+								<a href="{{ action('CharacterController@getView', array('characterID' => $recipient)) }}">
+									<img src='http://image.eveonline.com/Character/{{ $recipient }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+									<span rel="id-to-name">{{ $recipient }}</span>
+								</a>
+							</td>
+						</tr>
+					    @endforeach
+					</tbody>
+				</table>
+	        </div><!-- /.box-body -->
+		</div>
 	</div>
 </div>
 	

@@ -62,6 +62,10 @@ class Character {
             $job_record->save();        
             EveApi\Character\IndustryJobs::Update($keyID, $vCode);
 
+            $job_record->output = 'Started CharacterInfo Update';
+            $job_record->save();
+            EveApi\Character\Info::Update($keyID, $vCode);
+
             $job_record->output = 'Started MailMessages Update';
             $job_record->save();        
             EveApi\Character\MailMessages::Update($keyID, $vCode);

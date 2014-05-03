@@ -21,6 +21,9 @@ class CharacterInfo extends BaseApi {
 		$scope = 'Eve';
 		$api = 'CharacterInfo';
 
+		if (BaseApi::isBannedCall($api, $scope, $keyID))
+			return;
+
 		// Prepare the Pheal instance
 		$pheal = new Pheal($keyID, $vCode);
 
@@ -31,6 +34,13 @@ class CharacterInfo extends BaseApi {
 			$character_info = $pheal
 				->eveScope
 				->CharacterInfo(array('characterID' => $characterID));
+
+		} catch (\Pheal\Exceptions\APIException $e) {
+
+			// If we cant get character information, prevent us from calling
+			// this API again
+			BaseApi::banCall($api, $scope, $keyID, 0, $e->getCode() . ': ' . $e->getMessage());
+		    return;
 
 		} catch (Exception $e) {
 

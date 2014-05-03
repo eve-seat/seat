@@ -27,9 +27,10 @@
                     <tbody>
                         <tr>
                             <th>Date</th>
-                            <th>#</th>
                             <th>Type</th>
-                            <th>Amount</th>
+                            <th>#</th>
+                            <th>Per Item</th>
+                            <th>Total</th>
                             <th>Client</th>
                             <th>Type</th>
                             <th>Station Name</th>
@@ -37,16 +38,17 @@
                         @foreach ($wallet_transactions as $e)
                             <tr @if ($e->transactionType == 'buy')class="danger" @endif>
                                 <td>
-                                	<spanp data-toggle="tooltip" title="" data-original-title="{{ $e->transactionDateTime }}">
+                                	<span data-toggle="tooltip" title="" data-original-title="{{ $e->transactionDateTime }}">
                                 		{{ Carbon\Carbon::parse($e->transactionDateTime)->diffForHumans() }}
                                 	</span>
                                 </td>
-                                <td>{{ $e->quantity }}</td>
                                 <td>
                                     <img src='http://image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
                                     {{ $e->typeName }}
                                 </td>
+                                <td>{{ $e->quantity }}</td>
                                 <td>{{ number_format($e->price, 2, '.', ' ') }} ISK</td>
+                                <td>{{ number_format($e->price * $e->quantity, 2, '.', ' ') }} ISK</td>
                                 <td>{{ $e->clientName }}</td>
                                 <td>{{ $e->transactionType }}</td>
                                 <td>{{ $e->stationName }}</td>

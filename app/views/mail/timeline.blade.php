@@ -56,6 +56,7 @@
                     		@if (strlen($message->toCorpOrAllianceID) > 0 && count(explode(',', $message->toCorpOrAllianceID)) > 0)
 	                    		<b>To Corp/Alliance:</b>
 	                    			@foreach (explode(',', $message->toCorpOrAllianceID) as $corp_alliance)
+										<img src='{{ App\Services\Helpers\Helpers::generateEveImage($corp_alliance, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
 	                    				<span rel="id-to-name">{{ $corp_alliance }}</span>
 	                    			@endforeach
 	                    	@endif
@@ -75,7 +76,11 @@
                     		@if (strlen($message->toListID) > 0 && count(explode(',', $message->toListID)) > 0)
 	                    		<b>To Mailing List:</b>
 	                    			@foreach (explode(',', $message->toListID) as $list)
-	                    				{{ $list }}
+	                    				@if(array_key_exists($list, $mailing_list_names))
+		                    				{{ $mailing_list_names[$list] }}
+		                    			@else
+		                    				Unknown Mailing List {{ $list }}
+		                    			@endif
 	                    			@endforeach
 	                    	@endif
 

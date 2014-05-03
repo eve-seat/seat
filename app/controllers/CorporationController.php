@@ -145,8 +145,14 @@ class CorporationController extends BaseController {
 			->groupBy('cmt.characterID')
 			->get();
 
+		// Set an array with the character info that we have
+		$member_info = null;
+		foreach (DB::table('eve_characterinfo')->get() as $character)
+			$member_info[$character->characterID] = $character;
+
 		return View::make('corporation.membertracking.membertracking')
-			->with('members', $members);
+			->with('members', $members)
+			->with('member_info', $member_info);
 	}
 
 	/*
@@ -577,6 +583,7 @@ class CorporationController extends BaseController {
 		$shuffled_contents = array();
 		foreach ($item_contents as $contents)
 			$shuffled_contents[$contents->itemID][] = array(
+				'typeID' => $contents->typeID,
 				'quantity' => $contents->quantity,
 				'name' => $contents->typeName,
 				'volume' => $contents->volume
@@ -791,7 +798,7 @@ class CorporationController extends BaseController {
 
 		$wallet_daily_delta = DB::table('corporation_walletjournal')
 			->select(DB::raw('DATE(`date`) as day, IFNULL( SUM( amount ), 0 ) AS daily_delta'))
-			->whereRaw('date BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) and NOW()')
+			// ->whereRaw('date BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) and NOW()')
 			->where('corporationID', $corporationID)
 			->groupBy('day')
 			->get();

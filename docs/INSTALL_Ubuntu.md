@@ -61,8 +61,9 @@ After seat is downloaded, we need to get composer to help us install the applica
     - `php composer.phar install`  
 
 #### 5. Get EVE SDE's ####
-Again, assuming you used `/var/www`, a tool to download the required static data exports can be found in `/var/www/seat/evesde/update_sde.sh`.
-This tool can be run with:  
+Again, assuming you used `/var/www`, a tool to download the required static data exports can be found in `/var/www/seat/evesde/update_sde.sh`. The script is written for `sh`, however Ubuntu in all their wisdom appears to have dropped this in favour of Dash. Therefore, we need to get you back to sh so that the updator works.
+This tool can be prepared and run with:  
+    - `update-alternatives --install /bin/sh sh /bin/bash 1`  
     - `cd /var/www/seat/evesde`  
     - `sh update_sde.sh` (the script will probably error with 'update_sde.sh: 34: update_sde.sh: +: not found. Don't worry, progress reporting us just broken the rest is fine :<)  
 

@@ -76,14 +76,13 @@
 <script type="text/javascript">
 
     $(function () {
-        // TODO: Fix this stupid graphs width
         var options = { chart: {
             renderTo: 'chart',
             type: 'line',
             zoomType: 'x',
             },
             title: {
-                text: '30 Day ISK Delta',
+                text: 'Daily ISK Delta',
             },
             xAxis: {
                 title: {
@@ -109,7 +108,7 @@
 
             var deltas = [];
             for (i in json) {
-                deltas.push([parseInt(json[i]['daily_delta'])]);
+                deltas.push([json[i]['day'], parseInt(json[i]['daily_delta'])]);
             }
 
             options.series[0].name = "Delta";

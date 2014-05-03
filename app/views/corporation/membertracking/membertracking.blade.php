@@ -22,36 +22,55 @@
 		@foreach(array_chunk($members, 4) as $character_row)
 			<div class="row">
 				@foreach($character_row as $character)
-					<div class="col-md-1">
-						<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}">
-							<img src="http://image.eveonline.com/Character/{{ $character->characterID }}_64.jpg" class="img-circle pull-right">
-						</a>
-					</div>
-					<div class="col-md-2">
-						<ul class="list-unstyled">
-							<li>
-								<b>Name: </b>{{ $character->name }}
-								@if (strlen($character->title) > 0) {{-- display the title if its set --}}
-									<small><span class="text-muted">{{ $character->title }}</span></small>
-								@endif
-							</li>
-							<li><b>Joined: </b>{{ Carbon\Carbon::parse($character->startDateTime)->diffForHumans() }}</li>
-							<li><b>Last Logon: </b>{{ Carbon\Carbon::parse($character->logonDateTime)->diffForHumans() }}</li>
-							<li><b>Last Logoff: </b>{{ Carbon\Carbon::parse($character->logoffDateTime)->diffForHumans() }}</li>
-							<li><b>Location: </b>{{ $character->location }}</li>
-							<li><b>Ship: </b>{{ $character->shipType }}</li>
-							<li>
-								@if ($character->isOk == 1)
-									<span class="text-green"><i class="fa fa-check"></i> Key Ok</span>
+					@if($character->isOk == 1)<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}" style="color:inherit">@endif
+						<div class="col-md-1">
+								<img src="http://image.eveonline.com/Character/{{ $character->characterID }}_64.jpg" class="img-circle pull-right">
+						</div>
+						<div class="col-md-2">
+							<ul class="list-unstyled">
+								<li>
+									<b>Name: </b>{{ $character->name }}
+									@if (strlen($character->title) > 0) {{-- display the title if its set --}}
+										<small><span class="text-muted">{{ $character->title }}</span></small>
+									@endif
+								</li>
+								<li><b>Joined: </b>{{ Carbon\Carbon::parse($character->startDateTime)->diffForHumans() }}</li>
+								<li><b>Last Logon: </b>{{ Carbon\Carbon::parse($character->logonDateTime)->diffForHumans() }}</li>
+								<li><b>Last Logoff: </b>{{ Carbon\Carbon::parse($character->logoffDateTime)->diffForHumans() }}</li>
+
+								{{-- key information, if available --}}
+								@if (!empty($member_info) && array_key_exists($character->characterID, $member_info))
+
+									{{-- skillpoints --}}
+									@if (!empty($member_info[$character->characterID]->skillPoints))
+										<li><b>Skillpoints:</b> {{ number_format($member_info[$character->characterID]->skillPoints, 0, '.', ' ') }}</li>
+									@endif
+									{{-- ship type --}}
+									@if (!empty($member_info[$character->characterID]->shipTypeName))
+										<li><b>Ship:</b> {{ $member_info[$character->characterID]->shipTypeName }}</li>
+									@endif
+									{{-- last location --}}
+									@if (!empty($member_info[$character->characterID]->lastKnownLocation))
+										<li><b>Last Location:</b> {{ $member_info[$character->characterID]->lastKnownLocation }}</li>
+									@endif
 								@else
-									<span class="text-red"><i class="fa fa-times"></i> Key not Ok</span>
+									{{-- use the information from the Corporation API --}}
+									<li><b>Location: </b>{{ $character->location }}</li>
+									<li><b>Ship: </b>{{ $character->shipType }}</li>
 								@endif
-								@if (strlen($character->keyID) > 0)
-									<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" data-toggle="tooltip" title="" data-original-title="Key Details"><i class="fa fa-cog"></i></a>
-								@endif
-							</li>
-						</ul>
-					</div>
+								<li>
+									@if ($character->isOk == 1)
+										<span class="text-green"><i class="fa fa-check"></i> Key Ok</span>
+									@else
+										<span class="text-red"><i class="fa fa-times"></i> Key not Ok</span>
+									@endif
+									@if (strlen($character->keyID) > 0)
+										<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" data-toggle="tooltip" title="" data-original-title="Key Details"><i class="fa fa-cog"></i></a>
+									@endif
+								</li>
+							</ul>
+						</div>
+					@if($character->isOk == 1)</a>@endif
 				@endforeach	
 			</div>
 			<hr>

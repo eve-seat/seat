@@ -40,7 +40,7 @@ class QueueController extends BaseController {
 		$db_working_count = \SeatQueueInformation::where('status', '=', 'Working')->count();
 		$db_working = \SeatQueueInformation::where('status', '=', 'Working')->get();
 
-
+		$db_history = \SeatQueueInformation::orderBy('updated_at', 'desc')->take(25)->get();
 
 		return View::make('queue.status')
 			->with('redis_count', $redis_count)
@@ -51,7 +51,8 @@ class QueueController extends BaseController {
 			->with('db_error_count', $db_error_count)
 			->with('db_errors', $db_errors)
 			->with('db_working_count', $db_working_count)
-			->with('db_working', $db_working);
+			->with('db_working', $db_working)
+			->with('db_history', $db_history);
 	}
 
 	/*

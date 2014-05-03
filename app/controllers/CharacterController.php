@@ -21,8 +21,14 @@ class CharacterController extends BaseController {
 			->groupBy('account_apikeyinfo_characters.characterID')
 			->get();
 
+		// Set an array with the character info that we have
+		$character_info = null;
+		foreach (DB::table('eve_characterinfo')->get() as $character)
+			$character_info[$character->characterID] = $character;
+
 		return View::make('character.all')
-			->with('characters', $characters);
+			->with('characters', $characters)
+			->with('character_info', $character_info);
 	}
 
 	/*
@@ -53,15 +59,25 @@ class CharacterController extends BaseController {
 			->where('character_charactersheet.characterID', $characterID)
 			->first();
 
+		// Check if whave knowledge of this character, else, simply redirect to the
+		// public character function
 		if(count($character) <= 0)
-			return Redirect::action('CharacterController@getAll')
-				->withErrors('Invalid Character ID');
+			return Redirect::action('CharacterController@getPublic', array('characterID' => $characterID))
+				->withErrors('No API key information is available for this character. This is the public view of the character. Submit a API key with this character on for more information.');
 
 		$other_characters = DB::table('account_apikeyinfo_characters')
 			->join('character_charactersheet', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
 			->join('character_skillintraining', 'account_apikeyinfo_characters.characterID', '=', 'character_skillintraining.characterID')
 			->where('account_apikeyinfo_characters.keyID', $character->keyID)
 			->where('account_apikeyinfo_characters.characterID', '<>', $character->characterID)
+			->get();
+
+		$character_info = DB::table('eve_characterinfo')
+			->where('characterID', $characterID)
+			->first();
+
+		$employment_history = DB::table('eve_characterinfo_employmenthistory')
+			->where('characterID', $characterID)
 			->get();
 
 		$skillpoints = DB::table('character_charactersheet_skills')
@@ -320,10 +336,14 @@ class CharacterController extends BaseController {
 				}
 			}
 		}
+
+		// var_dump($character_info);die();
 		
 		// Finally, give all this to the view to handle
 		return View::make('character.view')
 			->with('character', $character)
+			->with('character_info', $character_info)
+			->with('employment_history', $employment_history)
 			->with('other_characters', $other_characters)
 			->with('skillpoints', $skillpoints)
 			->with('skill_queue', $skill_queue)
@@ -339,6 +359,37 @@ class CharacterController extends BaseController {
 			->with('contracts_courier', $contracts_courier)
 			->with('contracts_other', $contracts_other)
 			->with('assets', $assets); // leave this just in case
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getPublic()
+	|--------------------------------------------------------------------------
+	|
+	| *Usually* we will get to this route of we don't have actual information
+	| from a API key.
+	|
+	*/
+
+	public function getPublic($characterID)
+	{
+
+		// Firstly we will call the character info updator worker
+		\Seat\EveApi\Eve\CharacterInfo::Update((int)$characterID);
+
+		// Get the information from the database now
+		$character_info = DB::table('eve_characterinfo')
+			->where('characterID', $characterID)
+			->first();
+
+		$employment_history = DB::table('eve_characterinfo_employmenthistory')
+			->where('characterID', $characterID)
+			->get();
+
+		// Finally, give all this to the view to handle
+		return View::make('character.public')
+			->with('character_info', $character_info)
+			->with('employment_history', $employment_history);
 	}
 
 	/*
@@ -550,7 +601,7 @@ class CharacterController extends BaseController {
 
 		$wallet_daily_delta = DB::table('character_walletjournal')
 			->select(DB::raw('DATE(`date`) as day, IFNULL( SUM( amount ), 0 ) AS daily_delta'))
-			->whereRaw('date BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) and NOW()')
+			// ->whereRaw('date BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) and NOW()')
 			->where('characterID', $characterID)
 			->groupBy('day')
 			->get();
