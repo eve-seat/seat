@@ -131,4 +131,43 @@ class Helpers {
 			return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
 		}
 	}
+
+    /*
+    |--------------------------------------------------------------------------
+    | parseCorpSecurityRoleLogs()
+    |--------------------------------------------------------------------------
+    |
+    | Return the Roles from corporation member security-log table
+    | TODO: More Documentation.
+    |
+    */
+
+    public static function parseCorpSecurityRoleLog($roleString) {
+        if($roleString == "[]" and is_string($roleString)) {
+            return "";
+        } elseif ($roleString <> "" and is_string($roleString)) {
+            $t = implode(', ',get_object_vars(json_decode($roleString)));
+            return str_replace("role","",$t);
+        }
+
+    }
+
+    /*
+	|--------------------------------------------------------------------------
+	| makePrettyMemberRoleList()
+	|--------------------------------------------------------------------------
+	|
+	| Returns a pretty Corporation Member Role List
+	| TODO: More Documentation.
+	|
+	*/
+
+	public static function makePrettyMemberRoleList($stringToFormat) {
+		if($stringToFormat == "" or is_null ($stringToFormat)) {
+			return "";
+		} else  {
+			return str_replace(",",", ",$stringToFormat);
+		}
+
+	}
 }

@@ -805,4 +805,133 @@ class CorporationController extends BaseController {
 
 		return Response::json($wallet_daily_delta);
 	}
+
+
+	/*
+	|--------------------------------------------------------------------------
+	| getListSheets()
+	|--------------------------------------------------------------------------
+	|
+	| Overview for getSheet()
+	|
+	*/
+
+	public function getListSheets()
+	{
+
+		$corporations = DB::table('account_apikeyinfo')
+			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->where('account_apikeyinfo.type', 'Corporation')
+			->get();
+
+		return View::make('corporation.sheet.listsheets')
+			->with('corporations', $corporations);
+	}
+
+		/*
+	|--------------------------------------------------------------------------
+	| getSheet()
+	|--------------------------------------------------------------------------
+	|
+	| Display a corporations Members and related Security Information
+	|
+	*/
+
+	public function getSheet($corporationID)
+	{
+		$member_roles = DB::table('corporation_msec_roles as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->remember(5)
+			->get();
+
+		$member_roles_base = DB::table('corporation_msec_roles_at_base as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->remember(5)
+			->get();
+
+		$member_roles_hq = DB::table('corporation_msec_roles_at_hq as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->remember(5)
+			->get();
+
+		$member_roles_other = DB::table('corporation_msec_roles_at_other as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->remember(5)
+			->get();
+
+		$member_roles_grantable = DB::table('corporation_msec_grantable_roles as cmr')
+			->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+			->where('cmr.corporationID', $corporationID)
+			->groupBy('cmr.characterID')
+			->orderBy('cmr.name', 'asc')
+			->remember(5)
+			->get();
+
+		$member_roles_grantable_base = DB::table('corporation_msec_grantable_roles_at_base as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->remember(5)
+			->get();
+
+		$member_roles_grantable_hq = DB::table('corporation_msec_grantable_roles_at_hq as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->remember(5)
+			->get();
+
+		$member_roles_grantable_other = DB::table('corporation_msec_grantable_roles_at_other as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->remember(5)
+			->get();
+
+
+		$member_roles_log = DB::table('corporation_msec_log as cml')
+			->select('cml.characterID', 'cmt.name as characterName', 'cml.issuerID', 'cml.issuerName', 'cml.changeTime', 'cmld.oldRoles', 'cmld.newRoles','cml.roleLocationType')
+			->join(DB::raw('corporation_msec_log_details as cmld'),'cml.hash','=','cmld.hash')
+			->join(DB::raw('corporation_member_tracking as cmt'),'cml.characterID','=','cmt.characterID')
+			->where('cml.corporationID', $corporationID)
+			->orderBy('cml.changeTime', 'asc')
+			->remember(5)
+			->get();
+
+		return View::make('corporation.sheet.sheet')
+			->with('member_roles',			      	$member_roles)
+			->with('member_roles_hq',		      	$member_roles_hq)
+			->with('member_roles_base',		      	$member_roles_base)
+			->with('member_roles_other',	      	$member_roles_other)
+			->with('member_roles_grantable',      	$member_roles_grantable)
+			->with('member_roles_grantable_hq',   	$member_roles_grantable_hq)
+			->with('member_roles_grantable_base', 	$member_roles_grantable_base)
+			->with('member_roles_grantable_other',	$member_roles_grantable_other)
+			->with('member_roles_log', 				$member_roles_log)
+		;
+	}
+
 }

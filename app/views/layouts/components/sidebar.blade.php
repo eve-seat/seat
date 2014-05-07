@@ -43,6 +43,7 @@
                     <li><a href="{{ action('CorporationController@getListTransactions') }}"><i class="fa fa-angle-double-right"></i> Wallet Transactions</a></li>
                     <li><a href="{{ action('CorporationController@getListLedgers') }}"><i class="fa fa-angle-double-right"></i> Wallet Ledger</a></li>
                     <li><a href="{{ action('CorporationController@getListMemberTracking') }}"><i class="fa fa-angle-double-right"></i> Member Tracking</a></li>
+                    <li><a href="{{ action('CorporationController@getListSheets') }}"><i class="fa fa-angle-double-right"></i> Sheets</a></li>
                 </ul>
             </li>
             <li class="treeview @if (Request::is('character/*')) active @endif">
