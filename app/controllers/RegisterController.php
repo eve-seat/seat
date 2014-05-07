@@ -18,6 +18,9 @@ class RegisterController extends BaseController {
 
 	public function getNew()
 	{
-		return View::make('register.register');
+		if (Config::get('seat.allow_registration'))
+   		return View::make('register.enabled');
+		else
+   		return View::make('register.disabled');
 	}
 }

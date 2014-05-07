@@ -42,4 +42,15 @@ return array(
 
 	'ban_grace' => 60 * 24,
 
+	/*
+	|--------------------------------------------------------------------------
+	| Allow Registrations
+	|--------------------------------------------------------------------------
+	|
+	|	Specify whether the website is currently allow registrations 
+	|
+	*/
+
+	'allow_registration' => false,
+
 );
