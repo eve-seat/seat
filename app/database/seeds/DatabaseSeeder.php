@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder {
 
 		$this->call('UserTableSeeder');
 		$this->call('EveApiCalllistTableSeeder');
-        $this->call('EveNotificationTypesSeeder');
+        	$this->call('EveNotificationTypesSeeder');
 		$this->call('EveCorporationRolemapSeeder');
 	}
 }
