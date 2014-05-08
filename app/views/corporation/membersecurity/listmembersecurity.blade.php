@@ -1,6 +1,6 @@
 @extends('layouts.masterLayout')
 
-@section('html_title', 'All Corporation Sheets')
+@section('html_title', 'All Corporations Member Security')
 
 @section('page_content')
 
@@ -14,8 +14,8 @@
                 From character: {{ $corp->characterName }}
             </p>
         </div>
-        <a href="{{ action('CorporationController@getSheet', array('corporationID' => $corp->corporationID)) }}" class="small-box-footer">
-            View Corporation Sheet <i class="fa fa-arrow-circle-right"></i>
+        <a href="{{ action('CorporationController@getMemberSecurity', array('corporationID' => $corp->corporationID)) }}" class="small-box-footer">
+            View Member Security <i class="fa fa-arrow-circle-right"></i>
         </a>
     </div>
 @endforeach

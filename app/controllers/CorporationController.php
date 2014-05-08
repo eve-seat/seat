@@ -816,7 +816,7 @@ class CorporationController extends BaseController {
 	|
 	*/
 
-	public function getListSheets()
+	public function getListMemberSecurity()
 	{
 
 		$corporations = DB::table('account_apikeyinfo')
@@ -824,7 +824,7 @@ class CorporationController extends BaseController {
 			->where('account_apikeyinfo.type', 'Corporation')
 			->get();
 
-		return View::make('corporation.sheet.listsheets')
+		return View::make('corporation.membersecurity.listmembersecurity')
 			->with('corporations', $corporations);
 	}
 
@@ -837,7 +837,7 @@ class CorporationController extends BaseController {
 	|
 	*/
 
-	public function getSheet($corporationID)
+	public function getMemberSecurity($corporationID)
 	{
 		$member_roles = DB::table('corporation_msec_roles as cmr')
             ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
@@ -845,7 +845,6 @@ class CorporationController extends BaseController {
             ->where('cmr.corporationID', $corporationID)
             ->groupBy('cmr.characterID')
             ->orderBy('cmr.name', 'asc')
-			->remember(5)
 			->get();
 
 		$member_roles_base = DB::table('corporation_msec_roles_at_base as cmr')
@@ -854,7 +853,6 @@ class CorporationController extends BaseController {
             ->where('cmr.corporationID', $corporationID)
             ->groupBy('cmr.characterID')
             ->orderBy('cmr.name', 'asc')
-			->remember(5)
 			->get();
 
 		$member_roles_hq = DB::table('corporation_msec_roles_at_hq as cmr')
@@ -863,7 +861,6 @@ class CorporationController extends BaseController {
             ->where('cmr.corporationID', $corporationID)
             ->groupBy('cmr.characterID')
             ->orderBy('cmr.name', 'asc')
-			->remember(5)
 			->get();
 
 		$member_roles_other = DB::table('corporation_msec_roles_at_other as cmr')
@@ -872,7 +869,6 @@ class CorporationController extends BaseController {
             ->where('cmr.corporationID', $corporationID)
             ->groupBy('cmr.characterID')
             ->orderBy('cmr.name', 'asc')
-			->remember(5)
 			->get();
 
 		$member_roles_grantable = DB::table('corporation_msec_grantable_roles as cmr')
@@ -881,7 +877,6 @@ class CorporationController extends BaseController {
 			->where('cmr.corporationID', $corporationID)
 			->groupBy('cmr.characterID')
 			->orderBy('cmr.name', 'asc')
-			->remember(5)
 			->get();
 
 		$member_roles_grantable_base = DB::table('corporation_msec_grantable_roles_at_base as cmr')
@@ -890,7 +885,6 @@ class CorporationController extends BaseController {
             ->where('cmr.corporationID', $corporationID)
             ->groupBy('cmr.characterID')
             ->orderBy('cmr.name', 'asc')
-			->remember(5)
 			->get();
 
 		$member_roles_grantable_hq = DB::table('corporation_msec_grantable_roles_at_hq as cmr')
@@ -899,7 +893,6 @@ class CorporationController extends BaseController {
             ->where('cmr.corporationID', $corporationID)
             ->groupBy('cmr.characterID')
             ->orderBy('cmr.name', 'asc')
-			->remember(5)
 			->get();
 
 		$member_roles_grantable_other = DB::table('corporation_msec_grantable_roles_at_other as cmr')
@@ -908,7 +901,6 @@ class CorporationController extends BaseController {
             ->where('cmr.corporationID', $corporationID)
             ->groupBy('cmr.characterID')
             ->orderBy('cmr.name', 'asc')
-			->remember(5)
 			->get();
 
 
@@ -918,10 +910,10 @@ class CorporationController extends BaseController {
 			->join(DB::raw('corporation_member_tracking as cmt'),'cml.characterID','=','cmt.characterID')
 			->where('cml.corporationID', $corporationID)
 			->orderBy('cml.changeTime', 'asc')
-			->remember(5)
 			->get();
 
-		return View::make('corporation.sheet.sheet')
+		return View::make('corporation.membersecurity.membersecurity')
+			/*->with('corporation_sheet', $corporation_sheet)*/
 			->with('member_roles',			      	$member_roles)
 			->with('member_roles_hq',		      	$member_roles_hq)
 			->with('member_roles_base',		      	$member_roles_base)

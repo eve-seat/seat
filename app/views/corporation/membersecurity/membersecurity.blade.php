@@ -1,17 +1,8 @@
 @extends('layouts.masterLayout')
 
-@section('html_title', 'Corporation Sheet')
+@section('html_title', 'Member Security')
 
 @section('page_content')
-
-<div class="box">
-    <div class="box-header">
-        <h3 class="box-title">Overview</h3>
-    </div>
-    <div class="box-body">
-        Future™ Area for Corporation Sheet
-    </div>
-</div>
 
 <div class="box">
     <div class="box-header">
