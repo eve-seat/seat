@@ -77,6 +77,10 @@ class Character {
             $job_record->output = 'Started Notifications Update';
             $job_record->save();        
             EveApi\Character\Notifications::Update($keyID, $vCode);
+            
+            $job_record->output = 'Started PlanetaryColonies Update';
+            $job_record->save();        
+            EveApi\Character\PlanetaryColonies::Update($keyID, $vCode);
 
             $job_record->output = 'Started MarketOrders Update';
             $job_record->save();        

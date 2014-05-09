@@ -4,6 +4,10 @@ class EveApiCalllistTableSeeder extends Seeder {
 
     public function run()
     {
+
+    	// Temporarily disable mass assignment restrictions
+    	Eloquent::unguard();
+
 		DB::table('api_calllist')->delete();
 
 		// Eve Api Callist from https://api.eveonline.com/api/calllist.xml.aspx
@@ -62,6 +66,12 @@ class EveApiCalllistTableSeeder extends Seeder {
 		EveApiCalllist::create(array('type' => 'Corporation', 'name' => 'MemberMedals', 'accessMask' => 4, 'description' => 'List of medals awarded to corporation members.'));
 		EveApiCalllist::create(array('type' => 'Corporation', 'name' => 'AssetList', 'accessMask' => 2, 'description' => 'List of all corporation assets.'));
 		EveApiCalllist::create(array('type' => 'Corporation', 'name' => 'AccountBalance', 'accessMask' => 1, 'description' => 'Current balance of all corporation accounts.'));
+
+		// New PI Call Lists - Not in calllist.xml.aspx at time of seed 
+		EveApiCalllist::create(array('type' => 'Character', 'name' => 'PlanetaryColonies', 'accessMask' => 2, 'description' => ''));
+		EveApiCalllist::create(array('type' => 'Character', 'name' => 'PlanetaryPins', 'accessMask' => 2, 'description' => ''));
+		EveApiCalllist::create(array('type' => 'Character', 'name' => 'PlanetaryRoutes', 'accessMask' => 2, 'description' => ''));
+		EveApiCalllist::create(array('type' => 'Character', 'name' => 'PlanetaryLinks', 'accessMask' => 2, 'description' => ''));
     }
 
 }
