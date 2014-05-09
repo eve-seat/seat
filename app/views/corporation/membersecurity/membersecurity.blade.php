@@ -131,7 +131,7 @@
                     </div>
                 </div><!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_roles_grantable_general">
-                    {{-- member roles general --}}
+                    {{-- member roles grantable general --}}
                     <div class="box box-solid box-primary">
                         <div class="box-header">
                             <h3 class="box-title">Member Roles Grantable - General</h3>
@@ -158,7 +158,7 @@
                     </div>
                 </div><!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_roles_grantable_hq">
-                    {{-- member roles headquarter --}}
+                    {{-- member roles grantable headquarter --}}
                     <div class="box box-solid box-primary">
                         <div class="box-header">
                             <h3 class="box-title">Member Roles Grantable - Headquarter</h3>
@@ -185,7 +185,7 @@
                     </div>
                 </div><!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_roles_grantable_base">
-                    {{-- member roles base --}}
+                    {{-- member roles grantable base --}}
                     <div class="box box-solid box-primary">
                         <div class="box-header">
                             <h3 class="box-title">Member Roles Grantable - Base</h3>
@@ -211,8 +211,8 @@
                         </div><!-- /.box-body -->
                     </div>
                 </div><!-- /.tab-pane -->
-                <div class="tab-pane" id="tab_role_grantables_other">
-                    {{-- member roles other --}}
+                <div class="tab-pane" id="tab_role_grantable_other">
+                    {{-- member roles grantable other --}}
                     <div class="box box-solid box-primary">
                         <div class="box-header">
                             <h3 class="box-title">Member Roles Grantable - Other</h3>
@@ -239,7 +239,7 @@
                     </div>
                 </div><!-- /.tab-pane -->
                 <div class="tab-pane" id="tab_roles_log">
-                    {{-- member roles chane log --}}
+                    {{-- member roles change log --}}
                     <div class="box box-solid box-primary">
                         <div class="box-header">
                             <h3 class="box-title">Member Roles - Log</h3>
