@@ -1,5 +1,7 @@
 ## SeAT - Simple (or Stupid) EVE Online API Tool ##
 
+[![Latest Release](http://img.shields.io/github/release/eve-seat/seat.svg?style=flat)](https://github.com/eve-seat/seat/releases/latest)
+
 ##### *This is very much BETA software with a ton of things not yet implemented. USE AT YOUR OWN RISK* #####
 
 ### Introduction ###
