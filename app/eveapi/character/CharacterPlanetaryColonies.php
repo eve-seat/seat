@@ -74,7 +74,6 @@ class PlanetaryColonies extends BaseApi {
 
 				// Process each of the colonies as reported by the API. We will keep a note of the
 				// planetID's that we have, and delete the ones that are not in this list
-				$known_planets = array();
 				foreach ($planetary_colonies->colonies as $colony) {
 
 					// Check the database and prepare a new object if needed
@@ -154,10 +153,11 @@ class PlanetaryColonies extends BaseApi {
 					}
 
 					// Remove the old pins
-					\EveCharacterPlanetaryPins::where('characterID', $characterID)
-						->where('planetID', $colony->planetID)
-						->whereNotIn('pinID', $known_pins)
-						->delete();
+					if (count($known_pins) > 0)
+						\EveCharacterPlanetaryPins::where('characterID', $characterID)
+							->where('planetID', $colony->planetID)
+							->whereNotIn('pinID', $known_pins)
+							->delete();
 
 					// Next, the routes
 					try {
@@ -205,10 +205,11 @@ class PlanetaryColonies extends BaseApi {
 					}
 
 					// Remove the old routes
-					\EveCharacterPlanetaryRoutes::where('characterID', $characterID)
-						->where('planetID', $colony->planetID)
-						->whereNotIn('routeID', $known_routes)
-						->delete();
+					if (count($known_routes) > 0)
+						\EveCharacterPlanetaryRoutes::where('characterID', $characterID)
+							->where('planetID', $colony->planetID)
+							->whereNotIn('routeID', $known_routes)
+							->delete();
 
 					// Lastly the links information
 					try {
@@ -249,9 +250,10 @@ class PlanetaryColonies extends BaseApi {
 			}
 
 			// Remove the old colonies that were recorded and are no longer present
-			\EveCharacterPlanetaryColonies::where('characterID', $characterID)
-				->whereNotIn('planetID', $known_planets)
-				->delete();
+			if (count($known_planets) > 0)
+				\EveCharacterPlanetaryColonies::where('characterID', $characterID)
+					->whereNotIn('planetID', $known_planets)
+					->delete();
 		}
 
 		// Unlock the call
