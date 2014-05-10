@@ -71,7 +71,6 @@ class PlanetaryColonies extends BaseApi {
 				$known_planets = array();
 				$known_pins = array();
 				$known_routes = array();
-				$known_links = array();
 
 				// Process each of the colonies as reported by the API. We will keep a note of the
 				// planetID's that we have, and delete the ones that are not in this list
@@ -154,7 +153,11 @@ class PlanetaryColonies extends BaseApi {
 						$known_pins[] = $pin->pinID;
 					}
 
-					//TODO: Cleanup old pins for this planet
+					// Remove the old pins
+					\EveCharacterPlanetaryPins::where('characterID', $characterID)
+						->where('planetID', $colony->planetID)
+						->whereNotIn('pinID', $known_pins)
+						->delete();
 
 					// Next, the routes
 					try {
@@ -201,7 +204,11 @@ class PlanetaryColonies extends BaseApi {
 						$known_routes[] = $route->routeID;
 					}
 
-					//TODO: Cleanup old routes
+					// Remove the old routes
+					\EveCharacterPlanetaryRoutes::where('characterID', $characterID)
+						->where('planetID', $colony->planetID)
+						->whereNotIn('routeID', $known_routes)
+						->delete();
 
 					// Lastly the links information
 					try {
@@ -217,18 +224,18 @@ class PlanetaryColonies extends BaseApi {
 						throw $e;
 					}
 
-					// Process the pins from the API for this planet
+					// TODO: The logic for keeping the links up to date needs some more thinking as
+					// it does not have a unique 'linkID' or something that can be referenced.
+					// For now I am just going to drop all the links for this planet and recreate
+					// them all.
+					\EveCharacterPlanetaryLinks::where('characterID', $characterID)
+						->where('planetID', $colony->planetID)
+						->delete();
+
+					// Process the links from the API for this colony
 					foreach ($planetary_links->links as $link) {
 
-						// Find the pin in the database or create a new one
-						$link_data = \EveCharacterPlanetaryLinks::where('characterID', $characterID)
-							->where('planetID', $colony->planetID)
-							->where('sourcePinID', $link->sourcePinID)
-							->where('destinationPinID', $link->destinationPinID)
-							->first();
-
-						if (!$link_data)
-							$link_data = new \EveCharacterPlanetarylinks;
+						$link_data = new \EveCharacterPlanetaryLinks;
 
 						$link_data->characterID = $characterID;
 						$link_data->planetID = $colony->planetID;
@@ -237,17 +244,14 @@ class PlanetaryColonies extends BaseApi {
 						$link_data->linkLevel = $link->linkLevel;
 						$link_data->save();
 
-						// Add this link to the known links
-						$known_links[] = array($link->sourcePinID, $link->destinationPinID);
 					}
-
-					// TODO: Cleanup Old Links
-
 				}
-
 			}
 
-			// TODO: Cleanup colonies
+			// Remove the old colonies that were recorded and are no longer present
+			\EveCharacterPlanetaryColonies::where('characterID', $characterID)
+				->whereNotIn('planetID', $known_planets)
+				->delete();
 		}
 
 		// Unlock the call
