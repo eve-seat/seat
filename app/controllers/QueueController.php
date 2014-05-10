@@ -99,8 +99,26 @@ class QueueController extends BaseController {
 
 		return Response::json();
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getDeleteAllErrors()
+	|--------------------------------------------------------------------------
+	|
+	| Removes all Job Errors
+	|
+	*/
+
+	public function getDeleteAllErrors()
+	{
+
+		\SeatQueueInformation::where('status','Error')
+			->delete();
+
+		return Response::json();
+	}
 	
-		/*
+	/*
 	|--------------------------------------------------------------------------
 	| getDeleteQueuedJob()
 	|--------------------------------------------------------------------------

@@ -169,6 +169,9 @@
 	        <div class="box-header">
 	            <h3 class="box-title">Last Error Messages</h3>
 	            <div class="box-tools pull-right">
+	            	@if (count($db_errors) > 0)
+		            	<button id="delete-all-errors" class="btn btn-danger btn-sm" data-widget="remove"><i class="fa fa-eraser"></i> Delete All</button> |
+		            @endif
 	            	<button class="btn btn-danger btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
 	            	<button class="btn btn-danger btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
 	            </div>
@@ -264,6 +267,16 @@
 				success: function() {
 					parent.remove();
 				}
+			});
+		});
+
+		// Ajax Delete All Error Messages
+		$("button#delete-all-errors").click(function() {
+
+			// Call the ajax and remove the row from the dom
+			$.ajax({
+				type: 'get',
+				url: "{{ action('QueueController@getDeleteAllErrors') }}",
 			});
 		});
 		
