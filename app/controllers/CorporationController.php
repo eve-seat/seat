@@ -909,7 +909,7 @@ class CorporationController extends BaseController {
 			->join(DB::raw('corporation_msec_log_details as cmld'),'cml.hash','=','cmld.hash')
 			->join(DB::raw('corporation_member_tracking as cmt'),'cml.characterID','=','cmt.characterID')
 			->where('cml.corporationID', $corporationID)
-			->orderBy('cml.changeTime', 'asc')
+			->orderBy('cml.changeTime', 'desc')
 			->get();
 
 		return View::make('corporation.membersecurity.membersecurity')
