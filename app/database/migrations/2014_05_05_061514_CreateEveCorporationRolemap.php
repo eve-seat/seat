@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEveCorporationRolemap extends Migration {
+class CreateSeatCorporationRoleMap extends Migration {
 
     /**
      * Run the migrations.
@@ -12,7 +12,7 @@ class CreateEveCorporationRolemap extends Migration {
      */
     public function up()
     {
-        Schema::create('eve_corporation_rolemap', function(Blueprint $table)
+        Schema::create('seat_corporation_rolemap', function(Blueprint $table)
         {
           $table->increments('id');
           
@@ -33,7 +33,7 @@ class CreateEveCorporationRolemap extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('eve_corporation_rolemap');
+        Schema::drop('seat_corporation_rolemap');
     }
 
 }
