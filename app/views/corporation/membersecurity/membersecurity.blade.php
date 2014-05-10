@@ -211,7 +211,7 @@
                         </div><!-- /.box-body -->
                     </div>
                 </div><!-- /.tab-pane -->
-                <div class="tab-pane" id="tab_role_grantable_other">
+                <div class="tab-pane" id="tab_roles_grantable_other">
                     {{-- member roles grantable other --}}
                     <div class="box box-solid box-primary">
                         <div class="box-header">
