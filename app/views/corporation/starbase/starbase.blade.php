@@ -37,14 +37,22 @@
 						            </tr>
 					            	@foreach ($starbase as $details)
 							            <tr>
+											{{--
+												Find the starbases name in the $item_locations array.
+												We acheive this by looping over the item_locaions we received, and check
+												if we have a matching item id.
 
-											{{-- find the starbases name in the $item_locations array --}}	
+												If the moonID is 0, we just keep the null value. This could happen if the location was not
+												determined. It appears that this may happen if the state of the tower is not online.
+											--}}
 											{{--*/$posname = null/*--}}
-											@foreach ($item_locations[$details->moonID] as $name_finder)
-												@if ($name_finder['itemID'] == $details->itemID)
-													{{--*/$posname = $name_finder['itemName']/*--}}
-												@endif
-											@endforeach
+											@if ($details->moonID != 0)
+												@foreach ($item_locations[$details->moonID] as $name_finder)
+													@if ($name_finder['itemID'] == $details->itemID)
+														{{--*/$posname = $name_finder['itemName']/*--}}
+													@endif
+												@endforeach
+											@endif
 							                <td>
 							                	<img src='//image.eveonline.com/Type/{{ $details->typeID }}_32.png' style='width: 18px;height: 18px;'>
 							                	{{ $details->typeName }}
@@ -81,11 +89,13 @@
 
 				{{-- find the starbases name in the $item_locations array --}}	
 				{{--*/$posname = null/*--}}
-				@foreach ($item_locations[$details->moonID] as $name_finder)
-					@if ($name_finder['itemID'] == $details->itemID)
-						{{--*/$posname = $name_finder['itemName']/*--}}
-					@endif
-				@endforeach
+				@if ($details->moonID != 0)
+					@foreach ($item_locations[$details->moonID] as $name_finder)
+						@if ($name_finder['itemID'] == $details->itemID)
+							{{--*/$posname = $name_finder['itemName']/*--}}
+						@endif
+					@endforeach
+				@endif
 
 				{{-- process the rest of the html --}}
 				<div class="col-md-4">
@@ -293,80 +303,90 @@
 					        	<h4>Modules Detail: <small class="pull-right text-muted">% Full</small></h4>
 								<table class="table table-condensed table-hover">
 								    <tbody>
-									    @foreach ($item_locations[$details->moonID] as $item)
+								    	{{--
+								    		In the case of us not knowing what the moonID is for whatever reason,
+								    		make a note about it
+								    	--}}
+								    	@if ($details->moonID == 0)
+								    		<tr>
+								    			<td colspan="3">Unknown MoonID, unable to find assets</td>
+								    		</tr>
+								    	@else
+										    @foreach ($item_locations[$details->moonID] as $item)
 
-									    	{{-- 
-									    		a quick check is done here to ensure that the tower type id and the module type id is
-									    		not the same. there is no need to show the towers details here too as it is already
-									    		covered in the Tower Info block, together with the fuel usage information.
+										    	{{-- 
+										    		a quick check is done here to ensure that the tower type id and the module type id is
+										    		not the same. there is no need to show the towers details here too as it is already
+										    		covered in the Tower Info block, together with the fuel usage information.
 
-									    		If we are not at a tower, continue
-									    	--}}
-									    	@if ($item['typeID'] <> $details->typeID)
-											    <tr>
-											        <td>
-											        	<b>{{ $item['typeName'] }}</b>
+										    		If we are not at a tower, continue
+										    	--}}
+										    	@if ($item['typeID'] <> $details->typeID)
+												    <tr>
+												        <td>
+												        	<b>{{ $item['typeName'] }}</b>
 
-											        	{{-- if the module has been given a name, show it --}}
-											        	@if ($item['typeName'] <> $item['itemName'])
-												        	<small class="text-muted">{{ $item['itemName'] }}</small>
-												       	@endif
-												    </td>
-											        <td>
-											        	{{-- 
-											        		Here we will count the total m3 for everything in this module.
-											        		We will start off by making the total_size 0, and then adding the
-											        		volume of the item inside the module to it.
-											        	--}}
-											        	{{-- */ $total_size = 0 /* --}}
-											        	@if (isset($item_contents[$item['itemID']]))
+												        	{{-- if the module has been given a name, show it --}}
+												        	@if ($item['typeName'] <> $item['itemName'])
+													        	<small class="text-muted">{{ $item['itemName'] }}</small>
+													       	@endif
+													    </td>
+												        <td>
+												        	{{-- 
+												        		Here we will count the total m3 for everything in this module.
+												        		We will start off by making the total_size 0, and then adding the
+												        		volume of the item inside the module to it.
+												        	--}}
+												        	{{-- */ $total_size = 0 /* --}}
+												        	@if (isset($item_contents[$item['itemID']]))
 
-											        		@if (count($item_contents[$item['itemID']]) > 1)
-												        		<ul class="list-unstyled">
-												        			<li class="nav-header text-muted pull-right">{{ count($item_contents[$item['itemID']]) }} Items</li>
-														        	@foreach ($item_contents[$item['itemID']] as $contents)
+												        		@if (count($item_contents[$item['itemID']]) > 1)
+													        		<ul class="list-unstyled">
+													        			<li class="nav-header text-muted pull-right">{{ count($item_contents[$item['itemID']]) }} Items</li>
+															        	@foreach ($item_contents[$item['itemID']] as $contents)
 
-														        		<li>
-															        		<img src='//image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
-															        		<b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
-															        		{{-- add the volume --}}
-															        		{{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}
-															        	</li>
+															        		<li>
+																        		<img src='//image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																        		<b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
+																        		{{-- add the volume --}}
+																        		{{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}
+																        	</li>
+															        	@endforeach
+															        </ul>
+															    @else
+																    @foreach ($item_contents[$item['itemID']] as $contents)
+																	    <img src='//image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+														        		<b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
+														        		{{-- add the volume --}}
+														        		{{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}													        		
 														        	@endforeach
-														        </ul>
-														    @else
-															    @foreach ($item_contents[$item['itemID']] as $contents)
-																    <img src='//image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
-													        		<b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
-													        		{{-- add the volume --}}
-													        		{{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}													        		
-													        	@endforeach
-														    @endif
-												        @endif
-												    </td>
-												   	<td>
-												       	{{-- check if there is a capacity larger that 0. Some modules, like hardners have 0 capacity --}} 
-											        	@if ($item['capacity'] > 0)
+															    @endif
+													        @endif
+													    </td>
+													   	<td>
+													       	{{-- check if there is a capacity larger that 0. Some modules, like hardners have 0 capacity --}} 
+												        	@if ($item['capacity'] > 0)
 
-											        		{{-- 
-											        			Some Silos have bonusses to silo capacity, so lets take that into account here.
-											        			If a silo/coupling array is bonusable, add the bonus to the total capacity
-											        		--}}
-											        		@if (array_key_exists($details->typeID, $tower_cargo_bonusses) && (in_array($item['typeID'], $cargo_size_bonusable_modules)))
-											        			<span class="pull-right">
-												        			{{ round(($total_size / ( $item['capacity'] *= (1 + $tower_cargo_bonusses[$details->typeID] / 100))) * 100) }}%
-												        		</span>
-											        		@else 	{{-- We have a non bonused module --}}
-											        			<span class="pull-right">
-														        	{{ $percentage = round( ($total_size / $item['capacity']) * 100) }}%
-														        </span>
-														    @endif
-												        @endif											        
-											        </td>
-											    </tr>
-											@endif
+												        		{{-- 
+												        			Some Silos have bonusses to silo capacity, so lets take that into account here.
+												        			If a silo/coupling array is bonusable, add the bonus to the total capacity
+												        		--}}
+												        		@if (array_key_exists($details->typeID, $tower_cargo_bonusses) && (in_array($item['typeID'], $cargo_size_bonusable_modules)))
+												        			<span class="pull-right">
+													        			{{ round(($total_size / ( $item['capacity'] *= (1 + $tower_cargo_bonusses[$details->typeID] / 100))) * 100) }}%
+													        		</span>
+												        		@else 	{{-- We have a non bonused module --}}
+												        			<span class="pull-right">
+															        	{{ $percentage = round( ($total_size / $item['capacity']) * 100) }}%
+															        </span>
+															    @endif
+													        @endif											        
+												        </td>
+												    </tr>
+												@endif
 
-										@endforeach
+											@endforeach
+										@endif
 									</tbody>
 								</table>
 					        </div><!-- /.tab-pane -->
