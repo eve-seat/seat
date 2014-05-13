@@ -101,6 +101,7 @@
 	            <li><a href="#assets" data-toggle="tab">Assets</a></li>
 	            <li><a href="#contacts" data-toggle="tab">Contacts</a></li>
 	            <li><a href="#contracts" data-toggle="tab">Contracts</a></li>
+	            <li><a href="#market_orders" data-toggle="tab">Market Orders</a></li>
 	            <li class="pull-right">
 	            	<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" class="text-muted" data-toggle="tooltip" title="" data-placement="top" data-original-title="API Key Details">
 	            		<i class="fa fa-gear"></i>
@@ -1263,6 +1264,86 @@
 		                </div> <!-- ./col-md-12 -->
 		            </div> <!-- ./row -->
 	            </div><!-- /.tab-pane -->
+
+
+	            {{-- character market orders --}}
+	            <div class="tab-pane" id="market_orders">
+	            	<div class="row">
+	            		<div class="col-md-12">
+	            			<div class="box">
+                                <div class="box-header">
+                                    <h3 class="box-title">Market Orders ({{ count($market_orders) }})</h3>
+                                    <div class="box-tools">
+                                    	<a href="{{ action('CharacterController@getFullMail', array('characterID' => $character->characterID)) }}" class="btn btn-default btn-sm pull-right">
+                                    		<i class="fa fa-envelope-o"></i> All Mail
+                                    	</a>
+                                    </div>                                    
+                                </div><!-- /.box-header -->
+                                <div class="box-body no-padding">
+							        <table class="table table-hover table-condensed">
+							            <tbody>
+								            <tr>
+								                <th style="width: 10px">#</th>
+								                <th>Type</th>
+								                <th>Price P/U</th>
+								                <th>Issued</th>
+								                <th>Expires</th>
+								                <th>Order By</th>
+								                <th>Location</th>
+								                <th>Type</th>
+								                <th>Vol</th>
+								                <th>Min. Vol</th>
+								                <th>State</th>
+								            </tr>
+
+											@foreach ($market_orders as $order)
+									            <tr>
+									                <td>{{ $order->orderID }}</td>
+									                <td>
+									                	@if ($order->bid)
+										                	Buy
+										                @else
+										                	Sell
+										                @endif
+									                </td>
+									                <td>
+									                	@if ($order->escrow > 0)
+										                	<span data-toggle="tooltip" title="" data-original-title="Escrow: {{ $order->escrow }}">
+											                	<i class="fa fa-money pull-right"></i> {{ number_format($order->price, 2, '.', ' ') }}
+											                </span>
+											             @else
+										                	{{ number_format($order->price, 2, '.', ' ') }}
+											             @endif
+									                </td>									                
+									                <td>{{ $order->issued }}</td>
+									                <td>
+									                	{{ Carbon\Carbon::parse($order->issued)->addDays($order->duration)->diffForHumans() }}
+									                </td>
+									                <td>
+														<a href="{{ action('CharacterController@getView', array('characterID' => $order->charID)) }}">
+															<img src='//image.eveonline.com/Character/{{ $order->charID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+														</a>
+									                	<span rel="id-to-name">{{ $order->charID }}</span>
+									                </td>
+									                <td>{{ $order->location }}</td>
+									                <td>
+									                	<img src='//image.eveonline.com/Type/{{ $order->typeID }}_32.png' style='width: 18px;height: 18px;'>
+									                	{{ $order->typeName }}
+									                </td>
+									                <td>{{ $order->volRemaining }}/{{ $order->volEntered }}</td>
+									                <td>{{ $order->minVolume }}</td>
+									                <td>{{ $order_states[$order->orderState] }}</td>
+									            </tr>
+											@endforeach
+
+							        	</tbody>
+							        </table>
+                                </div><!-- /.box-body -->
+                            </div>
+		                </div> <!-- ./col-md-12 -->
+		            </div> <!-- ./row -->
+	            </div><!-- /.tab-pane -->
+
 
 	        </div><!-- /.tab-content -->
 	    </div><!-- nav-tabs-custom -->

@@ -337,8 +337,46 @@ class CharacterController extends BaseController {
 			}
 		}
 
-		// var_dump($character_info);die();
-		
+		// Character Market Orders
+		$market_orders = DB::select(
+			'SELECT *, CASE
+				when a.stationID BETWEEN 66000000 AND 66014933 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.stationID-6000001)
+				when a.stationID BETWEEN 66014934 AND 67999999 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.stationID-6000000)
+				when a.stationID BETWEEN 60014861 AND 60014928 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.stationID)
+				when a.stationID BETWEEN 60000000 AND 61000000 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.stationID)
+				when a.stationID>=61000000 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.stationID)
+				else (SELECT m.itemName FROM mapDenormalize AS m
+					WHERE m.itemID=a.stationID) end
+					AS location,a.stationID AS locID FROM `character_marketorders` AS a
+					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
+					LEFT JOIN `invGroups` ON `invTypes`.`groupID` = `invGroups`.`groupID`
+					WHERE a.`characterID` = ? ORDER BY a.issued desc
+					LIMIT 500',
+			array($characterID)
+		);
+
+		// Order states from: https://neweden-dev.com/Character/Market_Orders
+		//orderState	 byte
+		// Valid states: 0 = open/active, 1 = closed, 2 = expired (or fulfilled), 3 = cancelled, 4 = pending, 5 = character deleted.
+		$order_states = array(
+			'0' => 'Active',
+			'1' => 'Closed',
+			'2' => 'Expired / Fulfilled',
+			'3' => 'Cancelled',
+			'4' => 'Pending',
+			'5' => 'Deleted'
+		);
+
 		// Finally, give all this to the view to handle
 		return View::make('character.view')
 			->with('character', $character)
@@ -358,6 +396,8 @@ class CharacterController extends BaseController {
 			->with('assets_count', $assets_count)
 			->with('contracts_courier', $contracts_courier)
 			->with('contracts_other', $contracts_other)
+			->with('market_orders', $market_orders)
+			->with('order_states', $order_states)
 			->with('assets', $assets); // leave this just in case
 	}
 
