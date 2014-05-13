@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Seat by eve-seat</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Seat</h1>
+        <p>Simple (or Stupid) EVE Online API Tool</p>
+
+        <p class="view"><a href="https://github.com/eve-seat/seat">View the Project on GitHub <small>eve-seat/seat</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/eve-seat/seat/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/eve-seat/seat/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/eve-seat/seat">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>
+<a name="seat---simple-or-stupid-eve-online-api-tool" class="anchor" href="#seat---simple-or-stupid-eve-online-api-tool"><span class="octicon octicon-link"></span></a>SeAT - Simple (or Stupid) EVE Online API Tool</h2>
+
+<h5>
+<a name="this-is-very-much-beta-software-with-a-ton-of-things-not-yet-implemented-use-at-your-own-risk" class="anchor" href="#this-is-very-much-beta-software-with-a-ton-of-things-not-yet-implemented-use-at-your-own-risk"><span class="octicon octicon-link"></span></a><em>This is very much BETA software with a ton of things not yet implemented. USE AT YOUR OWN RISK</em>
+</h5>
+
+<h3>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h3>
+
+<p>SeAT attempts to be a EVE Online™ Corporation Management Tool written in PHP using the <a href="http://laravel.com/">Laravel</a> Framework driven by a MySQL database.<br>
+SeAT itself is the result of a rewrite of the original Corporation Management Tool that I wrote for our corp and figured there may be others out there that may need similar tools.</p>
+
+<h3>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h3>
+
+<p>SeAT allows corporation CEO's and directors to manage member API keys, store member wallet &amp; mail history, monitor corporation poses, wallets, transactions, account ledgers etc.</p>
+
+<h3>
+<a name="technical-summary" class="anchor" href="#technical-summary"><span class="octicon octicon-link"></span></a>Technical Summary</h3>
+
+<p>API Keys are stored in the backend database and get updated as the schedule is configured. A cronjob gets kicked off every minute that checks which jobs need to be scheduled and actions as required.<br>
+A 'job' can be defined as a set of categorized API calls to update certain part of a Character, Corporation, Eve or Map related information in the backend. More than 55 API Endpoints have been implemented and form part of these jobs.</p>
+
+<h3>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h3>
+
+<p>Refer to the <code>docs/</code> directory for installation instructions. It is suggested that you checkout the latest release that can be found <a href="https://github.com/eve-seat/seat/releases">here</a>.</p>
+
+<h3>
+<a name="upgrading" class="anchor" href="#upgrading"><span class="octicon octicon-link"></span></a>Upgrading</h3>
+
+<p>Please refer to the UPGRADING guide in <code>docs/UPDGRADING.md</code></p>
+
+<h3>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>Todo</h3>
+
+<p>There really is a TON of stuff that still needs to be done:</p>
+
+<ul>
+<li><del>Corporation Wallet Ledger</del></li>
+<li><del>Asset Search</del></li>
+<li><del>Skill Search</del></li>
+<li><del>Clone Overview</del></li>
+<li>Character Interactions (ie Player Tradings, Mails etc.)</li>
+<li>
+<del>Starbase Fuel Time Left calculations</del> as well as Silo input/output end etas.</li>
+<li>Corporation Sheets with Member Security Roles view</li>
+</ul><p>There is a metric ton of information pulled via the API that is not yet exposed on the web front end... so <em>lots</em> to do still :)</p>
+
+<p>A much longer term goal would be to get the system to such a state where corporation members are able to register and view thier own keys and administrators are able to deletegate roles such as recruiters etc.</p>
+
+<h3>
+<a name="contact" class="anchor" href="#contact"><span class="octicon octicon-link"></span></a>Contact</h3>
+
+<p>You can get hold of me via Twitter <a href="https://twitter.com/qu1ckkkk">@qu1ckkkk</a>, ingame character <a href="http://evewho.com/pilot/qu1ckkkk">qu1ckkkk</a> or on <a href="https://kiwiirc.com/client/irc.coldfront.net/?nick=seat_user%7C?#wcs-pub">IRC</a> at #wcs-pub on irc.coldfront.net</p>
+
+<h3>
+<a name="legal" class="anchor" href="#legal"><span class="octicon octicon-link"></span></a>Legal</h3>
+
+<p>EVE Online and the EVE logo are the registered trademarks of CCP hf. All rights are reserved worldwide. All other trademarks are the property of their respective owners. EVE Online, the EVE logo, EVE and all associated logos and designs are the intellectual property of CCP hf. All artwork, screenshots, characters, vehicles, storylines, world facts or other recognizable features of the intellectual property relating to these trademarks are likewise the intellectual property of CCP hf.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/eve-seat">eve-seat</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
