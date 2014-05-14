@@ -206,13 +206,11 @@ class ApiKeyController extends BaseController {
 			// Based in the key type, push a update job
 			switch ($access['type']) {
 				case 'Character':
-					$jobID = \Queue::push('Seat\EveQueues\Full\Character', array('keyID' => $keyID, 'vCode' => $vCode));
-					\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => $keyID, 'api' => 'Character', 'scope' => 'Eve', 'status' => 'Queued'));
+					$jobID = \App\Services\Queue\QueueHelper::addToQueue('\Full\Character', $keyID, $vCode, 'Character', 'Eve');
 					break;
 
 				case 'Corporation':
-					$jobID = \Queue::push('Seat\EveQueues\Full\Corporation', array('keyID' => $keyID, 'vCode' => $vCode));
-					\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => $keyID, 'api' => 'Corporation', 'scope' => 'Eve', 'status' => 'Queued'));
+					$jobID = \App\Services\Queue\QueueHelper::addToQueue('\Full\Corporation', $keyID, $vCode, 'Corporation', 'Eve');
 					break;
 
 				default:
@@ -309,8 +307,7 @@ class ApiKeyController extends BaseController {
 
 		// Only process Character keys here
 		if ($access['type'] == 'Character') {
-			$jobID = \Queue::push('Seat\EveQueues\Full\Character', array('keyID' => $key->keyID, 'vCode' => $key->vCode));
-			\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => $key->keyID, 'api' => 'Character', 'scope' => 'Eve', 'status' => 'Queued'));
+			$jobID = \App\Services\Queue\QueueHelper::addToQueue('\Full\Character', $key->keyID, $key->vCode, 'Character', 'Eve', true);
 
 			return Response::json(array('state' => 'new', 'jobID' => $jobID));
 		} else {

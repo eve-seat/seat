@@ -46,16 +46,13 @@ class SeatAPIUpdate extends Command {
 		\Log::info('Started command ' . $this->name, array('src' => __CLASS__));
 
 		// Server APIs
-		$jobID = \Queue::push('Seat\EveQueues\Full\Server', array());
-		\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => 0, 'api' => 'ServerStatus', 'scope' => 'Server', 'status' => 'Queued'));
+		\App\Services\Queue\QueueHelper::addToQueue('\Full\Server', '0',NULL, 'ServerStatus', 'Server');							
 
 		// Map APIs
-		$jobID = \Queue::push('Seat\EveQueues\Full\Map', array());
-		\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => 0, 'api' => 'Map', 'scope' => 'Eve', 'status' => 'Queued'));
+		\App\Services\Queue\QueueHelper::addToQueue('\Full\Map', '0',NULL, 'Map', 'Eve');	
 
 		// Eve APIs
-		$jobID = \Queue::push('Seat\EveQueues\Full\Eve', array());
-		\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => 0, 'api' => 'Eve', 'scope' => 'Eve', 'status' => 'Queued'));
+		\App\Services\Queue\QueueHelper::addToQueue('\Full\Eve', '0',NULL, 'Eve', 'Eve');	
 
 		\Log::info('Starting job submissions for all keys', array('src' => __CLASS__));
 
@@ -72,13 +69,11 @@ class SeatAPIUpdate extends Command {
 
 			switch ($access['type']) {
 				case 'Character':
-					$jobID = \Queue::push('Seat\EveQueues\Full\Character', array('keyID' => $key->keyID, 'vCode' => $key->vCode));
-					\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => $key->keyID, 'api' => 'Character', 'scope' => 'Eve', 'status' => 'Queued'));					
+					\App\Services\Queue\QueueHelper::addToQueue('\Full\Character', $key->keyID, $key->vCode, 'Character', 'Eve');					
 					break;
 
 				case 'Corporation':
-					$jobID = \Queue::push('Seat\EveQueues\Full\Corporation', array('keyID' => $key->keyID, 'vCode' => $key->vCode));
-					\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => $key->keyID, 'api' => 'Corporation', 'scope' => 'Eve', 'status' => 'Queued'));					
+				\App\Services\Queue\QueueHelper::addToQueue('\Full\Corporation', $key->keyID, $key->vCode, 'Corporation', 'Eve');					
 					break;
 				
 				default:
