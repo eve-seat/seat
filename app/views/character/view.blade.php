@@ -36,7 +36,7 @@
                                     <dt>Corporation</dt>
                                     <dd>{{ $character->corporationName }}</dd>
 
-                                    <dt>Race, Booldline, Sex</dt>
+                                    <dt>Race, Bloodline, Sex</dt>
                                     <dd>{{ $character->race }}, {{ $character->bloodLine }}, {{ $character->gender }}</dd>
 
                                     <dt>Date of Birth</dt>
@@ -1272,12 +1272,7 @@
 	            		<div class="col-md-12">
 	            			<div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title">Market Orders ({{ count($market_orders) }})</h3>
-                                    <div class="box-tools">
-                                    	<a href="{{ action('CharacterController@getFullMail', array('characterID' => $character->characterID)) }}" class="btn btn-default btn-sm pull-right">
-                                    		<i class="fa fa-envelope-o"></i> All Mail
-                                    	</a>
-                                    </div>                                    
+                                    <h3 class="box-title">Market Orders ({{ count($market_orders) }})</h3>                             
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
 							        <table class="table table-hover table-condensed">
