@@ -70,8 +70,7 @@ class EveCharacterUpdater extends ScheduledCommand {
 
 			// Only process Character keys here
 			if ($access['type'] == 'Character') {
-				$jobID = \Queue::push('Seat\EveQueues\Full\Character', array('keyID' => $key->keyID, 'vCode' => $key->vCode));
-				\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => $key->keyID, 'api' => 'Character', 'scope' => 'Eve', 'status' => 'Queued'));
+				\App\Services\Queue\QueueHelper::addToQueue('\Full\Character', $key->keyID, $key->vCode, 'Eve', 'Character');
 			}
 		}
 	}
