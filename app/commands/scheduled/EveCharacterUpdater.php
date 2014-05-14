@@ -69,9 +69,9 @@ class EveCharacterUpdater extends ScheduledCommand {
 			}
 
 			// Only process Character keys here
-			if ($access['type'] == 'Character') {
-				\App\Services\Queue\QueueHelper::addToQueue('\Full\Character', $key->keyID, $key->vCode, 'Eve', 'Character');
-			}
+			if ($access['type'] == 'Character')
+				\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
+
 		}
 	}
 }

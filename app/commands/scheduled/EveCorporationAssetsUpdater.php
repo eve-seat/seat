@@ -69,9 +69,9 @@ class EveCorporationAssetsUpdater extends ScheduledCommand {
 			}
 
 			// Only process Corporation keys and only update the Assets from Partial\
-			if ($access['type'] == 'Corporation') {
-				\App\Services\Queue\QueueHelper::addToQueue('\Partial\CorporationAssets', $key->keyID, $key->vCode, 'Eve', 'CorporationAssets');								
-			}
+			if ($access['type'] == 'Corporation')
+				\App\Services\Queue\QueueHelper::addToQueue(array('Partial', 'CorporationAssets'), $key->keyID, $key->vCode, 'CorporationAssets', 'Eve');
+
 		}
 	}
 }

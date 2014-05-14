@@ -206,11 +206,11 @@ class ApiKeyController extends BaseController {
 			// Based in the key type, push a update job
 			switch ($access['type']) {
 				case 'Character':
-					$jobID = \App\Services\Queue\QueueHelper::addToQueue('\Full\Character', $keyID, $vCode, 'Character', 'Eve');
+					$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
 					break;
 
 				case 'Corporation':
-					$jobID = \App\Services\Queue\QueueHelper::addToQueue('\Full\Corporation', $keyID, $vCode, 'Corporation', 'Eve');
+					$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Corporation'), $key->keyID, $key->vCode, 'Corporation', 'Eve');
 					break;
 
 				default:
@@ -292,7 +292,7 @@ class ApiKeyController extends BaseController {
 
 		// Check that there is not already an outstanding job for this keyID
 		$queue_check = DB::table('queue_information')
-			->where('status', 'Queued')
+			->whereIn('status', array('Queued', 'Working'))
 			->where('ownerID', $key->keyID)
 			->first();
 
@@ -307,7 +307,8 @@ class ApiKeyController extends BaseController {
 
 		// Only process Character keys here
 		if ($access['type'] == 'Character') {
-			$jobID = \App\Services\Queue\QueueHelper::addToQueue('\Full\Character', $key->keyID, $key->vCode, 'Character', 'Eve', true);
+
+			$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
 
 			return Response::json(array('state' => 'new', 'jobID' => $jobID));
 		} else {

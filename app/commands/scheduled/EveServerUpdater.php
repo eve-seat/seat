@@ -60,6 +60,6 @@ class EveServerUpdater extends ScheduledCommand {
 		\Log::info('Started command ' . $this->name, array('src' => __CLASS__));
 		
 		// Server APIs
-		\App\Services\Queue\QueueHelper::addToQueue('\Full\Server', '0', NULL, 'Server', 'ServerStatus');
+		\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Server'), '0', NULL, 'ServerStatus', 'Server');
 	}
 }

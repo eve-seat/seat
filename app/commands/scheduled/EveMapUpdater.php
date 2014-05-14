@@ -59,6 +59,7 @@ class EveMapUpdater extends ScheduledCommand {
 		
 		\Log::info('Started command ' . $this->name, array('src' => __CLASS__));
 
-		\App\Services\Queue\QueueHelper::addToQueue('\Full\Map', '0', NULL, 'Eve', 'Map');	
+		\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Map'), '0', NULL, 'Map', 'Eve');
+
 	}
 }

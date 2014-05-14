@@ -45,15 +45,12 @@ class SeatAPIUpdate extends Command {
 
 		\Log::info('Started command ' . $this->name, array('src' => __CLASS__));
 
-		// Server APIs
-		\App\Services\Queue\QueueHelper::addToQueue('\Full\Server', '0',NULL, 'ServerStatus', 'Server');							
+		// Server, Map & Eve APIs
+		\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Server'), 0, NULL, 'ServerStatus', 'Server');
+		\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Map'), 0, NULL, 'Map', 'Eve');
+		\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Eve'), 0, NULL, 'Eve', 'Eve');
 
-		// Map APIs
-		\App\Services\Queue\QueueHelper::addToQueue('\Full\Map', '0',NULL, 'Map', 'Eve');	
-
-		// Eve APIs
-		\App\Services\Queue\QueueHelper::addToQueue('\Full\Eve', '0',NULL, 'Eve', 'Eve');	
-
+		// Log the start of the key processing
 		\Log::info('Starting job submissions for all keys', array('src' => __CLASS__));
 
 		// Get the keys, and process them
@@ -69,11 +66,11 @@ class SeatAPIUpdate extends Command {
 
 			switch ($access['type']) {
 				case 'Character':
-					\App\Services\Queue\QueueHelper::addToQueue('\Full\Character', $key->keyID, $key->vCode, 'Character', 'Eve');					
+					\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
 					break;
 
 				case 'Corporation':
-				\App\Services\Queue\QueueHelper::addToQueue('\Full\Corporation', $key->keyID, $key->vCode, 'Corporation', 'Eve');					
+					\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Corporation'), $key->keyID, $key->vCode, 'Corporation', 'Eve');
 					break;
 				
 				default:

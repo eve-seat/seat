@@ -69,9 +69,9 @@ class EveCorporationWalletUpdater extends ScheduledCommand {
 			}
 
 			// Only process Corporation keys and only update the Assets from Partial\
-			if ($access['type'] == 'Corporation') {
-				\App\Services\Queue\QueueHelper::addToQueue('\Partial\CorporationWallet', $key->keyID, $key->vCode, 'Eve', 'CorporationWallet');								
-			}
+			if ($access['type'] == 'Corporation')
+				\App\Services\Queue\QueueHelper::addToQueue(array('Partial', 'CorporationWallet'), $key->keyID, $key->vCode, 'CorporationWallet', 'Eve');
+
 		}
 	}
 }
