@@ -19,12 +19,14 @@
         <link href="{{ URL::asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
         <!-- font Awesome -->
         <link href="{{ URL::asset('assets/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
-        <!-- Theme style -->
-        <link href="{{ URL::asset('assets/css/app.css') }}" rel="stylesheet" type="text/css">
         <!-- select2 -->
         <link href="{{ URL::asset('assets/css/select2.css') }}" rel="stylesheet" type="text/css">
         <!-- select2 bootstrap hax -->
         <link href="{{ URL::asset('assets/css/select2-bootstrap.css') }}" rel="stylesheet" type="text/css">
+        <!-- datatables bootstrap  -->
+        <link href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css" rel="stylesheet" type="text/css">
+        <!-- Theme style -->
+        <link href="{{ URL::asset('assets/css/app.css') }}" rel="stylesheet" type="text/css">
         
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -85,6 +87,8 @@
         <script src="{{ URL::asset('assets/js/app.js') }}" type="text/javascript"></script>
         <!-- highcharts -->
         <script src="//code.highcharts.com/highcharts.js"></script>
+        <!-- datatables -->
+        <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
         <!-- select2 -->
         <script src="{{ URL::asset('assets/js/select2.min.js') }}" type="text/javascript"></script>
 
