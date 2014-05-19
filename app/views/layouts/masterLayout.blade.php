@@ -83,14 +83,14 @@
         <script src="{{ URL::asset('assets/js/bootstrap.min.js') }}" type="text/javascript"></script> 
         <!-- Bootbox -->
         <script src="{{ URL::asset('assets/js/bootbox.min.js') }}" type="text/javascript"></script>
-        <!-- AdminLTE App -->
-        <script src="{{ URL::asset('assets/js/app.js') }}" type="text/javascript"></script>
         <!-- highcharts -->
         <script src="//code.highcharts.com/highcharts.js"></script>
         <!-- datatables -->
         <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
         <!-- select2 -->
         <script src="{{ URL::asset('assets/js/select2.min.js') }}" type="text/javascript"></script>
+        <!-- app -->
+        <script src="{{ URL::asset('assets/js/app.js') }}" type="text/javascript"></script>
 
         <!-- cant put this in app.js as we need the proper URL where this application lives :< -->
         <script type="text/javascript">

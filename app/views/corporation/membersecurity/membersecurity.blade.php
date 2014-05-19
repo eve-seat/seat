@@ -30,11 +30,13 @@
                         </div>
                         <div class="box-body no-padding table-responsive">
                             <table class="table table-condensed table-hover">
-                                <tbody>
+                                <thead>
                                     <tr>
                                         <th width="20%">Character</th>
                                         <th width="*">Role</th>
                                     </tr>
+                                </thead>
+                                <tbody>
                                     @foreach ($member_roles as $e)
                                     <tr>
                                         <td>
@@ -57,11 +59,13 @@
                         </div>
                         <div class="box-body no-padding table-responsive">
                             <table class="table table-condensed table-hover">
-                                <tbody>
+                                <thead>
                                     <tr>
                                         <th width="20%">Character</th>
                                         <th width="*">Role</th>
                                     </tr>
+                                </thead>
+                                <tbody>
                                     @foreach ($member_roles_hq as $e)
                                     <tr>
                                         <td>
@@ -84,11 +88,13 @@
                         </div>
                         <div class="box-body no-padding table-responsive">
                             <table class="table table-condensed table-hover">
-                                <tbody>
+                                <thead>
                                     <tr>
                                         <th width="20%">Character</th>
                                         <th width="*">Role</th>
                                     </tr>
+                                </thead>
+                                <tbody>
                                     @foreach ($member_roles_base as $e)
                                     <tr>
                                         <td>
@@ -111,11 +117,13 @@
                         </div>
                         <div class="box-body no-padding table-responsive">
                             <table class="table table-condensed table-hover">
-                                <tbody>
+                                <thead>
                                     <tr>
                                         <th width="20%">Character</th>
                                         <th width="*">Role</th>
                                     </tr>
+                                </thead>
+                                <tbody>
                                     @foreach ($member_roles_other as $e)
                                     <tr>
                                         <td>
@@ -138,11 +146,13 @@
                         </div>
                         <div class="box-body no-padding table-responsive">
                             <table class="table table-condensed table-hover">
-                                <tbody>
+                                <thead>
                                     <tr>
                                         <th width="20%">Character</th>
                                         <th width="*">Role</th>
                                     </tr>
+                                </thead>
+                                <tbody>
                                     @foreach ($member_roles_grantable as $e)
                                     <tr>
                                         <td>
@@ -165,11 +175,13 @@
                         </div>
                         <div class="box-body no-padding table-responsive">
                             <table class="table table-condensed table-hover">
-                                <tbody>
+                                <thead>
                                     <tr>
                                         <th width="20%">Character</th>
                                         <th width="*">Role</th>
                                     </tr>
+                                </thead>
+                                <tbody>
                                     @foreach ($member_roles_grantable_hq as $e)
                                     <tr>
                                         <td>
@@ -192,11 +204,13 @@
                         </div>
                         <div class="box-body no-padding table-responsive">
                             <table class="table table-condensed table-hover">
-                                <tbody>
+                                <thead>
                                     <tr>
                                         <th width="20%">Character</th>
                                         <th width="*">Role</th>
                                     </tr>
+                                </thead>
+                                <tbody>
                                     @foreach ($member_roles_grantable_base as $e)
                                     <tr>
                                         <td>
@@ -219,11 +233,13 @@
                         </div>
                         <div class="box-body no-padding table-responsive">
                             <table class="table table-condensed table-hover">
-                                <tbody>
+                                <thead>
                                     <tr>
                                         <th width="20%">Character</th>
                                         <th width="*">Role</th>
                                     </tr>
+                                </thead>
+                                <tbody>
                                     @foreach ($member_roles_grantable_other as $e)
                                     <tr>
                                         <td>
@@ -247,7 +263,7 @@
                         <div class="box-body no-padding">
                             {{-- var_dump($member_roles_log) --}}
                             <table class="table table-condensed table-hover">
-                                <tbody>
+                                <thead>
                                     <tr>
                                         <th width="12%">Affected Character</th>
                                         <th width="12%">Changed by</th>
@@ -256,6 +272,8 @@
                                         <th width="30%">old Roles</th>
                                         <th width="30%">new Roles</th>
                                     </tr>
+                                </thead>
+                                <tbody>
                                     @foreach ($member_roles_log as $e)
                                     <tr>
                                         <td>

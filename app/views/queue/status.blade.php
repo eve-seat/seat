@@ -87,7 +87,7 @@
 			<div class="box-body no-padding">
 	        	@if (count($db_queue) > 0)
 					<table class="table table-condensed">
-					    <tbody>
+					    <thead>
 					    	<tr>
 					            <th>Owner</th>
 					            <th>Scope</th>
@@ -96,6 +96,8 @@
 					            <th>Updated</th>
 					            <th></th>
 					        </tr>
+					    </thead>
+					    <tbody>
 					        @foreach ($db_queue as $queue)
 						        <tr>
 						            <td>{{ $queue->ownerID }}</td>
@@ -132,7 +134,7 @@
 	        <div class="box-body no-padding">
 	        	@if (count($db_working) > 0)
 					<table class="table table-condensed">
-					    <tbody>
+					    <thead>
 					    	<tr>
 					            <th>Owner</th>
 					            <th>Scope</th>
@@ -141,6 +143,8 @@
 					            <th>Created</th>
 					            <th>Updated</th>
 					        </tr>
+					    </thead>
+					    <tbody>
 					        @foreach ($db_working as $work)
 						        <tr>
 						            <td>{{ $work->ownerID }}</td>
@@ -179,7 +183,7 @@
 	        <div class="box-body no-padding">
 	        	@if (count($db_errors) > 0)
 					<table class="table table-condensed">
-					    <tbody>
+					    <thead>
 					    	<tr>
 					            <th>Owner</th>
 					            <th>Scope</th>
@@ -189,6 +193,8 @@
 					            <th>Updated</th>
 					            <th></th>
 					        </tr>
+					    </thead>
+					    <tbody>
 					        @foreach ($db_errors as $error)
 						        <tr>
 						            <td>{{ $error->ownerID }}</td>
@@ -220,7 +226,7 @@
 	        <div class="box-body no-padding">
 	        	@if (!empty($db_history))
 						<table class="table table-condensed">
-					    <tbody>
+					    <thead>
 					    	<tr>
 					            <th>Owner</th>
 					            <th>Scope</th>
@@ -228,6 +234,8 @@
 					            <th>Status</th>
 					            <th>Updated at</th>
 					        </tr>
+					    </thead>
+					    <tbody>
 					        @foreach ($db_history as $history)
 						        <tr>
 						            <td>{{ $history->ownerID }}</td>

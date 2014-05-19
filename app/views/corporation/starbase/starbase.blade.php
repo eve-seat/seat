@@ -26,7 +26,7 @@
 			    		<div class="col-md-6">
 
 					        <table class="table table-condensed table-hover">
-					            <tbody>
+					            <thead>
 					            	<tr>
 						                <th>Type</th>
 						                <th>Location</th>
@@ -35,6 +35,8 @@
 						                <th>State</th>
 						                <th></th>
 						            </tr>
+					            </thead>
+					            <tbody>
 					            	@foreach ($starbase as $details)
 							            <tr>
 											{{--

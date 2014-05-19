@@ -44,13 +44,14 @@
 							    @else
 							        <div class="tab-pane" id="ledger{{ $accountKey }}">
 							    @endif
-									<table class="table table-condensed table-hover">
-									    <tbody>
+									<table class="table table-condensed table-hover" id="datatable">
+									    <thead>
 									    	<tr>
 										        <th>Transaction Type</th>
 										        <th>Amount</th>
 										    </tr>
-
+									    </thead>
+									    <tbody>
 										    @foreach ($ledger['ledger'] as $entry)
 											    <tr>
 											        <td>{{ $entry->refTypeName }}</td>
@@ -97,12 +98,14 @@
 							        <h3 class="box-title">Tax Contributions for Bounty Prizes</h3>
 							    </div>
 							    <div class="box-body no-padding">
-									<table class="table table-condensed table-hover">
-									    <tbody>
+									<table class="table table-condensed table-hover" id="datatable">
+									    <thead>
 									    	<tr>
 										        <th>Contributor</th>
 										        <th>Contribution Total</th>
 										    </tr>
+									    </thead>
+									    <tbody>
 										    @foreach ($bounty_tax as $entry)
 											    <tr>
 											        <td>
@@ -132,12 +135,14 @@
 							        <h3 class="box-title">Tax Contributions for Planetary Interaction</h3>
 							    </div>
 							    <div class="box-body no-padding">
-									<table class="table table-condensed table-hover">
-									    <tbody>
+									<table class="table table-condensed table-hover" id="datatable">
+									    <thead>
 									    	<tr>
 										        <th>Contributor</th>
 										        <th>Contribution Total</th>
 										    </tr>
+									    </thead>
+									    <tbody>
 										    @foreach ($pi_tax as $entry)
 											    <tr>
 											        <td>

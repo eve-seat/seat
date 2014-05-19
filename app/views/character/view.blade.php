@@ -414,192 +414,195 @@
 							    </div>
 
 							    <div class="box-body">
-									<table class="table table-condensed table-hover">
-									    <tbody><tr>
+									<table class="table table-condensed table-hover" id="datatable">
+									    <thead>
+									    	<tr>
 									        <th>Skill</th>
 									        <th>Amarr</th>
 									        <th>Caldari</th>
 									        <th>Gallente</th>
 									        <th>Minmatar</th>
-									    </tr>
-									    <tr>
-									        <td>Frigate</td>
+										    </tr>
+										</thead>
+										<tbody>
+										    <tr>
+										        <td>Frigate</td>
 
-									        	@foreach( array(3331, 3330, 3328 ,3329) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Destroyer</td>
-									        	@foreach( array(33091, 33092, 33093 ,33094) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Cruiser</td>
-									        	@foreach( array(3335, 3334, 3332 ,3333) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Battlecruiser</td>
-									        	@foreach( array(33095, 33096, 33097 ,33098) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Battleship</td>
-									        	@foreach( array(3339, 3338, 3336 ,3337) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Strategic Cruiser</td>
-									        	@foreach( array(30650, 30651, 30652 ,30653) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Industrial</td>
-									        	@foreach( array(3343, 3342, 3340 ,3341) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>									    
-									    <tr>
-									        <td>Freighter</td>
-									        	@foreach( array(20524, 20526, 20527 ,20528) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>									    
-									    <tr>
-									        <td>Carrier</td>
-									        	@foreach( array(24311, 24312, 24313 ,24314) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Dreadnaught</td>
-									        	@foreach( array(20525, 20530, 20531 ,20532) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>	
-									        <td>Titan</td>
-									        	@foreach( array(3347, 3346, 3344 ,3345) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>										    
-									</tbody></table>
-
+										        	@foreach( array(3331, 3330, 3328 ,3329) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Destroyer</td>
+										        	@foreach( array(33091, 33092, 33093 ,33094) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Cruiser</td>
+										        	@foreach( array(3335, 3334, 3332 ,3333) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Battlecruiser</td>
+										        	@foreach( array(33095, 33096, 33097 ,33098) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Battleship</td>
+										        	@foreach( array(3339, 3338, 3336 ,3337) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Strategic Cruiser</td>
+										        	@foreach( array(30650, 30651, 30652 ,30653) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Industrial</td>
+										        	@foreach( array(3343, 3342, 3340 ,3341) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>									    
+										    <tr>
+										        <td>Freighter</td>
+										        	@foreach( array(20524, 20526, 20527 ,20528) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>									    
+										    <tr>
+										        <td>Carrier</td>
+										        	@foreach( array(24311, 24312, 24313 ,24314) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Dreadnaught</td>
+										        	@foreach( array(20525, 20530, 20531 ,20532) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>	
+										        <td>Titan</td>
+										        	@foreach( array(3347, 3346, 3344 ,3345) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>										    
+										</tbody>
+									</table>
 							    </div><!-- /.box-body -->
 							</div>
 
@@ -626,8 +629,8 @@
                                     </div>
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
-                                    <table class="table table-condensed table-hover">
-                                        <tbody>
+                                    <table class="table table-condensed table-hover" id="datatable">
+                                        <thead>
 	                                        <tr>
 	                                            <th>Date</th>
 	                                            <th>Type</th>
@@ -637,6 +640,8 @@
 	                                            <th>Amount</th>
 	                                            <th>Balance</th>
 	                                        </tr>
+                                        </thead>
+                                        <tbody>
 	                                        @foreach ($wallet_journal as $e)
 		                                        <tr @if ($e->amount < 0)class="danger" @endif>
 		                                            <td>
@@ -658,7 +663,6 @@
 		                                            <td>{{ number_format($e->balance, 2, '.', ' ') }}</td>
 		                                        </tr>
 		                                    @endforeach
-
                                     	</tbody>
                                    	</table>
                                 </div><!-- /.box-body -->
@@ -681,8 +685,8 @@
                                     </div>
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
-					                <table class="table table-condensed table-hover">
-					                    <tbody>
+					                <table class="table table-condensed table-hover" id="datatable">
+					                    <thead>
 					                        <tr>
 												<th>Date</th>
 												<th>Type</th>
@@ -693,6 +697,8 @@
 												<th>Type</th>
 												<th>Station Name</th>
 					                        </tr>
+					                    </thead>
+					                    <tbody>
 					                        @foreach ($wallet_transactions as $e)
 					                            <tr @if ($e->transactionType == 'buy')class="danger" @endif>
 					                                <td>
@@ -712,7 +718,6 @@
 					                                <td>{{ $e->stationName }}</td>
 					                            </tr>
 					                        @endforeach
-
 					                	</tbody>
 					               	</table>
                                 </div><!-- /.box-body -->
@@ -735,8 +740,8 @@
                                     </div>                                    
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
-							        <table class="table table-hover table-condensed">
-							            <tbody>
+							        <table class="table table-hover table-condensed" id="datatable">
+							            <thead>
 								            <tr>
 								                <th style="width: 10px">#</th>
 								                <th>Date</th>
@@ -745,7 +750,8 @@
 								                <th>Subject</th>
 								                <th></th>
 								            </tr>
-
+							            </thead>
+							            <tbody>
 											@foreach ($mail as $message)
 									            <tr>
 									                <td>{{ $message->messageID }}</td>
@@ -795,8 +801,8 @@
                                     <h3 class="box-title">Notifications ({{ count($notifications) }})</h3>
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
-							        <table class="table table-hover table-condensed">
-							            <tbody>
+							        <table class="table table-hover table-condensed" id="datatable">
+							            <thead>
 								            <tr>
 								                <th style="width: 10px">#</th>
 								                <th>Date</th>
@@ -805,7 +811,8 @@
 								                <th>Sample</th>
 								                <th></th>
 								            </tr>
-
+							            </thead>
+							            <tbody>
 											@foreach ($notifications as $note)
 									            <tr>
 									                <td>{{ $note->notificationID }}</td>
@@ -820,7 +827,6 @@
 									                <td></td>
 									            </tr>
 											@endforeach
-
 							        	</tbody>
 							        </table>
                                 </div><!-- /.box-body -->
@@ -932,12 +938,13 @@
 
                                 			<div class="col-md-2">
 										        <table class="table table-hover table-condensed">
-										            <tbody>
+										            <thead>
 											            <tr>
 											                <th>Name</th>
 											                <th>Standing</th>
 											            </tr>
-
+											        </thead>
+											        <tbody>
 														@foreach ($list as $contact)
 												            <tr>
 												                <td>
@@ -957,7 +964,6 @@
 												                </td>
 												            </tr>
 														@endforeach
-
 										        	</tbody>
 										        </table>
 										    </div> <!-- ./col-md-2 -->
@@ -1275,8 +1281,8 @@
                                     <h3 class="box-title">Market Orders ({{ count($market_orders) }})</h3>                             
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
-							        <table class="table table-hover table-condensed">
-							            <tbody>
+							        <table class="table table-hover table-condensed" id="datatable">
+							            <thead>
 								            <tr>
 								                <th style="width: 10px">#</th>
 								                <th>Type</th>
@@ -1290,7 +1296,8 @@
 								                <th>Min. Vol</th>
 								                <th>State</th>
 								            </tr>
-
+							            </thead>
+							            <tbody>
 											@foreach ($market_orders as $order)
 									            <tr>
 									                <td>{{ $order->orderID }}</td>

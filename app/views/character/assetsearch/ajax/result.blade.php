@@ -1,6 +1,6 @@
 @if (count($assets) > 0)
-	<table class="table table-condensed table-hover">
-	    <tbody>
+	<table class="table table-condensed table-hover" id="datatable">
+	    <thead>
 	    	<tr>
 		        <th>Character</th>
 		        <th>Corporation</th>
@@ -8,6 +8,8 @@
 		        <th>Location</th>
 		        <th>Quantity</th>
 		    </tr>
+	    </thead>
+	    <tbody>
 		    @foreach ($assets as $result)
 			    <tr>
 			        <td>

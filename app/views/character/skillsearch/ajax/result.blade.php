@@ -1,6 +1,6 @@
 @if (count($filter) > 0)
-	<table class="table table-condensed table-hover">
-	    <tbody>
+	<table class="table table-condensed table-hover" id="datatable">
+	    <thead>
 	    	<tr>
 		        <th>Character</th>
 		        <th>Corporation</th>
@@ -8,6 +8,8 @@
 		        <th>Skillpoints</th>
 		        <th>Level</th>
 		    </tr>
+		</thead>
+		<tbody>
 		    @foreach ($filter as $result)
 			    <tr>
 			        <td>

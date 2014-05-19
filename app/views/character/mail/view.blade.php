@@ -23,8 +23,8 @@
 		        </div>
 		    </div><!-- /.box-header -->
 		    <div class="box-body">
-		        <table class="table table-hover table-condensed">
-		            <tbody>
+		        <table class="table table-hover table-condensed" id="datatable">
+		            <thead>
 			            <tr>
 			                <th style="width: 10px">#</th>
 			                <th>Date</th>
@@ -33,7 +33,8 @@
 			                <th>Subject</th>
 			                <th></th>
 			            </tr>
-
+		            </thead>
+		            <tbody>
 						@foreach ($mail as $message)
 				            <tr>
 				                <td>{{ $message->messageID }}</td>

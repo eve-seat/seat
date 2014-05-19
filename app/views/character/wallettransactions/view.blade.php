@@ -23,8 +23,8 @@
 		        </div>
 		    </div><!-- /.box-header -->
 		    <div class="box-body no-padding">
-                <table class="table table-condensed table-hover">
-                    <tbody>
+                <table class="table table-condensed table-hover" id="datatable">
+                    <thead>
                         <tr>
                             <th>Date</th>
                             <th>Type</th>
@@ -35,6 +35,8 @@
                             <th>Type</th>
                             <th>Station Name</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         @foreach ($wallet_transactions as $e)
                             <tr @if ($e->transactionType == 'buy')class="danger" @endif>
                                 <td>

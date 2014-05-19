@@ -22,8 +22,8 @@
 		        </div>
 		    </div><!-- /.box-header -->
 		    <div class="box-body no-padding">
-                <table class="table table-condensed table-hover">
-                    <tbody>
+                <table class="table table-condensed table-hover" id="datatable">
+                    <thead>
                         <tr>
                             <th>Date</th>
                             <th>Wallet Division</th>
@@ -34,6 +34,8 @@
                             <th>Amount</th>
                             <th>Balance</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         @foreach ($wallet_journal as $e)
                             <tr @if ($e->amount < 0)class="danger" @endif>
                                 <td>

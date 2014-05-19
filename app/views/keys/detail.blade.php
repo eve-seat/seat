@@ -117,11 +117,13 @@
             </div>
             <div class="box-body no-padding">
                 <table class="table table-condensed table-hover">
-                    <tbody>
+                    <thead>
                         <tr>
                             <th>Endpoint</th>
                             <th>Access</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         @foreach (App\Services\Helpers\Helpers::processAccessMask($key_information->accessMask, $key_information->type) as $endpoint => $access)
                             <tr>
                                 <td>{{ $endpoint }}</td>
@@ -153,7 +155,7 @@
             @if (count($recent_jobs) > 0)
                 <div class="box-body no-padding">
 				<table class="table table-condensed table-hover">
-				    <tbody>
+				    <thead>
 				    	<tr>
 					        <th>Scheduled</th>
 					        <th>API</th>
@@ -161,6 +163,8 @@
 					        <th>Status</th>
 					        <th></th>
 					    </tr>
+                    </thead>
+                    <tbody>
 					    @foreach ($recent_jobs as $job)
 						    <tr>
 						        <td>
@@ -207,7 +211,7 @@
             @if (count($key_bans) > 0)
                 <div class="box-body no-padding">
     				<table class="table table-condensed table-hover">
-    				    <tbody>
+    				    <thead>
     				    	<tr>
     					        <th>Scheduled</th>
     					        <th>Access Mask</th>
@@ -215,6 +219,8 @@
     					        <th>Scope</th>
     					        <th></th>
     					    </tr>
+                        </thead>
+                        <tbody>
     					    @foreach ($key_bans as $ban)
     						    <tr>
     						        <td>
