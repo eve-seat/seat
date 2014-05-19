@@ -219,3 +219,8 @@ $(document).on("click", "a.confirmlink", function(event){
       }
    });
 });
+
+// Init datatables on, tables
+(function($) {
+    $("table#datatable").dataTable({ paging:false });
+}(jQuery));
