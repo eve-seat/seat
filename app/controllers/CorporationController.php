@@ -239,7 +239,8 @@ class CorporationController extends BaseController {
 				'quantity' => $value->quantity,
 				'typeID' => $value->typeID,
 				'typeName' => $value->typeName,
-				'groupName' => $value->groupName
+				'groupName' => $value->groupName,
+				'volume' => $value->volume * $value->quantity,
 			);
 			$assets_count++;
 			foreach( $assets_contents as $contents){
@@ -249,7 +250,8 @@ class CorporationController extends BaseController {
 						'quantity' => $contents->sumquantity,
 						'typeID' => $contents->typeID,
 						'typeName' => $contents->typeName,
-						'groupName' => $contents->groupName
+						'groupName' => $contents->groupName,
+						'volume' => $contents->volume * $contents->sumquantity
 					);
 				$assets_count++;
 				}
@@ -1018,6 +1020,23 @@ class CorporationController extends BaseController {
 			->with('order_states', $order_states)
 			->with('wallet_divisions', $wallet_divisions)
 			->with('corporation_name', $corporation_name);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| sumVolume()
+	|--------------------------------------------------------------------------
+	|
+	| Returns the total volume of an array of assets
+	|
+	*/
+
+	public static function sumVolume($array, $col_name) {
+		$volume = 0;
+		foreach($array as $item){
+			$volume += $item[$col_name];
+		}
+		return Helpers::formatBigNumber($volume);
 	}
 
 }
