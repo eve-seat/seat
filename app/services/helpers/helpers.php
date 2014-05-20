@@ -170,4 +170,21 @@ class Helpers {
 		}
 
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| sumVolume()
+	|--------------------------------------------------------------------------
+	|
+	| Returns the total volume of an array of assets
+	|
+	*/
+
+	public static function sumVolume($array, $col_name) {
+		$volume = 0;
+		foreach($array as $item){
+			$volume += $item[$col_name];
+		}
+		return Helpers::formatBigNumber($volume);
+	}
 }

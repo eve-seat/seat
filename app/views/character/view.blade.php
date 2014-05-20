@@ -848,7 +848,7 @@
 									@foreach ($assets_list as $location => $assets)
 										<div class="box box-solid box-primary">
 											<div class="box-header">
-												<h3 class="box-title">{{ $location }} ({{ count($assets) }})</h3>
+												<h3 class="box-title">{{ $location }} ({{ count($assets) }}) {{ App\Services\Helpers\Helpers::sumVolume($assets, 'volume') }} m3</h3>
 												<div class="box-tools pull-right">
 													<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
 												</div>

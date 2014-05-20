@@ -196,7 +196,8 @@ class CharacterController extends BaseController {
 				'quantity' => $value->quantity,
 				'typeID' => $value->typeID,
 				'typeName' => $value->typeName,
-				'groupName' => $value->groupName
+				'groupName' => $value->groupName,
+				'volume' => $value->volume * $value->quantity,
 			);
 			$assets_count++;
 
@@ -209,7 +210,8 @@ class CharacterController extends BaseController {
 						'quantity' => $contents->sumquantity,
 						'typeID' => $contents->typeID,
 						'typeName' => $contents->typeName,
-						'groupName' => $contents->groupName
+						'groupName' => $contents->groupName,
+						'volume' => $contents->volume * $contents->quantity,
 					);
 					$assets_count++;
 				}
