@@ -3,7 +3,6 @@
 @section('html_title', 'Corporation Assets')
 
 @section('page_content')
-
 <div class="row">
 	<div class="col-md-12">
 		<div class="box">
@@ -14,7 +13,7 @@
 				@foreach ($assets_list as $location => $assets)
 					<div class="box box-solid box-primary">
 						<div class="box-header">
-							<h3 class="box-title">{{ $location }} ({{ count($assets) }})</h3>
+							<h3 class="box-title">{{ $location }} ({{ count($assets) }}) {{ App\Services\Helpers\Helpers::sumVolume($assets, 'volume') }} m3</h3>
 							<div class="box-tools pull-right">
 								<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
 							</div>
@@ -30,8 +29,9 @@
 												<th style="width: 50%" colspan="2">Type</th>
 												<th>Group</th>
 												<th style="width: 50px"></th>
+												<th>m3</th>
 											</tr>
-										</tbody>
+										</tbody>			
 											@foreach ($column as $asset)
 												<tbody style="border-top:0px solid #FFF">
 													<tr class="item-container">
@@ -52,6 +52,7 @@
 														@else
 															<td></td>
 														@endif
+														<td>{{ App\Services\Helpers\Helpers::formatBigNumber($asset['volume']) }}</td>
 													</tr>
 												</tbody>
 												@if(isset($asset['contents']))
@@ -72,6 +73,7 @@
 																	</span>
 																</td>
 																<td></td>
+																<td>{{ App\Services\Helpers\Helpers::formatBigNumber($content['volume']) }}</td>
 															</tr>
 														@endforeach
 													</tbody>
