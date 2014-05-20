@@ -863,6 +863,7 @@
 																	<th style="width: 40px">#</th>
 																	<th style="width: 50%" colspan="2">Type</th>
 																	<th>Group</th>
+																	<th>m<sup>3</sup></th>
 																	<th style="width: 50px"></th>
 																</tr>
 															</tbody>
@@ -879,6 +880,11 @@
 																			<td>
 																				<span data-toggle="tooltip" title="" data-original-title="{{ $asset['groupName'] }}">
 																					{{ str_limit($asset['groupName'], 40, $end = '...') }}
+																				</span>
+																			</td>
+																			<td>
+																				<span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['volume'], 0, '.', ' ') }}m3">
+																					{{ App\Services\Helpers\Helpers::formatBigNumber($asset['volume']) }}
 																				</span>
 																			</td>
 																			@if(isset($asset['contents']))
@@ -905,6 +911,11 @@
 																							{{ str_limit($content['groupName'], 25, $end = '...') }}
 																						</span>
 																					</td>
+																					<td>
+																						<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['volume'], 0, '.', ' ') }}m3">{{ App\Services\Helpers\Helpers::formatBigNumber($content['volume']) }}
+																						</span>
+																					</td>
+
 																					<td></td>
 																				</tr>
 																			@endforeach

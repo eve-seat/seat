@@ -28,8 +28,8 @@
 												<th style="width: 40px">#</th>
 												<th style="width: 50%" colspan="2">Type</th>
 												<th>Group</th>
+												<th>m<sup>3</sup></th>
 												<th style="width: 50px"></th>
-												<th>m3</th>
 											</tr>
 										</tbody>			
 											@foreach ($column as $asset)
@@ -47,12 +47,16 @@
 																{{ str_limit($asset['groupName'], 40, $end = '...') }}
 															</span>
 														</td>
+														<td>
+															<span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['volume'], 0, '.', ' ') }}m3">
+																{{ App\Services\Helpers\Helpers::formatBigNumber($asset['volume']) }}
+															</span>
+														</td>
 														@if(isset($asset['contents']))
 															<td style="text-align: right"><i class="fa fa-plus viewcontent" style="cursor: pointer;"></i></td>
 														@else
 															<td></td>
 														@endif
-														<td>{{ App\Services\Helpers\Helpers::formatBigNumber($asset['volume']) }}</td>
 													</tr>
 												</tbody>
 												@if(isset($asset['contents']))
@@ -72,8 +76,12 @@
 																		{{ str_limit($content['groupName'], 25, $end = '...') }}
 																	</span>
 																</td>
+																<td>
+																	<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['volume'], 0, '.', ' ') }}m3">
+																		{{ App\Services\Helpers\Helpers::formatBigNumber($content['volume']) }}
+																	</span>
+																</td>
 																<td></td>
-																<td>{{ App\Services\Helpers\Helpers::formatBigNumber($content['volume']) }}</td>
 															</tr>
 														@endforeach
 													</tbody>
