@@ -13,73 +13,78 @@
         <div class="box box-info">
             <div class="box-header">
                 <h2 class="box-title"><i class="fa fa-user"></i> Character Details for {{ $character->characterName }}</h2>
-                <div class="box-tools pull-right">
-                </div>
             </div>
             <div class="box-body">
             	<div class="row">
-            		<div class="col-md-3">
-		                <img src='//image.eveonline.com/Character/{{ $character->characterID }}_256.jpg' class='img-circle pull-right'>
+            		<div class="col-md-2">
+		                <img src='//image.eveonline.com/Character/{{ $character->characterID }}_256.jpg' class='img-circle'>
 		            </div>
-		            <div class="col-md-4">
-                        <div class="box box-solid">
-                            <div class="box-header">
-                                <h3 class="box-title">Character Overview</h3>
-                                <div class="box-tools pull-right">
-                                </div>
-                            </div>
-                            <div class="box-body">
-                            	<dl>
-                                    <dt>Name</dt>
-                                    <dd>{{ $character->characterName }}</dd>
+		            <div class="col-md-2">
+                        <h3>Character Overview</h3>
+                    	<dl>
+                            <dt>Name</dt>
+                            <dd>{{ $character->characterName }}</dd>
 
-                                    <dt>Corporation</dt>
-                                    <dd>{{ $character->corporationName }}</dd>
+                            <dt>Corporation</dt>
+                            <dd>{{ $character->corporationName }}</dd>
 
-                                    <dt>Race, Bloodline, Sex</dt>
-                                    <dd>{{ $character->race }}, {{ $character->bloodLine }}, {{ $character->gender }}</dd>
+                            <dt>Race, Bloodline, Sex</dt>
+                            <dd>{{ $character->race }}, {{ $character->bloodLine }}, {{ $character->gender }}</dd>
 
-                                    <dt>Date of Birth</dt>
-                                    <dd>{{ $character->DoB }} ({{ Carbon\Carbon::parse($character->DoB)->diffForHumans() }})</dd>
-                                </dl>
-                            </div><!-- /.box-body -->
-                        </div><!-- /.box -->
+                            <dt>Date of Birth</dt>
+                            <dd>{{ $character->DoB }} ({{ Carbon\Carbon::parse($character->DoB)->diffForHumans() }})</dd>
+                        </dl>
                     </div>
-                    <div class="col-md-5">
-                        <div class="box box-solid">
-                            <div class="box-header">
-                                <h3 class="box-title">Other Characters on Key</h3>
-                                <div class="box-tools pull-right">
-                                </div>
-                            </div>
-                            <div class="box-body">
-                            	@if (count($other_characters) > 0)
-					                @foreach ($other_characters as $alt)
-						                <div class="row">
-						               		<a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}" style="color:inherit;">
-						                		<div class="col-md-2">
-											<img src="//image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
-										</div>
-										<div class="col-md-5">
-											<ul class="list-unstyled">
-												<li><b>Name: </b>{{ $alt->characterName }}</li>
-												<li><b>Corp: </b>{{ $alt->corporationName }}</li>
-												<li>
-													@if (strlen($alt->trainingEndTime) > 0)
-														<b>Training Ends: </b> {{ Carbon\Carbon::parse($alt->trainingEndTime)->diffForHumans() }}
-													@endif
-												</li>
-											</ul>
-										</div>
-									</a>
+                    <div class="col-md-4">
+                        <h3>Other Characters on Key</h3>
+                    	@if (count($other_characters) > 0)
+			                @foreach ($other_characters as $alt)
+				                <div class="row">
+				               		<a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}" style="color:inherit;">
+				                		<div class="col-md-2">
+									<img src="//image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
+								</div>
+								<div class="col-md-5">
+									<ul class="list-unstyled">
+										<li><b>Name: </b>{{ $alt->characterName }}</li>
+										<li><b>Corp: </b>{{ $alt->corporationName }}</li>
+										<li>
+											@if (strlen($alt->trainingEndTime) > 0)
+												<b>Training Ends: </b> {{ Carbon\Carbon::parse($alt->trainingEndTime)->diffForHumans() }}
+											@endif
+										</li>
+									</ul>
+								</div>
+								</a>
 								</div><!-- ./row -->
-					                @endforeach
-					            @else
-					            	No other known characters on this key.
-					           	@endif
-                            </div><!-- /.box-body -->
-                        </div><!-- /.box -->
-                    </div> <!-- ./col-md-5 -->
+			                @endforeach
+			            @else
+			            	No other known characters on this key.
+			           	@endif
+                    </div> <!-- ./col-md-4 -->
+                    <div class="col-md-4">
+                        <h3>Characters from this Person Group</h3>
+                    	@if (count($people) > 0)
+                    		<div class="row">
+	                    		@foreach (array_chunk($people, (count($people) / 2) > 1 ? count($people) / 2 : 2) as $other_alts)
+	                    			<div class="col-md-6">
+			                    		<ul class="list-unstyled">
+							                @foreach ($other_alts as $person)
+							                	<li>
+													<a href="{{ action('CharacterController@getView', array('characterID' => $person->characterID)) }}">
+														<img src='//image.eveonline.com/Character/{{ $person->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+														{{ $person->characterName }}
+													</a>				                	
+												</li>
+							                @endforeach
+							            </ul>
+							        </div>
+						        @endforeach
+						    </div> <!-- ./row -->
+			            @else
+			            	No other characters in a person group
+			           	@endif
+                    </div> <!-- ./col-md-4 -->
 		        </div>
             </div><!-- /.box-body -->
         </div><!-- /.box -->

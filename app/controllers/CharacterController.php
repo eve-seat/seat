@@ -72,6 +72,18 @@ class CharacterController extends BaseController {
 			->where('account_apikeyinfo_characters.characterID', '<>', $character->characterID)
 			->get();
 
+		// Get the other characters linked to this key as a person if any
+		$_key = $character->keyID;	// Small var declaration as I doubt you can use $character->keyID in the closure
+		$people = DB::table('seat_people')
+			->leftJoin('account_apikeyinfo_characters', 'seat_people.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->whereIn('personID', function($query) use ($_key) {
+
+				$query->select('personID')
+					->from('seat_people')
+					->where('keyID', $_key);
+			})
+			->get();
+
 		$character_info = DB::table('eve_characterinfo')
 			->where('characterID', $characterID)
 			->first();
@@ -385,6 +397,7 @@ class CharacterController extends BaseController {
 			->with('character_info', $character_info)
 			->with('employment_history', $employment_history)
 			->with('other_characters', $other_characters)
+			->with('people', $people)
 			->with('skillpoints', $skillpoints)
 			->with('skill_queue', $skill_queue)
 			->with('skill_groups', $skill_groups)
