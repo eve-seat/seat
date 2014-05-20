@@ -354,7 +354,7 @@ class ApiKeyController extends BaseController {
 	|
 	*/
 
-	public function getDeleteKey($keyID)
+	public function getDeleteKey($keyID, $delete_all_info = false)
 	{
 
 		// Get the full key and vCode
@@ -363,13 +363,165 @@ class ApiKeyController extends BaseController {
 		if (!$key)
 			App::abort(404);
 
-		$key->delete();
+		// Based on delete_all_info, we will either just delete the key,
+		// or all of the information associated with it
+		switch ((bool)$delete_all_info) {
+			case true:
 
-		// Delete the information that we have for this key too
-		\EveAccountAPIKeyInfo::where('keyID', $keyID)->delete();
+				// Check if we can determine if this is a corporation or account/char key.
+				$type = \EveAccountAPIKeyInfo::where('keyID', $keyID)->pluck('type');
 
-		return Redirect::action('ApiKeyController@getAll')
-			->with('success', 'Key has been deleted');
+				// Check if the type is set
+				if ($type) {
+
+					// For corporation keys, we will delete corporation stuff, duhr
+					if ($type == "Corporation") {
+
+						// Most of the data for corporations is stored with the corporationID
+						// as key. To get this ID, we need to find the character attached to
+						// this key, and then the corporation for that character
+						$characters = BaseApi::findKeyCharacters($keyID);
+						$corporationID = BaseApi::findCharacterCorporation($characters[0]);
+
+						// With the corporationID now known, go ahead and cleanup the database
+						\EveCorporationAccountBalance::where('corporationID', $corporationID)->delete();
+						\EveCorporationAssetList::where('corporationID', $corporationID)->delete();
+						\EveCorporationAssetListContents::where('corporationID', $corporationID)->delete();
+						\EveCorporationAssetListLocations::where('corporationID', $corporationID)->delete();
+						\EveCorporationContactListAlliance::where('corporationID', $corporationID)->delete();
+						\EveCorporationContactListCorporate::where('corporationID', $corporationID)->delete();
+						\EveCorporationContracts::where('corporationID', $corporationID)->delete();
+						\EveCorporationContractsItems::where('corporationID', $corporationID)->delete();
+						\EveCorporationCorporationSheet::where('corporationID', $corporationID)->delete();
+						\EveCorporationCorporationSheetDivisions::where('corporationID', $corporationID)->delete();
+						\EveCorporationCorporationSheetWalletDivisions::where('corporationID', $corporationID)->delete();
+						\EveCorporationIndustryJobs::where('corporationID', $corporationID)->delete();
+						\EveCorporationMarketOrders::where('corporationID', $corporationID)->delete();
+						\EveCorporationMedals::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberMedals::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberSecurityGrantableRoles::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberSecurityGrantableRolesAtBase::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberSecurityGrantableRolesAtHQ::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberSecurityGrantableRolesAtOther::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberSecurityLog::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberSecurityRoles::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberSecurityRolesAtBase::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberSecurityRolesAtHQ::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberSecurityRolesAtOther::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberSecurityTitles::where('corporationID', $corporationID)->delete();
+						\EveCorporationMemberTracking::where('corporationID', $corporationID)->delete();
+						\EveCorporationShareholderCharacters::where('corporationID', $corporationID)->delete();
+						\EveCorporationShareholderCorporations::where('corporationID', $corporationID)->delete();
+						\EveCorporationStandingsAgents::where('corporationID', $corporationID)->delete();
+						\EveCorporationStandingsFactions::where('corporationID', $corporationID)->delete();
+						\EveCorporationStandingsNPCCorporations::where('corporationID', $corporationID)->delete();
+						\EveCorporationStarbaseDetail::where('corporationID', $corporationID)->delete();
+						\EveCorporationStarbaseList::where('corporationID', $corporationID)->delete();
+						\EveCorporationWalletJournal::where('corporationID', $corporationID)->delete();
+						\EveCorporationWalletTransactions::where('corporationID', $corporationID)->delete();
+
+					} else {
+
+						// And for character stuff, we delete character stuff
+
+						// Here we need to be careful now. It may happen that we have more than 1 key
+						// for a character, so we have to be aware of this. It adds a factor of
+						// complexity to the whole thing.
+						$characters = BaseApi::findKeyCharacters($keyID);
+
+						// Now that we know about all of the characters, we will loop over them and check
+						// that we only have 1 key for them. If more than one keys have this character, we will
+						// simply ignore the cleanup and add a message about it
+						foreach ($characters as $id => $character) {
+							
+							// Check how many keys know about this character
+							if (\EveAccountAPIKeyInfoCharacters::where('characterID', $character)->count() > 1) {
+
+									// Write a log entry about this
+									\Log::warning('Character ' . $character . ' is recorded on another key and will not been cleaned up');
+
+									// Remove this character from $characters
+									unset($characters[$id]);
+							}
+						}
+
+						// So we now have an array of characterID's that can be cleaned up. Lets do that
+						if (count($characters) > 0) {
+
+							\EveCharacterAccountBalance::whereIn('characterID', $characters)->delete();
+							\EveCharacterAssetList::whereIn('characterID', $characters)->delete();
+							\EveCharacterAssetListContents::whereIn('characterID', $characters)->delete();
+							\EveCharacterCharacterSheet::whereIn('characterID', $characters)->delete();
+							\EveCharacterCharacterSheetSkills::whereIn('characterID', $characters)->delete();
+							\EveCharacterContactList::whereIn('characterID', $characters)->delete();
+							\EveCharacterContactListAlliance::whereIn('characterID', $characters)->delete();
+							\EveCharacterContactListCorporate::whereIn('characterID', $characters)->delete();
+							\EveCharacterContactNotifications::whereIn('characterID', $characters)->delete();
+							\EveCharacterContracts::whereIn('characterID', $characters)->delete();
+							\EveCharacterContractsItems::whereIn('characterID', $characters)->delete();
+							\EveCharacterIndustryJobs::whereIn('characterID', $characters)->delete();
+							// Intentionally ignoring the mail related information as this has a lot of overlap
+							// and is almost always usefull
+							\EveCharacterMarketOrders::whereIn('characterID', $characters)->delete();
+							\EveCharacterPlanetaryColonies::whereIn('characterID', $characters)->delete();
+							\EveCharacterPlanetaryLinks::whereIn('characterID', $characters)->delete();
+							\EveCharacterPlanetaryPins::whereIn('characterID', $characters)->delete();
+							\EveCharacterPlanetaryRoutes::whereIn('characterID', $characters)->delete();
+							\EveCharacterResearch::whereIn('characterID', $characters)->delete();
+							\EveCharacterSkillInTraining::whereIn('characterID', $characters)->delete();
+							\EveCharacterSkillQueue::whereIn('characterID', $characters)->delete();
+							\EveCharacterStandingsAgents::whereIn('characterID', $characters)->delete();
+							\EveCharacterStandingsFactions::whereIn('characterID', $characters)->delete();
+							\EveCharacterStandingsNPCCorporations::whereIn('characterID', $characters)->delete();
+							\EveCharacterUpcomingCalendarEvents::whereIn('characterID', $characters)->delete();
+							\EveCharacterWalletJournal::whereIn('characterID', $characters)->delete();
+							\EveCharacterWalletTransactions::whereIn('characterID', $characters)->delete();
+						}
+					}
+
+					// Finally, delete the key and redirect
+					$key->delete();
+
+					// Delete the information that we have for this key too
+					\EveAccountAPIKeyInfo::where('keyID', $keyID)->delete();
+					\EveAccountAPIKeyInfoCharacters::where('keyID', $keyID)->delete();
+
+					return Redirect::action('ApiKeyController@getAll')
+						->with('success', 'Key has been deleted');	
+
+				} else {
+
+					// So, we are unable to determine the key type, so maybe this is
+					// a invalid one or whatever. Just get rid of it.
+
+					// Delete the API Key
+					$key->delete();
+
+					// Delete the information that we have for this key too
+					\EveAccountAPIKeyInfo::where('keyID', $keyID)->delete();
+					\EveAccountAPIKeyInfoCharacters::where('keyID', $keyID)->delete();
+
+					return Redirect::action('ApiKeyController@getAll')
+						->with('success', 'Key has been deleted');					
+				}
+
+				break;
+			case false:
+
+				// Delete the API Key
+				$key->delete();
+
+				// Delete the information that we have for this key too
+				\EveAccountAPIKeyInfo::where('keyID', $keyID)->delete();
+				\EveAccountAPIKeyInfoCharacters::where('keyID', $keyID)->delete();
+
+				return Redirect::action('ApiKeyController@getAll')
+					->with('success', 'Key has been deleted');
+
+				break;			
+		}
+
+
 
 	}
 
