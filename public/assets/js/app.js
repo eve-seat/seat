@@ -222,5 +222,5 @@ $(document).on("click", "a.confirmlink", function(event){
 
 // Init datatables on, tables
 (function($) {
-    $("table#datatable").dataTable({ paging:false });
+    $("[id^=datatable]").dataTable({ paging:false, order:[] });
 }(jQuery));
