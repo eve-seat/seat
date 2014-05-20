@@ -13,18 +13,18 @@ SeAT allows corporation CEO's and directors to manage member API keys, store mem
 
 ### Technical Summary ###
 API Keys are stored in the backend database and get updated as the schedule is configured. A cronjob gets kicked off every minute that checks which jobs need to be scheduled and actions as required.  
-A 'job' can be defined as a set of categorized API calls to update certains part of a Character, Corporation, Eve or Map related information in the backend. More than 55 API Endpoints have been implemented and form part of these jobs.
+A 'job' can be defined as a set of categorized API calls to update certain part of a Character, Corporation, Eve or Map related information in the backend. More than 55 API Endpoints have been implemented and form part of these jobs.
 
 ### Screenshots ###
 
 Character View
-![Character View](http://i.imgur.com/EV1G2NC.png)
+![Character View](http://i.imgur.com/vKkE7bv.png)
 
 Key Details View
-![Key Details View](http://i.imgur.com/qL1X41M.png)
+![Key Details View](http://i.imgur.com/DUQCP7q.png)
 
 Starbase Details View
-![Starbase Details View](http://i.imgur.com/djeC4ui.png)
+![Starbase Details View](http://i.imgur.com/es3uIkA.png)
 
 ### Installation ###
 Refer to the `docs/` directory for installation instructions. It is suggested that you checkout the latest release that can be found [here](https://github.com/eve-seat/seat/releases).
@@ -45,7 +45,7 @@ There really is a TON of stuff that still needs to be done:
 
 There is a metric ton of information pulled via the API that is not yet exposed on the web front end... so *lots* to do still :)
 
-A much longer term goal would be to get the system to such a state where corporation members are able to register and view thier own keys and administrators are able to deletegate roles such as recruiters etc.
+A much longer term goal would be to get the system to such a state where corporation members are able to register and view thier own keys and administrators are able to delegate roles such as recruiters etc.
 
 ### Contact ###
 You can get hold of me via Twitter [@qu1ckkkk](https://twitter.com/qu1ckkkk), ingame character [qu1ckkkk](http://evewho.com/pilot/qu1ckkkk) or on [IRC](https://kiwiirc.com/client/irc.coldfront.net/?nick=seat_user|?#wcs-pub) at #wcs-pub on irc.coldfront.net
