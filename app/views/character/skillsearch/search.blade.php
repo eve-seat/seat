@@ -63,7 +63,7 @@
 		    placeholder: "Start typing to filter for skills.",
 		    data:function() { return { text:'text', results: skillList }; },
 		});
-		$("#level").select2({ width: "100" });
+		$("#level").select2({ width: "150" });
 
 		// Listen for when the select2() emits a change, and perform the search
 		$("#searchinput, #level").on("change", function(e) {
