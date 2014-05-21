@@ -570,7 +570,7 @@ class CharacterController extends BaseController {
 			->join('invTypes', 'character_charactersheet_skills.typeID', '=', 'invTypes.typeID')
 			->whereIn('character_charactersheet_skills.typeID', array_values($skills))
 			->orderBy('invTypes.typeName')
-			->groupBy('character_charactersheet_skills.characterID');
+			->groupBy('character_charactersheet_skills.characterID', 'character_charactersheet_skills.typeID');
 
 		// Check if we should get all of the levels or a specific one
 		if ($level == 'A')
