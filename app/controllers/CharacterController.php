@@ -82,6 +82,7 @@ class CharacterController extends BaseController {
 					->from('seat_people')
 					->where('keyID', $_key);
 			})
+			->groupBy('characterID')
 			->get();
 
 		$character_info = DB::table('eve_characterinfo')
