@@ -660,8 +660,10 @@ class ApiKeyController extends BaseController {
 		$person->keyID = Input::get('affected-key');
 		$person->save();
 
+		$people = \SeatPeopleMain::where('personID', '=', Input::get('personid'))->first();
+
 		return Redirect::action('ApiKeyController@getPeople')
-			->with('success', 'Key ' . Input::get('affected-key') . ' has been added to person group ' . Input::get('personid'));
+			->with('success', 'Key ' . Input::get('affected-key') . ' has been added to the group ' . $people->characterName);
 	}
 
 	/*
