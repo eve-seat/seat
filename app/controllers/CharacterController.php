@@ -558,17 +558,25 @@ class CharacterController extends BaseController {
 	public function postSearchSkills()
 	{
 
+		$skills = explode(',', Input::get('skills'));
+		$level = Input::get('level');
+
 		// Ensure we actually got an array...
-		if (!is_array(Input::get('skills')))
+		if (!is_array($skills))
 			App::abort(404);
 
 		$filter = DB::table('character_charactersheet_skills')
 			->join('account_apikeyinfo_characters', 'character_charactersheet_skills.characterID', '=', 'account_apikeyinfo_characters.characterID')
 			->join('invTypes', 'character_charactersheet_skills.typeID', '=', 'invTypes.typeID')
-			->whereIn('character_charactersheet_skills.typeID', array_values(Input::get('skills')))
+			->whereIn('character_charactersheet_skills.typeID', array_values($skills))
 			->orderBy('invTypes.typeName')
-			->groupBy('character_charactersheet_skills.characterID')
-			->get();
+			->groupBy('character_charactersheet_skills.characterID');
+
+		// Check if we should get all of the levels or a specific one
+		if ($level == 'A')
+			$filter = $filter->get();
+		else
+			$filter = $filter->where('character_charactersheet_skills.level', $level)->get();
 
 		return View::make('character.skillsearch.ajax.result')
 			->with('filter', $filter);
