@@ -19,7 +19,7 @@
 				<div class="form-group">
 				  <label class="sr-only" for="level"></label>
 				    <div class="input-group">
-				      {{ Form::select('level', array('A' => 'Any Level', '1' => 'Level 1', '2' => 'Level 2', '3' => 'Level 3', '4' => 'Level 4', '5' => 'Level 5'), 'A', array('id' => 'level', 'class' => 'form-control'))}}
+				      {{ Form::select('level', array('A' => 'Any Level', '0' => 'Injected Only', '1' => 'Level 1', '2' => 'Level 2', '3' => 'Level 3', '4' => 'Level 4', '5' => 'Level 5'), 'A', array('id' => 'level', 'class' => 'form-control'))}}
 				    </div>
 				</div>
 
