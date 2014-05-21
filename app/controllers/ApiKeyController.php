@@ -311,9 +311,13 @@ class ApiKeyController extends BaseController {
 			$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
 
 			return Response::json(array('state' => 'new', 'jobID' => $jobID));
-		} else {
+		}elseif( $access['type'] == 'Corporation' ){
 
-			return Response::json(array('state' => 'error', 'jobID' => null));
+			$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Corporation'), $key->keyID, $key->vCode, 'Corporation', 'Eve');
+
+			return Response::json(array('state' => 'new', 'jobID' => $jobID));
+		} else {
+			return Response::json(array('keyID' => $key->keyID, 'vCode' => $key->vCode, 'state' => 'error', 'jobID' => null));
 		}
 
 	}
