@@ -41,7 +41,12 @@ class ApiKeyController extends BaseController {
 		$keys = DB::table('seat_keys')
 			->select('seat_keys.keyID', 'seat_keys.isOk', 'seat_keys.lastError', 'account_apikeyinfo.accessMask', 'account_apikeyinfo.type', 'account_apikeyinfo.expires', DB::raw('count(`banned_calls`.`ownerID`) bans'))
 			->leftJoin('account_apikeyinfo', 'seat_keys.keyID', '=', 'account_apikeyinfo.keyID')
-			->leftJoin('banned_calls', 'seat_keys.keyID', '=', 'banned_calls.ownerID')
+			->leftJoin('banned_calls', 'seat_keys.keyID', '=', 'banned_calls.ownerID');
+		if (!Sentry::getUser()->isSuperUser()) {
+			$keys = $key
+				->where('seat_keys.user_id', Sentry::getUser()->getKey());
+		}
+		$keys = $keys
 			->groupBy('seat_keys.keyID')
 			->get();
 
@@ -192,7 +197,7 @@ class ApiKeyController extends BaseController {
 			$key_data->isOk = 1;
 			$key_data->lastError = null;
 			$key_data->deleted_at = null;
-			$key_data->user_id = 1; // TODO: Fix this when the proper user management occurs
+			$key_data->user_id = Sentry::getUser()->getKey();
 			$key_data->save();
 
 			// Queue a job to update this API **now**

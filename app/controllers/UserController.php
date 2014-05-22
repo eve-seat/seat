@@ -19,9 +19,9 @@ class UserController extends BaseController {
 
 	public function getSignIn()
 	{
-		if (Auth::viaRemember()) {
+		if (Sentry::check()) {
 			return Redirect::intended('/')
-				->with('success', 'Welcome back' . Auth::user()->username);
+				->with('success', 'Welcome back' . Sentry::getUser()->first_name);
 		}
 
 		return View::make('user.login');
@@ -42,8 +42,7 @@ class UserController extends BaseController {
 		$password = Input::get('password');
 		$remember = Input::get('remember_me');
 
-		if (Auth::attempt(array('username' => $username, 'password' => $password), $remember == 'yes'? true : false)) {
-
+		if (Sentry::authenticate(array('email' => $username, 'password' => $password), $remember == 'yes')) {
 			return Redirect::intended('/');
 		}
 
@@ -63,7 +62,7 @@ class UserController extends BaseController {
 
 	public function getSignOut()
 	{
-		Auth::logout();
+		Sentry::logout();
 		return Redirect::action('UserController@getSignIn')
 			->with('success', 'Successfully signed out');
 	}

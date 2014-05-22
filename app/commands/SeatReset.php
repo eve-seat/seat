@@ -5,6 +5,7 @@ namespace Seat\Commands;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Carthalyst\Sentry as Sentry;
 
 class SeatReset extends Command {
 
@@ -53,16 +54,33 @@ class SeatReset extends Command {
 
 		$this->info('The passwords match. Resetting to the new ' . strlen($password) . ' char one.');
 
-		$admin = \User::where('username', '=', 'admin')->first();
-
-		if (!isset($admin)) {
-
-			$this->error('The admin user could not be found... Have you run db:seed ?');
-			return;
+		try {
+			$admin = \Sentry::findUserByLogin('admin');
+		}
+		catch (\Cartalyst\Sentry\Users\UserNotFoundException $e) {
+			\Sentry::register(array(
+				'email'	 	=> 'admin',
+				'password'	=> $password,
+			), true);
+			$admin = \Sentry::findUserByLogin('admin');
 		}
 
-		$admin->password = \Hash::make($password);
+		try {
+			$adminGroup = \Sentry::findGroupByName('Administrators');
+		}
+		catch (\Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
+			\Sentry::createGroup(array(
+		    'name'        => 'Administrators',
+		    'permissions' => array(
+	        'superuser' => 1,
+		    ),
+			));
+			$adminGroup = \Sentry::findGroupByName('Administrators');
+		}
+
+		$admin->password = $password;
 		$admin->save();
+		$admin->addGroup($adminGroup);
 
 		$this->info('Password has been changed successfully.');
 	}
