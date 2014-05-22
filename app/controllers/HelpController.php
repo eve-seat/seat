@@ -15,34 +15,40 @@ class HelpController extends BaseController {
 
 		// Get the current version
 		$current_version = \Config::get('seat.version');
+		// Try determine how far back we are on releases
+		$versions_behind = 0;
 
-		// Check the releases from Github for eve-seat/seat
-		$headers = array('Accept' => 'application/json');
-		$request = Requests::get('https://api.github.com/repos/eve-seat/seat/releases', $headers);
+		try {
 
-		if ($request->status_code == 200) {
+			// Check the releases from Github for eve-seat/seat
+			$headers = array('Accept' => 'application/json');
+			$request = Requests::get('https://api.github.com/repos/eve-seat/seat/releases', $headers);
 
-			$release_data = json_decode($request->body);
+			if ($request->status_code == 200) {
 
-			// Try determine how far back we are on releases
-			$versions_behind = 0;
+				$release_data = json_decode($request->body);
 
-			// Try and determine if we are up to date
-			if ($release_data[0]->tag_name == 'v'.$current_version) {
+				// Try and determine if we are up to date
+				if ($release_data[0]->tag_name == 'v'.$current_version) {
+
+				} else {
+
+					foreach ($release_data as $release) {
+
+						if ($release->tag_name == 'v'.$current_version)
+							break;
+						else
+							$versions_behind++;
+					}
+				}
 
 			} else {
-
-				foreach ($release_data as $release) {
-					
-					if ($release->tag_name == 'v'.$current_version)
-						break;
-					else
-						$versions_behind++;
-				}
+				$release_data = null;
 			}
 
-		} else {
-			$release_data = null;	
+		} catch (Exception $e) {
+
+			$release_data = null;
 		}
 
 		return View::make('help.help')

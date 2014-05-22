@@ -41,7 +41,6 @@
                 </div>
             </div>
             <div class="box-body">
-
                 @if ($versions_behind > 0)
                     <br>
                     <div class="alert alert-warning alert-dismissable">
