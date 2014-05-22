@@ -6,7 +6,7 @@
 	"require": {
 		"laravel/framework": "4.1.*",
 		"3rdpartyeve/phealng": "0.3.*",
-        "pda/pheanstalk": "dev-master",
+        "rmccue/requests": ">=1.0",
         "indatus/dispatcher": "1.2.1"
 	},
 	"autoload": {
