@@ -67,6 +67,7 @@
                 </a>
                 <ul class="treeview-menu">
                     <li><a href="{{ action('DebugController@getApi') }}"><i class="fa fa-angle-double-right"></i> API Debugger</a></li>
+                    <li><a href="{{ action('HelpController@getHelp') }}"><i class="fa fa-angle-double-right"></i> Help &amp; About</a></li>
                 </ul>
             </li>            
         </ul>
