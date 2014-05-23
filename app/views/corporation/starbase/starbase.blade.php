@@ -48,7 +48,7 @@
 												determined. It appears that this may happen if the state of the tower is not online.
 											--}}
 											{{--*/$posname = null/*--}}
-											@if ($details->moonID != 0)
+											@if ($details->moonID != 0 && isset($item_locations[$details->moonID]))
 												@foreach ($item_locations[$details->moonID] as $name_finder)
 													@if ($name_finder['itemID'] == $details->itemID)
 														{{--*/$posname = $name_finder['itemName']/*--}}
@@ -91,7 +91,7 @@
 
 				{{-- find the starbases name in the $item_locations array --}}	
 				{{--*/$posname = null/*--}}
-				@if ($details->moonID != 0)
+				@if ($details->moonID != 0 && isset($item_locations[$details->moonID]))
 					@foreach ($item_locations[$details->moonID] as $name_finder)
 						@if ($name_finder['itemID'] == $details->itemID)
 							{{--*/$posname = $name_finder['itemName']/*--}}
