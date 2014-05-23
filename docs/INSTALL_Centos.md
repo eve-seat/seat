@@ -65,7 +65,7 @@ Finally, we can get to the SeAT stuff itself. You are going to want to clone the
 Next, clone the respoitory somwhere on disk. I'll reccomend `/var/www`:  
     - `cd /var/www`  
     - `git clone https://github.com/eve-seat/seat.git`  
-    - Checkout the latest SeAT version found [here](https://github.com/eve-seat/seat/tags) with `git checkout tags/v0.8` (v0.8 is current latest)  
+    - Checkout the latest SeAT version found [here](https://github.com/eve-seat/seat/tags) with `git checkout tags/v0.8` (v0.8 is current latest but may have changed. Hint: [![Latest Release](http://img.shields.io/github/release/eve-seat/seat.svg)](https://github.com/eve-seat/seat/releases/latest))  
     - Ensure that your webserver owns all of the content with: `sudo chown -R apache:apache /var/www/seat`
     - `sudo chmod -R guo+w app/storage` to ensure that the web server can write to the storage location  
 
