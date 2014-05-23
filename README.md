@@ -41,7 +41,7 @@ There really is a TON of stuff that still needs to be done:
 - ~~Clone Overview~~
 - Character Interactions (ie Player Tradings, Mails etc.)
 - ~~Starbase Fuel Time Left calculations~~ as well as Silo input/output end etas.
-- Corporation Sheets with Member Security Roles view
+- ~~Corporation Sheets with Member Security Roles view~~
 
 There is a metric ton of information pulled via the API that is not yet exposed on the web front end... so *lots* to do still :)
 
