@@ -76,7 +76,7 @@
 									<img src='//image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 								</a>
 								{{ $character->characterName }}
-								<a href="{{ action('ApiKeyController@getNewGroup', array('characterID' => $character->characterID )) }}" class="pull-right">Use as Main for new Group</a>
+								<a href="{{ action('ApiKeyController@getNewGroup', array('keyID' => $key, 'characterID' => $character->characterID )) }}" class="pull-right">Use as Main for new Group</a>
 							</li>
 						@endforeach
 						<hr>

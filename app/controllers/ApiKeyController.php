@@ -605,25 +605,29 @@ class ApiKeyController extends BaseController {
 	|
 	*/
 
-	public function getNewGroup($characterID)
+	public function getNewGroup($keyID, $characterID)
 	{
 
-		// First, off, start by checking that the key this characterID beongs to is
+		// Check that the key and character ids exist and is valid
+		if (!\SeatKey::where('keyID', $keyID) || !\EveAccountAPIKeyInfoCharacters::where('characterID', $characterID))
+			App::abort(404);
+
+		// Next, check that the key this characterID beongs to is
 		// not already assigned to another group, and that the characterID is actually
 		// valid
 		$character_key = DB::table('account_apikeyinfo_characters')
-			->where('characterID', $characterID)
-			->pluck('keyID');
+			->where('keyID', $keyID)
+			->first();
 
-		if (!$character_key || SeatPeople::where('keyID', $character_key)->first())
-			App::abort('404');
+		if (!$character_key)
+			return Redirect::action('ApiKeyController@getPeople')
+				->withErrors('This key is already assigned to a people group');
 
 		// Ok, so the key is not already affiliated with another person, so lets create
 		// a new person, and assign this key and main
-
 		$person = new SeatPeople;
 		$person->personID = DB::table('seat_people')->max('id') + 1;
-		$person->keyID = $character_key;
+		$person->keyID = $keyID;
 		$person->save();
 
 		// Get the main information
