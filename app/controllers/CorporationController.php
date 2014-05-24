@@ -239,7 +239,8 @@ class CorporationController extends BaseController {
 				'quantity' => $value->quantity,
 				'typeID' => $value->typeID,
 				'typeName' => $value->typeName,
-				'groupName' => $value->groupName
+				'groupName' => $value->groupName,
+				'volume' => $value->volume * $value->quantity,
 			);
 			$assets_count++;
 			foreach( $assets_contents as $contents){
@@ -249,7 +250,8 @@ class CorporationController extends BaseController {
 						'quantity' => $contents->sumquantity,
 						'typeID' => $contents->typeID,
 						'typeName' => $contents->typeName,
-						'groupName' => $contents->groupName
+						'groupName' => $contents->groupName,
+						'volume' => $contents->volume * $contents->sumquantity
 					);
 				$assets_count++;
 				}
@@ -805,4 +807,219 @@ class CorporationController extends BaseController {
 
 		return Response::json($wallet_daily_delta);
 	}
+
+
+	/*
+	|--------------------------------------------------------------------------
+	| getListSheets()
+	|--------------------------------------------------------------------------
+	|
+	| Overview for getSheet()
+	|
+	*/
+
+	public function getListMemberSecurity()
+	{
+
+		$corporations = DB::table('account_apikeyinfo')
+			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->where('account_apikeyinfo.type', 'Corporation')
+			->get();
+
+		return View::make('corporation.membersecurity.listmembersecurity')
+			->with('corporations', $corporations);
+	}
+
+		/*
+	|--------------------------------------------------------------------------
+	| getSheet()
+	|--------------------------------------------------------------------------
+	|
+	| Display a corporations Members and related Security Information
+	|
+	*/
+
+	public function getMemberSecurity($corporationID)
+	{
+		$member_roles = DB::table('corporation_msec_roles as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->get();
+
+		$member_roles_base = DB::table('corporation_msec_roles_at_base as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->get();
+
+		$member_roles_hq = DB::table('corporation_msec_roles_at_hq as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->get();
+
+		$member_roles_other = DB::table('corporation_msec_roles_at_other as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->get();
+
+		$member_roles_grantable = DB::table('corporation_msec_grantable_roles as cmr')
+			->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+			->where('cmr.corporationID', $corporationID)
+			->groupBy('cmr.characterID')
+			->orderBy('cmr.name', 'asc')
+			->get();
+
+		$member_roles_grantable_base = DB::table('corporation_msec_grantable_roles_at_base as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->get();
+
+		$member_roles_grantable_hq = DB::table('corporation_msec_grantable_roles_at_hq as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->get();
+
+		$member_roles_grantable_other = DB::table('corporation_msec_grantable_roles_at_other as cmr')
+            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
+            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
+            ->where('cmr.corporationID', $corporationID)
+            ->groupBy('cmr.characterID')
+            ->orderBy('cmr.name', 'asc')
+			->get();
+
+
+		$member_roles_log = DB::table('corporation_msec_log as cml')
+			->select('cml.characterID', 'cmt.name as characterName', 'cml.issuerID', 'cml.issuerName', 'cml.changeTime', 'cmld.oldRoles', 'cmld.newRoles','cml.roleLocationType')
+			->join(DB::raw('corporation_msec_log_details as cmld'),'cml.hash','=','cmld.hash')
+			->join(DB::raw('corporation_member_tracking as cmt'),'cml.characterID','=','cmt.characterID')
+			->where('cml.corporationID', $corporationID)
+			->orderBy('cml.changeTime', 'desc')
+			->get();
+
+		return View::make('corporation.membersecurity.membersecurity')
+			/*->with('corporation_sheet', $corporation_sheet)*/
+			->with('member_roles',			      	$member_roles)
+			->with('member_roles_hq',		      	$member_roles_hq)
+			->with('member_roles_base',		      	$member_roles_base)
+			->with('member_roles_other',	      	$member_roles_other)
+			->with('member_roles_grantable',      	$member_roles_grantable)
+			->with('member_roles_grantable_hq',   	$member_roles_grantable_hq)
+			->with('member_roles_grantable_base', 	$member_roles_grantable_base)
+			->with('member_roles_grantable_other',	$member_roles_grantable_other)
+			->with('member_roles_log', 				$member_roles_log)
+		;
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getListMarketOrders()
+	|--------------------------------------------------------------------------
+	|
+	| Get a list of the corporations that we can display market orders for
+	|
+	*/
+
+	public function getListMarketOrders()
+	{
+
+		$corporations = DB::table('account_apikeyinfo')
+			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->where('account_apikeyinfo.type', 'Corporation')
+			->get();
+
+		return View::make('corporation.marketorders.listmarketorders')
+			->with('corporations', $corporations);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getMarketOrders()
+	|--------------------------------------------------------------------------
+	|
+	| Display the corporation Market orders
+	|
+	*/
+
+	public function getMarketOrders($corporationID)
+	{
+
+		$corporation_name = DB::table('account_apikeyinfo_characters')
+			->where('corporationID', $corporationID)
+			->first();
+
+		// Corporation Market Orders
+		$market_orders = DB::select(
+			'SELECT *, CASE
+				when a.stationID BETWEEN 66000000 AND 66014933 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.stationID-6000001)
+				when a.stationID BETWEEN 66014934 AND 67999999 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.stationID-6000000)
+				when a.stationID BETWEEN 60014861 AND 60014928 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.stationID)
+				when a.stationID BETWEEN 60000000 AND 61000000 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.stationID)
+				when a.stationID>=61000000 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.stationID)
+				else (SELECT m.itemName FROM mapDenormalize AS m
+					WHERE m.itemID=a.stationID) end
+					AS location,a.stationID AS locID FROM `corporation_marketorders` AS a
+					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
+					LEFT JOIN `invGroups` ON `invTypes`.`groupID` = `invGroups`.`groupID`
+					WHERE a.`corporationID` = ? ORDER BY a.issued desc',
+			array($corporationID)
+		);
+
+		// Order states from: https://neweden-dev.com/Character/Market_Orders
+		//orderState	 byte
+		// Valid states: 0 = open/active, 1 = closed, 2 = expired (or fulfilled), 3 = cancelled, 4 = pending, 5 = character deleted.
+		$order_states = array(
+			'0' => 'Active',
+			'1' => 'Closed',
+			'2' => 'Expired / Fulfilled',
+			'3' => 'Cancelled',
+			'4' => 'Pending',
+			'5' => 'Deleted'
+		);
+
+		$wallet_divisions_data = DB::table('corporation_corporationsheet_walletdivisions')
+			->select('accountKey', 'description')
+			->where('corporationID', $corporationID)
+			->get();
+
+		// Set the key for the wallet divisions array
+		$wallet_divisions = array();
+		foreach ($wallet_divisions_data as $division)
+			$wallet_divisions[$division->accountKey] = $division->description;
+
+
+		return View::make('corporation.marketorders.marketorders')
+			->with('market_orders', $market_orders)
+			->with('order_states', $order_states)
+			->with('wallet_divisions', $wallet_divisions)
+			->with('corporation_name', $corporation_name);
+	}
+
 }

@@ -1,7 +1,7 @@
 ## SeAT - Simple (or Stupid) EVE Online API Tool ##
 
 ### Introduction ###
-SeAT attempts to be a EVE Online™ Corporation Management Tool written in PHP using the [Laravel][1] Framework. If the fact that its written in PHP makes you mad or want to complain by telling us how bad PHP is (cause you read in online where & someone told you its bad), then I'm pretty happy that we have come this far. If not, well, read on :)
+SeAT attempts to be a EVE Online™ Corporation Management Tool written in PHP using the [Laravel][1] Framework. If the fact that its written in PHP makes you mad or want to complain by telling us how bad PHP is (cause you read it online where someone told you its bad), then I'm pretty happy that we have come this far. If not, well, read on :)
 
 ### Requirements ###
 Installing SeAT *should* be relatively simple. At a high level, the main requirements for SeAT is:
@@ -15,7 +15,7 @@ Installing SeAT *should* be relatively simple. At a high level, the main require
 SeAT was developed for Linux and has been tested to work fine on CentOS. Chances are you could get it going pretty easily on many other Linux distros, so feel free to contribute docs with install guides. As far as windows support goes... well....
 
 ### Installation ###
-The following installation assumes you are using CentOS. For the Debian/Ubuntu folk, most of the `yum install` commands will probably end up being things like `apt-get install`. A seperate guide for Debian / Ubuntu folk will come soon™
+The following installation assumes you are using CentOS. For the Debian/Ubuntu folk, most of the `yum install` commands will probably end up being things like `apt-get install`. A seperate guide for Debian / Ubuntu can be found in `docs/`. 
 
 For CentOS, the EPEL repository is needed for Redis and supervisod, so download and install it with the following 2 commands:
 
@@ -65,8 +65,8 @@ Finally, we can get to the SeAT stuff itself. You are going to want to clone the
 Next, clone the respoitory somwhere on disk. I'll reccomend `/var/www`:  
     - `cd /var/www`  
     - `git clone https://github.com/eve-seat/seat.git`  
-    - Checkout the latest SeAT version found [here](https://github.com/eve-seat/seat/tags) with `git checkout tags/v0.5` (v0.5 is current latest)  
-    - Ensure that your webserver owns all of the content with: `chown -R apache:apache /var/www/seat`
+    - Checkout the latest SeAT version found [here](https://github.com/eve-seat/seat/tags) with `git checkout tags/v0.8` (v0.8 is current latest but may have changed. Hint: [![Latest Release](http://img.shields.io/github/release/eve-seat/seat.svg)](https://github.com/eve-seat/seat/releases/latest))  
+    - Ensure that your webserver owns all of the content with: `sudo chown -R apache:apache /var/www/seat`
     - `sudo chmod -R guo+w app/storage` to ensure that the web server can write to the storage location  
 
 After seat is downloaded, we need to get composer to help us install the applications dependencies and generate autoload files:  
@@ -91,12 +91,13 @@ SeAT configuration lives in `app/config`. Assuming you cloned to `/var/www`, the
 
 Edit the fowlling files:  
     - database.php (set your configured username/password)  
-    - cache.php  
+    - cache.php  (may not require any changes, depending on how you wish to setup SeAT)
     
 #### 7. Run the SeAT database migrations & seeds ####
 SeAT has all of the database schemas stored in 'migration' scripts in `app/database/migrations`. Run them with:
 
 ```bash
+$ cd /var/www/seat
 $ php artisan migrate
 Migrated: 2014_04_20_121149_add_augmentationinfo
 ```
@@ -113,7 +114,7 @@ Seeded: EveNotificationTypesSeeder
 ```
     
 ####  8. Install & Configure supervisord ####
-Supervisor will be used to keep the workers alive that need to process API jobs. The amount of workers that you start I guess depends on how many keys you have to process. For me, 4 workers seem to work just fine. Set it up by running:  
+Supervisor will be used to keep the workers alive that need to process API jobs. The amount of workers that you start I guess depends on how many keys you have to process. For me, 4 workers seem to work just fine processing ~150 keys. Set it up by running:  
     - `yum install supervisor`  
     - `chkconfig supervisord on`  
 

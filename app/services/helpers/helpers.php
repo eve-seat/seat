@@ -116,19 +116,75 @@ class Helpers {
 	
  		if($id > 90000000 && $id < 98000000) {
 
-			return 'http://image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
+			return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
 
 		} elseif($id > 98000000 && $id < 99000000) {
 
-			return 'http://image.eveonline.com/Corporation/' . $id . '_' . $size . '.png';
+			return '//image.eveonline.com/Corporation/' . $id . '_' . $size . '.png';
 
 		} elseif($id > 99000000 && $id < 100000000) {
 
-			return 'http://image.eveonline.com/Alliance/' . $id . '_' . $size . '.png';
+			return '//image.eveonline.com/Alliance/' . $id . '_' . $size . '.png';
 
 		} else {
 
-			return 'http://image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
+			return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
 		}
+	}
+
+    /*
+    |--------------------------------------------------------------------------
+    | parseCorpSecurityRoleLogs()
+    |--------------------------------------------------------------------------
+    |
+    | Return the Roles from corporation member security-log table
+    | TODO: More Documentation.
+    |
+    */
+
+    public static function parseCorpSecurityRoleLog($roleString) {
+        if($roleString == "[]" and is_string($roleString)) {
+            return "";
+        } elseif ($roleString <> "" and is_string($roleString)) {
+            $t = implode(', ',get_object_vars(json_decode($roleString)));
+            return str_replace("role","",$t);
+        }
+
+    }
+
+    /*
+	|--------------------------------------------------------------------------
+	| makePrettyMemberRoleList()
+	|--------------------------------------------------------------------------
+	|
+	| Returns a pretty Corporation Member Role List
+	| TODO: More Documentation.
+	|
+	*/
+
+	public static function makePrettyMemberRoleList($stringToFormat) {
+		if($stringToFormat == "" or is_null ($stringToFormat)) {
+			return "";
+		} else  {
+			return str_replace(",",", ",$stringToFormat);
+		}
+
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| sumVolume()
+	|--------------------------------------------------------------------------
+	|
+	| Returns the total volume of an array of assets
+	|
+	*/
+
+	public static function sumVolume($array, $col_name) {
+		$volume = 0;
+		foreach($array as $item){
+			$volume += $item[$col_name];
+		}
+		return Helpers::formatBigNumber($volume);
 	}
 }

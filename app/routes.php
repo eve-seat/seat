@@ -38,4 +38,6 @@ Route::group(array('before' => 'auth|csrf'), function() {
     Route::controller('helpers', 'HelperController');
     Route::controller('debug', 'DebugController');
 
+    Route::controller('help', 'HelpController');
+
 });

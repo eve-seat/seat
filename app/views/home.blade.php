@@ -28,7 +28,7 @@
 <hr>
 
 <div class="row">
-    <div class="col-lg-3 col-xs-6">
+    <div class="col-lg-3 col-xs-12">
         <!-- small box -->
         <div class="small-box bg-blue">
             <div class="inner">
@@ -47,7 +47,7 @@
             </a>
         </div>
     </div><!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
+    <div class="col-lg-3 col-xs-12">
         <!-- small box -->
         <div class="small-box bg-purple">
             <div class="inner">
@@ -66,7 +66,7 @@
             </a>
         </div>
     </div><!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
+    <div class="col-lg-3 col-xs-12">
         <!-- small box -->
         <div class="small-box bg-green">
             <div class="inner">
@@ -85,7 +85,7 @@
             </a>
         </div>
     </div><!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
+    <div class="col-lg-3 col-xs-12">
         <!-- small box -->
         <div class="small-box bg-maroon">
             <div class="inner">

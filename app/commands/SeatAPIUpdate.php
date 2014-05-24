@@ -45,18 +45,12 @@ class SeatAPIUpdate extends Command {
 
 		\Log::info('Started command ' . $this->name, array('src' => __CLASS__));
 
-		// Server APIs
-		$jobID = \Queue::push('Seat\EveQueues\Full\Server', array());
-		\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => 0, 'api' => 'ServerStatus', 'scope' => 'Server', 'status' => 'Queued'));
+		// Server, Map & Eve APIs
+		\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Server'), 0, NULL, 'ServerStatus', 'Server');
+		\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Map'), 0, NULL, 'Map', 'Eve');
+		\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Eve'), 0, NULL, 'Eve', 'Eve');
 
-		// Map APIs
-		$jobID = \Queue::push('Seat\EveQueues\Full\Map', array());
-		\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => 0, 'api' => 'Map', 'scope' => 'Eve', 'status' => 'Queued'));
-
-		// Eve APIs
-		$jobID = \Queue::push('Seat\EveQueues\Full\Eve', array());
-		\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => 0, 'api' => 'Eve', 'scope' => 'Eve', 'status' => 'Queued'));
-
+		// Log the start of the key processing
 		\Log::info('Starting job submissions for all keys', array('src' => __CLASS__));
 
 		// Get the keys, and process them
@@ -72,13 +66,11 @@ class SeatAPIUpdate extends Command {
 
 			switch ($access['type']) {
 				case 'Character':
-					$jobID = \Queue::push('Seat\EveQueues\Full\Character', array('keyID' => $key->keyID, 'vCode' => $key->vCode));
-					\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => $key->keyID, 'api' => 'Character', 'scope' => 'Eve', 'status' => 'Queued'));					
+					\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
 					break;
 
 				case 'Corporation':
-					$jobID = \Queue::push('Seat\EveQueues\Full\Corporation', array('keyID' => $key->keyID, 'vCode' => $key->vCode));
-					\SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => $key->keyID, 'api' => 'Corporation', 'scope' => 'Eve', 'status' => 'Queued'));					
+					\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Corporation'), $key->keyID, $key->vCode, 'Corporation', 'Eve');
 					break;
 				
 				default:

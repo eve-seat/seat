@@ -219,3 +219,8 @@ $(document).on("click", "a.confirmlink", function(event){
       }
    });
 });
+
+// Init datatables on, tables
+(function($) {
+    $("[id^=datatable]").dataTable({ paging:false, order:[] });
+}(jQuery));

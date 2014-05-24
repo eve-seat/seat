@@ -87,7 +87,7 @@
 			<div class="box-body no-padding">
 	        	@if (count($db_queue) > 0)
 					<table class="table table-condensed">
-					    <tbody>
+					    <thead>
 					    	<tr>
 					            <th>Owner</th>
 					            <th>Scope</th>
@@ -96,6 +96,8 @@
 					            <th>Updated</th>
 					            <th></th>
 					        </tr>
+					    </thead>
+					    <tbody>
 					        @foreach ($db_queue as $queue)
 						        <tr>
 						            <td>{{ $queue->ownerID }}</td>
@@ -132,7 +134,7 @@
 	        <div class="box-body no-padding">
 	        	@if (count($db_working) > 0)
 					<table class="table table-condensed">
-					    <tbody>
+					    <thead>
 					    	<tr>
 					            <th>Owner</th>
 					            <th>Scope</th>
@@ -141,6 +143,8 @@
 					            <th>Created</th>
 					            <th>Updated</th>
 					        </tr>
+					    </thead>
+					    <tbody>
 					        @foreach ($db_working as $work)
 						        <tr>
 						            <td>{{ $work->ownerID }}</td>
@@ -169,6 +173,9 @@
 	        <div class="box-header">
 	            <h3 class="box-title">Last Error Messages</h3>
 	            <div class="box-tools pull-right">
+	            	@if (count($db_errors) > 0)
+		            	<button id="delete-all-errors" class="btn btn-danger btn-sm" data-widget="remove"><i class="fa fa-eraser"></i> Delete All</button> |
+		            @endif
 	            	<button class="btn btn-danger btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
 	            	<button class="btn btn-danger btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
 	            </div>
@@ -176,7 +183,7 @@
 	        <div class="box-body no-padding">
 	        	@if (count($db_errors) > 0)
 					<table class="table table-condensed">
-					    <tbody>
+					    <thead>
 					    	<tr>
 					            <th>Owner</th>
 					            <th>Scope</th>
@@ -186,6 +193,8 @@
 					            <th>Updated</th>
 					            <th></th>
 					        </tr>
+					    </thead>
+					    <tbody>
 					        @foreach ($db_errors as $error)
 						        <tr>
 						            <td>{{ $error->ownerID }}</td>
@@ -217,7 +226,7 @@
 	        <div class="box-body no-padding">
 	        	@if (!empty($db_history))
 						<table class="table table-condensed">
-					    <tbody>
+					    <thead>
 					    	<tr>
 					            <th>Owner</th>
 					            <th>Scope</th>
@@ -225,6 +234,8 @@
 					            <th>Status</th>
 					            <th>Updated at</th>
 					        </tr>
+					    </thead>
+					    <tbody>
 					        @foreach ($db_history as $history)
 						        <tr>
 						            <td>{{ $history->ownerID }}</td>
@@ -264,6 +275,16 @@
 				success: function() {
 					parent.remove();
 				}
+			});
+		});
+
+		// Ajax Delete All Error Messages
+		$("button#delete-all-errors").click(function() {
+
+			// Call the ajax and remove the row from the dom
+			$.ajax({
+				type: 'get',
+				url: "{{ action('QueueController@getDeleteAllErrors') }}",
 			});
 		});
 		

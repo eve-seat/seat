@@ -24,7 +24,7 @@
 				@foreach($character_row as $character)
 					@if($character->isOk == 1)<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}" style="color:inherit">@endif
 						<div class="col-md-1">
-								<img src="http://image.eveonline.com/Character/{{ $character->characterID }}_64.jpg" class="img-circle pull-right">
+								<img src="//image.eveonline.com/Character/{{ $character->characterID }}_64.jpg" class="img-circle pull-right">
 						</div>
 						<div class="col-md-2">
 							<ul class="list-unstyled">

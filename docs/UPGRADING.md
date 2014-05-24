@@ -56,6 +56,8 @@ $ php artisan migrate
 Migrated: 2014_04_16_173335_LaravelUpdate4_1_26_RememberMe  # will show 'Nothing to migrate.' if nothing is outstanding
 ```
 
+* Check if the version you are upgrading to has any special instructions in `docs/upgrade_specifics`. Eg. SeAT v0.7 -> v0.8 had some extra table seeds to be run, and includes the instructions in a file for this.
+
 * Bring the application out of maintenance mode:
 
 ```bash

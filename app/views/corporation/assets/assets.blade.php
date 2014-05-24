@@ -3,7 +3,6 @@
 @section('html_title', 'Corporation Assets')
 
 @section('page_content')
-
 <div class="row">
 	<div class="col-md-12">
 		<div class="box">
@@ -14,7 +13,7 @@
 				@foreach ($assets_list as $location => $assets)
 					<div class="box box-solid box-primary">
 						<div class="box-header">
-							<h3 class="box-title">{{ $location }} ({{ count($assets) }})</h3>
+							<h3 class="box-title">{{ $location }} ({{ count($assets) }}) {{ App\Services\Helpers\Helpers::sumVolume($assets, 'volume') }} m3</h3>
 							<div class="box-tools pull-right">
 								<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
 							</div>
@@ -29,22 +28,28 @@
 												<th style="width: 40px">#</th>
 												<th style="width: 50%" colspan="2">Type</th>
 												<th>Group</th>
+												<th>m<sup>3</sup></th>
 												<th style="width: 50px"></th>
 											</tr>
-										</tbody>
+										</tbody>			
 											@foreach ($column as $asset)
 												<tbody style="border-top:0px solid #FFF">
 													<tr class="item-container">
 														<td>{{ App\Services\Helpers\Helpers::formatBigNumber($asset['quantity']) }}</td>
 														<td colspan="2">
 															<span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['quantity'], 0, '.', ' ') }} x {{ $asset['typeName'] }}">
-																<img src='http://image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																<img src='//image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
 																{{ str_limit($asset['typeName'], 35, $end = '...') }} {{ isset($asset['contents']) ? "(". count($asset['contents']) . ")" : "" }}
 															</span>
 														</td>
 														<td>
 															<span data-toggle="tooltip" title="" data-original-title="{{ $asset['groupName'] }}">
 																{{ str_limit($asset['groupName'], 40, $end = '...') }}
+															</span>
+														</td>
+														<td>
+															<span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['volume'], 0, '.', ' ') }}m3">
+																{{ App\Services\Helpers\Helpers::formatBigNumber($asset['volume']) }}
 															</span>
 														</td>
 														@if(isset($asset['contents']))
@@ -62,13 +67,18 @@
 																<td style="width: 18px;"></td>
 																<td>
 																	<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}">
-																		<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																		<img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
 																		{{ str_limit($content['typeName'], 30, $end = '...') }}
 																	</span>
 																</td>
 																<td>
 																	<span data-toggle="tooltip" title="" data-original-title="{{ $content['groupName'] }}">
 																		{{ str_limit($content['groupName'], 25, $end = '...') }}
+																	</span>
+																</td>
+																<td>
+																	<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['volume'], 0, '.', ' ') }}m3">
+																		{{ App\Services\Helpers\Helpers::formatBigNumber($content['volume']) }}
 																	</span>
 																</td>
 																<td></td>

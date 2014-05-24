@@ -46,7 +46,7 @@
                     	<small>
                     		<b>From:</b>
                     		<a href="{{ action('CharacterController@getView', array('characterID' => $message->senderID)) }}">
-                    			<img src='http://image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+                    			<img src='//image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
                     		</a>
                     		{{ $message->senderName }} sent about {{ Carbon\Carbon::parse($message->sentDate)->diffForHumans() }}
                     			@ {{ $message->sentDate }}
@@ -66,7 +66,7 @@
 	                    		<b>To Characters:</b>
 	                    			@foreach (explode(',', $message->toCharacterIDs) as $characterID)
 			                    		<a href="{{ action('CharacterController@getView', array('characterID' => $characterID)) }}">
-			                    			<img src='http://image.eveonline.com/Character/{{ $characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+			                    			<img src='//image.eveonline.com/Character/{{ $characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 			                    		</a>
 	                    				<span rel="id-to-name">{{ $characterID }}</span>
 	                    			@endforeach

@@ -13,73 +13,78 @@
         <div class="box box-info">
             <div class="box-header">
                 <h2 class="box-title"><i class="fa fa-user"></i> Character Details for {{ $character->characterName }}</h2>
-                <div class="box-tools pull-right">
-                </div>
             </div>
             <div class="box-body">
             	<div class="row">
-            		<div class="col-md-3">
-		                <img src='http://image.eveonline.com/Character/{{ $character->characterID }}_256.jpg' class='img-circle pull-right'>
+            		<div class="col-md-2">
+		                <img src='//image.eveonline.com/Character/{{ $character->characterID }}_256.jpg' class='img-circle'>
 		            </div>
-		            <div class="col-md-4">
-                        <div class="box box-solid">
-                            <div class="box-header">
-                                <h3 class="box-title">Character Overview</h3>
-                                <div class="box-tools pull-right">
-                                </div>
-                            </div>
-                            <div class="box-body">
-                            	<dl>
-                                    <dt>Name</dt>
-                                    <dd>{{ $character->characterName }}</dd>
+		            <div class="col-md-2">
+                        <h3>Character Overview</h3>
+                    	<dl>
+                            <dt>Name</dt>
+                            <dd>{{ $character->characterName }}</dd>
 
-                                    <dt>Corporation</dt>
-                                    <dd>{{ $character->corporationName }}</dd>
+                            <dt>Corporation</dt>
+                            <dd>{{ $character->corporationName }}</dd>
 
-                                    <dt>Race, Booldline, Sex</dt>
-                                    <dd>{{ $character->race }}, {{ $character->bloodLine }}, {{ $character->gender }}</dd>
+                            <dt>Race, Bloodline, Sex</dt>
+                            <dd>{{ $character->race }}, {{ $character->bloodLine }}, {{ $character->gender }}</dd>
 
-                                    <dt>Date of Birth</dt>
-                                    <dd>{{ $character->DoB }} ({{ Carbon\Carbon::parse($character->DoB)->diffForHumans() }})</dd>
-                                </dl>
-                            </div><!-- /.box-body -->
-                        </div><!-- /.box -->
+                            <dt>Date of Birth</dt>
+                            <dd>{{ $character->DoB }} ({{ Carbon\Carbon::parse($character->DoB)->diffForHumans() }})</dd>
+                        </dl>
                     </div>
-                    <div class="col-md-5">
-                        <div class="box box-solid">
-                            <div class="box-header">
-                                <h3 class="box-title">Other Characters on Key</h3>
-                                <div class="box-tools pull-right">
-                                </div>
-                            </div>
-                            <div class="box-body">
-                            	@if (count($other_characters) > 0)
-					                @foreach ($other_characters as $alt)
-						                <div class="row">
-						               		<a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}" style="color:inherit;">
-						                		<div class="col-md-2">
-											<img src="http://image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
-										</div>
-										<div class="col-md-5">
-											<ul class="list-unstyled">
-												<li><b>Name: </b>{{ $alt->characterName }}</li>
-												<li><b>Corp: </b>{{ $alt->corporationName }}</li>
-												<li>
-													@if (strlen($alt->trainingEndTime) > 0)
-														<b>Training Ends: </b> {{ Carbon\Carbon::parse($alt->trainingEndTime)->diffForHumans() }}
-													@endif
-												</li>
-											</ul>
-										</div>
-									</a>
+                    <div class="col-md-4">
+                        <h3>Other Characters on Key</h3>
+                    	@if (count($other_characters) > 0)
+			                @foreach ($other_characters as $alt)
+				                <div class="row">
+				               		<a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}" style="color:inherit;">
+				                		<div class="col-md-2">
+									<img src="//image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
+								</div>
+								<div class="col-md-5">
+									<ul class="list-unstyled">
+										<li><b>Name: </b>{{ $alt->characterName }}</li>
+										<li><b>Corp: </b>{{ $alt->corporationName }}</li>
+										<li>
+											@if (strlen($alt->trainingEndTime) > 0)
+												<b>Training Ends: </b> {{ Carbon\Carbon::parse($alt->trainingEndTime)->diffForHumans() }}
+											@endif
+										</li>
+									</ul>
+								</div>
+								</a>
 								</div><!-- ./row -->
-					                @endforeach
-					            @else
-					            	No other known characters on this key.
-					           	@endif
-                            </div><!-- /.box-body -->
-                        </div><!-- /.box -->
-                    </div> <!-- ./col-md-5 -->
+			                @endforeach
+			            @else
+			            	No other known characters on this key.
+			           	@endif
+                    </div> <!-- ./col-md-4 -->
+                    <div class="col-md-4">
+                        <h3>Characters from this Person Group</h3>
+                    	@if (count($people) > 0)
+                    		<div class="row">
+	                    		@foreach (array_chunk($people, (count($people) / 2) > 1 ? count($people) / 2 : 2) as $other_alts)
+	                    			<div class="col-md-6">
+			                    		<ul class="list-unstyled">
+							                @foreach ($other_alts as $person)
+							                	<li>
+													<a href="{{ action('CharacterController@getView', array('characterID' => $person->characterID)) }}">
+														<img src='//image.eveonline.com/Character/{{ $person->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+														{{ $person->characterName }}
+													</a>				                	
+												</li>
+							                @endforeach
+							            </ul>
+							        </div>
+						        @endforeach
+						    </div> <!-- ./row -->
+			            @else
+			            	No other characters in a person group
+			           	@endif
+                    </div> <!-- ./col-md-4 -->
 		        </div>
             </div><!-- /.box-body -->
         </div><!-- /.box -->
@@ -101,6 +106,7 @@
 	            <li><a href="#assets" data-toggle="tab">Assets</a></li>
 	            <li><a href="#contacts" data-toggle="tab">Contacts</a></li>
 	            <li><a href="#contracts" data-toggle="tab">Contracts</a></li>
+	            <li><a href="#market_orders" data-toggle="tab">Market Orders</a></li>
 	            <li class="pull-right">
 	            	<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" class="text-muted" data-toggle="tooltip" title="" data-placement="top" data-original-title="API Key Details">
 	            		<i class="fa fa-gear"></i>
@@ -413,192 +419,195 @@
 							    </div>
 
 							    <div class="box-body">
-									<table class="table table-condensed table-hover">
-									    <tbody><tr>
+									<table class="table table-condensed table-hover" id="datatable">
+									    <thead>
+									    	<tr>
 									        <th>Skill</th>
 									        <th>Amarr</th>
 									        <th>Caldari</th>
 									        <th>Gallente</th>
 									        <th>Minmatar</th>
-									    </tr>
-									    <tr>
-									        <td>Frigate</td>
+										    </tr>
+										</thead>
+										<tbody>
+										    <tr>
+										        <td>Frigate</td>
 
-									        	@foreach( array(3331, 3330, 3328 ,3329) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Destroyer</td>
-									        	@foreach( array(33091, 33092, 33093 ,33094) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Cruiser</td>
-									        	@foreach( array(3335, 3334, 3332 ,3333) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Battlecruiser</td>
-									        	@foreach( array(33095, 33096, 33097 ,33098) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Battleship</td>
-									        	@foreach( array(3339, 3338, 3336 ,3337) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Strategic Cruiser</td>
-									        	@foreach( array(30650, 30651, 30652 ,30653) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Industrial</td>
-									        	@foreach( array(3343, 3342, 3340 ,3341) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>									    
-									    <tr>
-									        <td>Freighter</td>
-									        	@foreach( array(20524, 20526, 20527 ,20528) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>									    
-									    <tr>
-									        <td>Carrier</td>
-									        	@foreach( array(24311, 24312, 24313 ,24314) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>
-									    <tr>
-									        <td>Dreadnaught</td>
-									        	@foreach( array(20525, 20530, 20531 ,20532) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>	
-									        <td>Titan</td>
-									        	@foreach( array(3347, 3346, 3344 ,3345) as $s)
-											        <td>
-											        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
-										        			<span class="label label-success">5</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
-												        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-											        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-												        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @else
-													        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
-												        @endif
-												    </td>
-												@endforeach
-									    </tr>										    
-									</tbody></table>
-
+										        	@foreach( array(3331, 3330, 3328 ,3329) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Destroyer</td>
+										        	@foreach( array(33091, 33092, 33093 ,33094) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Cruiser</td>
+										        	@foreach( array(3335, 3334, 3332 ,3333) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Battlecruiser</td>
+										        	@foreach( array(33095, 33096, 33097 ,33098) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Battleship</td>
+										        	@foreach( array(3339, 3338, 3336 ,3337) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Strategic Cruiser</td>
+										        	@foreach( array(30650, 30651, 30652 ,30653) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Industrial</td>
+										        	@foreach( array(3343, 3342, 3340 ,3341) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>									    
+										    <tr>
+										        <td>Freighter</td>
+										        	@foreach( array(20524, 20526, 20527 ,20528) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>									    
+										    <tr>
+										        <td>Carrier</td>
+										        	@foreach( array(24311, 24312, 24313 ,24314) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>
+										    <tr>
+										        <td>Dreadnaught</td>
+										        	@foreach( array(20525, 20530, 20531 ,20532) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>	
+										        <td>Titan</td>
+										        	@foreach( array(3347, 3346, 3344 ,3345) as $s)
+												        <td>
+												        	@if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+											        			<span class="label label-success">5</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 0)
+													        	<span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+												        	@elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+													        	<span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @else
+														        <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) }}</span>
+													        @endif
+													    </td>
+													@endforeach
+										    </tr>										    
+										</tbody>
+									</table>
 							    </div><!-- /.box-body -->
 							</div>
 
@@ -625,8 +634,8 @@
                                     </div>
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
-                                    <table class="table table-condensed table-hover">
-                                        <tbody>
+                                    <table class="table table-condensed table-hover" id="datatable">
+                                        <thead>
 	                                        <tr>
 	                                            <th>Date</th>
 	                                            <th>Type</th>
@@ -636,6 +645,8 @@
 	                                            <th>Amount</th>
 	                                            <th>Balance</th>
 	                                        </tr>
+                                        </thead>
+                                        <tbody>
 	                                        @foreach ($wallet_journal as $e)
 		                                        <tr @if ($e->amount < 0)class="danger" @endif>
 		                                            <td>
@@ -657,7 +668,6 @@
 		                                            <td>{{ number_format($e->balance, 2, '.', ' ') }}</td>
 		                                        </tr>
 		                                    @endforeach
-
                                     	</tbody>
                                    	</table>
                                 </div><!-- /.box-body -->
@@ -680,8 +690,8 @@
                                     </div>
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
-					                <table class="table table-condensed table-hover">
-					                    <tbody>
+					                <table class="table table-condensed table-hover" id="datatable">
+					                    <thead>
 					                        <tr>
 												<th>Date</th>
 												<th>Type</th>
@@ -692,6 +702,8 @@
 												<th>Type</th>
 												<th>Station Name</th>
 					                        </tr>
+					                    </thead>
+					                    <tbody>
 					                        @foreach ($wallet_transactions as $e)
 					                            <tr @if ($e->transactionType == 'buy')class="danger" @endif>
 					                                <td>
@@ -700,7 +712,7 @@
 					                                	</span>
 					                                </td>
 					                                <td>
-					                                	<img src='http://image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
+					                                	<img src='//image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
 					                                	{{ $e->typeName }}
 					                                </td>
 					                                <td>{{ $e->quantity }}</td>
@@ -711,7 +723,6 @@
 					                                <td>{{ $e->stationName }}</td>
 					                            </tr>
 					                        @endforeach
-
 					                	</tbody>
 					               	</table>
                                 </div><!-- /.box-body -->
@@ -734,8 +745,8 @@
                                     </div>                                    
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
-							        <table class="table table-hover table-condensed">
-							            <tbody>
+							        <table class="table table-hover table-condensed" id="datatable">
+							            <thead>
 								            <tr>
 								                <th style="width: 10px">#</th>
 								                <th>Date</th>
@@ -744,7 +755,8 @@
 								                <th>Subject</th>
 								                <th></th>
 								            </tr>
-
+							            </thead>
+							            <tbody>
 											@foreach ($mail as $message)
 									            <tr>
 									                <td>{{ $message->messageID }}</td>
@@ -755,7 +767,7 @@
 									                </td>
 									                <td>
 							                    		<a href="{{ action('CharacterController@getView', array('characterID' => $message->senderID)) }}">
-							                    			<img src='http://image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+							                    			<img src='//image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 							                    		</a>
 									                	{{ $message->senderName }}
 									                </td>
@@ -794,8 +806,8 @@
                                     <h3 class="box-title">Notifications ({{ count($notifications) }})</h3>
                                 </div><!-- /.box-header -->
                                 <div class="box-body no-padding">
-							        <table class="table table-hover table-condensed">
-							            <tbody>
+							        <table class="table table-hover table-condensed" id="datatable">
+							            <thead>
 								            <tr>
 								                <th style="width: 10px">#</th>
 								                <th>Date</th>
@@ -804,7 +816,8 @@
 								                <th>Sample</th>
 								                <th></th>
 								            </tr>
-
+							            </thead>
+							            <tbody>
 											@foreach ($notifications as $note)
 									            <tr>
 									                <td>{{ $note->notificationID }}</td>
@@ -819,7 +832,6 @@
 									                <td></td>
 									            </tr>
 											@endforeach
-
 							        	</tbody>
 							        </table>
                                 </div><!-- /.box-body -->
@@ -841,7 +853,7 @@
 									@foreach ($assets_list as $location => $assets)
 										<div class="box box-solid box-primary">
 											<div class="box-header">
-												<h3 class="box-title">{{ $location }} ({{ count($assets) }})</h3>
+												<h3 class="box-title">{{ $location }} ({{ count($assets) }}) {{ App\Services\Helpers\Helpers::sumVolume($assets, 'volume') }} m3</h3>
 												<div class="box-tools pull-right">
 													<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
 												</div>
@@ -856,6 +868,7 @@
 																	<th style="width: 40px">#</th>
 																	<th style="width: 50%" colspan="2">Type</th>
 																	<th>Group</th>
+																	<th>m<sup>3</sup></th>
 																	<th style="width: 50px"></th>
 																</tr>
 															</tbody>
@@ -865,13 +878,18 @@
 																			<td>{{ App\Services\Helpers\Helpers::formatBigNumber($asset['quantity']) }}</td>
 																			<td colspan="2">
 																				<span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['quantity'], 0, '.', ' ') }} x {{ $asset['typeName'] }}">
-																					<img src='http://image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																					<img src='//image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
 																					{{ str_limit($asset['typeName'], 35, $end = '...') }} {{ isset($asset['contents']) ? "(". count($asset['contents']) . ")" : "" }}
 																				</span>
 																			</td>
 																			<td>
 																				<span data-toggle="tooltip" title="" data-original-title="{{ $asset['groupName'] }}">
 																					{{ str_limit($asset['groupName'], 40, $end = '...') }}
+																				</span>
+																			</td>
+																			<td>
+																				<span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['volume'], 0, '.', ' ') }}m3">
+																					{{ App\Services\Helpers\Helpers::formatBigNumber($asset['volume']) }}
 																				</span>
 																			</td>
 																			@if(isset($asset['contents']))
@@ -889,7 +907,7 @@
 																					<td style="width: 18px;"></td>
 																					<td>
 																						<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}">
-																							<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+																							<img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
 																							{{ str_limit($content['typeName'], 30, $end = '...') }}
 																						</span>
 																					</td>
@@ -898,6 +916,11 @@
 																							{{ str_limit($content['groupName'], 25, $end = '...') }}
 																						</span>
 																					</td>
+																					<td>
+																						<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['volume'], 0, '.', ' ') }}m3">{{ App\Services\Helpers\Helpers::formatBigNumber($content['volume']) }}
+																						</span>
+																					</td>
+
 																					<td></td>
 																				</tr>
 																			@endforeach
@@ -931,17 +954,18 @@
 
                                 			<div class="col-md-2">
 										        <table class="table table-hover table-condensed">
-										            <tbody>
+										            <thead>
 											            <tr>
 											                <th>Name</th>
 											                <th>Standing</th>
 											            </tr>
-
+											        </thead>
+											        <tbody>
 														@foreach ($list as $contact)
 												            <tr>
 												                <td>
 										                    		<a href="{{ action('CharacterController@getView', array('characterID' => $contact->contactID)) }}">
-										                    			<img src='http://image.eveonline.com/Character/{{ $contact->contactID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+										                    			<img src='//image.eveonline.com/Character/{{ $contact->contactID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 										                    			{{ $contact->contactName }}
 										                    		</a>
 												                </td>
@@ -956,7 +980,6 @@
 												                </td>
 												            </tr>
 														@endforeach
-
 										        	</tbody>
 										        </table>
 										    </div> <!-- ./col-md-2 -->
@@ -1101,7 +1124,7 @@
 																							<li style="list-style:none;">
 																								{{-- Check if it's a item request or not --}}
 																								@if($content['included'] == 1)
-																									<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																									<img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
 																									<span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
 																								@endif
 																							</li>
@@ -1118,7 +1141,7 @@
 																							<li style="list-style:none;">
 																								{{-- Check if it's a item request or not --}}
 																								@if($content['included'] == 0)
-																									<img src='http://image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
+																									<img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'> 
 																									<span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
 																								@endif
 																							</li>
@@ -1263,6 +1286,82 @@
 		                </div> <!-- ./col-md-12 -->
 		            </div> <!-- ./row -->
 	            </div><!-- /.tab-pane -->
+
+
+	            {{-- character market orders --}}
+	            <div class="tab-pane" id="market_orders">
+	            	<div class="row">
+	            		<div class="col-md-12">
+	            			<div class="box">
+                                <div class="box-header">
+                                    <h3 class="box-title">Market Orders ({{ count($market_orders) }})</h3>                             
+                                </div><!-- /.box-header -->
+                                <div class="box-body no-padding">
+							        <table class="table table-hover table-condensed" id="datatable">
+							            <thead>
+								            <tr>
+								                <th style="width: 10px">#</th>
+								                <th>Type</th>
+								                <th>Price P/U</th>
+								                <th>Issued</th>
+								                <th>Expires</th>
+								                <th>Order By</th>
+								                <th>Location</th>
+								                <th>Type</th>
+								                <th>Vol</th>
+								                <th>Min. Vol</th>
+								                <th>State</th>
+								            </tr>
+							            </thead>
+							            <tbody>
+											@foreach ($market_orders as $order)
+									            <tr>
+									                <td>{{ $order->orderID }}</td>
+									                <td>
+									                	@if ($order->bid)
+										                	Buy
+										                @else
+										                	Sell
+										                @endif
+									                </td>
+									                <td>
+									                	@if ($order->escrow > 0)
+										                	<span data-toggle="tooltip" title="" data-original-title="Escrow: {{ $order->escrow }}">
+											                	<i class="fa fa-money pull-right"></i> {{ number_format($order->price, 2, '.', ' ') }}
+											                </span>
+											             @else
+										                	{{ number_format($order->price, 2, '.', ' ') }}
+											             @endif
+									                </td>									                
+									                <td>{{ $order->issued }}</td>
+									                <td>
+									                	{{ Carbon\Carbon::parse($order->issued)->addDays($order->duration)->diffForHumans() }}
+									                </td>
+									                <td>
+														<a href="{{ action('CharacterController@getView', array('characterID' => $order->charID)) }}">
+															<img src='//image.eveonline.com/Character/{{ $order->charID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+														</a>
+									                	<span rel="id-to-name">{{ $order->charID }}</span>
+									                </td>
+									                <td>{{ $order->location }}</td>
+									                <td>
+									                	<img src='//image.eveonline.com/Type/{{ $order->typeID }}_32.png' style='width: 18px;height: 18px;'>
+									                	{{ $order->typeName }}
+									                </td>
+									                <td>{{ $order->volRemaining }}/{{ $order->volEntered }}</td>
+									                <td>{{ $order->minVolume }}</td>
+									                <td>{{ $order_states[$order->orderState] }}</td>
+									            </tr>
+											@endforeach
+
+							        	</tbody>
+							        </table>
+                                </div><!-- /.box-body -->
+                            </div>
+		                </div> <!-- ./col-md-12 -->
+		            </div> <!-- ./row -->
+	            </div><!-- /.tab-pane -->
+
 
 	        </div><!-- /.tab-content -->
 	    </div><!-- nav-tabs-custom -->

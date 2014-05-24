@@ -12,7 +12,7 @@
 		        <h3 class="box-title">
                     All Mail for:
                     <a href="{{ action('CharacterController@getView', array('characterID' => $characterID)) }}">
-                        <img src='http://image.eveonline.com/Character/{{ $characterID }}_32.jpg' class='img-circle'>
+                        <img src='//image.eveonline.com/Character/{{ $characterID }}_32.jpg' class='img-circle'>
                     </a>
                     {{ $character_name }}
                 </h3>
@@ -23,8 +23,8 @@
 		        </div>
 		    </div><!-- /.box-header -->
 		    <div class="box-body">
-		        <table class="table table-hover table-condensed">
-		            <tbody>
+		        <table class="table table-hover table-condensed" id="datatable">
+		            <thead>
 			            <tr>
 			                <th style="width: 10px">#</th>
 			                <th>Date</th>
@@ -33,7 +33,8 @@
 			                <th>Subject</th>
 			                <th></th>
 			            </tr>
-
+		            </thead>
+		            <tbody>
 						@foreach ($mail as $message)
 				            <tr>
 				                <td>{{ $message->messageID }}</td>
@@ -44,7 +45,7 @@
 				                </td>
 				                <td>
 		                    		<a href="{{ action('CharacterController@getView', array('characterID' => $message->senderID)) }}">
-		                    			<img src='http://image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+		                    			<img src='//image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 		                    		</a>
 				                	{{ $message->senderName }}
 				                </td>

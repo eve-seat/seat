@@ -12,7 +12,7 @@
 		        <h3 class="box-title">
                     Wallet Journal for:
                     <a href="{{ action('CharacterController@getView', array('characterID' => $characterID)) }}">
-                        <img src='http://image.eveonline.com/Character/{{ $characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+                        <img src='//image.eveonline.com/Character/{{ $characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
                     </a>
                     {{ $character_name }}
                 </h3>
@@ -23,8 +23,8 @@
 		        </div>
 		    </div><!-- /.box-header -->
 		    <div class="box-body no-padding">
-                <table class="table table-condensed table-hover">
-                    <tbody>
+                <table class="table table-condensed table-hover" id="datatable">
+                    <thead>
                         <tr>
                             <th>Date</th>
                             <th>Type</th>
@@ -34,6 +34,8 @@
                             <th>Amount</th>
                             <th>Balance</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         @foreach ($wallet_journal as $e)
                             <tr @if ($e->amount < 0)class="danger" @endif>
                                 <td>
@@ -55,7 +57,6 @@
                                 <td>{{ number_format($e->balance, 2, '.', ' ') }}</td>
                             </tr>
                         @endforeach
-
                     </tbody>
                	</table>
 		    </div><!-- /.box-body -->

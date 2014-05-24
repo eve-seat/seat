@@ -74,6 +74,7 @@
 					},
 						success: function(result){
 						$("div#result").html(result);
+						$("table#datatable").dataTable({ paging:false });
 					},
 					error: function(xhr, textStatus, errorThrown){
 						console.log(xhr);

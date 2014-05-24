@@ -72,6 +72,19 @@ class CharacterController extends BaseController {
 			->where('account_apikeyinfo_characters.characterID', '<>', $character->characterID)
 			->get();
 
+		// Get the other characters linked to this key as a person if any
+		$_key = $character->keyID;	// Small var declaration as I doubt you can use $character->keyID in the closure
+		$people = DB::table('seat_people')
+			->leftJoin('account_apikeyinfo_characters', 'seat_people.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->whereIn('personID', function($query) use ($_key) {
+
+				$query->select('personID')
+					->from('seat_people')
+					->where('keyID', $_key);
+			})
+			->groupBy('characterID')
+			->get();
+
 		$character_info = DB::table('eve_characterinfo')
 			->where('characterID', $characterID)
 			->first();
@@ -196,7 +209,8 @@ class CharacterController extends BaseController {
 				'quantity' => $value->quantity,
 				'typeID' => $value->typeID,
 				'typeName' => $value->typeName,
-				'groupName' => $value->groupName
+				'groupName' => $value->groupName,
+				'volume' => $value->volume * $value->quantity,
 			);
 			$assets_count++;
 
@@ -209,7 +223,8 @@ class CharacterController extends BaseController {
 						'quantity' => $contents->sumquantity,
 						'typeID' => $contents->typeID,
 						'typeName' => $contents->typeName,
-						'groupName' => $contents->groupName
+						'groupName' => $contents->groupName,
+						'volume' => $contents->volume * $contents->quantity,
 					);
 					$assets_count++;
 				}
@@ -337,14 +352,53 @@ class CharacterController extends BaseController {
 			}
 		}
 
-		// var_dump($character_info);die();
-		
+		// Character Market Orders
+		$market_orders = DB::select(
+			'SELECT *, CASE
+				when a.stationID BETWEEN 66000000 AND 66014933 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.stationID-6000001)
+				when a.stationID BETWEEN 66014934 AND 67999999 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.stationID-6000000)
+				when a.stationID BETWEEN 60014861 AND 60014928 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.stationID)
+				when a.stationID BETWEEN 60000000 AND 61000000 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.stationID)
+				when a.stationID>=61000000 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.stationID)
+				else (SELECT m.itemName FROM mapDenormalize AS m
+					WHERE m.itemID=a.stationID) end
+					AS location,a.stationID AS locID FROM `character_marketorders` AS a
+					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
+					LEFT JOIN `invGroups` ON `invTypes`.`groupID` = `invGroups`.`groupID`
+					WHERE a.`characterID` = ? ORDER BY a.issued desc
+					LIMIT 500',
+			array($characterID)
+		);
+
+		// Order states from: https://neweden-dev.com/Character/Market_Orders
+		//orderState	 byte
+		// Valid states: 0 = open/active, 1 = closed, 2 = expired (or fulfilled), 3 = cancelled, 4 = pending, 5 = character deleted.
+		$order_states = array(
+			'0' => 'Active',
+			'1' => 'Closed',
+			'2' => 'Expired / Fulfilled',
+			'3' => 'Cancelled',
+			'4' => 'Pending',
+			'5' => 'Deleted'
+		);
+
 		// Finally, give all this to the view to handle
 		return View::make('character.view')
 			->with('character', $character)
 			->with('character_info', $character_info)
 			->with('employment_history', $employment_history)
 			->with('other_characters', $other_characters)
+			->with('people', $people)
 			->with('skillpoints', $skillpoints)
 			->with('skill_queue', $skill_queue)
 			->with('skill_groups', $skill_groups)
@@ -358,6 +412,8 @@ class CharacterController extends BaseController {
 			->with('assets_count', $assets_count)
 			->with('contracts_courier', $contracts_courier)
 			->with('contracts_other', $contracts_other)
+			->with('market_orders', $market_orders)
+			->with('order_states', $order_states)
 			->with('assets', $assets); // leave this just in case
 	}
 
@@ -502,17 +558,25 @@ class CharacterController extends BaseController {
 	public function postSearchSkills()
 	{
 
+		$skills = explode(',', Input::get('skills'));
+		$level = Input::get('level');
+
 		// Ensure we actually got an array...
-		if (!is_array(Input::get('skills')))
+		if (!is_array($skills))
 			App::abort(404);
 
 		$filter = DB::table('character_charactersheet_skills')
 			->join('account_apikeyinfo_characters', 'character_charactersheet_skills.characterID', '=', 'account_apikeyinfo_characters.characterID')
 			->join('invTypes', 'character_charactersheet_skills.typeID', '=', 'invTypes.typeID')
-			->whereIn('character_charactersheet_skills.typeID', array_values(Input::get('skills')))
+			->whereIn('character_charactersheet_skills.typeID', array_values($skills))
 			->orderBy('invTypes.typeName')
-			->groupBy('character_charactersheet_skills.characterID')
-			->get();
+			->groupBy('character_charactersheet_skills.characterID', 'character_charactersheet_skills.typeID');
+
+		// Check if we should get all of the levels or a specific one
+		if ($level == 'A')
+			$filter = $filter->get();
+		else
+			$filter = $filter->where('character_charactersheet_skills.level', $level)->get();
 
 		return View::make('character.skillsearch.ajax.result')
 			->with('filter', $filter);

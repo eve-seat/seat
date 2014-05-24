@@ -7,21 +7,12 @@
 
  <div class="box">
 
-
 	<div class="box-header">
 	    <h3 class="box-title">All API Keys @if (count($key_info) > 0) ({{ count($key_info) }}) @endif</h3>
-	    <div class="box-tools">
-	        <div class="input-group">
-	            <input type="text" name="table_search" class="form-control input-sm pull-right" style="width: 150px;" placeholder="Search">
-	            <div class="input-group-btn">
-	                <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
-	            </div>
-	        </div>
-	    </div>
 	</div>
 
     <div class="box-body no-padding">
-        <table class="table table-condensed table-hover">
+        <table class="table table-condensed table-hover" id="datatable">
             <thead>
                 <tr>
                     <th>KeyID</th>
@@ -45,7 +36,7 @@
 	                    	@if (isset($key['characters']))
 		                    	@foreach($key['characters'] as $char)
 		                    		<a href="{{ action('CharacterController@getView', array('characterID' => $char['characterID'])) }}">
-		                    			<img src='http://image.eveonline.com/Character/{{ $char['characterID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+		                    			<img src='//image.eveonline.com/Character/{{ $char['characterID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 		                    			{{ $char['characterName'] }}
 		                    		</a>
 		                    	@endforeach
@@ -62,10 +53,8 @@
 		                    </span>
 	                    </td>
 	                    <td>
-							<div class="btn-group">
 								<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $key['keyID'])) }}" class="btn btn-default btn-xs"><i class="fa fa-cog"></i> Key Details</a>
-								<a href="{{ action('ApiKeyController@getDeleteKey', array('keyID' => $key['keyID'])) }}" class="btn btn-danger btn-xs confirmlink"><i class="fa fa-times"></i> Delete</a>
-							</div>
+								<a a-keep-data="{{ action('ApiKeyController@getDeleteKey', array('keyID' => $key['keyID'])) }}" a-delete-data="{{ action('ApiKeyController@getDeleteKey', array('keyID' => $key['keyID'], 'delete_all_info'=> true)) }}" a-key-id="{{ $key['keyID'] }}" class="btn btn-danger btn-xs delete-key"><i class="fa fa-times"></i> Delete</a>
 	                    </td>
 	                </tr>
 
@@ -76,4 +65,37 @@
     </div><!-- /.box-body -->
 </div><!-- /.box -->
 
+@stop
+
+@section('javascript')
+<script type="text/javascript">
+    $(document).on("click", ".delete-key", function(e) {
+
+    	// Save the links
+    	var keep_data = $(this).attr("a-keep-data");
+    	var delete_data = $(this).attr("a-delete-data");
+
+    	// Provide the user a option to keep the existing data, or delete everything we know about the key
+		bootbox.dialog({
+		  message: "Please confirm whether you want to delete the key and keep all data, or delete all of the associated data too?",
+		  title: "Delete API Key " + $(this).attr("a-key-id"),
+		  buttons: {
+		    success: {
+		      label: "Delete Key Only",
+		      className: "btn-warning",
+		      callback: function() {
+		        window.location = keep_data;
+		      }
+		    },
+		    danger: {
+		      label: "Delete Key and ALL Data",
+		      className: "btn-danger",
+		      callback: function() {
+		        window.location = delete_data;
+		      }
+		    }
+		  }
+		});
+    });
+</script>
 @stop
