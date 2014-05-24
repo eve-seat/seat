@@ -2,7 +2,7 @@
 
 The following guide attempts to be a very generic walk through for upgrading SeAT to the latest release. Theoretically speaking, this will normally be all the steps required to get up and running again. Some steps may technically not be necessary, but they wont hurt your install.
 
-**NOTE:** As most good sysadmins do, I would recommend you *backup* your database before doing any actual upgrade work though generally the database migrations attempt to be non destructive.
+**NOTE:** As most good sysadmins do, I would recommend you *backup* your database before doing any actual upgrade work, though generally the database migrations attempt to be non destructive.
 
 ## Upgrading
 
@@ -32,10 +32,10 @@ $ git fetch
 $ git pull
 $ git checkout tags/v0.1    # sample version
 ```
-* Ensure that you have the latest vendor packages by running `composer update`. Assuming you have the composer.phar saved in the project root it may look something like this:
+* Ensure that you have the latest vendor packages. Assuming you have the composer.phar saved in the project root it may look something like this:
 
 ```bash
-$ /var/www/vhosts/seat/composer.phar update
+$ /var/www/seat/composer.phar update
 Loading composer repositories with package information
 Updating dependencies (including require-dev)
 Generating autoload files
@@ -45,7 +45,7 @@ Generating optimized class loader
 * Regenerate the composer autoload classes:
 
 ```bash
-$ /var/www/vhosts/seat/composer.phar dump-autoload
+$ /var/www/seat/composer.phar dump-autoload
 Generating autoload files
 ```
 
@@ -66,7 +66,7 @@ Application is now live.
 ```
 
 ## Notes
-Generally its a good idea to have a look at `app/storage/logs/laravel.log` to check if anything fishy has going on and possibly pick up on errors early.
+Generally its a good idea to have a look at `app/storage/logs/laravel.log` to check if anything fishy has gone on and possibly pick up on any errors early on.
 
 ## Additional Resources
 

@@ -11,11 +11,9 @@ After you have followed the normal steps found in `docs/UPGRADING.md`, and befor
   - `php artisan db:seed --class EveCorporationRolemapSeeder`  
   - `php artisan db:seed --class EveApiCalllistTableSeeder`  
     
-A new dependency has been introduced as well and should be installed by running:
+A new dependency has been introduced as well and should have been installed when you ran `composer update` in the normal steps found in `docs/UPGRADING.md`. Ensure you have done this. 
 
-  - `composer update` from within your SeAT install.
-
-Lastly, bring your app `up` but running `php artisan up` and watch the log files for any potential errors.
+Lastly, bring your app back online by running `php artisan up` and watch the log files for any potential errors.
 
 #### Errr, I think it broke. HALP!
 Come on to [irc](https://kiwiirc.com/client/irc.coldfront.net/?nick=seat_user%7C?#wcs-pub) and lets see if we can fix any problems you may have.
