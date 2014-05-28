@@ -1,6 +1,6 @@
 <?php
 
-class UserController extends BaseController {
+class SessionController extends BaseController {
 
     public function __construct()
     {
@@ -24,7 +24,7 @@ class UserController extends BaseController {
 				->with('success', 'Welcome back' . Sentry::getUser()->first_name);
 		}
 
-		return View::make('user.login');
+		return View::make('session.login');
 	}
 
 	/*
@@ -38,17 +38,34 @@ class UserController extends BaseController {
 
 	public function postSignIn()
 	{
-		$username = Input::get('username');
+		$email = Input::get('email');
 		$password = Input::get('password');
 		$remember = Input::get('remember_me');
 
-		if (Sentry::authenticate(array('email' => $username, 'password' => $password), $remember == 'yes')) {
-			return Redirect::intended('/');
-		}
+		$destination = Redirect::back()
+			->withInput();
 
-		return Redirect::back()
-			->withInput()
-			->withErrors('Authentication Failure');
+		try {
+			if (Sentry::authenticate(array('email' => $email, 'password' => $password), $remember == 'yes')) {
+				$destination = Redirect::intended('/');
+			}
+		}
+		catch (Cartalyst\Sentry\Users\LoginRequiredException $e) {
+			$destination = $destination->withErrors('Please enter a login');
+		}
+		catch (Cartalyst\Sentry\Users\PasswordRequiredException $e) {
+			$destination = $destination->withErrors('Please enter a password');
+		}
+		catch (Cartalyst\Sentry\Users\WrongPasswordException $e) {
+			$destination = $destination->withErrors('Authentication failure');
+		}
+		catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
+			$destination = $destination->withErrors('User not found');
+		}
+		catch (Cartalyst\Sentry\Users\UserNotActivatedException $e) {
+			$destination = $destination->withErrors('User not activated');
+		}
+		return $destination;
 	}
 
 	/*
@@ -63,7 +80,7 @@ class UserController extends BaseController {
 	public function getSignOut()
 	{
 		Sentry::logout();
-		return Redirect::action('UserController@getSignIn')
+		return Redirect::action('SessionController@getSignIn')
 			->with('success', 'Successfully signed out');
 	}
 }

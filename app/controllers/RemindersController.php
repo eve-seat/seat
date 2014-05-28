@@ -28,7 +28,7 @@ class RemindersController extends BaseController {
 					->withErrors(Lang::get($response));
 
 			case Password::REMINDER_SENT:
-				return Redirect::action('UserController@getSignIn')
+				return Redirect::action('SessionController@getSignIn')
 					->with('success', Lang::get($response));
 		}
 	}
@@ -73,7 +73,7 @@ class RemindersController extends BaseController {
 					->withErrors(Lang::get($response));
 
 			case Password::PASSWORD_RESET:
-				return Redirect::action('UserController@getSignIn')
+				return Redirect::action('SessionController@getSignIn')
 					->with('success', 'Your password has been successfully reset');
 		}
 	}

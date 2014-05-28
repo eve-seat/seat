@@ -13,7 +13,7 @@
 
 Route::group(array('prefix' => 'account'), function() {
 
-    Route::controller('user', 'UserController');
+    Route::controller('user', 'SessionController');
     Route::controller('password', 'RemindersController');
     Route::controller('register', 'RegisterController');
 

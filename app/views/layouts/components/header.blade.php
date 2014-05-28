@@ -55,7 +55,7 @@
                                 <a href="#" class="btn btn-default btn-flat">Profile</a>
                             </div>
                             <div class="pull-right">
-                                {{ HTML::linkAction('UserController@getSignOut', 'Sign out', array(), array('class' => 'btn btn-default btn-flat')) }}
+                                {{ HTML::linkAction('SessionController@getSignOut', 'Sign out', array(), array('class' => 'btn btn-default btn-flat')) }}
                             </div>
                         </li>
                     </ul>
