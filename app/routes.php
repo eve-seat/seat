@@ -13,7 +13,7 @@
 
 Route::group(array('prefix' => 'account'), function() {
 
-    Route::controller('user', 'SessionController');
+    Route::controller('login', 'SessionController');
     Route::controller('password', 'RemindersController');
     Route::controller('register', 'RegisterController');
 
@@ -36,8 +36,11 @@ Route::group(array('before' => 'auth|csrf'), function() {
     Route::controller('queue', 'QueueController');
 
     Route::controller('helpers', 'HelperController');
+    Route::controller('user', 'UserController');
     Route::controller('debug', 'DebugController');
 
     Route::controller('help', 'HelpController');
 
 });
+
+Route::when('user/*', 'auth.superuser');

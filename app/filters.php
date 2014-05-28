@@ -41,10 +41,12 @@ Route::filter('auth', function()
 });
 
 
-Route::filter('auth.basic', function()
+Route::filter('auth.superuser', function()
 {
-	return Sentry::check();
+	if (!Sentry::check() || !Sentry::getUser()->isSuperUser())
+		return Redirect::to('/');
 });
+
 
 /*
 |--------------------------------------------------------------------------

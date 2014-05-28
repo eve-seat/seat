@@ -60,6 +60,18 @@
                     <li><a href="{{ action('CharacterController@getSearchSkills') }}"><i class="fa fa-angle-double-right"></i> Skill Search</a></li>
                 </ul>
             </li>
+            @if (Sentry::getUser()->isSuperUser())
+            <li class="treeview @if (Request::is('user/*')) active @endif">
+                <a href="#">
+                    <i class="fa fa-user"></i> <span>Users</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="{{ action('UserController@getNewUser') }}"><i class="fa fa-angle-double-right"></i> Add New User</a></li>
+                    <li><a href="{{ action('UserController@getAll') }}"><i class="fa fa-angle-double-right"></i> List All Users</a></li>
+                </ul>
+            </li>
+            @endif
             <li class="treeview @if (Request::is('debug/*')) active @endif">
                 <a href="#">
                     <i class="fa fa-gear"></i> <span>Other</span>
@@ -69,7 +81,7 @@
                     <li><a href="{{ action('DebugController@getApi') }}"><i class="fa fa-angle-double-right"></i> API Debugger</a></li>
                     <li><a href="{{ action('HelpController@getHelp') }}"><i class="fa fa-angle-double-right"></i> Help &amp; About</a></li>
                 </ul>
-            </li>            
+            </li>
         </ul>
     </section>
     <!-- /.sidebar -->
