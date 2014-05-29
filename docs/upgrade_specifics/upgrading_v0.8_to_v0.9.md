@@ -6,6 +6,10 @@ After you have followed the normal steps found in `docs/UPGRADING.md`, and befor
 
 ### Version 0.8 -> 0.9
 
+You must run the migrations for Sentry using this command:
+
+  - `php artisan migrate --package=cartalyst/sentry`
+
 When logging in, username is now referred to as email address to conform with the new user management package. You can continue treating this as a username if you want; it doesn't really care.
 
 You must reset your SeAT admin password:

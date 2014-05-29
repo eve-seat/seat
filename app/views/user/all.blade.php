@@ -33,7 +33,7 @@
                       <td>{{ $user->isSuperUser() ? "Yes" : "No" }}</td>
                       <td>
                 <a href="{{ action('UserController@getDetail', array('userID' => $user->getKey())) }}" class="btn btn-default btn-xs"><i class="fa fa-cog"></i> User Details</a>
-                @if (count($users) > 1) <a a-delete-user="{{ action('UserController@getDeleteUser', array('userID' => $user->getKey(), 'delete_all_info'=> true)) }}" a-user-name="{{ $user->email }}" class="btn btn-danger btn-xs delete-key"><i class="fa fa-times"></i> Delete</a> @endif
+                @if (count($users) > 1 && $user->getKey() != Sentry::getUser()->getKey()) <a a-delete-user="{{ action('UserController@getDeleteUser', array('userID' => $user->getKey(), 'delete_all_info'=> true)) }}" a-user-name="{{ $user->email }}" class="btn btn-danger btn-xs delete-key"><i class="fa fa-times"></i> Delete</a> @endif
                       </td>
                   </tr>
 
