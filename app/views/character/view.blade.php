@@ -186,6 +186,16 @@
 		                                		@endforeach
 		                                	</ol>
 		                                </dd>
+
+		                                <dt>Skill Queue Ends</dt>
+		                                <dd>
+		                                	{{ end($skill_queue)->endTime }} ({{ Carbon\Carbon::parse(end($skill_queue)->endTime)->diffForHumans() }})
+		                                	@if (Carbon\Carbon::parse(end($skill_queue)->endTime)->lte(Carbon\Carbon::now()->addDay()))
+		                                		<span class="text-yellow"><i class="fa fa-exclamation"></i> Less than 24hrs worth of skill queue left</span>
+		                                	@else
+		                                		<span class="text-green"><i class="fa fa-check"></i> More than 24hrs worth of skill queue left</span>
+		                                	@endif
+		                                </dd>
 		                            </dl>
 		                        </div><!-- /.box-body -->
 		                    </div><!-- /.box -->

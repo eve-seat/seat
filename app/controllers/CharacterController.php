@@ -26,9 +26,15 @@ class CharacterController extends BaseController {
 		foreach (DB::table('eve_characterinfo')->get() as $character)
 			$character_info[$character->characterID] = $character;
 
+		$last_skills_end = null;
+		foreach (DB::table('character_skillqueue')->select('characterID', DB::raw('max(endTime) as endTime'))->groupBy('characterID')->get() as $endTime) {
+			$last_skills_end[$endTime->characterID] = $endTime;
+		}
+
 		return View::make('character.all')
 			->with('characters', $characters)
-			->with('character_info', $character_info);
+			->with('character_info', $character_info)
+			->with('last_skills_end', $last_skills_end);
 	}
 
 	/*
