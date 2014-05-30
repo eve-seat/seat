@@ -43,7 +43,7 @@ class ApiKeyController extends BaseController {
 			->leftJoin('account_apikeyinfo', 'seat_keys.keyID', '=', 'account_apikeyinfo.keyID')
 			->leftJoin('banned_calls', 'seat_keys.keyID', '=', 'banned_calls.ownerID');
 		if (!Sentry::getUser()->isSuperUser()) {
-			$keys = $key
+			$keys = $keys
 				->where('seat_keys.user_id', Sentry::getUser()->getKey());
 		}
 		$keys = $keys
