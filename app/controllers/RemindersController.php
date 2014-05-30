@@ -59,9 +59,10 @@ class RemindersController extends BaseController {
 
 		$response = Password::reset($credentials, function($user, $password)
 		{
-			$user->password = Hash::make($password);
-
-			$user->save();
+			// We actually don't care about the Auth user that is returned, use its email to find the Sentry user
+			$sentryUser = Sentry::findUserByLogin($user->email);
+			$sentryUser->password = $password;
+			$sentryUser->save();
 		});
 
 		switch ($response)
