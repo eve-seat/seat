@@ -79,6 +79,8 @@ class Helpers {
         // is this a number?
         if(!is_numeric($number))
         	return false;
+
+        $places = 0;
        
         // now filter it;
         if($number > 1000000000000)
@@ -92,8 +94,12 @@ class Helpers {
 
         else if($number > 1000)
         	return round(($number / 1000), 1) . 'k';
+
+        else if($number > 100)
+        	$places = 2;
+        	return $number;
        
-        return number_format($number);
+        return number_format($number, $places);
     }
 	
 	/*

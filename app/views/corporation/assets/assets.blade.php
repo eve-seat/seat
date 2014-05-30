@@ -84,6 +84,10 @@
 																<td></td>
 															</tr>
 														@endforeach
+														<tr>
+															<td colspan="4">Total</td>
+															<td colspan="2">{{ App\Services\Helpers\Helpers::sumVolume($asset['contents'], 'volume') }} m3</td>
+														</tr>
 													</tbody>
 												@endif
 											@endforeach
