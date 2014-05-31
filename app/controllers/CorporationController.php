@@ -695,12 +695,20 @@ class CorporationController extends BaseController {
 			->groupBy('corporation_walletjournal.ownerName2')
 			->orderBy('total', 'desc')
 			->get();
-		$pi_tax = DB::table('corporation_walletjournal')
+		$mission_tax = DB::table('corporation_walletjournal')
 			->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->whereIn('corporation_walletjournal.refTypeID', array(33,34)) // Ref type ids: 33: Mission Reward; 34: Mission Time Bonus
+			->where('corporation_walletjournal.corporationID', $corporationID)
+			->groupBy('corporation_walletjournal.ownerName2')
+			->orderBy('total', 'desc')
+			->get();
+		$pi_tax = DB::table('corporation_walletjournal')
+			->select('ownerID1', 'ownerName1', DB::raw('SUM(corporation_walletjournal.amount) total'))
 			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
 			->whereIn('corporation_walletjournal.refTypeID', array(96,97,98)) // Ref type ids: 96: Planetary Import Tax; 97: Planetary Export Tax; 98: Planetary Construction
 			->where('corporation_walletjournal.corporationID', $corporationID)
-			->groupBy('corporation_walletjournal.ownerName2')
+			->groupBy('corporation_walletjournal.ownerName1')
 			->orderBy('total', 'desc')
 			->get();
 
@@ -710,6 +718,7 @@ class CorporationController extends BaseController {
 			->with('wallet_balances', $wallet_balances)
 			->with('ledgers', $ledgers)
 			->with('bounty_tax', $bounty_tax)
+			->with('mission_tax', $mission_tax)
 			->with('pi_tax', $pi_tax);
 	}
 
@@ -766,14 +775,24 @@ class CorporationController extends BaseController {
 			->groupBy('corporation_walletjournal.ownerName2')
 			->orderBy('total', 'desc')
 			->get();
-		$pi_tax = DB::table('corporation_walletjournal')
+		$mission_tax = DB::table('corporation_walletjournal')
 			->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+			->whereIn('corporation_walletjournal.refTypeID', array(33,34)) // Ref type ids: 33: Mission Reward; 34: Mission Time Bonus
+			->where(DB::raw('MONTH(date)'), $month)
+			->where(DB::raw('YEAR(date)'), $year)		
+			->where('corporation_walletjournal.corporationID', $corporationID)
+			->groupBy('corporation_walletjournal.ownerName2')
+			->orderBy('total', 'desc')
+			->get();
+		$pi_tax = DB::table('corporation_walletjournal')
+			->select('ownerID1', 'ownerName1', DB::raw('SUM(corporation_walletjournal.amount) total'))
 			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
 			->whereIn('corporation_walletjournal.refTypeID', array(96,97,98)) // Ref type ids: 96: Planetary Import Tax; 97: Planetary Export Tax; 98: Planetary Construction
 			->where(DB::raw('MONTH(date)'), $month)
 			->where(DB::raw('YEAR(date)'), $year)			
 			->where('corporation_walletjournal.corporationID', $corporationID)
-			->groupBy('corporation_walletjournal.ownerName2')
+			->groupBy('corporation_walletjournal.ownerName1')
 			->orderBy('total', 'desc')
 			->get();
 
@@ -782,6 +801,7 @@ class CorporationController extends BaseController {
 			->with('date', $date)
 			->with('ledgers', $ledgers)
 			->with('bounty_tax', $bounty_tax)
+			->with('mission_tax', $mission_tax)
 			->with('pi_tax', $pi_tax);
 	}
 
