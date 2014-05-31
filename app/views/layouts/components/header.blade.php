@@ -38,14 +38,14 @@
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="glyphicon glyphicon-user"></i>
-                        <span>{{ Auth::User()->username }} <i class="caret"></i></span>
+                        <span>{{ Sentry::getUser()->first_name }} <i class="caret"></i></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header bg-light-blue">
                             <p>
-                                {{ Auth::user()->username }} | {{ Auth::user()->email }}
-                                <small>Joined: {{ Auth::user()->created_at }}</small>
+                                {{ Sentry::getUser()->first_name }} | {{ Sentry::getUser()->email }}
+                                <small>Joined: {{ Sentry::getUser()->created_at }}</small>
                             </p>
                         </li>
   
@@ -55,7 +55,7 @@
                                 <a href="#" class="btn btn-default btn-flat">Profile</a>
                             </div>
                             <div class="pull-right">
-                                {{ HTML::linkAction('UserController@getSignOut', 'Sign out', array(), array('class' => 'btn btn-default btn-flat')) }}
+                                {{ HTML::linkAction('SessionController@getSignOut', 'Sign out', array(), array('class' => 'btn btn-default btn-flat')) }}
                             </div>
                         </li>
                     </ul>

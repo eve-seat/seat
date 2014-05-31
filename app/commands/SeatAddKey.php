@@ -44,6 +44,13 @@ class SeatAddKey extends Command {
 	 */
 	public function fire()
 	{
+		try {
+			$admin = \Carthalyst\Sentry::findUserByLogin('admin');
+		}
+		catch (\Cartalyst\Sentry\Users\UserNotFoundException $e) {
+			$this->error('Admin account doesn\'t exist.');
+		}
+
 		$keyID = $this->argument('keyID');
 		$vCode = $this->argument('vCode');
 
@@ -87,7 +94,7 @@ class SeatAddKey extends Command {
 				$key_info->isOk = 1;
 				$key_info->lastError = null;
 				$key_info->deleted_at = null;
-				$key_info->user_id = 1; // TODO: Fix this when the proper user management occurs
+				$key_info->user_id = $admin->getKey();
 				$key_info->save();
 
 				$this->info('Successfully saved the API key to the database.');

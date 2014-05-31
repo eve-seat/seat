@@ -7,14 +7,14 @@
     <div class="form-box" id="login-box">
         <div class="header">SeAT | Sign In</div>
 
-        {{ Form::open(array('action' => 'UserController@postSignIn')) }}
+        {{ Form::open(array('action' => 'SessionController@postSignIn')) }}
 
             <div class="body bg-gray">
                 <div class="form-group">
-                    {{ Form::text('username', null, array('class' => 'form-control', 'placeholder' => 'User ID'), 'required', 'autofocus') }}
+                    {{ Form::text('email', null, array('class' => 'form-control', 'placeholder' => 'Email Address'), 'required', 'autofocus') }}
                 </div>
                 <div class="form-group">
-                    {{ Form::password('password', array('class' => 'form-control', 'placeholder' => 'Password')) }}
+                    {{ Form::password('password', array('class' => 'form-control', 'placeholder' => 'Password'), 'required') }}
                 </div>          
                 <div class="form-group">
                     {{ Form::checkbox('remember_me', 'yes') }} Remember me

@@ -107,6 +107,7 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Indatus\Dispatcher\ServiceProvider',	// Schedules
+		'Cartalyst\Sentry\SentryServiceProvider',	// ACL
 
 	),
 
@@ -173,7 +174,7 @@ return array(
 		'URL'             => 'Illuminate\Support\Facades\URL',
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
-
+		'Sentry'					=> 'Cartalyst\Sentry\Facades\Laravel\Sentry',	// ACL
 	),
 
 );

@@ -35,16 +35,18 @@ App::after(function($request, $response)
 
 Route::filter('auth', function()
 {
-	if (Auth::guest())
-		return Redirect::action('UserController@getSignIn')
+	if (!Sentry::check())
+		return Redirect::action('SessionController@getSignIn')
 			->with('warning', 'Please Sign In first to continue');
 });
 
 
-Route::filter('auth.basic', function()
+Route::filter('auth.superuser', function()
 {
-	return Auth::basic();
+	if (!Sentry::check() || !Sentry::getUser()->isSuperUser())
+		return Redirect::to('/');
 });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -59,7 +61,7 @@ Route::filter('auth.basic', function()
 
 Route::filter('guest', function()
 {
-	if (Auth::check()) return Redirect::to('/');
+	if (!Sentry::check()) return Redirect::to('/');
 });
 
 /*
