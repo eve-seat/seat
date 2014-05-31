@@ -38,6 +38,11 @@
 										<b>Training Ends: </b> {{ Carbon\Carbon::parse($character->trainingEndTime)->diffForHumans() }}
 									@endif
 								</li>
+								<li>
+									@if (isset($last_skills_end[$character->characterID]) && strlen($last_skills_end[$character->characterID]->endTime) > 0)
+										<b>Skill Queue Ends: </b> {{ Carbon\Carbon::parse($last_skills_end[$character->characterID]->endTime)->diffForHumans() }}
+									@endif
+								</li>
 								{{-- key information, if available --}}
 								@if (!empty($character_info) && array_key_exists($character->characterID, $character_info))
 
