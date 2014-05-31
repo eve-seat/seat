@@ -34,13 +34,14 @@
 										</li>
 										@foreach($characterInfo['characters'] as $character)
 											<li>
-												<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}">
+												<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}" style="color:inherit;">
 													<img src='//image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+													{{ $character->characterName }}
 												</a>
-												{{ $character->characterName }}
 												@if ($personData[0]['main']->characterID <> $character->characterID)
 													<a href="{{ action('ApiKeyController@getSetGroupMain', array('personid' => $personData[0]['personID'], 'characterid' => $character->characterID)) }}" class="pull-right">Set as Main</a>
 												@endif
+
 
 											</li>
 										@endforeach
