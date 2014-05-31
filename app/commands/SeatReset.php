@@ -54,30 +54,41 @@ class SeatReset extends Command {
 
 		$this->info('The passwords match. Resetting to the new ' . strlen($password) . ' char one.');
 
+		// Attempt to find the admin user usnig Sentry helper functions.
+		// If the user does not exist, we create it.
 		try {
+
 			$admin = \Sentry::findUserByLogin('admin');
-		}
-		catch (\Cartalyst\Sentry\Users\UserNotFoundException $e) {
+
+		} catch (\Cartalyst\Sentry\Users\UserNotFoundException $e) {
+
 			\Sentry::register(array(
 				'email'	 	=> 'admin',
 				'password'	=> $password,
-			), true);
+			), true);	// Set the account to be active
+
 			$admin = \Sentry::findUserByLogin('admin');
 		}
 
+		// Next, we check for the existance of the admin group and create it if it
+		// does not exist
 		try {
+
 			$adminGroup = \Sentry::findGroupByName('Administrators');
-		}
-		catch (\Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
+
+		} catch (\Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
+
 			\Sentry::createGroup(array(
-		    'name'        => 'Administrators',
-		    'permissions' => array(
-	        'superuser' => 1,
-		    ),
+			    'name'        => 'Administrators',
+			    'permissions' => array(
+			        'superuser' => 1,
+			    ),
 			));
+
 			$adminGroup = \Sentry::findGroupByName('Administrators');
 		}
 
+		// Set the password and group membership for the admin user.
 		$admin->password = $password;
 		$admin->save();
 		$admin->addGroup($adminGroup);

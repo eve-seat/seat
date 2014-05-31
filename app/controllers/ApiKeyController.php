@@ -42,13 +42,13 @@ class ApiKeyController extends BaseController {
 			->select('seat_keys.keyID', 'seat_keys.isOk', 'seat_keys.lastError', 'account_apikeyinfo.accessMask', 'account_apikeyinfo.type', 'account_apikeyinfo.expires', DB::raw('count(`banned_calls`.`ownerID`) bans'))
 			->leftJoin('account_apikeyinfo', 'seat_keys.keyID', '=', 'account_apikeyinfo.keyID')
 			->leftJoin('banned_calls', 'seat_keys.keyID', '=', 'banned_calls.ownerID');
-		if (!Sentry::getUser()->isSuperUser()) {
-			$keys = $keys
-				->where('seat_keys.user_id', Sentry::getUser()->getKey());
-		}
-		$keys = $keys
-			->groupBy('seat_keys.keyID')
-			->get();
+
+		// If the current user is not a admin, only get the keys that they own
+		if (!Sentry::getUser()->isSuperUser())
+			$keys = $keys->where('seat_keys.user_id', Sentry::getUser()->getKey());
+
+		// And complete the query
+		$keys = $keys->groupBy('seat_keys.keyID')->get();
 
 		// Prepare the key information and characters for the view
 		$key_information = array();
