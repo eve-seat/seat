@@ -392,6 +392,11 @@ class CharacterController extends BaseController {
 			'5' => 'Deleted'
 		);
 
+		// Character calendar events
+ 			$calendar_events = DB::table('character_upcomingcalendarevents')
+ 				->where('characterID', $characterID)
+ 				->get();
+
 		// Finally, give all this to the view to handle
 		return View::make('character.view')
 			->with('character', $character)
@@ -414,6 +419,7 @@ class CharacterController extends BaseController {
 			->with('contracts_other', $contracts_other)
 			->with('market_orders', $market_orders)
 			->with('order_states', $order_states)
+			->with('calendar_events', $calendar_events)
 			->with('assets', $assets); // leave this just in case
 	}
 
