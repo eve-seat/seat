@@ -889,9 +889,14 @@
 																				</span>
 																			</td>
 																			<td>
-																				<span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['volume'], 0, '.', ' ') }}m3">
+																				<span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['volume'], 0, '.', ' ') }} m3">
 																					{{ App\Services\Helpers\Helpers::formatBigNumber($asset['volume']) }}
 																				</span>
+																				@if(isset($asset['contents']))
+																				<span data-toggle="tooltip" title="" data-original-title="{{ App\Services\Helpers\Helpers::sumVolume($asset['contents'], 'volume') }} m3">
+																					({{ App\Services\Helpers\Helpers::sumVolume($asset['contents'], 'volume') }})
+																					</span>
+																				@endif
 																			</td>
 																			@if(isset($asset['contents']))
 																				<td style="text-align: right"><i class="fa fa-plus viewcontent" style="cursor: pointer;"></i></td>
@@ -918,7 +923,8 @@
 																						</span>
 																					</td>
 																					<td>
-																						<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['volume'], 0, '.', ' ') }}m3">{{ App\Services\Helpers\Helpers::formatBigNumber($content['volume']) }}
+																						<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['volume'], 0, '.', ' ') }} m3">
+																							{{ App\Services\Helpers\Helpers::formatBigNumber($content['volume']) }}
 																						</span>
 																					</td>
 
