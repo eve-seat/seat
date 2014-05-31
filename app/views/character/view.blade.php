@@ -893,7 +893,7 @@
 																					{{ App\Services\Helpers\Helpers::formatBigNumber($asset['volume']) }}
 																				</span>
 																				@if(isset($asset['contents']))
-																				<span data-toggle="tooltip" title="" data-original-title="{{ App\Services\Helpers\Helpers::sumVolume($asset['contents'], 'volume') }} m3">
+																				<span data-toggle="tooltip" title="" data-original-title="{{ App\Services\Helpers\Helpers::sumVolume($asset['contents'], 'volume') }} m3 in container contents">
 																					({{ App\Services\Helpers\Helpers::sumVolume($asset['contents'], 'volume') }})
 																					</span>
 																				@endif
