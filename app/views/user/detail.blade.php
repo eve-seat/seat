@@ -55,11 +55,10 @@
         </div>
 
         <div class="form-group">
-          <label class="col-md-4 control-label" for="is_admin">Administrator</label>
+          <label class="col-md-4 control-label" for="is_admin">Superuser?</label>
           <div class="col-md-4">
             <div class="input-group">
-              <span class="input-group-addon">{{ Form::checkbox('is_admin', 'yes', $user->isSuperUser()) }}</span>
-              {{ Form::text('label', null, array('id' => 'last_name', 'class' => ' form-control', 'placeholder' => 'Check to make this user an administrator', 'disabled' => 'disabled')) }}
+              {{ Form::checkbox('is_admin', 'yes', $user->isSuperUser()) }}
             </div>
           </div>
         </div>

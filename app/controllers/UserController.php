@@ -1,5 +1,7 @@
 <?php
 
+use App\Services\Validators;
+
 class UserController extends BaseController {
 
 	/*
@@ -36,20 +38,6 @@ class UserController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
-	| getNewUser()
-	|--------------------------------------------------------------------------
-	|
-	| Return a view to add new users
-	|
-	*/
-
-	public function getNewUser()
-	{
-		return View::make('user.new');
-	}
-
-	/*
-	|--------------------------------------------------------------------------
 	| postNewUser()
 	|--------------------------------------------------------------------------
 	|
@@ -60,33 +48,52 @@ class UserController extends BaseController {
 	public function postNewUser()
 	{
 
-		if ($user = Sentry::register(array('email' => Input::get('email'), 'password' => Input::get('password'), 'first_name' => Input::get('first_name'), 'last_name' => Input::get('last_name')), true)) {
+		// Grab the inputs and validate them
+		$new_user = Input::only(
+			'email', 'password', 'first_name', 'last_name', 'is_admin'
+		);
 
-			if (Input::get('is_admin') == 'yes') {
+		$validation = new Validators\SeatUserValidator($new_user);
 
-				try {
+		// Should the form validation pass, continue to attempt to add this user
+		if ($validation->passes()) {
 
-					$adminGroup = Sentry::findGroupByName('Administrators');
+			if ($user = Sentry::register(array('email' => Input::get('email'), 'password' => Input::get('password'), 'first_name' => Input::get('first_name'), 'last_name' => Input::get('last_name')), true)) {
 
-				} catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
+				if (Input::get('is_admin') == 'yes') {
 
-					return Redirect::back()
-						->withInput()
-						->withErrors('Administrators group could not be found');
+					try {
+
+						$adminGroup = Sentry::findGroupByName('Administrators');
+
+					} catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
+
+						return Redirect::back()
+							->withInput()
+							->withErrors('Administrators group could not be found');
+					}
+
+					$user->addGroup($adminGroup);
 				}
 
-				$user->addGroup($adminGroup);
-			}
+				return Redirect::action('UserController@getAll')
+					->with('success', 'User ' . Input::get('email') . ' has been added');
 
-			return Redirect::action('UserController@getDetail', array($user->getKey()))
-				->with('success', 'User ' . Input::get('email') . ' has been added');
+			} else {
+
+				return Redirect::back()
+					->withInput()
+					->withErrors('Error adding user');
+			}
 
 		} else {
 
 			return Redirect::back()
-				->withInput()
-				->withErrors('Error adding user');
+					->withInput()
+				->withErrors($validation->errors);
 		}
+
+
 	}
 
 	/*
