@@ -123,7 +123,11 @@ class Character {
         } catch (\Exception $e) {
 
             $job_record->status = 'Error';
-            $job_record->output = 'Last status: ' . $job_record->output . ' Error: ' . $e->getCode() . ': ' . $e->getMessage();
+            $job_record->output = 'Last status: ' . $job_record->output . PHP_EOL .
+                'Error: ' . $e->getCode() . ': ' . $e->getMessage() . PHP_EOL .
+                'File: ' . $e->getFile() . ':' . $e->getLine() . PHP_EOL .
+                'Trace: ' . $e->getTraceAsString() . PHP_EOL .
+                'Previous: ' . $e->getPrevious();
             $job_record->save();
 
             $job->delete();

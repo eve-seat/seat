@@ -200,10 +200,13 @@
 						            <td>{{ $error->ownerID }}</td>
 						            <td>{{ $error->scope }}</td>
 						            <td>{{ $error->api }}</td>
-						            <td>{{ $error->output }}</td>
+						            <td>{{ str_limit($error->output, 100, '...') }}</td>
 						            <td>{{ Carbon\Carbon::parse($error->created_at)->diffForHumans() }}</td>
 						            <td>{{ Carbon\Carbon::parse($error->updated_at)->diffForHumans() }}</td>
-						            <td><i class="fa fa-times" id="delete-error" a-error-id="{{ $error->id }}" data-toggle="tooltip" title="" data-original-title="Delete Error"></i></td>
+						            <td>
+						            	<i class="fa fa-times" id="delete-error" a-error-id="{{ $error->id }}" data-toggle="tooltip" title="" data-original-title="Delete Error"></i>
+						            	<i class="fa fa-eye" id="view-full-error" a-error-id="{{ $error->id }}" data-toggle="tooltip" title="" data-original-title="View Full Error"></i>
+						            </td>
 						        </tr>
 						    @endforeach
 						</tbody>
@@ -276,6 +279,16 @@
 					parent.remove();
 				}
 			});
+		});
+
+		// Ajax View Full Error Message
+		$("i#view-full-error").click(function() {
+
+			// Start rotating the icom indicating loading
+			$(this).addClass('fa-spin');
+
+			// Set the parent variable
+			window.location = "{{ action('QueueController@getViewError') }}/" + $(this).attr('a-error-id')
 		});
 
 		// Ajax Delete All Error Messages

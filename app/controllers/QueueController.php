@@ -83,6 +83,24 @@ class QueueController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getViewError()
+	|--------------------------------------------------------------------------
+	|
+	| Removes a Job record that is in a error state
+	|
+	*/
+
+	public function getViewError($id)
+	{
+
+		$detail = \SeatQueueInformation::where('id', $id)->first();
+
+		return View::make('queue.view')
+			->with('detail', $detail);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getDeleteError()
 	|--------------------------------------------------------------------------
 	|
