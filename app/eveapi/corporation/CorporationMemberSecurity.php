@@ -229,21 +229,28 @@ class MemberSecurity extends BaseApi {
 				}
 
 				// i) titles Update
-				\EveCorporationMemberSecurityTitles::where('characterID', '=', $security->characterID)
-					->where('corporationID', '=', $corporationID)
-					->delete();
-					
-				foreach ($security->titles as $role) {
 
-					$roles_data = new \EveCorporationMemberSecurityTitles;
+				// DUST characters seem to not have the titles attributes in their XML's coming
+				// from the eveapi. So lets first check if the element exists before we attempt
+				// to update it with the new data
+				if (isset($security->titles)) {
 
-					$roles_data->characterID = $security->characterID;
-					$roles_data->corporationID = $corporationID;
-					$roles_data->name = $security->name;
-					$roles_data->titleID = $role->titleID;
-					$roles_data->titleName = $role->titleName;
-					
-					$roles_data->save();
+					\EveCorporationMemberSecurityTitles::where('characterID', '=', $security->characterID)
+						->where('corporationID', '=', $corporationID)
+						->delete();
+
+					foreach ($security->titles as $role) {
+
+						$roles_data = new \EveCorporationMemberSecurityTitles;
+
+						$roles_data->characterID = $security->characterID;
+						$roles_data->corporationID = $corporationID;
+						$roles_data->name = $security->name;
+						$roles_data->titleID = $role->titleID;
+						$roles_data->titleName = $role->titleName;
+
+						$roles_data->save();
+					}
 				}
 			}
 
