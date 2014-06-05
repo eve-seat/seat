@@ -246,6 +246,11 @@ class ApiKeyController extends BaseController {
 	public function getDetail($keyID)
 	{
 
+		// Ensure that this user may access the data for $keyID
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($keyID, Session::get('valid_keys')))
+				App::abort(404);
+
 		$key_information = DB::table('seat_keys')
 			->select('seat_keys.keyID', 'seat_keys.vCode', 'seat_keys.isOk', 'seat_keys.lastError', 'account_apikeyinfo.accessMask', 'account_apikeyinfo.type', 'account_apikeyinfo.expires')
 			->leftJoin('account_apikeyinfo', 'seat_keys.keyID', '=', 'account_apikeyinfo.keyID')

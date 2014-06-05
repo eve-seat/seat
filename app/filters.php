@@ -13,7 +13,14 @@
 
 App::before(function($request)
 {
-	//
+	// Users have keys allocated to them from the `seat_keys` table.
+	// We can check if the user is authed and if so, get the keyID's
+	// this user is valid for.
+	if (Sentry::check()) {
+
+		$valid_keys = \SeatKey::where('user_id', Sentry::getUser()->id)->lists('keyID');
+		Session::put('valid_keys', $valid_keys);
+	}
 });
 
 
