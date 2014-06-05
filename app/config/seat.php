@@ -51,6 +51,6 @@ return array(
 	|
 	*/
 
-	'allow_registration' => false,
+	'allow_registration' => true,
 
 );
