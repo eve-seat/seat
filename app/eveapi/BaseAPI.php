@@ -39,7 +39,7 @@ class BaseApi {
 		PhealConfig::getInstance()->http_method = 'curl';
 
 		// Disable the Laravel query log. Some of the API calls do.. a lot of queries :P
-		DB::connection()->disableQueryLog();
+		\DB::connection()->disableQueryLog();
 	}
 
 	/*
