@@ -13,7 +13,7 @@
 @if ($existance > 0)
 	<div class="callout callout-warning">
 	    <h4><i class="fa fa-warning"></i> Key already exists in the database</h4>
-	    <p>Adding it here will simply reactive it if it is disabled.</p>
+	    <p>Adding it here will simply reactive it if it is disabled and make you the owner.</p>
 	</div>
 @else
 	<div class="callout callout-info">
