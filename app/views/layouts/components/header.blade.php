@@ -44,7 +44,7 @@
                         <!-- User image -->
                         <li class="user-header bg-light-blue">
                             <p>
-                                {{ Sentry::getUser()->first_name }} | {{ Sentry::getUser()->email }}
+                                {{ Sentry::getUser()->email }}
                                 <small>Joined: {{ Sentry::getUser()->created_at }}</small>
                             </p>
                         </li>
