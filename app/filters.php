@@ -16,10 +16,30 @@ App::before(function($request)
 	// Users have keys allocated to them from the `seat_keys` table.
 	// We can check if the user is authed and if so, get the keyID's
 	// this user is valid for.
+
+	// We will also get a list of corporation ID's that the user is
+	// affiliated to. This can be used to check the permissions then
+	// later for specific functions such as starbases etc.
 	if (Sentry::check()) {
 
-		$valid_keys = \SeatKey::where('user_id', Sentry::getUser()->id)->lists('keyID');
+		// Valid API Keys
+		$valid_keys = SeatKey::where('user_id', Sentry::getUser()->id)->lists('keyID');
 		Session::put('valid_keys', $valid_keys);
+
+		// Affiliated corporationID's.
+		if (!empty($valid_keys)) {
+
+			// Get the list of corporationID's that the user is affiliated with
+			$corporation_affiliation = EveAccountAPIKeyInfoCharacters::whereIn('keyID', $valid_keys)
+				->lists('corporationID');
+
+			Session::put('corporation_affiliations', $corporation_affiliation);
+		} else {
+
+			// Just to ensure that we dont have some strange errors later, lets
+			// define a empty array in the session for corporation_affiliations
+			Session::put('corporation_affiliations', array());
+		}
 	}
 });
 
