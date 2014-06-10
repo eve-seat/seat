@@ -33,6 +33,7 @@ Route::group(array('before' => 'auth|csrf'), function() {
 
     Route::controller('character', 'CharacterController');
     Route::controller('corporation', 'CorporationController');
+    Route::controller('eve', 'EveController');
     Route::controller('queue', 'QueueController');
 
     Route::controller('helpers', 'HelperController');

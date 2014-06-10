@@ -60,7 +60,15 @@
                     <li><a href="{{ action('CharacterController@getSearchSkills') }}"><i class="fa fa-angle-double-right"></i> Skill Search</a></li>
                 </ul>
             </li>
-
+            <li class="treeview @if (Request::is('eve/*')) active @endif">
+                <a href="#">
+                    <i class="fa fa-globe"></i> <span>Eve</span>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="{{ action('EveController@getSearchItems') }}"><i class="fa fa-angle-double-right"></i> Item Search</a></li>
+                </ul>
+            </li>
             {{-- superuser only features --}}
             @if (Sentry::getUser()->isSuperUser())
                 <li class="treeview @if (Request::is('user/*')) active @endif">
