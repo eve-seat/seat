@@ -54,6 +54,8 @@ class RegisterController extends BaseController {
 		    	'user_id' => Crypt::encrypt($user->id)
 		    );
 
+		    var_dump($data);die();
+
 		   	// Send the mail with the activation code 
 			Mail::send('emails.auth.register', $data, function($message) {
 
@@ -85,8 +87,10 @@ class RegisterController extends BaseController {
 
 		 if ($user->attemptActivation($activation_code)) {
 
-	 		return Redirect::action('SessionController@getSignIn')
-	 			->with('success', 'Account successfully activated! Please login with yout credentials');
+		 	Sentry::login($user);
+
+	 		return Redirect::action('HomeController@showIndex')
+	 			->with('success', 'Account successfully activated! Welcome :)');
 		 }
 	}
 }
