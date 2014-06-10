@@ -189,8 +189,36 @@ class Helpers {
 	public static function sumVolume($array, $col_name) {
 		$volume = 0;
 		foreach($array as $item){
+			if(isset($item['contents'])){
+				foreach($item['contents'] as $type){
+					$volume += $type[$col_name];
+				}
+			}
 			$volume += $item[$col_name];
 		}
 		return Helpers::formatBigNumber($volume);
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| numAssets()
+	|--------------------------------------------------------------------------
+	|
+	| Returns the number of assets including what is within a container
+	|
+	*/
+
+	public static function numAssets($array) {
+		$count = 0;
+		foreach($array as $item){
+			$count++;
+			if(isset($item['contents'])){
+				foreach($item['contents'] as $type){
+					$count++;
+				}
+			}
+		}		
+		return $count;
+	}
+
 }
