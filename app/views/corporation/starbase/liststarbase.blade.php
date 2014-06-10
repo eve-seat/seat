@@ -1,6 +1,6 @@
 @extends('layouts.masterLayout')
 
-@section('html_title', 'All Corporation Startbases')
+@section('html_title', 'All Corporation Starbases')
 
 @section('page_content')
 
