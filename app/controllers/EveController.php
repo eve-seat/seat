@@ -1,8 +1,5 @@
 <?php
 
-use Seat\EveApi\BaseApi;
-use Pheal\Pheal;
-
 class EveController extends BaseController {
 
 /*

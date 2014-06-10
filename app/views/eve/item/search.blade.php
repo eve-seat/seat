@@ -38,7 +38,7 @@
 @section('javascript')
 	<script type="text/javascript">	
 
-		// Search for asset types to search for... lol
+		// Search for item types to search for... lol
 		$('#searchinput').select2({
 			multiple: true,
 			width: "350",

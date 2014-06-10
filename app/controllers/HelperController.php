@@ -110,10 +110,10 @@ class HelperController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
-	| getAvailableSkills()
+	| getAvailableItems()
 	|--------------------------------------------------------------------------
 	|
-	| Return the currently available skills as a json object
+	| Return the currently available items as a json object
 	|
 	*/
 
