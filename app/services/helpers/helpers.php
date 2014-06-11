@@ -201,24 +201,21 @@ class Helpers {
 
 	/*
 	|--------------------------------------------------------------------------
-	| numAssets()
+	| marketOrderType()
 	|--------------------------------------------------------------------------
 	|
-	| Returns the number of assets including what is within a container
+	| Returns the count of a market order type
 	|
 	*/
 
-	public static function numAssets($array) {
+	public static function marketOrderCount($array, $col_name) {
 		$count = 0;
-		foreach($array as $item){
-			$count++;
-			if(isset($item['contents'])){
-				foreach($item['contents'] as $type){
-					$count++;
-				}
+		foreach($array as $order){
+			if($order->orderState == $col_name){
+				$count ++;
 			}
-		}		
+		}
 		return $count;
 	}
-
+>>>>>>> market order tabs
 }
