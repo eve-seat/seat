@@ -12,8 +12,8 @@
 		<div class="nav-tabs-custom">
 	    <ul class="nav nav-tabs">
 	        <li class="active"><a href="#agents" data-toggle="tab">Agents ({{ count($agent_standings) }})</a></li>
-	        <li><a href="#factions" data-toggle="tab">Factions ({{ count($faction_standings) }})</a></li>
 	        <li><a href="#npcs" data-toggle="tab">NPC Corporations ({{ count($npc_standings) }})</a></li>
+	        <li><a href="#factions" data-toggle="tab">Factions ({{ count($faction_standings) }})</a></li>
 	    </ul>
 	  </div> <!-- nav-tabs -->
 	   	<div class="tab-content">
@@ -24,7 +24,7 @@
 	        <thead>
 	          <tr>
 	          	<td>#</td>
-	          	<td>FromName</td>
+	          	<td>Name</td>
 	          	<td>Standing</td>
 	          </tr>
 	        </thead>
@@ -42,18 +42,22 @@
 	      </table>
 	    </div> <!-- ./ tab-pane -->
 
-	    {{-- Faction Standings --}}
-	    <div class="tab-pane" id="factions">
+	    {{-- NPC Standings --}}
+	    <div class="tab-pane" id="npcs">
 	        <table class="table table-hover table-condensed" id="datatable">
 	        <thead>
 	          <tr>
-	          	<td>FromName</td>
+	          	<td>#</td>
+	          	<td>Name</td>
 	          	<td>Standing</td>
 	          </tr>
 	        </thead>
 	        <tbody>
-	        	@foreach($faction_standings as $standing)
+	        	@foreach($npc_standings as $standing)
 	        		<tr>
+	        			<td>
+	        				<img src="{{ App\Services\Helpers\Helpers::generateEveImage( $standing->fromID, 32) }}">
+	        			</td>
 	        			<td>{{ $standing->fromName }}</td>
 	        			<td>{{ $standing->standing }}</td>
 	        		</tr>
@@ -62,18 +66,22 @@
 	      </table>
 	    </div> <!-- ./ tab-pane -->
 
-	    {{-- NPC Standings --}}
-	    <div class="tab-pane" id="npcs">
+	    {{-- Faction Standings --}}
+	    <div class="tab-pane" id="factions">
 	        <table class="table table-hover table-condensed" id="datatable">
 	        <thead>
 	          <tr>
-	          	<td>FromName</td>
+	          	<td>#</td>
+	          	<td>Name</td>
 	          	<td>Standing</td>
 	          </tr>
 	        </thead>
 	        <tbody>
-	        	@foreach($npc_standings as $standing)
+	        	@foreach($faction_standings as $standing)
 	        		<tr>
+	        			<td>
+	        				<img src="{{ App\Services\Helpers\Helpers::generateEveImage( $standing->fromID, 32) }}">
+	        			</td>
 	        			<td>{{ $standing->fromName }}</td>
 	        			<td>{{ $standing->standing }}</td>
 	        		</tr>
