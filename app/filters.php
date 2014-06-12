@@ -20,10 +20,15 @@ App::before(function($request)
 	// We will also get a list of corporation ID's that the user is
 	// affiliated to. This can be used to check the permissions then
 	// later for specific functions such as starbases etc.
+
+	// We will also check if the user has any director roles in any
+	// of the affiliated corporations. Directors will be allowed to
+	// assign permissions to other members of their corporation
 	if (Sentry::check()) {
 
 		// Valid API Keys
-		$valid_keys = SeatKey::where('user_id', Sentry::getUser()->id)->lists('keyID');
+		$valid_keys = SeatKey::where('user_id', Sentry::getUser()->id)
+			->lists('keyID');
 		Session::put('valid_keys', $valid_keys);
 
 		// Affiliated corporationID's.
@@ -34,11 +39,20 @@ App::before(function($request)
 				->lists('corporationID');
 
 			Session::put('corporation_affiliations', $corporation_affiliation);
+
+			// Determine which corporations the user is a director for
+			$is_director = EveCorporationMemberSecurityRoles::whereIn('corporationID', $corporation_affiliation)
+				->where('roleID', 1)
+				->lists('corporationID');
+
+			Session::put('is_director', $is_director);
+
 		} else {
 
 			// Just to ensure that we dont have some strange errors later, lets
 			// define a empty array in the session for corporation_affiliations
 			Session::put('corporation_affiliations', array());
+			Session::put('is_director', array());
 		}
 	}
 });
