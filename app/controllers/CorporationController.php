@@ -234,7 +234,7 @@ class CorporationController extends BaseController {
 		// the data, split into those assets in a station and those assets in space
 
 		// Declare empty variables
-		$station_assets_list = $space_asset_list = array();
+		$station_assets_list = $space_assets_list = array();
 		$station_assets_count = $space_assets_count = 0; //start counting item
 
 		// Loop over and split by locationID 60000000-67999999 are stationIDs
