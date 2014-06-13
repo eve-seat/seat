@@ -6,10 +6,6 @@ After you have followed the normal steps found in `docs/UPGRADING.md`, and befor
 
 ### Version 0.8 -> 0.9
 
-You must run the migrations for Sentry using this command:
-
-  - `php artisan migrate --package=cartalyst/sentry`
-
 When logging in, username is now referred to as email address to conform with the new user management package. You can continue treating this as a username if you want; it doesn't really care.
 
 You must reset your SeAT admin password:
@@ -17,6 +13,10 @@ You must reset your SeAT admin password:
   - `php artisan seat:reset`  
     
 It will prompt you to enter a new admin password. Once you've done this, you'll be able to create extra users in addition to the default "admin" user.
+
+You must seed the default SeAT groups:
+  - `php artisan seat:groupsync`
+
 
 Lastly, bring your app back online by running `php artisan up` and watch the log files for any potential errors.
 
