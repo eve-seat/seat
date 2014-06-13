@@ -167,7 +167,7 @@ Route::filter('key.required', function()
 		if (Request::is($match)) {
 
 			// Check that we havea some valid keys defined in Session::get('valid_keys')
-			if (count(Session::get('valid_keys')) <= 0)
+			if (!Sentry::getUser()->isSuperUser() && count(Session::get('valid_keys')) <= 0)
 				return Redirect::action('ApiKeyController@getNewKey')
 					->with('warning', 'No API Keys are defined to show you any information. Please enter at least one.');
 		}
