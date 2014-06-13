@@ -169,53 +169,56 @@
 	</div><!-- ./ md-4 -->
 	<div class="col-md-4">
 	    <!-- Danger box -->
-	    <div class="box box-solid box-danger">
-	        <div class="box-header">
-	            <h3 class="box-title">Last Error Messages</h3>
-	            <div class="box-tools pull-right">
-	            	@if (count($db_errors) > 0)
-		            	<button id="delete-all-errors" class="btn btn-danger btn-sm" data-widget="remove"><i class="fa fa-eraser"></i> Delete All</button> |
-		            @endif
-	            	<button class="btn btn-danger btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
-	            	<button class="btn btn-danger btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
-	            </div>
-	        </div>
-	        <div class="box-body no-padding">
-	        	@if (count($db_errors) > 0)
-					<table class="table table-condensed">
-					    <thead>
-					    	<tr>
-					            <th>Owner</th>
-					            <th>Scope</th>
-					            <th>API</th>
-					            <th>Status</th>
-					            <th>Created</th>
-					            <th>Updated</th>
-					            <th></th>
-					        </tr>
-					    </thead>
-					    <tbody>
-					        @foreach ($db_errors as $error)
-						        <tr>
-						            <td>{{ $error->ownerID }}</td>
-						            <td>{{ $error->scope }}</td>
-						            <td>{{ $error->api }}</td>
-						            <td>{{ str_limit($error->output, 100, '...') }}</td>
-						            <td>{{ Carbon\Carbon::parse($error->created_at)->diffForHumans() }}</td>
-						            <td>{{ Carbon\Carbon::parse($error->updated_at)->diffForHumans() }}</td>
-						            <td>
-						            	<i class="fa fa-times" id="delete-error" a-error-id="{{ $error->id }}" data-toggle="tooltip" title="" data-original-title="Delete Error"></i>
-						            	<i class="fa fa-eye" id="view-full-error" a-error-id="{{ $error->id }}" data-toggle="tooltip" title="" data-original-title="View Full Error"></i>
-						            </td>
+
+	    @if (Sentry::getUser()->isSuperUser())
+		    <div class="box box-solid box-danger">
+		        <div class="box-header">
+		            <h3 class="box-title">Last Error Messages</h3>
+		            <div class="box-tools pull-right">
+		            	@if (count($db_errors) > 0)
+			            	<button id="delete-all-errors" class="btn btn-danger btn-sm" data-widget="remove"><i class="fa fa-eraser"></i> Delete All</button> |
+			            @endif
+		            	<button class="btn btn-danger btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+		            	<button class="btn btn-danger btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+		            </div>
+		        </div>
+		        <div class="box-body no-padding">
+		        	@if (count($db_errors) > 0)
+						<table class="table table-condensed">
+						    <thead>
+						    	<tr>
+						            <th>Owner</th>
+						            <th>Scope</th>
+						            <th>API</th>
+						            <th>Status</th>
+						            <th>Created</th>
+						            <th>Updated</th>
+						            <th></th>
 						        </tr>
-						    @endforeach
-						</tbody>
-					</table>
-	        	@else
-	        		<h3><i class="fa fa-check"></i> No Job Errors</h3>
-	        	@endif
-	        </div><!-- /.box-body -->
-	    </div><!-- /.box -->
+						    </thead>
+						    <tbody>
+						        @foreach ($db_errors as $error)
+							        <tr>
+							            <td>{{ $error->ownerID }}</td>
+							            <td>{{ $error->scope }}</td>
+							            <td>{{ $error->api }}</td>
+							            <td>{{ str_limit($error->output, 100, '...') }}</td>
+							            <td>{{ Carbon\Carbon::parse($error->created_at)->diffForHumans() }}</td>
+							            <td>{{ Carbon\Carbon::parse($error->updated_at)->diffForHumans() }}</td>
+							            <td>
+							            	<i class="fa fa-times" id="delete-error" a-error-id="{{ $error->id }}" data-toggle="tooltip" title="" data-original-title="Delete Error"></i>
+							            	<i class="fa fa-eye" id="view-full-error" a-error-id="{{ $error->id }}" data-toggle="tooltip" title="" data-original-title="View Full Error"></i>
+							            </td>
+							        </tr>
+							    @endforeach
+							</tbody>
+						</table>
+		        	@else
+		        		<h3><i class="fa fa-check"></i> No Job Errors</h3>
+		        	@endif
+		        </div><!-- /.box-body -->
+		    </div><!-- /.box -->
+		@endif
 
 	    <!-- Job History box -->
 	    <div class="box box-solid box-success">
