@@ -20,7 +20,7 @@ class CharacterController extends BaseController {
 			->join('character_skillintraining', 'account_apikeyinfo_characters.characterID', '=', 'character_skillintraining.characterID')
 			->groupBy('account_apikeyinfo_characters.characterID');
 
-		if (!Sentry::getUser()->isSuperUser())
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
 			$characters = $characters->whereIn('seat_keys.keyID', Session::get('valid_keys'))
 				->get();
 		else
@@ -78,7 +78,7 @@ class CharacterController extends BaseController {
 
 		// Next, check if the current user has access. Superusers may see all the things,
 		// normal users may only see their own stuffs
-		if (!Sentry::getUser()->isSuperUser())
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
 			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
 				return Redirect::action('CharacterController@getPublic', array('characterID' => $characterID))
 					->withErrors('You do not have access to view this character. This is the public view of the character.');
