@@ -23,6 +23,11 @@
 		  </div>
 		  <div class="panel-footer">
 		  	{{ $key_count }} Owned API Keys
+		  	<span class="pull-right">
+		  		@if (Sentry::getUser()->isSuperUser())
+		  			<span class="label label-danger">Administrator Account</span>
+		  		@endif
+		  	</span>
 		  </div>
 		</div>
 	</div>
