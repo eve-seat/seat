@@ -79,6 +79,14 @@ class SeatGroupSync extends Command {
 				)
 			),
 
+			// Contract Manager group is to allow access to Posses and Assets
+			array(
+				'name' => 'Contract Managers',
+				'permissions' => array(
+					'contract_manager' => 1
+				)
+			),
+
 			// Market Manager group is to allow access to Market Orders and Assets
 			array(
 				'name' => 'Market Managers',
