@@ -24,7 +24,7 @@ Route::group(array('before' => 'auth|csrf|key.required'), function() {
 
     Route::get('/', 'HomeController@showIndex');
 
-	Route::controller('api-key', 'ApiKeyController');
+    Route::controller('api-key', 'ApiKeyController');
     Route::controller('dashboard', 'DashboardController');
 
     Route::group(array('prefix' => 'character'), function() {
@@ -41,6 +41,7 @@ Route::group(array('before' => 'auth|csrf|key.required'), function() {
     Route::controller('user', 'UserController');
     Route::controller('debug', 'DebugController');
 
+    Route::controller('profile', 'ProfileController');
     Route::controller('help', 'HelpController');
 
 });

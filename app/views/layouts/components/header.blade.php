@@ -52,7 +52,7 @@
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                {{ HTML::linkAction('ProfileController@getView', 'Profile', array(), array('class' => 'btn btn-default btn-flat')) }}
                             </div>
                             <div class="pull-right">
                                 {{ HTML::linkAction('SessionController@getSignOut', 'Sign out', array(), array('class' => 'btn btn-default btn-flat')) }}
