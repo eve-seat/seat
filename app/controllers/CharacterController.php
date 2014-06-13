@@ -18,8 +18,13 @@ class CharacterController extends BaseController {
 			->leftJoin('seat_keys', 'account_apikeyinfo_characters.keyID', '=', 'seat_keys.keyID')
 			->join('character_charactersheet', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
 			->join('character_skillintraining', 'account_apikeyinfo_characters.characterID', '=', 'character_skillintraining.characterID')
-			->groupBy('account_apikeyinfo_characters.characterID')
-			->get();
+			->groupBy('account_apikeyinfo_characters.characterID');
+
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			$characters = $characters->whereIn('seat_keys.keyID', Session::get('valid_keys'))
+				->get();
+		else
+			$characters = $characters->get();
 
 		// Set an array with the character info that we have
 		$character_info = null;
@@ -70,6 +75,13 @@ class CharacterController extends BaseController {
 		if(count($character) <= 0)
 			return Redirect::action('CharacterController@getPublic', array('characterID' => $characterID))
 				->withErrors('No API key information is available for this character. This is the public view of the character. Submit a API key with this character on for more information.');
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				return Redirect::action('CharacterController@getPublic', array('characterID' => $characterID))
+					->withErrors('You do not have access to view this character. This is the public view of the character.');
 
 		$other_characters = DB::table('account_apikeyinfo_characters')
 			->join('character_charactersheet', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
@@ -472,6 +484,10 @@ class CharacterController extends BaseController {
 	public function getFullWalletJournal($characterID)
 	{
 
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
 		$character_name = DB::table('account_apikeyinfo_characters')
 			->where('characterID', $characterID)
 			->pluck('characterName');
@@ -500,6 +516,10 @@ class CharacterController extends BaseController {
 	public function getFullWalletTransactions($characterID)
 	{
 
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
 		$character_name = DB::table('account_apikeyinfo_characters')
 			->where('characterID', $characterID)
 			->pluck('characterName');
@@ -526,6 +546,10 @@ class CharacterController extends BaseController {
 
 	public function getFullMail($characterID)
 	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
 
 		$character_name = DB::table('account_apikeyinfo_characters')
 			->where('characterID', $characterID)
@@ -584,6 +608,10 @@ class CharacterController extends BaseController {
 			->orderBy('invTypes.typeName')
 			->groupBy('character_charactersheet_skills.characterID', 'character_charactersheet_skills.typeID');
 
+		// Permissions checks
+		if (!Sentry::getUser()->isSuperUser())
+			$filter = $filter->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
+
 		// Check if we should get all of the levels or a specific one
 		if ($level == 'A')
 			$filter = $filter->get();
@@ -623,6 +651,8 @@ class CharacterController extends BaseController {
 
 		if (!is_array(Input::get('items')))
 			App::abort(404);
+
+		// TODO: PERMISSIONS CHECKS FOR THE UTTER SHIT SQL BELOW
 
 		// Seriously need to fix up this shit SQL, but not sure how to get this
 		// into Fluent correctly yet...
@@ -675,9 +705,12 @@ class CharacterController extends BaseController {
 	public function getWalletDelta($characterID)
 	{
 
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
 		$wallet_daily_delta = DB::table('character_walletjournal')
 			->select(DB::raw('DATE(`date`) as day, IFNULL( SUM( amount ), 0 ) AS daily_delta'))
-			// ->whereRaw('date BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) and NOW()')
 			->where('characterID', $characterID)
 			->groupBy('day')
 			->get();

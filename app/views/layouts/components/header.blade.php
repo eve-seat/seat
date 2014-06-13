@@ -38,13 +38,13 @@
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="glyphicon glyphicon-user"></i>
-                        <span>{{ Sentry::getUser()->first_name }} <i class="caret"></i></span>
+                        <span>{{ Sentry::getUser()->email }} <i class="caret"></i></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header bg-light-blue">
                             <p>
-                                {{ Sentry::getUser()->first_name }} | {{ Sentry::getUser()->email }}
+                                {{ Sentry::getUser()->email }}
                                 <small>Joined: {{ Sentry::getUser()->created_at }}</small>
                             </p>
                         </li>
@@ -52,7 +52,7 @@
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
+                                {{ HTML::linkAction('ProfileController@getView', 'Profile', array(), array('class' => 'btn btn-default btn-flat')) }}
                             </div>
                             <div class="pull-right">
                                 {{ HTML::linkAction('SessionController@getSignOut', 'Sign out', array(), array('class' => 'btn btn-default btn-flat')) }}

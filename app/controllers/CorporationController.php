@@ -16,8 +16,12 @@ class CorporationController extends BaseController {
 
 		$corporations = DB::table('account_apikeyinfo')
 			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-			->where('account_apikeyinfo.type', 'Corporation')
-			->get();
+			->where('account_apikeyinfo.type', 'Corporation');
+
+		if (!Sentry::getUser()->isSuperUser())
+			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+		else
+			$corporations = $corporations->get();
 
 		return View::make('corporation.walletjournal.listjournals')
 			->with('corporations', $corporations);
@@ -34,6 +38,10 @@ class CorporationController extends BaseController {
 
 	public function getJournal($corporationID)
 	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('wallet_manager'))
+				App::abort(404);
 
 		$corporation_name = DB::table('account_apikeyinfo_characters')
 			->where('corporationID', $corporationID)
@@ -67,8 +75,12 @@ class CorporationController extends BaseController {
 
 		$corporations = DB::table('account_apikeyinfo')
 			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-			->where('account_apikeyinfo.type', 'Corporation')
-			->get();
+			->where('account_apikeyinfo.type', 'Corporation');
+
+		if (!Sentry::getUser()->isSuperUser())
+			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+		else
+			$corporations = $corporations->get();
 
 		return View::make('corporation.wallettransactions.listtransactions')
 			->with('corporations', $corporations);
@@ -85,6 +97,10 @@ class CorporationController extends BaseController {
 
 	public function getTransactions($corporationID)
 	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('wallet_manager'))
+				App::abort(404);
 
 		$corporation_name = DB::table('account_apikeyinfo_characters')
 			->where('corporationID', $corporationID)
@@ -116,8 +132,12 @@ class CorporationController extends BaseController {
 
 		$corporations = DB::table('account_apikeyinfo')
 			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-			->where('account_apikeyinfo.type', 'Corporation')
-			->get();
+			->where('account_apikeyinfo.type', 'Corporation');
+
+		if (!Sentry::getUser()->isSuperUser())
+			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+		else
+			$corporations = $corporations->get();
 
 		return View::make('corporation.membertracking.listmembertracking')
 			->with('corporations', $corporations);
@@ -134,6 +154,10 @@ class CorporationController extends BaseController {
 
 	public function getMemberTracking($corporationID)
 	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('recruiter'))
+				App::abort(404);
 
 		$members = DB::table(DB::raw('corporation_member_tracking as cmt'))
 			->select(DB::raw('cmt.characterID, cmt.name, cmt.startDateTime, cmt.title, cmt.logonDateTime, cmt.logoffDateTime, cmt.location, cmt.shipType, k.keyID, k.isOk'))
@@ -169,8 +193,12 @@ class CorporationController extends BaseController {
 
 		$corporations = DB::table('account_apikeyinfo')
 			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-			->where('account_apikeyinfo.type', 'Corporation')
-			->get();
+			->where('account_apikeyinfo.type', 'Corporation');
+
+		if (!Sentry::getUser()->isSuperUser())
+			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+		else
+			$corporations = $corporations->get();
 
 		return View::make('corporation.assets.listasset')
 			->with('corporations', $corporations);
@@ -187,6 +215,10 @@ class CorporationController extends BaseController {
 
 	public function getAssets($corporationID)
 	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('asset_manager'))
+				App::abort(404);
 
 		$corporation_name = DB::table('account_apikeyinfo_characters')
 			->where('corporationID', $corporationID)
@@ -280,8 +312,12 @@ class CorporationController extends BaseController {
 
 		$corporations = DB::table('account_apikeyinfo')
 			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-			->where('account_apikeyinfo.type', 'Corporation')
-			->get();
+			->where('account_apikeyinfo.type', 'Corporation');
+
+		if (!Sentry::getUser()->isSuperUser())
+			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+		else
+			$corporations = $corporations->get();
 
 		return View::make('corporation.contracts.listcontract')
 			->with('corporations', $corporations);
@@ -299,6 +335,9 @@ class CorporationController extends BaseController {
 	public function getContracts($corporationID)
 	{
 
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('contract_manager'))
+				App::abort(404);
 
 		$corporation_name = DB::table('account_apikeyinfo_characters')
 			->where('corporationID', $corporationID)
@@ -440,8 +479,12 @@ class CorporationController extends BaseController {
 
 		$corporations = DB::table('account_apikeyinfo')
 			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-			->where('account_apikeyinfo.type', 'Corporation')
-			->get();
+			->where('account_apikeyinfo.type', 'Corporation');
+
+		if (!Sentry::getUser()->isSuperUser())
+			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+		else
+			$corporations = $corporations->get();
 
 		return View::make('corporation.starbase.liststarbase')
 			->with('corporations', $corporations);
@@ -461,6 +504,10 @@ class CorporationController extends BaseController {
 
 	public function getStarBase($corporationID)
 	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('pos_manager'))
+				App::abort(404);
 
 		// The very first thing we should be doing is getting all of the starbases for the corporationID
 		$starbases = DB::table('corporation_starbaselist')
@@ -625,8 +672,12 @@ class CorporationController extends BaseController {
 
 		$corporations = DB::table('account_apikeyinfo')
 			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-			->where('account_apikeyinfo.type', 'Corporation')
-			->get();
+			->where('account_apikeyinfo.type', 'Corporation');
+
+		if (!Sentry::getUser()->isSuperUser())
+			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+		else
+			$corporations = $corporations->get();
 
 		return View::make('corporation.ledger.listledger')
 			->with('corporations', $corporations);
@@ -643,6 +694,10 @@ class CorporationController extends BaseController {
 
 	public function getLedgerSummary($corporationID)
 	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('wallet_manager'))
+				App::abort(404);
 
 		// Get the month/year data
 		$available_dates = DB::table('corporation_walletjournal')
@@ -737,6 +792,10 @@ class CorporationController extends BaseController {
 	public function getLedgerMonth($corporationID, $date)
 	{
 
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('wallet_manager'))
+				App::abort(404);
+
 		// TODO: Add check to ensure corporation exists
 
 		// Parse the date
@@ -818,9 +877,12 @@ class CorporationController extends BaseController {
 	public function getWalletDelta($corporationID)
 	{
 
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('wallet_manager'))
+				App::abort(404);
+
 		$wallet_daily_delta = DB::table('corporation_walletjournal')
 			->select(DB::raw('DATE(`date`) as day, IFNULL( SUM( amount ), 0 ) AS daily_delta'))
-			// ->whereRaw('date BETWEEN DATE_SUB(NOW(), INTERVAL 30 DAY) and NOW()')
 			->where('corporationID', $corporationID)
 			->groupBy('day')
 			->get();
@@ -843,8 +905,12 @@ class CorporationController extends BaseController {
 
 		$corporations = DB::table('account_apikeyinfo')
 			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-			->where('account_apikeyinfo.type', 'Corporation')
-			->get();
+			->where('account_apikeyinfo.type', 'Corporation');
+
+		if (!Sentry::getUser()->isSuperUser())
+			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+		else
+			$corporations = $corporations->get();
 
 		return View::make('corporation.membersecurity.listmembersecurity')
 			->with('corporations', $corporations);
@@ -861,6 +927,11 @@ class CorporationController extends BaseController {
 
 	public function getMemberSecurity($corporationID)
 	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('recruiter'))
+				App::abort(404);
+
 		$member_roles = DB::table('corporation_msec_roles as cmr')
             ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
             ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
@@ -962,8 +1033,12 @@ class CorporationController extends BaseController {
 
 		$corporations = DB::table('account_apikeyinfo')
 			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-			->where('account_apikeyinfo.type', 'Corporation')
-			->get();
+			->where('account_apikeyinfo.type', 'Corporation');
+
+		if (!Sentry::getUser()->isSuperUser())
+			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+		else
+			$corporations = $corporations->get();
 
 		return View::make('corporation.marketorders.listmarketorders')
 			->with('corporations', $corporations);
@@ -980,6 +1055,10 @@ class CorporationController extends BaseController {
 
 	public function getMarketOrders($corporationID)
 	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('market_manager'))
+				App::abort(404);
 
 		$corporation_name = DB::table('account_apikeyinfo_characters')
 			->where('corporationID', $corporationID)

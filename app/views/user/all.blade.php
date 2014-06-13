@@ -38,26 +38,6 @@
 		    </div>
 
 		    <div class="form-group">
-		      <label class="col-md-4 control-label" for="first_name">First Name</label>
-		      <div class="col-md-4">
-		        <div class="input-group">
-		          <span class="input-group-addon"><i class="fa fa-user"></i></span>
-		          {{ Form::text('first_name', null, array('id' => 'first_name', 'class' => ' form-control', 'placeholder' => 'First Name')) }}
-		        </div>
-		      </div>
-		    </div>
-
-		    <div class="form-group">
-		      <label class="col-md-4 control-label" for="last_name">Last Name</label>
-		      <div class="col-md-4">
-		        <div class="input-group">
-		          <span class="input-group-addon"><i class="fa fa-user"></i></span>
-		          {{ Form::text('last_name', null, array('id' => 'last_name', 'class' => ' form-control', 'placeholder' => 'Last Name')) }}
-		        </div>
-		      </div>
-		    </div>
-
-		    <div class="form-group">
 		      <label class="col-md-4 control-label" for="is_admin">Superuser?</label>
 		      <div class="col-md-4">
 		        <div class="input-group">
@@ -93,8 +73,7 @@
 					<thead>
 						<tr>
 							<th>Email</th>
-							<th>First Name</th>
-							<th>Last Name</th>
+							<th>Last Login</th>
 							<th>Administrator</th>
 							<th></th>
 						</tr>
@@ -105,8 +84,7 @@
 
 							<tr>
 								<td>{{ $user->email }}</td>
-								<td>{{ $user->first_name }}</td>
-								<td>{{ $user->last_name }}</td>
+								<td>{{ $user->last_login }} ({{ Carbon\Carbon::parse($user->last_login)->diffForHumans() }})</td>
 								<td>{{ $user->isSuperUser() ? "<span class='text-red'>Yes</span>" : "No" }}</td>
 								<td>
 									<a href="{{ action('UserController@getDetail', array('userID' => $user->getKey())) }}" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> Edit</a>
