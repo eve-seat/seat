@@ -61,6 +61,9 @@ class RegisterController extends BaseController {
 					->subject('SeAT Account Confirmation');
 			});
 
+			return Redirect::action('SessionController@getSignIn')
+				->with('success', 'Successfully registered a new account. Please check your email for the activation link.');
+
 		} else {
 
 			return Redirect::back()
