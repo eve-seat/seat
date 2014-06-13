@@ -54,8 +54,6 @@ class RegisterController extends BaseController {
 		    	'user_id' => Crypt::encrypt($user->id)
 		    );
 
-		    var_dump($data);die();
-
 		   	// Send the mail with the activation code 
 			Mail::send('emails.auth.register', $data, function($message) {
 
