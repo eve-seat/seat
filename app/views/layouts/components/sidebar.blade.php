@@ -62,14 +62,19 @@
             </li>
 
             {{-- superuser only features --}}
-            @if (Sentry::getUser()->isSuperUser())
+            @if (Sentry::getUser()->isSuperUser() || App\Services\Permissions\PermissionHelper::hasDirector())
                 <li class="treeview @if (Request::is('user/*')) active @endif">
                     <a href="#">
                         <i class="fa fa-cogs"></i> <span>Configuration</span>
                         <i class="fa fa-angle-left pull-right"></i>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="{{ action('UserController@getAll') }}"><i class="fa fa-angle-double-right"></i> User Management</a></li>
+                        @if (Sentry::getUser()->isSuperUser())
+                            <li><a href="{{ action('UserController@getAll') }}"><i class="fa fa-angle-double-right"></i> User Management</a></li>
+                        @endif
+                        @if (Sentry::getUser()->isSuperUser() || App\Services\Permissions\PermissionHelper::hasDirector())
+                            <li><a href="{{ action('PermissionsController@getShowAll') }}"><i class="fa fa-angle-double-right"></i> Permissions Management</a></li>
+                        @endif
                     </ul>
                 </li>
             @endif

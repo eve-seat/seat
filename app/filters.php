@@ -29,6 +29,7 @@ App::before(function($request)
 		// Valid API Keys
 		$valid_keys = SeatKey::where('user_id', Sentry::getUser()->id)
 			->lists('keyID');
+
 		Session::put('valid_keys', $valid_keys);
 
 		// Affiliated corporationID's.
@@ -36,6 +37,7 @@ App::before(function($request)
 
 			// Get the list of corporationID's that the user is affiliated with
 			$corporation_affiliation = EveAccountAPIKeyInfoCharacters::whereIn('keyID', $valid_keys)
+				->groupBy('corporationID')
 				->lists('corporationID');
 
 			Session::put('corporation_affiliations', $corporation_affiliation);
@@ -43,6 +45,7 @@ App::before(function($request)
 			// Determine which corporations the user is a director for
 			$is_director = EveCorporationMemberSecurityRoles::whereIn('corporationID', $corporation_affiliation)
 				->where('roleID', 1)
+				->groupBy('corporationID')
 				->lists('corporationID');
 
 			Session::put('is_director', $is_director);
@@ -56,7 +59,6 @@ App::before(function($request)
 		}
 	}
 });
-
 
 App::after(function($request, $response)
 {

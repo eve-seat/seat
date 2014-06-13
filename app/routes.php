@@ -35,6 +35,8 @@ Route::group(array('before' => 'auth|csrf'), function() {
     Route::controller('corporation', 'CorporationController');
     Route::controller('queue', 'QueueController');
 
+    Route::controller('permissions', 'PermissionsController');
+
     Route::controller('helpers', 'HelperController');
     Route::controller('user', 'UserController');
     Route::controller('debug', 'DebugController');
