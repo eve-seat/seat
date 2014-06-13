@@ -19,16 +19,11 @@ class PermissionsController extends BaseController {
 		// First, ensure that this user has the minimum access required. The
 		// user should be at least a superuser of a director of one of the corporations
 		// he has characters in
-		if (!Sentry::getUser()->isSuperUser() && !PermissionHelper::hasDirector())
+		if (!Sentry::getUser()->isSuperUser())
 			App::abort(404);
 
-		// Get the corporations that the user can access
-		// $corporations = EveCorporationCorporationSheet;
-		if (!Sentry::getUser()->isSuperUser())
-			$corporations = EveCorporationCorporationSheet::whereIn('corporationID', Session::get('is_director'))
-				->get();
-		else
-			$corporations = EveCorporationCorporationSheet::all();
+		// Get the corporations
+		$corporations = EveCorporationCorporationSheet::all();
 
 		return View::make('permissions.all')
 			->with('corporations', $corporations);
@@ -47,7 +42,7 @@ class PermissionsController extends BaseController {
 	{
 
 		// Very first check is to ensure the user has the required access
-		if (!Sentry::getUser()->isSuperUser() && !in_array($corporationID, Session::get('is_director')))
+		if (!Sentry::getUser()->isSuperUser())
 			App::abort(404);
 
 		// Lets get the SeAT accounts with keys having members in this corporation
@@ -101,6 +96,10 @@ class PermissionsController extends BaseController {
 	public function postSetPermission()
 	{
 
+		// Very first check is to ensure the user has the required access
+		if (!Sentry::getUser()->isSuperUser())
+			App::abort(404);
+
 		$group = Input::get('group');
 		$user = Input::get('user');
 
@@ -128,10 +127,6 @@ class PermissionsController extends BaseController {
 			
 			App::abort(401);
 		}
-
-		// Very first check is to ensure the user has the required access
-		if (!Sentry::getUser()->isSuperUser() && !PermissionHelper::hasDirector())
-			App::abort(404);
 
 		// Determine if the user is in the group. If so, remove the user. If not, add the user
 		if ($user->inGroup($group))
