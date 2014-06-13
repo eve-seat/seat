@@ -40,7 +40,7 @@ class CorporationController extends BaseController {
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
-			if (!in_array($corporationID, Session::get('valid_keys')))
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('wallet_manager'))
 				App::abort(404);
 
 		$corporation_name = DB::table('account_apikeyinfo_characters')
@@ -99,7 +99,7 @@ class CorporationController extends BaseController {
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
-			if (!in_array($corporationID, Session::get('valid_keys')))
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('wallet_manager'))
 				App::abort(404);
 
 		$corporation_name = DB::table('account_apikeyinfo_characters')
@@ -156,7 +156,7 @@ class CorporationController extends BaseController {
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
-			if (!in_array($corporationID, Session::get('valid_keys')))
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('recruiter'))
 				App::abort(404);
 
 		$members = DB::table(DB::raw('corporation_member_tracking as cmt'))
@@ -217,7 +217,7 @@ class CorporationController extends BaseController {
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
-			if (!in_array($corporationID, Session::get('valid_keys')))
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('asset_manager'))
 				App::abort(404);
 
 		$corporation_name = DB::table('account_apikeyinfo_characters')
@@ -336,7 +336,7 @@ class CorporationController extends BaseController {
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
-			if (!in_array($corporationID, Session::get('valid_keys')))
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('contract_manager'))
 				App::abort(404);
 
 		$corporation_name = DB::table('account_apikeyinfo_characters')
@@ -506,7 +506,7 @@ class CorporationController extends BaseController {
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
-			if (!in_array($corporationID, Session::get('valid_keys')))
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('pos_manager'))
 				App::abort(404);
 
 		// The very first thing we should be doing is getting all of the starbases for the corporationID
@@ -696,7 +696,7 @@ class CorporationController extends BaseController {
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
-			if (!in_array($corporationID, Session::get('valid_keys')))
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('wallet_manager'))
 				App::abort(404);
 
 		// Get the month/year data
@@ -793,7 +793,7 @@ class CorporationController extends BaseController {
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
-			if (!in_array($corporationID, Session::get('valid_keys')))
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('wallet_manager'))
 				App::abort(404);
 
 		// TODO: Add check to ensure corporation exists
@@ -878,7 +878,7 @@ class CorporationController extends BaseController {
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
-			if (!in_array($corporationID, Session::get('valid_keys')))
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('wallet_manager'))
 				App::abort(404);
 
 		$wallet_daily_delta = DB::table('corporation_walletjournal')
@@ -929,7 +929,7 @@ class CorporationController extends BaseController {
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
-			if (!in_array($corporationID, Session::get('valid_keys')))
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('recruiter'))
 				App::abort(404);
 
 		$member_roles = DB::table('corporation_msec_roles as cmr')
@@ -1057,7 +1057,7 @@ class CorporationController extends BaseController {
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
-			if (!in_array($corporationID, Session::get('valid_keys')))
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('market_manager'))
 				App::abort(404);
 
 		$corporation_name = DB::table('account_apikeyinfo_characters')
