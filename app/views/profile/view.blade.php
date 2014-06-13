@@ -4,6 +4,8 @@
 
 @section('page_content')
 
+<div class="row">
+
 	<div class="col-md-6">
 		<div class="panel panel-default">
 		  <div class="panel-heading">
@@ -15,6 +17,8 @@
 		    </h3>
 		  </div>
 		  <div class="panel-body">
+
+		  	<p class="lead small">Group Memberships</p>
 
 		  	@foreach($groups as $group)
 		  		{{ $group->name }}<br>
@@ -32,4 +36,10 @@
 		</div>
 	</div>
 
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<p class="text-center">For any account related enquiries, including permissions amendments, please contact the SeAT administrator.</p>
+	</div>
+</div>
 @stop
