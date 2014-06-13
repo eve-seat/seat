@@ -10,8 +10,6 @@
 <div id="notification">
 </div>
 
-
-
 <div class="row">
   <div class="col-md-2">
     <ul class="nav nav-pills nav-stacked" id="available-corporations">
@@ -24,9 +22,9 @@
 
   <div class="col-md-10">
 
-  	<p class="lead">Select a Corporation</p>
-
-  	<div id="load-result"></div>
+  	<div id="load-result">
+	  	<p class="lead">Select a Corporation</p>
+  	</div>
 
   </div> <!-- ./tab-content -->
 </div>
@@ -58,12 +56,6 @@
 		var groupname = $(this).attr('a-group-name');
 		var user_id = $(this).attr('a-user-id');
 
-		if ($(this).is(':checked')) {
-			console.log('Checked ' + $(this).attr('a-group-name') + ' for user ' + $(this).attr('a-user-id'));
-		} else {
-			console.log('Unhecked ' + $(this).attr('a-group-name') + ' for user ' + $(this).attr('a-user-id'));
-		}
-
 		request = $.ajax({
 		    url: "{{ action('PermissionsController@postSetPermission') }}",
 		    type: "post",
@@ -73,7 +65,7 @@
 		// callback handler that will be called on success
 		request.done(function (response, textStatus, jqXHR) {
 		    // $("div#result").html(response);
-		    $("div#notification").show().html("<div class='alert alert-success alert-dismissable'> <i class='fa fa-check'></i> <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>×</button> <b>Success!</b>The permissions change has been applied </div>"
+		    $("div#notification").show().html("<div class='alert alert-success alert-dismissable'> <i class='fa fa-check'></i> <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>×</button> <b>Success!</b> The permissions change has been applied </div>"
 		    ).fadeOut(2000);
 		});
 

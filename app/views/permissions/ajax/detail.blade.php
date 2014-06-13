@@ -15,16 +15,21 @@
 
 				  	<p class="lead small pull-right">Note, users in the <i>Administrators</i> group automatically have all permissions</p>
 
-				  	{{-- loop over the groups that are available --}}
-				  	@foreach ($available_groups as $available_group)
+				  	<ul class="nav nav-pills nav-stacked">
+					  	<li class="header">Corporation Permissions</li>
+					  	{{-- loop over the groups that are available --}}
+					  	@foreach ($available_groups as $available_group)
+					  		<li>
 
-				  		{{-- check if the user has any permissions assigned, and that the permission exists for them --}}
-				  		@if (isset($group_memberships[$user->id]) && in_array($available_group, $group_memberships[$user->id]))
-					  		<div class="form-group">{{ Form::checkbox($available_group, 'yes', true, array('id' => 'permission' ,'a-group-name' => $available_group, 'a-user-id' => $user->id)) }} {{ $available_group }}</div>
-					  	@else
-					  		<div class="form-group">{{ Form::checkbox($available_group, 'yes', false, array('id' => 'permission' ,'a-group-name' => $available_group, 'a-user-id' => $user->id)) }} {{ $available_group }}</div>
-				  		@endif
-				  	@endforeach
+						  		{{-- check if the user has any permissions assigned, and that the permission exists for them --}}
+						  		@if (isset($group_memberships[$user->id]) && in_array($available_group, $group_memberships[$user->id]))
+							  		<div class="form-group">{{ Form::checkbox($available_group, 'yes', true, array('id' => 'permission' ,'a-group-name' => $available_group, 'a-user-id' => $user->id)) }} {{ $available_group }}</div>
+							  	@else
+							  		<div class="form-group">{{ Form::checkbox($available_group, 'yes', false, array('id' => 'permission' ,'a-group-name' => $available_group, 'a-user-id' => $user->id)) }} {{ $available_group }}</div>
+						  		@endif
+						  	</li>
+					  	@endforeach
+					</ul>
 
 				  </div>
 				  <div class="panel-footer">
