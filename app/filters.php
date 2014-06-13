@@ -144,9 +144,8 @@ Route::filter('csrf', function()
 | Key Required Filter
 |--------------------------------------------------------------------------
 |
-| The following filters are used to verify that the user of the current
-| session is logged into this application. The "basic" filter easily
-| integrates HTTP Basic authentication for quick, simple checking.
+| The following filters is used to ensure that routes that require a key
+| to have usefull information have valid keys to show information for
 |
 */
 
