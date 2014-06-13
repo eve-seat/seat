@@ -226,8 +226,6 @@
 						$( "#person-" + value).find(".btn-group").removeClass('open');
 					}
 				})
-				console.log(id);
-
 			} else {
 				$( "div[id^='person-']" ).show();
 				$( "div[id^='person-']" ).find(".btn-group").removeClass('open');
