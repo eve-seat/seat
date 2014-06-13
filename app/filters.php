@@ -138,3 +138,40 @@ Route::filter('csrf', function()
 	    }
 	}
 });
+
+/*
+|--------------------------------------------------------------------------
+| Key Required Filter
+|--------------------------------------------------------------------------
+|
+| The following filters are used to verify that the user of the current
+| session is logged into this application. The "basic" filter easily
+| integrates HTTP Basic authentication for quick, simple checking.
+|
+*/
+
+Route::filter('key.required', function()
+{
+
+	// The below array defines a few routes that require
+	// the user to have keys defined before anything useful
+	// can be shown
+	$key_requied_routes = array(
+		"api-key/people*", "corporation/*", "character/*"
+	);
+
+	// Loop over the required routes, and ensure that there
+	// are keys as required
+	foreach ($key_requied_routes as $match) {
+
+		// Check if the current request matches $match
+		if (Request::is($match)) {
+
+			// Check that we havea some valid keys defined in Session::get('valid_keys')
+			if (count(Session::get('valid_keys')) <= 0)
+				return Redirect::action('ApiKeyController@getNewKey')
+					->with('warning', 'No API Keys are defined to show you any information. Please enter at least one.');
+		}
+	}
+
+});
