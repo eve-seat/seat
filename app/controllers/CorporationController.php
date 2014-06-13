@@ -249,7 +249,7 @@ class CorporationController extends BaseController {
 				LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
 				LEFT JOIN `invGroups` ON `invTypes`.`groupID` = `invGroups`.`groupID`
 				WHERE a.`corporationID` = ?
-		        ORDER BY location",
+		    ORDER BY location",
 			array($corporationID)
 		);
 
@@ -263,29 +263,57 @@ class CorporationController extends BaseController {
 			->get();
 
 		// Lastly, create an array that is easy to loop over in the template to display
-		// the data
-		$assets_list = array();
-		$assets_count = 0; //start counting item
-		foreach ($assets as $key => $value) {
-			$assets_list[$value->location][$value->itemID] =  array(
-				'quantity' => $value->quantity,
-				'typeID' => $value->typeID,
-				'typeName' => $value->typeName,
-				'groupName' => $value->groupName,
-				'volume' => $value->volume * $value->quantity,
-			);
-			$assets_count++;
-			foreach( $assets_contents as $contents){
-				if ($value->itemID == $contents->itemID){ // check what parent content item has
-					// create a sub array 'contents' and put content item info in
-					$assets_list[$value->location][$contents->itemID]['contents'][] = array(
-						'quantity' => $contents->sumquantity,
-						'typeID' => $contents->typeID,
-						'typeName' => $contents->typeName,
-						'groupName' => $contents->groupName,
-						'volume' => $contents->volume * $contents->sumquantity
-					);
-				$assets_count++;
+		// the data, split into those assets in a station and those assets in space
+
+		// Declare empty variables
+		$station_assets_list = $space_assets_list = array();
+		$station_assets_count = $space_assets_count = 0; //start counting item
+
+		// Loop over and split by locationID 60000000-67999999 are stationIDs
+		foreach ($assets as $key => $value) {	
+			if($value->locationID > 60000000 && $value->locationID < 67999999){
+				$station_assets_list[$value->location][$value->itemID] =  array(
+					'quantity' => $value->quantity,
+					'typeID' => $value->typeID,
+					'typeName' => $value->typeName,
+					'groupName' => $value->groupName,
+					'volume' => $value->volume * $value->quantity,
+				);
+				$station_assets_count++;
+				foreach( $assets_contents as $contents){
+					if ($value->itemID == $contents->itemID){ // check what parent content item has
+						// create a sub array 'contents' and put content item info in
+						$station_assets_list[$value->location][$contents->itemID]['contents'][] = array(
+							'quantity' => $contents->sumquantity,
+							'typeID' => $contents->typeID,
+							'typeName' => $contents->typeName,
+							'groupName' => $contents->groupName,
+							'volume' => $contents->volume * $contents->sumquantity
+						);
+					$station_assets_count++;
+					}
+				}
+			}else{
+				$space_assets_list[$value->location][$value->itemID] =  array(
+					'quantity' => $value->quantity,
+					'typeID' => $value->typeID,
+					'typeName' => $value->typeName,
+					'groupName' => $value->groupName,
+					'volume' => $value->volume * $value->quantity,
+				);
+				$space_assets_count++;
+				foreach( $assets_contents as $contents){
+					if ($value->itemID == $contents->itemID){ // check what parent content item has
+						// create a sub array 'contents' and put content item info in
+						$space_assets_list[$value->location][$contents->itemID]['contents'][] = array(
+							'quantity' => $contents->sumquantity,
+							'typeID' => $contents->typeID,
+							'typeName' => $contents->typeName,
+							'groupName' => $contents->groupName,
+							'volume' => $contents->volume * $contents->sumquantity
+						);
+					$space_assets_count++;
+					}
 				}
 			}
 		}
@@ -293,9 +321,11 @@ class CorporationController extends BaseController {
 		return View::make('corporation.assets.assets')
 			->with('corporation_name', $corporation_name)
 			->with('assets', $assets)
-			->with('assets_list', $assets_list)
 			->with('assets_contents', $assets_contents)
-			->with('assets_count', $assets_count);
+			->with('station_assets_list', $station_assets_list)
+			->with('station_assets_count', $station_assets_count)
+			->with('space_assets_list', $space_assets_list)
+			->with('space_assets_count', $space_assets_count);
 	}
 
 	/*
