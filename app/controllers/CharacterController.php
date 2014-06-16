@@ -180,10 +180,10 @@ class CharacterController extends BaseController {
 			->take(25)
 			->get();
 
-		// Now, this query for the assets relative to their locations.. dunno if I want to
-		// try and move this shit to a query builder / eloquent version... :<
-		$assets = DB::select(
-			'SELECT *, CASE
+		// Get the assets
+		$assets = DB::table(DB::raw('character_assetlist as a'))
+			->select(DB::raw("
+				*, CASE
 				when a.locationID BETWEEN 66000000 AND 66014933 then
 					(SELECT s.stationName FROM staStations AS s
 					  WHERE s.stationID=a.locationID-6000001)
@@ -201,12 +201,12 @@ class CharacterController extends BaseController {
 					  WHERE c.stationID=a.locationID)
 				else (SELECT m.itemName FROM mapDenormalize AS m
 					WHERE m.itemID=a.locationID) end
-					AS location,a.locationId AS locID FROM `character_assetlist` AS a
-					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
-					LEFT JOIN `invGroups` ON `invTypes`.`groupID` = `invGroups`.`groupID`
-					WHERE a.`characterID` = ? ORDER BY location',
-			array($characterID)
-		);
+					AS location,a.locationId AS locID"))
+			->join('invTypes', 'a.typeID', '=', 'invTypes.typeID')
+			->join('invGroups', 'invTypes.groupID', '=', 'invGroups.groupID')
+			->where('a.characterID', $characterID)
+			->get();
+
 		
 		// Get assets contents and sum the quantity
 		$assets_contents = DB::table(DB::raw('character_assetlist_contents as a'))
@@ -256,8 +256,9 @@ class CharacterController extends BaseController {
 		
 		// Character contract list
 		// Not a clean Query. TODO: Find another way
-		$contract_list = DB::select(
-			'SELECT *, CASE
+		$contract_list = DB::table(DB::raw('character_contracts as a'))
+			->select(DB::raw(
+				"*, CASE
 				when a.startStationID BETWEEN 66000000 AND 66014933 then
 					(SELECT s.stationName FROM staStations AS s
 					  WHERE s.stationID=a.startStationID-6000001)
@@ -294,11 +295,9 @@ class CharacterController extends BaseController {
 					  WHERE c.stationID=a.endStationID)
 				else (SELECT m.itemName FROM mapDenormalize AS m
 					WHERE m.itemID=a.endStationID) end
-				AS endlocation 
-				FROM `character_contracts` AS a
-					WHERE a.`characterID` = ?',
-			array($characterID)
-		);
+				AS endlocation "))
+			->where('a.characterID', $characterID)
+			->get();
 		
 		// Character contract item
 		$contract_list_item = DB::table('character_contracts_items')
@@ -370,9 +369,9 @@ class CharacterController extends BaseController {
 			}
 		}
 
-		// Character Market Orders
-		$market_orders = DB::select(
-			'SELECT *, CASE
+		$market_orders = DB::table(DB::raw('character_marketorders as a'))
+			->select(DB::raw(
+				"*, CASE
 				when a.stationID BETWEEN 66000000 AND 66014933 then
 					(SELECT s.stationName FROM staStations AS s
 					  WHERE s.stationID=a.stationID-6000001)
@@ -390,13 +389,13 @@ class CharacterController extends BaseController {
 					  WHERE c.stationID=a.stationID)
 				else (SELECT m.itemName FROM mapDenormalize AS m
 					WHERE m.itemID=a.stationID) end
-					AS location,a.stationID AS locID FROM `character_marketorders` AS a
-					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
-					LEFT JOIN `invGroups` ON `invTypes`.`groupID` = `invGroups`.`groupID`
-					WHERE a.`characterID` = ? ORDER BY a.issued desc
-					LIMIT 500',
-			array($characterID)
-		);
+					AS location,a.stationID AS locID"))
+			->join('invTypes', 'a.typeID', '=', 'invTypes.typeID')
+			->join('invGroups', 'invTypes.groupID', '=', 'invGroups.groupID')
+			->where('a.characterID', $characterID)
+			->orderBy('a.issued', 'DESC')
+			->take(500)
+			->get();
 
 		// Order states from: https://neweden-dev.com/Character/Market_Orders
 		//orderState	 byte
@@ -670,8 +669,8 @@ class CharacterController extends BaseController {
 
 		// Search the assets
 		$assets = DB::table(DB::raw('character_assetlist as a'))
-			->select(DB::raw("
-				*, CASE
+			->select(DB::raw(
+				"*, CASE
 				when a.locationID BETWEEN 66000000 AND 66014933 then
 					(SELECT s.stationName FROM staStations AS s
 					  WHERE s.stationID=a.locationID-6000001)
