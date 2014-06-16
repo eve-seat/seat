@@ -221,4 +221,23 @@ class Helpers {
 		return $count;
 	}
 
+	/*
+	|--------------------------------------------------------------------------
+	| marketOrderType()
+	|--------------------------------------------------------------------------
+	|
+	| Returns the count of a market order type
+	|
+	*/
+
+	public static function marketOrderCount($array, $col_name) {
+		$count = 0;
+		foreach($array as $order){
+			if($order->orderState == $col_name){
+				$count ++;
+			}
+		}
+		return $count;
+	}
+	
 }

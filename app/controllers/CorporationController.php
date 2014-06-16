@@ -1117,7 +1117,7 @@ class CorporationController extends BaseController {
 					AS location,a.stationID AS locID FROM `corporation_marketorders` AS a
 					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
 					LEFT JOIN `invGroups` ON `invTypes`.`groupID` = `invGroups`.`groupID`
-					WHERE a.`corporationID` = ? ORDER BY a.issued desc',
+					WHERE a.`corporationID` = ? ORDER BY a.orderState, a.issued desc',
 			array($corporationID)
 		);
 
@@ -1142,7 +1142,6 @@ class CorporationController extends BaseController {
 		$wallet_divisions = array();
 		foreach ($wallet_divisions_data as $division)
 			$wallet_divisions[$division->accountKey] = $division->description;
-
 
 		return View::make('corporation.marketorders.marketorders')
 			->with('market_orders', $market_orders)
