@@ -1,6 +1,6 @@
 @extends('layouts.masterLayout')
 
-@section('html_title', 'All Corporations Member Standings')
+@section('html_title', 'All Corporations Standings')
 
 @section('page_content')
 
@@ -15,7 +15,7 @@
             </p>
         </div>
         <a href="{{ action('CorporationController@getMemberStandings', array('corporationID' => $corp->corporationID)) }}" class="small-box-footer">
-            View Member Standings <i class="fa fa-arrow-circle-right"></i>
+            View Standings <i class="fa fa-arrow-circle-right"></i>
         </a>
     </div>
 @endforeach
