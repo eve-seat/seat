@@ -591,14 +591,14 @@ class ApiKeyController extends BaseController {
 
 			// SUUPER ADMIN Show all the things
 			$people = array();
-			foreach (SeatPeople::all() as $person) {
+			foreach (\SeatPeople::Join('seat_people_main', 'seat_people_main.personID', '=', 'seat_people.personID')->orderBy('seat_people_main.characterName', 'ASC')->get() as $person) {
 
 				// For every person, get the keyID and characters on that key
 				$people[$person->personID][] = array(
 
 					'personID' => $person->personID,
 					'keyID' => $person->keyID,
-					'characters' => EveAccountAPIKeyInfoCharacters::where('keyID', $person->keyID)->get(),
+					'characters' => EveAccountAPIKeyInfoCharacters::where('account_apikeyinfo_characters.keyID', $person->keyID)->get(),
 					'main' => $person->main()->first()
 				);
 			}

@@ -147,4 +147,27 @@ class HelperController extends BaseController {
 
 		return Response::json($people);
 	}
+	
+	/*
+	|--------------------------------------------------------------------------
+	| getAllAvailablePeople()
+	|--------------------------------------------------------------------------
+	|
+	| Return the currently all available people and return it with personID
+	|
+	*/
+
+	public function getAllAvailablePeople()
+	{
+
+		$people = DB::table('account_apikeyinfo_characters')
+			->select('account_apikeyinfo_characters.keyID', 'account_apikeyinfo_characters.characterID', 'account_apikeyinfo_characters.characterName', 'account_apikeyinfo_characters.corporationID', 'account_apikeyinfo_characters.corporationName', 'seat_people.personID')
+			->join('account_apikeyinfo', 'account_apikeyinfo_characters.keyID', '=', 'account_apikeyinfo.keyID')
+			->leftJoin('seat_people', 'account_apikeyinfo_characters.keyID', '=', 'seat_people.keyID')
+			->where('account_apikeyinfo.type', '!=', 'Corporation')
+			->where('account_apikeyinfo_characters.characterName', 'like', '%' . Input::get('q') . '%')
+			->get();
+
+		return Response::json($people);
+	}
 }
