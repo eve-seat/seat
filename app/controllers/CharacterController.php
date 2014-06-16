@@ -668,18 +668,10 @@ class CharacterController extends BaseController {
 		if (!is_array(Input::get('items')))
 			App::abort(404);
 
-		// TODO: PERMISSIONS CHECKS FOR THE UTTER SHIT SQL BELOW
-
-		// Seriously need to fix up this shit SQL, but not sure how to get this
-		// into Fluent correctly yet...
-
-		// Create a parameter list for use in our query
-		$plist = ':id_'.implode(',:id_', array_keys(Input::get('items')));
-		// Prepare the arguement list for the parameters list
-		$parms = array_combine(explode(",", $plist), Input::get('items'));
-
-		$assets = DB::select(
-			"SELECT *, CASE
+		// Search the assets
+		$assets = DB::table(DB::raw('character_assetlist as a'))
+			->select(DB::raw("
+				*, CASE
 				when a.locationID BETWEEN 66000000 AND 66014933 then
 					(SELECT s.stationName FROM staStations AS s
 					  WHERE s.stationID=a.locationID-6000001)
@@ -697,12 +689,19 @@ class CharacterController extends BaseController {
 					  WHERE c.stationID=a.locationID)
 				else (SELECT m.itemName FROM mapDenormalize AS m
 					WHERE m.itemID=a.locationID) end
-					AS location,a.locationId AS locID FROM `character_assetlist` AS a
-					LEFT JOIN `invTypes` ON a.`typeID` = `invTypes`.`typeID`
-					JOIN `account_apikeyinfo_characters` on `account_apikeyinfo_characters`.`characterID` = a.`characterID`
-					WHERE `invTypes`.`typeID` IN ( $plist ) GROUP BY a.`characterID` ORDER BY location",
-			$parms	
-		);
+					AS location,a.locationId AS locID"))
+			->join('invTypes', 'a.typeID', '=', 'invTypes.typeID')
+			->join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'a.characterID');
+
+		// If the user is not a superuser, filter the results down to keys they own
+		if (!Sentry::getUser()->isSuperUser())
+			$assets = $assets->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
+
+		// Complete the search
+		$assets = $assets->whereIn('invTypes.typeID', Input::get('items'))
+			->groupBy('a.characterID')
+			->orderBy('location')
+			->get();
 
 		return View::make('character.assetsearch.ajax.result')
 			->with('assets', $assets);
