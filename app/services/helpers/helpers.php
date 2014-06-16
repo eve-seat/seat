@@ -124,11 +124,11 @@ class Helpers {
 
 			return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
 
-		} elseif($id > 98000000 && $id < 99000000) {
+		} elseif(($id > 98000000 && $id < 99000000) || ($id > 1000000 && $id < 2000000)) {
 
 			return '//image.eveonline.com/Corporation/' . $id . '_' . $size . '.png';
 
-		} elseif($id > 99000000 && $id < 100000000) {
+		} elseif(($id > 99000000 && $id < 100000000) || ($id > 0 && $id < 1000000)) {
 
 			return '//image.eveonline.com/Alliance/' . $id . '_' . $size . '.png';
 

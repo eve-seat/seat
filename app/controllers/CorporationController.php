@@ -1150,4 +1150,60 @@ class CorporationController extends BaseController {
 			->with('corporation_name', $corporation_name);
 	}
 
+	/*
+	|--------------------------------------------------------------------------
+	| getListMemberStandings()
+	|--------------------------------------------------------------------------
+	|
+	| Get a list of the corporations that we can display market orders for
+	|
+	*/
+
+	public function getListMemberStandings()
+	{
+
+		$corporations = DB::table('account_apikeyinfo')
+			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->where('account_apikeyinfo.type', 'Corporation')
+			->get();
+
+		return View::make('corporation.memberstandings.listmemberstandings')
+			->with('corporations', $corporations);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getMemberStandings()
+	|--------------------------------------------------------------------------
+	|
+	| Display the corporation Member Standings
+	|
+	*/
+
+	public function getMemberStandings($corporationID)
+	{
+
+		$corporation_name = DB::table('account_apikeyinfo_characters')
+			->where('corporationID', $corporationID)
+			->first();
+
+		$agent_standings = DB::table('corporation_standings_agents')
+			->where('corporationID', $corporationID)
+			->get();
+
+		$faction_standings = DB::table('corporation_standings_factions')
+			->where('corporationID', $corporationID)
+			->get();
+
+		$npc_standings = DB::table('corporation_standings_npccorporations')
+			->where('corporationID', $corporationID)
+			->get();
+
+		return View::make('corporation.memberstandings.memberstandings')
+			->with('agent_standings', $agent_standings)
+			->with('faction_standings', $faction_standings)
+			->with('npc_standings', $npc_standings)
+			->with('corporation_name', $corporation_name);
+	}
+
 }

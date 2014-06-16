@@ -415,6 +415,19 @@ class CharacterController extends BaseController {
  				->where('characterID', $characterID)
  				->get();
 
+ 		// Standings
+ 		$agent_standings = DB::table('character_standings_agents')
+			->where('characterID', $characterID)
+			->get();
+
+		$faction_standings = DB::table('character_standings_factions')
+			->where('characterID', $characterID)
+			->get();
+
+		$npc_standings = DB::table('character_standings_npccorporations')
+			->where('characterID', $characterID)
+			->get();
+
 		// Finally, give all this to the view to handle
 		return View::make('character.view')
 			->with('character', $character)
@@ -438,7 +451,10 @@ class CharacterController extends BaseController {
 			->with('market_orders', $market_orders)
 			->with('order_states', $order_states)
 			->with('calendar_events', $calendar_events)
-			->with('assets', $assets); // leave this just in case
+			->with('assets', $assets)
+			->with('agent_standings', $agent_standings)
+			->with('faction_standings', $faction_standings)
+			->with('npc_standings', $npc_standings); // leave this just in case
 	}
 
 	/*
