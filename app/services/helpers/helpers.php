@@ -206,6 +206,7 @@ class Helpers {
 	|
 	| Returns the number of assets including what is within a container
 	|
+	|
 	*/
 
 	public static function numAssets($array) {
@@ -226,7 +227,17 @@ class Helpers {
 	| marketOrderType()
 	|--------------------------------------------------------------------------
 	|
-	| Returns the count of a market order type
+	| Returns the total of a market order type, ie:
+	| Pass in an array of market orders, with the type (col_name)
+	| you are looking for and an integer will be provided for all the 
+	| orders in that state within the array
+	| 
+	| '0' => 'Active',
+	| '1' => 'Closed',
+	| '2' => 'Expired / Fulfilled',
+	| '3' => 'Cancelled',
+	| '4' => 'Pending',
+	| '5' => 'Deleted'
 	|
 	*/
 
