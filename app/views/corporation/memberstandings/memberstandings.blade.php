@@ -1,12 +1,12 @@
 @extends('layouts.masterLayout')
 
-@section('html_title', 'Corporation Member Standings')
+@section('html_title', 'Corporation Standings')
 
 @section('page_content')
 
 <div class="box">
 	<div class="box-header">
-	  <h3 class="box-title">All Members</h3>
+	  <h3 class="box-title">All Standings</h3>
 	</div>
 	<div class="box-body">
 		<div class="nav-tabs-custom">
