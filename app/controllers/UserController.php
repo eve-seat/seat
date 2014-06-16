@@ -123,6 +123,33 @@ class UserController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getImpersonate()
+	|--------------------------------------------------------------------------
+	|
+	| Impersonate a user
+	|
+	*/
+
+	public function getImpersonate($userID)
+	{
+
+		try {
+
+			$user = Sentry::findUserById($userID);
+
+		} catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
+
+			App::abort(404);
+		}
+
+	 	Sentry::login($user);
+
+ 		return Redirect::action('HomeController@showIndex')
+ 			->with('warning', 'You are now impersonating ' . $user->email);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| postUpdateUser()
 	|--------------------------------------------------------------------------
 	|

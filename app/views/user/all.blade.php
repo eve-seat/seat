@@ -6,7 +6,7 @@
 
 <div class="row">
 
-	<div class="col-md-5">
+	<div class="col-md-4">
 		<div class="box">
 		<div class="box-header">
 		    <h3 class="box-title">Add New User</h3>
@@ -61,7 +61,7 @@
 		</div><!-- /.box -->
 	</div>
 
-	<div class="col-md-7">
+	<div class="col-md-8">
 		<div class="box">
 
 			<div class="box-header">
@@ -92,6 +92,7 @@
 										<a a-delete-user="{{ action('UserController@getDeleteUser', array('userID' => $user->getKey(), 'delete_all_info'=> true)) }}" a-user-name="{{ $user->email }}" class="btn btn-danger btn-xs delete-user">
 											<i class="fa fa-times"></i> Delete
 										</a>
+										<a href="{{ action('UserController@getImpersonate', array('userID' => $user->getKey())) }}" class="pull-right btn btn-success btn-xs" data-container="body" data-toggle="popover" data-placement="left" data-content="Note: To return to the admin view, you will have to re-login after impersonation" data-trigger="hover">Impersonate</a>
 									@endif
 								</td>
 							</tr>
