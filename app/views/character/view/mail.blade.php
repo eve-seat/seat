@@ -1,12 +1,11 @@
 {{-- character mail --}}
-<div class="tab-pane" id="mail">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box">
                   <div class="box-header">
                       <h3 class="box-title">Mail ({{ count($mail) }})</h3>
                       <div class="box-tools">
-                      	<a href="{{ action('CharacterController@getFullMail', array('characterID' => $character->characterID)) }}" class="btn btn-default btn-sm pull-right">
+                      	<a href="{{ action('CharacterController@getFullMail', array('characterID' => $characterID)) }}" class="btn btn-default btn-sm pull-right">
                       		<i class="fa fa-envelope-o"></i> All Mail
                       	</a>
                       </div>                                    
@@ -62,4 +61,3 @@
               </div>
       </div> <!-- ./col-md-12 -->
   </div> <!-- ./row -->
-</div><!-- /.tab-pane -->

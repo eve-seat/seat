@@ -1,5 +1,4 @@
 {{-- character contracts --}}
-<div class="tab-pane" id="contracts">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box">
@@ -66,7 +65,7 @@
 										</tbody>
 									</table>
 									{{-- Add additionnal information for the contracts and give a specific class (tbodycontent) for toggle it --}}
-									<div class="col-md-12 tbodycontent">
+									<div class="col-md-12 tbodycontent" style="display: none;">
 										<ul class="list-unstyled">
 											<li>
 												<i class="fa fa-map-marker"></i> 
@@ -290,4 +289,3 @@
               </div><!-- ./box -->
       </div> <!-- ./col-md-12 -->
   </div> <!-- ./row -->
-</div><!-- /.tab-pane -->

@@ -1,5 +1,4 @@
 {{-- character contacts --}}
-<div class="tab-pane" id="contacts">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box">
@@ -47,4 +46,3 @@
     	</div>
   	</div> <!-- ./col-md-12 -->
   </div> <!-- ./row -->
-</div><!-- /.tab-pane -->

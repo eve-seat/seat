@@ -120,6 +120,44 @@ class CharacterController extends BaseController {
 			->where('characterID', $characterID)
 			->get();
 
+		// Finally, give all this to the view to handle
+		return View::make('character.view')
+			->with('character', $character)
+			->with('character_info', $character_info)
+			->with('employment_history', $employment_history)
+			->with('other_characters', $other_characters)
+			->with('people', $people)
+			->with('skillpoints', $skillpoints)
+			->with('skill_queue', $skill_queue);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxSkills()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character skills as a ajax response
+	|
+	*/
+
+	public function getAjaxSkills($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
 		// Thanks to the db being pretty WTF, we will just do some things™ and get an
 		// array ready for all the skills. Essentially, we will use this as the main
 		// loop for our skill presentation in the view
@@ -153,6 +191,40 @@ class CharacterController extends BaseController {
             );
 		}
 
+		// Finally, give all this to the view to handle
+		return View::make('character.view.character_skills')
+			->with('skill_groups', $skill_groups)
+			->with('character_skills', $character_skills);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxWalletJournal()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character wallet journal as a ajax response
+	|
+	*/
+
+	public function getAjaxWalletJournal($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
+		// Get the wallet journal
 		$wallet_journal = DB::table('character_walletjournal')
 			->join('eve_reftypes', 'character_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
 			->where('characterID', $characterID)
@@ -160,18 +232,120 @@ class CharacterController extends BaseController {
 			->take(25)
 			->get();
 
+		// Finally, give all this to the view to handle
+		return View::make('character.view.wallet_journal')
+			->with('wallet_journal', $wallet_journal)
+			->with('characterID', $characterID);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxWalletTransactions()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character wallet transactions as a ajax response
+	|
+	*/
+
+	public function getAjaxWalletTransactions($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
+		// Get the Wallet transactions
 		$wallet_transactions = DB::table('character_wallettransactions')
 			->where('characterID', $characterID)
 			->orderBy('transactionDateTime', 'desc')
 			->take(25)
 			->get();
 
+		// Finally, give all this to the view to handle
+		return View::make('character.view.wallet_transactions')
+			->with('wallet_transactions', $wallet_transactions)
+			->with('characterID', $characterID);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxMail()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character mail as a ajax response
+	|
+	*/
+
+	public function getAjaxMail($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
+		// Get the Mail
 		$mail = DB::table('character_mailmessages')
 			->where('characterID', $characterID)
 			->orderBy('sentDate', 'desc')
 			->take(25)
 			->get();
 
+		// Finally, give all this to the view to handle
+		return View::make('character.view.mail')
+			->with('mail', $mail)
+			->with('characterID', $characterID);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxNotifications()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character notifications as a ajax response
+	|
+	*/
+
+	public function getAjaxNotifications($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
+		// Get the Notifications
 		$notifications = DB::table('character_notifications')
 			->join('eve_notification_types', 'character_notifications.typeID', '=', 'eve_notification_types.typeID')
 			->join('character_notification_texts', 'character_notifications.notificationID', '=', 'character_notification_texts.notificationID')
@@ -179,6 +353,39 @@ class CharacterController extends BaseController {
 			->orderBy('sentDate', 'desc')
 			->take(25)
 			->get();
+
+		// Finally, give all this to the view to handle
+		return View::make('character.view.notifications')
+			->with('notifications', $notifications)
+			->with('characterID', $characterID);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxAssets()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character assets as a ajax response
+	|
+	*/
+
+	public function getAjaxAssets($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
 
 		// Get the assets
 		$assets = DB::table(DB::raw('character_assetlist as a'))
@@ -207,7 +414,6 @@ class CharacterController extends BaseController {
 			->where('a.characterID', $characterID)
 			->get();
 
-		
 		// Get assets contents and sum the quantity
 		$assets_contents = DB::table(DB::raw('character_assetlist_contents as a'))
 			->select(DB::raw('*'), DB::raw('SUM(a.quantity) as sumquantity'))
@@ -248,14 +454,81 @@ class CharacterController extends BaseController {
 				}
 			}
 		}
-			
-		// Character contact list
+
+		// Finally, give all this to the view to handle
+		return View::make('character.view.assets')
+			->with('assets', $assets)
+			->with('assets_list', $assets_list)
+			->with('assets_count', $assets_count)
+			->with('characterID', $characterID);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxContacts()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character contacts as a ajax response
+	|
+	*/
+
+	public function getAjaxContacts($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
+		// Get the contact list
 		$contact_list = DB::table('character_contactlist')
 			->where('characterID', $characterID)
 			->get();
-		
+
+		// Finally, give all this to the view to handle
+		return View::make('character.view.contacts')
+			->with('contact_list', $contact_list)
+			->with('characterID', $characterID);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxContracts()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character contracts as a ajax response
+	|
+	*/
+
+	public function getAjaxContracts($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
 		// Character contract list
-		// Not a clean Query. TODO: Find another way
 		$contract_list = DB::table(DB::raw('character_contracts as a'))
 			->select(DB::raw(
 				"*, CASE
@@ -368,7 +641,41 @@ class CharacterController extends BaseController {
 				}
 			}
 		}
+		// Finally, give all this to the view to handle
+		return View::make('character.view.contracts')
+			->with('contracts_courier', $contracts_courier)
+			->with('contracts_other', $contracts_other)
+			->with('characterID', $characterID);
+	}
 
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxMarketOrders()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character market orders as a ajax response
+	|
+	*/
+
+	public function getAjaxMarketOrders($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
+		// Get the market orders
 		$market_orders = DB::table(DB::raw('character_marketorders as a'))
 			->select(DB::raw(
 				"*, CASE
@@ -398,7 +705,6 @@ class CharacterController extends BaseController {
 			->get();
 
 		// Order states from: https://neweden-dev.com/Character/Market_Orders
-		//orderState	 byte
 		// Valid states: 0 = open/active, 1 = closed, 2 = expired (or fulfilled), 3 = cancelled, 4 = pending, 5 = character deleted.
 		$order_states = array(
 			'0' => 'Active',
@@ -409,10 +715,77 @@ class CharacterController extends BaseController {
 			'5' => 'Deleted'
 		);
 
+		// Finally, give all this to the view to handle
+		return View::make('character.view.market_orders')
+			->with('market_orders', $market_orders)
+			->with('order_states', $order_states)
+			->with('characterID', $characterID);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxCalendarEvents()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character calendar events as a ajax response
+	|
+	*/
+
+	public function getAjaxCalendarEvents($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
 		// Character calendar events
- 			$calendar_events = DB::table('character_upcomingcalendarevents')
- 				->where('characterID', $characterID)
- 				->get();
+		$calendar_events = DB::table('character_upcomingcalendarevents')
+			->where('characterID', $characterID)
+			->get();
+
+		// Finally, give all this to the view to handle
+		return View::make('character.view.calendar_events')
+			->with('calendar_events', $calendar_events)
+			->with('characterID', $characterID);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxStandings()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character standings events as a ajax response
+	|
+	*/
+
+	public function getAjaxStandings($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
 
  		// Standings
  		$agent_standings = DB::table('character_standings_agents')
@@ -428,32 +801,11 @@ class CharacterController extends BaseController {
 			->get();
 
 		// Finally, give all this to the view to handle
-		return View::make('character.view')
-			->with('character', $character)
-			->with('character_info', $character_info)
-			->with('employment_history', $employment_history)
-			->with('other_characters', $other_characters)
-			->with('people', $people)
-			->with('skillpoints', $skillpoints)
-			->with('skill_queue', $skill_queue)
-			->with('skill_groups', $skill_groups)
-			->with('character_skills', $character_skills)
-			->with('wallet_transactions', $wallet_transactions)
-			->with('wallet_journal', $wallet_journal)
-			->with('mail', $mail)
-			->with('notifications', $notifications)
-			->with('contact_list', $contact_list)
-			->with('assets_list', $assets_list)
-			->with('assets_count', $assets_count)
-			->with('contracts_courier', $contracts_courier)
-			->with('contracts_other', $contracts_other)
-			->with('market_orders', $market_orders)
-			->with('order_states', $order_states)
-			->with('calendar_events', $calendar_events)
-			->with('assets', $assets)
+		return View::make('character.view.character_standings')
 			->with('agent_standings', $agent_standings)
 			->with('faction_standings', $faction_standings)
-			->with('npc_standings', $npc_standings); // leave this just in case
+			->with('npc_standings', $npc_standings)
+			->with('characterID', $characterID);
 	}
 
 	/*

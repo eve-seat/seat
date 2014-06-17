@@ -1,5 +1,4 @@
 {{-- character notification --}}
-<div class="tab-pane" id="notifications">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box">
@@ -39,4 +38,3 @@
               </div>
       </div> <!-- ./col-md-12 -->
   </div> <!-- ./row -->
-</div><!-- /.tab-pane -->

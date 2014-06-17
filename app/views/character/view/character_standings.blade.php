@@ -1,5 +1,4 @@
  {{-- character standings --}}
-<div class="tab-pane" id="standings">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box">
@@ -90,4 +89,3 @@
     		</div>
     	</div> <!-- ./col-md-12 -->
     </div> <!-- ./row -->
-</div><!-- /.tab-pane -->

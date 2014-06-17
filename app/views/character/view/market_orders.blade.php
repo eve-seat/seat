@@ -1,5 +1,4 @@
 {{-- character market orders --}}
-<div class="tab-pane" id="market_orders">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box">
@@ -70,4 +69,3 @@
               </div>
       </div> <!-- ./col-md-12 -->
   </div> <!-- ./row -->
-</div><!-- /.tab-pane -->

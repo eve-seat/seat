@@ -91,36 +91,37 @@
 	    <div class="nav-tabs-custom">
 	        <ul class="nav nav-tabs">
 	            <li class="active"><a href="#character_sheet" data-toggle="tab">Character Sheet</a></li>
-	            <li><a href="#character_skills" data-toggle="tab">Character Skills</a></li>
-	            <li id="journal_graph"><a href="#wallet_journal" data-toggle="tab">Wallet Journal</a></li>
-	            <li><a href="#wallet_transactions" data-toggle="tab">Wallet Transactions</a></li>
-	            <li><a href="#mail" data-toggle="tab">Mail</a></li>
-	            <li><a href="#notifications" data-toggle="tab">Notifications</a></li>
-	            <li><a href="#assets" data-toggle="tab">Assets</a></li>
-	            <li><a href="#contacts" data-toggle="tab">Contacts</a></li>
-	            <li><a href="#contracts" data-toggle="tab">Contracts</a></li>
-	            <li><a href="#market_orders" data-toggle="tab">Market Orders</a></li>
-	            <li><a href="#calendar_events" data-toggle="tab">Calendar Events</a></li>
-	            <li><a href="#standings" data-toggle="tab">Standings</a></li>
+	            <li><a href="#character_skills" data-toggle="tab" id="load-tab" a-tab-id="character_skills">Character Skills</a></li>
+	            <li id="journal_graph"><a href="#wallet_journal" data-toggle="tab" id="load-tab" a-tab-id="wallet_journal">Wallet Journal</a></li>
+	            <li><a href="#wallet_transactions" data-toggle="tab" id="load-tab" a-tab-id="wallet_transactions">Wallet Transactions</a></li>
+	            <li><a href="#mail" data-toggle="tab" id="load-tab" a-tab-id="mail">Mail</a></li>
+	            <li><a href="#notifications" data-toggle="tab" id="load-tab" a-tab-id="notifications">Notifications</a></li>
+	            <li><a href="#assets" data-toggle="tab" id="load-tab" a-tab-id="assets">Assets</a></li>
+	            <li><a href="#contacts" data-toggle="tab" id="load-tab" a-tab-id="contacts">Contacts</a></li>
+	            <li><a href="#contracts" data-toggle="tab" id="load-tab" a-tab-id="contracts">Contracts</a></li>
+	            <li><a href="#market_orders" data-toggle="tab" id="load-tab" a-tab-id="market_orders">Market Orders</a></li>
+	            <li><a href="#calendar_events" data-toggle="tab" id="load-tab" a-tab-id="calendar_events">Calendar Events</a></li>
+	            <li><a href="#standings" data-toggle="tab" id="load-tab" a-tab-id="character_standings">Standings</a></li>
 	            <li class="pull-right">
 	            	<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" class="text-muted" data-toggle="tooltip" title="" data-placement="top" data-original-title="API Key Details">
 	            		<i class="fa fa-gear"></i>
 	            	</a>
 	            </li>
 	        </ul>
-	        <div class="tab-content">
+	        <div class="tab-content" id="loaded-results">
 				@include('character.view.character_sheet')
-				@include('character.view.character_skills')
-				@include('character.view.wallet_journal')
-				@include('character.view.wallet_transactions')
-				@include('character.view.mail')
-				@include('character.view.notifications')
-				@include('character.view.assets')
-				@include('character.view.contacts')
-				@include('character.view.contracts')          
-				@include('character.view.market_orders')
-				@include('character.view.calendar_events')
-				@include('character.view.character_standings')
+
+				<div class="tab-pane" id="character_skills"></div>
+				<div class="tab-pane" id="wallet_journal"></div>
+				<div class="tab-pane" id="wallet_transactions"></div>
+				<div class="tab-pane" id="mail"></div>
+				<div class="tab-pane" id="notifications"></div>
+				<div class="tab-pane" id="assets"></div>
+				<div class="tab-pane" id="contacts"></div>
+				<div class="tab-pane" id="contracts"></div>
+				<div class="tab-pane" id="market_orders"></div>
+				<div class="tab-pane" id="calendar_events"></div>
+				<div class="tab-pane" id="character_standings"></div>
 	        </div><!-- /.tab-content -->
 	    </div><!-- nav-tabs-custom -->
 	</div><!-- ./col-md-12 -->  
@@ -129,10 +130,80 @@
 
 @section('javascript')
 <script type="text/javascript">
-	// First Hide all contents. Not very clean to add a fake class.. TODO: Think another way to do this
-	$(".tbodycontent").hide(); 
-	// on button click. Not very clean to add a fake class.. TODO: Think another way to do this
-	$(".viewcontent").on("click", function( event ){ 
+
+	// Bind a listener to the tabs which should load the required ajax for the
+	// tab that is selected
+	$("a#load-tab").click(function() {
+
+		// Tab Ajax Locations are defined here
+		var locations = {
+			"character_skills" : "{{ action('CharacterController@getAjaxSkills', array('characterID' => $character->characterID)) }}",
+			"wallet_journal" : "{{ action('CharacterController@getAjaxWalletJournal', array('characterID' => $character->characterID)) }}",
+			"wallet_transactions" : "{{ action('CharacterController@getAjaxWalletTransactions', array('characterID' => $character->characterID)) }}",
+			"mail" : "{{ action('CharacterController@getAjaxMail', array('characterID' => $character->characterID)) }}",
+			"notifications" : "{{ action('CharacterController@getAjaxNotifications', array('characterID' => $character->characterID)) }}",
+			"assets" : "{{ action('CharacterController@getAjaxAssets', array('characterID' => $character->characterID)) }}",
+			"contacts" : "{{ action('CharacterController@getAjaxContacts', array('characterID' => $character->characterID)) }}",
+			"contracts" : "{{ action('CharacterController@getAjaxContracts', array('characterID' => $character->characterID)) }}",
+			"market_orders" : "{{ action('CharacterController@getAjaxMarketOrders', array('characterID' => $character->characterID)) }}",
+			"calendar_events" : "{{ action('CharacterController@getAjaxCalendarEvents', array('characterID' => $character->characterID)) }}",
+			"character_standings" : "{{ action('CharacterController@getAjaxStandings', array('characterID' => $character->characterID)) }}"
+		}
+
+		// Populate the tab based on the url in locations
+	    $('div#' + $(this).attr("a-tab-id"))
+	    	.html('<br><p class="lead text-center"><i class="fa fa-cog fa fa-spin"></i> Loading the request...</p>')
+	    	.load(locations[$(this).attr("a-tab-id")]);
+
+	});
+
+	// Events to be triggered when the ajax calls have compelted.
+	$( document ).ajaxComplete(function() {
+
+		// Update any outstanding id-to-name fields
+		var items = [];
+		var arrays = [], size = 250;
+
+		$('[rel="id-to-name"]').each( function(){
+			//add item to array
+			if ($.isNumeric($(this).text())) {
+				items.push( $(this).text() );
+			}
+		});
+
+		var items = $.unique( items );
+
+		while (items.length > 0)
+			arrays.push(items.splice(0, size));
+
+		$.each(arrays, function( index, value ) {
+
+			$.ajax({
+				type: 'POST',
+				url: "{{ action('HelperController@postResolveNames') }}",
+				data: {
+					'ids': value.join(',')
+				},
+				success: function(result){
+					$.each(result, function(id, name) {
+
+						$("span:contains('" + id + "')").html(name);
+					})
+				},
+				error: function(xhr, textStatus, errorThrown){
+					console.log(xhr);
+					console.log(textStatus);
+					console.log(errorThrown);
+				}
+			});
+		});
+	});
+
+	// Bind events to the HTML that we will be getting from the AJAX response
+	$("div#loaded-results").delegate('.viewcontent', 'click', function() {
+
+		// Expandable assets & contracts views
+
 		// get the tag direct after the button
 		if($(this).hasClass('contracts')){
 			// if we are in Contracts view, we check the next Div Tag
@@ -153,10 +224,10 @@
 		} else {
 			$(this).removeClass('fa-minus').addClass('fa-plus'); 
 			$(this).closest("tr").css( "background-color", "#FFFFFF" ); // reset the background color on container when we hide content
-		}
+		}		
 	});
-	
-	// $(function () {
+
+	// Wallet delta graph	
 	$("li#journal_graph").click(function() {
 		var options = { chart: {
 			renderTo: 'chart',
@@ -201,42 +272,6 @@
 			// Trigger a fake resize to get the chart to calculate the width
 			// correctly
 			$(window).trigger('resize');
-		});
-	});
-	$( document ).ready(function() {
-		var items = [];
-		var arrays = [], size = 250;
-
-		$('[rel="id-to-name"]').each( function(){
-		//add item to array
-			items.push( $(this).text() );
-		});
-
-		var items = $.unique( items );
-
-		while (items.length > 0)
-			arrays.push(items.splice(0, size));
-
-		$.each(arrays, function( index, value ) {
-
-			$.ajax({
-				type: 'POST',
-				url: "{{ action('HelperController@postResolveNames') }}",
-				data: {
-					'ids': value.join(',')
-				},
-				success: function(result){
-					$.each(result, function(id, name) {
-
-						$("span:contains('" + id + "')").html(name);
-					})
-				},
-				error: function(xhr, textStatus, errorThrown){
-					console.log(xhr);
-					console.log(textStatus);
-					console.log(errorThrown);
-				}
-			});
 		});
 	});
 </script>

@@ -1,12 +1,11 @@
 {{-- wallet transactions --}}
-<div class="tab-pane" id="wallet_transactions">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box">
                   <div class="box-header">
                       <h3 class="box-title">Wallet Transactions ({{ count($wallet_transactions) }})</h3>
                       <div class="box-tools">
-                      	<a href="{{ action('CharacterController@getFullWalletTransactions', array('characterID' => $character->characterID)) }}" class="btn btn-default btn-sm pull-right">
+                      	<a href="{{ action('CharacterController@getFullWalletTransactions', array('characterID' => $characterID)) }}" class="btn btn-default btn-sm pull-right">
                       		<i class="fa fa-money"></i> View Full Transactions
                       	</a>
                       </div>
@@ -51,4 +50,3 @@
               </div>
       </div> <!-- ./col-md-12 -->
   </div> <!-- ./row -->
-</div><!-- /.tab-pane -->

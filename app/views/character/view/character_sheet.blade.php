@@ -5,7 +5,6 @@
 
 		<div class="col-md-6">
 
-
         	{{-- character information --}}
             <div class="box box-solid box-primary">
                 <div class="box-header">

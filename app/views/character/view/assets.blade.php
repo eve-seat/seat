@@ -1,5 +1,4 @@
 {{-- character assets --}}
-<div class="tab-pane" id="assets">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="box">
@@ -62,7 +61,7 @@
 														</tr>
 													</tbody>
 													@if(isset($asset['contents']))
-														<tbody style="border-top:0px solid #FFF" class="tbodycontent">
+														<tbody style="border-top:0px solid #FFF; display: none;" class="tbodycontent">
 															@foreach ($asset['contents'] as $content)
 																<tr class="hidding">
 																	<td>{{ App\Services\Helpers\Helpers::formatBigNumber($content['quantity']) }}</td>
@@ -101,4 +100,3 @@
 			</div><!-- /.box -->
 		</div> <!-- ./col-md-12 -->
 	</div> <!-- ./row -->
-</div><!-- /.tab-pane -->
