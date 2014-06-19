@@ -54,10 +54,13 @@ class PermissionsController extends BaseController {
 			->groupBy('users.id')
 			->get();
 
-		// Get all of the configured groups in the system and prepare a array of it
+		// Get all of the configured groups in the system and prepare a array of it.
+		// We check that the Administrators group is not added as these should only
+		// really be modified in the user management
 		$available_groups = array();
 		foreach (Sentry::findAllGroups() as $available_group)
-			$available_groups[] = $available_group->name;
+			if ($available_group->name <> 'Administrators')
+				$available_groups[] = $available_group->name;
 
 		// With the seat_users now known, we will loop over them and extract all of the
 		// groups that they belong to
