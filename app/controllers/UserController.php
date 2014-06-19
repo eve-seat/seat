@@ -229,4 +229,54 @@ class UserController extends BaseController {
 			->with('success', 'User has been deleted');
 	}
 
+	/*
+	|--------------------------------------------------------------------------
+	| postChangePassword()
+	|--------------------------------------------------------------------------
+	|
+	| Changes the password but sends an email to the user 
+	| to confirm the password change
+	|
+	*/
+
+	public function postChangePassword()
+	{
+		try {
+
+			$user = Sentry::getUser();
+
+			$validation = new Validators\SeatUserPasswordValidator;
+
+			if($validation->passes()){
+
+				if(Sentry::checkPassword(Input::get('oldPassword'))){
+					$user->password = Input::get('newPassword_confirmation');
+					$user->save();
+					return Redirect::action('ProfileController@getView')
+						->with('success', 'Your password has successfully been changed.');	
+
+				} else {
+
+				return Redirect::action('ProfileController@getView')
+						->withInput()
+						->withErrors('Your current password did not match.');
+				} // end checkPassword
+
+			} else {
+
+				return Redirect::action('ProfileController@getView')
+					->withInput()
+					->withErrors($validation->errors);
+
+			}
+
+		}
+
+		catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
+
+			App::abort(404);
+		}
+
+	}
+
 }
