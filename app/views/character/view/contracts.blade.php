@@ -220,7 +220,7 @@
 										</tbody>
 									</table>
 									{{-- Add additionnal information for the contracts and give a specific class (tbodycontent) for toggle it --}}
-									<div class="col-md-12 tbodycontent">
+									<div class="col-md-12 tbodycontent" style="display: none;">
 										<ul class="list-unstyled">
 											<li>
 												<i class="fa fa-flag-checkered"></i> 
