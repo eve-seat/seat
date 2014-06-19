@@ -74,11 +74,11 @@
 				        @endforeach
 				    </div> <!-- ./row -->
 	            @else
-	            	No other characters in a person group
+	            	No characters in a person group
 	           	@endif
 		    </div><!-- /.box-body -->
 		    <div class="box-footer">
-				<p class="text-center lead">{{ count($people) }} other characters on this people group</p>
+				<p class="text-center lead">{{ count($people) }} characters on this people group</p>
 		    </div><!-- /.box-footer-->
 		</div><!-- ./box -->
 	</div>
