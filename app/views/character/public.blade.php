@@ -68,7 +68,7 @@
                 	<ul class="list-unstyled">
                 		@foreach($employment_history as $employment)
                 			<li>
-                				<img src='https://image.eveonline.com/Corporation/{{ $employment->corporationID }}_64.png' class='img-circle'>
+                				<img src='https://image.eveonline.com/Corporation/{{ $employment->corporationID }}_32.png' class='img-circle'>
                 				Joined <b><span rel="id-to-name">{{ $employment->corporationID }}</span></b> on {{ $employment->startDate }} ({{ Carbon\Carbon::parse($employment->startDate)->diffForHumans() }})
                 			</li>
                 		@endforeach
@@ -88,7 +88,7 @@
         	{{-- Ship & Location Information --}}
             <div class="box box-solid box-primary">
                 <div class="box-header">
-                    <h3 class="box-title">Ship, Location &amp; Other</h3>
+                    <h3 class="box-title">Information</h3>
                     <div class="box-tools pull-right">
                     </div>
                 </div>
