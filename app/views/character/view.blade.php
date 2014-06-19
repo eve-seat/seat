@@ -90,7 +90,7 @@
 	    <!-- Custom Tabs -->
 	    <div class="nav-tabs-custom">
 	        <ul class="nav nav-tabs">
-	            <li class="active"><a href="#character_sheet" data-toggle="tab">Character Sheet</a></li>
+	            <li class="active" id="start"><a href="#character_sheet" data-toggle="tab" id="load-tab" a-tab-id="character_sheet">Character Sheet</a></li>
 	            <li><a href="#character_skills" data-toggle="tab" id="load-tab" a-tab-id="character_skills">Character Skills</a></li>
 	            <li id="journal_graph"><a href="#wallet_journal" data-toggle="tab" id="load-tab" a-tab-id="wallet_journal">Wallet Journal</a></li>
 	            <li><a href="#wallet_transactions" data-toggle="tab" id="load-tab" a-tab-id="wallet_transactions">Wallet Transactions</a></li>
@@ -108,20 +108,7 @@
 	            	</a>
 	            </li>
 	        </ul>
-	        <div class="tab-content" id="loaded-results">
-				@include('character.view.character_sheet')
-
-				<div class="tab-pane" id="character_skills"></div>
-				<div class="tab-pane" id="wallet_journal"></div>
-				<div class="tab-pane" id="wallet_transactions"></div>
-				<div class="tab-pane" id="mail"></div>
-				<div class="tab-pane" id="notifications"></div>
-				<div class="tab-pane" id="assets"></div>
-				<div class="tab-pane" id="contacts"></div>
-				<div class="tab-pane" id="contracts"></div>
-				<div class="tab-pane" id="market_orders"></div>
-				<div class="tab-pane" id="calendar_events"></div>
-				<div class="tab-pane" id="character_standings"></div>
+	        <div class="tab-content" id="tab-results">
 	        </div><!-- /.tab-content -->
 	    </div><!-- nav-tabs-custom -->
 	</div><!-- ./col-md-12 -->  
@@ -131,12 +118,19 @@
 @section('javascript')
 <script type="text/javascript">
 
+	// Click the first tab on page load. We could probably add some logic here
+	// to have the location hash read and that tab clicked
+	$(document).ready(function() {
+		$("li#start a").click();
+	})
+
 	// Bind a listener to the tabs which should load the required ajax for the
 	// tab that is selected
 	$("a#load-tab").click(function() {
 
 		// Tab Ajax Locations are defined here
 		var locations = {
+			"character_sheet" : "{{ action('CharacterController@getAjaxCharacterSheet', array('characterID' => $character->characterID)) }}",
 			"character_skills" : "{{ action('CharacterController@getAjaxSkills', array('characterID' => $character->characterID)) }}",
 			"wallet_journal" : "{{ action('CharacterController@getAjaxWalletJournal', array('characterID' => $character->characterID)) }}",
 			"wallet_transactions" : "{{ action('CharacterController@getAjaxWalletTransactions', array('characterID' => $character->characterID)) }}",
@@ -151,9 +145,19 @@
 		}
 
 		// Populate the tab based on the url in locations
-	    $('div#' + $(this).attr("a-tab-id"))
+	    $('div#tab-results')
 	    	.html('<br><p class="lead text-center"><i class="fa fa-cog fa fa-spin"></i> Loading the request...</p>')
-	    	.load(locations[$(this).attr("a-tab-id")]);
+	    	.load(locations[$(this).attr("a-tab-id")], function() {
+
+				if ($.fn.dataTable.isDataTable('table#datatable')) {
+				    $('table#datatable').DataTable();
+				}
+				else {
+				    table = $('table#datatable').DataTable( {
+				        paging: false
+				    });
+				}
+	    	});
 
 	});
 

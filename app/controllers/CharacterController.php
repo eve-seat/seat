@@ -103,6 +103,50 @@ class CharacterController extends BaseController {
 			->groupBy('characterID')
 			->get();
 
+		// Finally, give all this to the view to handle
+		return View::make('character.view')
+			->with('character', $character)
+			->with('other_characters', $other_characters)
+			->with('people', $people);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAjaxCharacterSheet()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character sheet as a ajax response
+	|
+	*/
+
+	public function getAjaxCharacterSheet($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
+		$character = DB::table('account_apikeyinfo_characters')
+			->leftJoin('account_apikeyinfo', 'account_apikeyinfo_characters.keyID', '=', 'account_apikeyinfo.keyID')
+			->leftJoin('seat_keys', 'account_apikeyinfo_characters.keyID', '=', 'seat_keys.keyID')
+			->join('account_accountstatus', 'account_apikeyinfo_characters.keyID', '=', 'account_accountstatus.keyID')
+			->join('character_charactersheet', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
+			->join('character_skillintraining', 'account_apikeyinfo_characters.characterID', '=', 'character_skillintraining.characterID')
+			->leftJoin('invTypes', 'character_skillintraining.trainingTypeID', '=', 'invTypes.typeID')
+			->where('character_charactersheet.characterID', $characterID)
+			->first();
+
 		$character_info = DB::table('eve_characterinfo')
 			->where('characterID', $characterID)
 			->first();
@@ -121,12 +165,10 @@ class CharacterController extends BaseController {
 			->get();
 
 		// Finally, give all this to the view to handle
-		return View::make('character.view')
+		return View::make('character.view.character_sheet')
 			->with('character', $character)
 			->with('character_info', $character_info)
 			->with('employment_history', $employment_history)
-			->with('other_characters', $other_characters)
-			->with('people', $people)
 			->with('skillpoints', $skillpoints)
 			->with('skill_queue', $skill_queue);
 	}
