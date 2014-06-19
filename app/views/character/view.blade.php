@@ -101,7 +101,7 @@
 	            <li><a href="#contracts" data-toggle="tab" id="load-tab" a-tab-id="contracts">Contracts</a></li>
 	            <li><a href="#market_orders" data-toggle="tab" id="load-tab" a-tab-id="market_orders">Market Orders</a></li>
 	            <li><a href="#calendar_events" data-toggle="tab" id="load-tab" a-tab-id="calendar_events">Calendar Events</a></li>
-	            <li><a href="#standings" data-toggle="tab" id="load-tab" a-tab-id="character_standings">Standings</a></li>
+	            <li><a href="#character_standings" data-toggle="tab" id="load-tab" a-tab-id="character_standings">Standings</a></li>
 	            <li class="pull-right">
 	            	<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" class="text-muted" data-toggle="tooltip" title="" data-placement="top" data-original-title="API Key Details">
 	            		<i class="fa fa-gear"></i>
