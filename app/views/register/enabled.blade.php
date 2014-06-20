@@ -20,9 +20,12 @@
 
             <div class="footer">                                                               
                 {{ Form::submit('Send My Activation Link', array('class' => 'btn bg-olive btn-block')) }}
+
+                <a href="{{ URL::previous() }}">Back to Main Menu</a>
             </div>
             
         {{ Form::close() }}
+
     </div>
 
 @stop
