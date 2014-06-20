@@ -49,7 +49,7 @@
 	</div>
 </div>
 
-<!-- vCode reveal modal -->
+<!-- password reveal modal -->
 <div class="modal fade" id="password-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -58,51 +58,51 @@
                 <h4 class="modal-title"><i class="fa fa-lock"></i> Change Password</h4>
             </div>
             <div class="modal-body">
-              <p class="text-center">
-              	{{ Form::open(array('action' => 'UserController@postChangePassword', 'class' => 'form-horizontal')) }}
-							    <fieldset>
+              	<p class="text-center">
+	              	{{ Form::open(array('action' => 'UserController@postChangePassword', 'class' => 'form-horizontal')) }}
+						<fieldset>
 
-							    <div class="form-group">
-							      <label class="col-md-4 control-label" for="oldPassword">Old Password</label>
-							      <div class="col-md-6">
-							        <div class="input-group">
-							          <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-							          {{ Form::password('oldPassword', array('id' => 'oldPassword', 'class' => 'form-control'), 'required', 'autofocus') }}
-							        </div>
-							      </div>
-							    </div>
+						<div class="form-group">
+						  <label class="col-md-4 control-label" for="oldPassword">Old Password</label>
+						  <div class="col-md-6">
+						    <div class="input-group">
+						      <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+						      {{ Form::password('oldPassword', array('id' => 'oldPassword', 'class' => 'form-control'), 'required', 'autofocus') }}
+						    </div>
+						  </div>
+						</div>
 
-							    <div class="form-group">
-							      <label class="col-md-4 control-label" for="newPassword">New Password</label>
-							      <div class="col-md-6">
-							        <div class="input-group">
-							          <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-							          {{ Form::password('newPassword', array('id' => 'newPassword', 'class' => ' form-control'), 'required') }}
-							        </div>
-							      </div>
-							    </div>
+						<div class="form-group">
+						  <label class="col-md-4 control-label" for="newPassword">New Password</label>
+						  <div class="col-md-6">
+						    <div class="input-group">
+						      <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+						      {{ Form::password('newPassword', array('id' => 'newPassword', 'class' => ' form-control'), 'required') }}
+						    </div>
+						  </div>
+						</div>
 
-							    <div class="form-group">
-							      <label class="col-md-4 control-label" for="confirmPassword">Confirm Password</label>
-							      <div class="col-md-6">
-							        <div class="input-group">
-							          <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-							          {{ Form::password('newPassword_confirmation', array('id' => 'confirmPassword', 'class' => ' form-control'), 'required') }}
-							        </div>
-							      </div>
-							    </div>
+						<div class="form-group">
+						  <label class="col-md-4 control-label" for="confirmPassword">Confirm Password</label>
+						  <div class="col-md-6">
+						    <div class="input-group">
+						      <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+						      {{ Form::password('newPassword_confirmation', array('id' => 'confirmPassword', 'class' => ' form-control'), 'required') }}
+						    </div>
+						  </div>
+						</div>
 
-							    <!-- Button -->
-							    <div class="form-group">
-							      <label class="col-md-4 control-label" for="singlebutton"></label>
-							      <div class="col-md-6">
-							        {{ Form::submit('Change Password', array('class' => 'btn bg-olive btn-block')) }}
-							      </div>
-							    </div>
+						<!-- Button -->
+						<div class="form-group">
+						  <label class="col-md-4 control-label" for="singlebutton"></label>
+						  <div class="col-md-6">
+						    {{ Form::submit('Change Password', array('class' => 'btn bg-olive btn-block')) }}
+						  </div>
+						</div>
 
-							    </fieldset>
-							  {{ Form::close() }}
-              </p>
+						</fieldset>
+					{{ Form::close() }}
+              	</p>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
