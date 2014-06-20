@@ -204,7 +204,7 @@
 	});
 
 	// Bind events to the HTML that we will be getting from the AJAX response
-	$("div#loaded-results").delegate('.viewcontent', 'click', function() {
+	$("div#tab-results").delegate('.viewcontent', 'click', function() {
 
 		// Expandable assets & contracts views
 
