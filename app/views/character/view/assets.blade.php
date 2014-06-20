@@ -49,7 +49,7 @@
 																</span>
 																@if(isset($asset['contents']))
 																<span data-toggle="tooltip" title="" data-original-title="{{ App\Services\Helpers\Helpers::sumVolume($asset['contents'], 'volume') }} m3 in container contents">
-																	({{ App\Services\Helpers\Helpers::sumVolume($asset['contents'], 'volume') }})
+																	({{ App\Services\Helpers\Helpers::sumVolume($asset['contents'], 'volume', 'personal') }})
 																	</span>
 																@endif
 															</td>
@@ -78,8 +78,8 @@
 																		</span>
 																	</td>
 																	<td>
-																		<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['volume'], 0, '.', ' ') }} m3">
-																			{{ App\Services\Helpers\Helpers::formatBigNumber($content['volume']) }}
+																		<span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['volume'] * $content['quantity'], 0, '.', ' ') }} m3">
+																			{{ App\Services\Helpers\Helpers::formatBigNumber($content['volume'] * $content['quantity']) }}
 																		</span>
 																	</td>
 

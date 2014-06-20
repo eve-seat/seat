@@ -183,18 +183,26 @@ class Helpers {
 	|--------------------------------------------------------------------------
 	|
 	| Returns the total volume of an array of assets
+	| param $personal is passed if the assets is calculated for the person
+	| 	and not the corporation
 	|
 	*/
 
-	public static function sumVolume($array, $col_name) {
+	public static function sumVolume($array, $col_name, $personal = NULL) {
 		$volume = 0;
 		foreach($array as $item){
 			if(isset($item['contents'])){
 				foreach($item['contents'] as $type){
-					$volume += $type[$col_name];
+					if($personal)
+						$volume += ($type[$col_name] * $type['quantity']);
+					else
+						$volume += $type[$col_name];
 				}
 			}
-			$volume += $item[$col_name];
+			if($personal)
+				$volume += ($item[$col_name] * $item['quantity']);
+			else
+				$volume += $item[$col_name];
 		}
 		return Helpers::formatBigNumber($volume);
 	}
