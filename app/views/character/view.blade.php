@@ -27,21 +27,21 @@
 	                @foreach ($other_characters as $alt)
 		                <div class="row">
 		               		<a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}" style="color:inherit;">
-		                		<div class="col-md-2">
-							<img src="//image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
-						</div>
-						<div class="col-md-5">
-							<ul class="list-unstyled">
-								<li><b>Name: </b>{{ $alt->characterName }}</li>
-								<li><b>Corp: </b>{{ $alt->corporationName }}</li>
-								<li>
-									@if (strlen($alt->trainingEndTime) > 0)
-										<b>Training Ends: </b> {{ Carbon\Carbon::parse($alt->trainingEndTime)->diffForHumans() }}
-									@endif
-								</li>
-							</ul>
-						</div>
-						</a>
+		                		<div class="col-md-4">
+									<img src="//image.eveonline.com/Character/{{ $alt->characterID }}_64.jpg" class="img-circle">
+								</div>
+								<div class="col-md-8">
+									<ul class="list-unstyled">
+										<li><b>Name: </b>{{ $alt->characterName }}</li>
+										<li><b>Corp: </b>{{ $alt->corporationName }}</li>
+										<li>
+											@if (strlen($alt->trainingEndTime) > 0)
+												<b>Training Ends: </b> {{ Carbon\Carbon::parse($alt->trainingEndTime)->diffForHumans() }}
+											@endif
+										</li>
+									</ul>
+								</div>
+							</a>
 						</div><!-- ./row -->
 	                @endforeach
 	            @else
