@@ -156,7 +156,7 @@ SeAT should now process jobs that enter the job queue.
 ####  9. Setup cron ####
 Setup the cronjob for SeAT. This job should run as a user that has access to SeAT's location:
   - `crontab -e`  
-  - Paste this line: `* * * * * php <path to artisan> scheduled:run 1>> /dev/null 2>&1`
+  - Paste this line: `* * * * * /usr/bin/php /var/www/seat/artisan scheduled:run 1>> /dev/null 2>&1`
 
 #### 10. Security #####
 The web interface has no configured default account and should have the admin account added the `seat:reset` artisan command:
