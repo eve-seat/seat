@@ -6,7 +6,7 @@ After you have followed the normal steps found in `docs/UPGRADING.md`, and befor
 
 ### Version 0.8 -> 0.9
 
-When logging in, username is now referred to as email address to conform with the new user management package. You can continue treating this as a username if you want; it doesn't really care.
+When logging in, username is now referred to as email address to conform with the new user management package. You can continue treating this as a username if you want; it doesn't really matter.
 
 You must reset your SeAT admin password:
 
@@ -16,6 +16,22 @@ It will prompt you to enter a new admin password. Once you've done this, you'll 
 
 You must seed the default SeAT groups:
   - `php artisan seat:groupsync`
+
+```bash
+$ php artisan seat:groupsync
+[info] Group POS Managers was not found. Creating it.
+[ok] Group POS Managers created.
+[info] Group Wallet Managers was not found. Creating it.
+[ok] Group Wallet Managers created.
+[info] Group Recruiters was not found. Creating it.
+[ok] Group Recruiters created.
+[info] Group Asset Managers was not found. Creating it.
+[ok] Group Asset Managers created.
+[info] Group Contract Managers was not found. Creating it.
+[ok] Group Contract Managers created.
+[info] Group Market Managers was not found. Creating it.
+[ok] Group Market Managers created.
+```
 
 
 Lastly, bring your app back online by running `php artisan up` and watch the log files for any potential errors.

@@ -159,7 +159,7 @@ Setup the cronjob for SeAT. This job should run as a user that has access to SeA
   - Paste this line: `* * * * * /usr/bin/php /var/www/seat/artisan scheduled:run 1>> /dev/null 2>&1`
 
 #### 10. Security #####
-The web interface has no configured default account and should have the admin account added the `seat:reset` artisan command:
+The web interface has a default account for the user `admin`, and should have its password set with `php artisan seat:reset`
 
 ```bash
 $ php artisan seat:reset
@@ -170,6 +170,25 @@ Retype that password please:
 The passwords match. Resetting to the new 12 char one.
 Password has been changed successfully.
 ```
+
+You should also seed the default SeAT user groups with `php artisan seat:groupsync`:
+
+```bash
+$ php artisan seat:groupsync
+[info] Group POS Managers was not found. Creating it.
+[ok] Group POS Managers created.
+[info] Group Wallet Managers was not found. Creating it.
+[ok] Group Wallet Managers created.
+[info] Group Recruiters was not found. Creating it.
+[ok] Group Recruiters created.
+[info] Group Asset Managers was not found. Creating it.
+[ok] Group Asset Managers created.
+[info] Group Contract Managers was not found. Creating it.
+[ok] Group Contract Managers created.
+[info] Group Market Managers was not found. Creating it.
+[ok] Group Market Managers created.
+```
+
 
 You should regenerate the applications security key:
 
