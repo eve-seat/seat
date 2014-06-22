@@ -29,12 +29,17 @@ class BaseApi {
 
 	public static function bootstrap()
 	{
+
+		// Configure Pheal
 		PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage( storage_path(). '/cache/phealcache/' );
 		PhealConfig::getInstance()->access = new \Pheal\Access\StaticCheck();
 		PhealConfig::getInstance()->log = new \Pheal\Log\FileStorage( storage_path() . '/logs/' );
 		PhealConfig::getInstance()->http_user_agent = 'SeAT ' . \Config::get('seat.version') . 'API Fetcher';
 		PhealConfig::getInstance()->api_customkeys = true;
 		PhealConfig::getInstance()->http_method = 'curl';
+
+		// Disable the Laravel query log. Some of the API calls do.. a lot of queries :P
+		\DB::connection()->disableQueryLog();
 	}
 
 	/*

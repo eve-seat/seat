@@ -83,6 +83,27 @@ class QueueController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getViewError()
+	|--------------------------------------------------------------------------
+	|
+	| Removes a Job record that is in a error state
+	|
+	*/
+
+	public function getViewError($id)
+	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			App::abort(404);
+
+		$detail = \SeatQueueInformation::where('id', $id)->first();
+
+		return View::make('queue.view')
+			->with('detail', $detail);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getDeleteError()
 	|--------------------------------------------------------------------------
 	|
@@ -92,6 +113,9 @@ class QueueController extends BaseController {
 
 	public function getDeleteError($id)
 	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			App::abort(404);
 
 		\SeatQueueInformation::where('status','Error')
 			->where('id', $id)
@@ -112,6 +136,9 @@ class QueueController extends BaseController {
 	public function getDeleteAllErrors()
 	{
 
+		if (!Sentry::getUser()->isSuperUser())
+			App::abort(404);
+
 		\SeatQueueInformation::where('status','Error')
 			->delete();
 
@@ -129,6 +156,9 @@ class QueueController extends BaseController {
 
 	public function getDeleteQueuedJob($id)
 	{
+
+		if (!Sentry::getUser()->isSuperUser())
+			App::abort(404);
 
 		// Get the Redis JobID from the databse for this jib
 		$redis_job_id = \SeatQueueInformation::where('id', $id)->pluck('jobID');

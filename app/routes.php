@@ -13,18 +13,18 @@
 
 Route::group(array('prefix' => 'account'), function() {
 
-    Route::controller('user', 'UserController');
+    Route::controller('login', 'SessionController');
     Route::controller('password', 'RemindersController');
     Route::controller('register', 'RegisterController');
 
 });
 
 
-Route::group(array('before' => 'auth|csrf'), function() {
+Route::group(array('before' => 'auth|csrf|key.required'), function() {
 
     Route::get('/', 'HomeController@showIndex');
 
-	Route::controller('api-key', 'ApiKeyController');
+    Route::controller('api-key', 'ApiKeyController');
     Route::controller('dashboard', 'DashboardController');
 
     Route::group(array('prefix' => 'character'), function() {
@@ -33,11 +33,18 @@ Route::group(array('before' => 'auth|csrf'), function() {
 
     Route::controller('character', 'CharacterController');
     Route::controller('corporation', 'CorporationController');
+    Route::controller('eve', 'EveController');
     Route::controller('queue', 'QueueController');
 
+    Route::controller('permissions', 'PermissionsController');
+
     Route::controller('helpers', 'HelperController');
+    Route::controller('user', 'UserController');
     Route::controller('debug', 'DebugController');
 
+    Route::controller('profile', 'ProfileController');
     Route::controller('help', 'HelpController');
 
 });
+
+Route::when('user/*', 'auth.superuser');

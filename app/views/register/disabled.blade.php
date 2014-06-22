@@ -11,7 +11,7 @@
                     Please come back later when it has been enabled
                 </p>
                 <p>
-                    <a href={{ url('/')}} class="btn btn-block bg-olive">Go home</a>
+                    <a href="{{ URL::previous() }}" class="btn btn-block bg-olive">Back to Main Menu</a>
                 </p>
             </div>
     </div>

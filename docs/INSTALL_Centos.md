@@ -65,9 +65,11 @@ Finally, we can get to the SeAT stuff itself. You are going to want to clone the
 Next, clone the respoitory somwhere on disk. I'll reccomend `/var/www`:  
     - `cd /var/www`  
     - `git clone https://github.com/eve-seat/seat.git`  
-    - Checkout the latest SeAT version found [here](https://github.com/eve-seat/seat/tags) with `git checkout tags/v0.8` (v0.8 is current latest but may have changed. Hint: [![Latest Release](http://img.shields.io/github/release/eve-seat/seat.svg)](https://github.com/eve-seat/seat/releases/latest))  
-    - Ensure that your webserver owns all of the content with: `sudo chown -R apache:apache /var/www/seat`
-    - `sudo chmod -R guo+w app/storage` to ensure that the web server can write to the storage location  
+    - Move to the new `seat` directory with `cd seat/`  
+    - Checkout the latest SeAT version found [here](https://github.com/eve-seat/seat/tags) with `git checkout -b 0.8 tags/v0.8` (v0.8 is current latest but may have changed. Hint: [![Latest Release](http://img.shields.io/github/release/eve-seat/seat.svg)](https://github.com/eve-seat/seat/releases/latest))  
+    - Ensure that your webserver owns all of the content with:  
+      - `sudo chown -R apache:apache /var/www/seat`  
+      - `sudo chmod -R guo+w app/storage` to ensure that the web server can write to the storage location  
 
 After seat is downloaded, we need to get composer to help us install the applications dependencies and generate autoload files:  
     - `cd /var/www/seat`  
@@ -75,12 +77,29 @@ After seat is downloaded, we need to get composer to help us install the applica
     - `php composer.phar install`  
 
 #### 5. Get EVE SDE's ####
-Again, assuming you used `/var/www`, a tool to download the required static data exports can be found in `/var/www/seat/evesde/update_sde.sh`.
+Again, assuming you used `/var/www` as the location to install SeAT, a tool to download the required static data exports can be found in `/var/www/seat/evesde/update_sde.sh`.
 This tool can be run with:  
     - `cd /var/www/seat/evesde`  
     - `sh update_sde.sh`  
 
-Once it completes the downloads, a directory with a name starting with `SeAT-` will be located in `/tmp` on your machine. This directory containts static data that can just be imported into your database. The command will look something like:
+The downloader can automatically import the required SDE's into MySQL too. A sample run with the automatic updates may look like:
+
+```bash
+[root@seat evesde]# sh update_sde.sh
+Automatically import required SQL files? [y/N] y
+Enter database user: seat
+Enter database password:
+Enter database server (empty for localhost):
+Enter database name: seat
+Creating temp directory /tmp/SeAT-3b722357aa3e44e16869877ca3924665...
+Getting dump dgmTypeAttributes from https://www.fuzzwork.co.uk/dump/rubicon-1.3-95173/dgmTypeAttributes.sql.bz2...
+Extracting /tmp/SeAT-3b722357aa3e44e16869877ca3924665/dgmTypeAttributes.sql.bz2 ...
+<snip>
+Importing the SQL files into MySQL...
+[root@seat evesde]#
+```
+
+If you chose not to automatically import the SQL, a directory with a name starting with `SeAT-` will be located in `/tmp` on your machine. This directory containts the static data that can just be imported into your database. The command will look something like:
 
 `cat /var/SeAT-109831-39871098278970987/*.sql | mysql -u seat -p seat`
 
@@ -90,8 +109,8 @@ Once the import has been completed, you can safely delete the `/tmp/SeAT-*` dire
 SeAT configuration lives in `app/config`. Assuming you cloned to `/var/www`, the configs will be in `/var/www/seat/app/config`.  
 
 Edit the fowlling files:  
-    - database.php (set your configured username/password)  
-    - cache.php  (may not require any changes, depending on how you wish to setup SeAT)
+    - `database.php` (set your configured username/password)  
+    - `cache.php`  (may not require any changes, depending on how you wish to setup SeAT)
     
 #### 7. Run the SeAT database migrations & seeds ####
 SeAT has all of the database schemas stored in 'migration' scripts in `app/database/migrations`. Run them with:
@@ -137,10 +156,10 @@ SeAT should now process jobs that enter the job queue.
 ####  9. Setup cron ####
 Setup the cronjob for SeAT. This job should run as a user that has access to SeAT's location:
   - `crontab -e`  
-  - Paste this line: `* * * * * php <path to artisan> scheduled:run 1>> /dev/null 2>&1`
+  - Paste this line: `* * * * * /usr/bin/php /var/www/seat/artisan scheduled:run 1>> /dev/null 2>&1`
 
 #### 10. Security #####
-The web interface has a default password of `seat!admin` and it is *highly* reccomended that you change this using the `seat:reset` artisan command:
+The web interface has a default account for the user `admin`, and should have its password set with `php artisan seat:reset`
 
 ```bash
 $ php artisan seat:reset
@@ -151,6 +170,25 @@ Retype that password please:
 The passwords match. Resetting to the new 12 char one.
 Password has been changed successfully.
 ```
+
+You should also seed the default SeAT user groups with `php artisan seat:groupsync`:
+
+```bash
+$ php artisan seat:groupsync
+[info] Group POS Managers was not found. Creating it.
+[ok] Group POS Managers created.
+[info] Group Wallet Managers was not found. Creating it.
+[ok] Group Wallet Managers created.
+[info] Group Recruiters was not found. Creating it.
+[ok] Group Recruiters created.
+[info] Group Asset Managers was not found. Creating it.
+[ok] Group Asset Managers created.
+[info] Group Contract Managers was not found. Creating it.
+[ok] Group Contract Managers created.
+[info] Group Market Managers was not found. Creating it.
+[ok] Group Market Managers created.
+```
+
 
 You should regenerate the applications security key:
 
@@ -179,7 +217,7 @@ Done! :)
 In order to get the SeAT frontend running, we need to configure Apache to serve our SeAT installs `public` folder.  
 The Apache configuration itself will depend on how your server is set up. Generally, virtual hosting is the way to go, and this is what I will be showing here.
 
-If you are not going to use virtual hosting, the easiest to get going will probably to symlink `/var/www/seat/public/` to `/var/www/html/seat`. This should have SeAT available at http://your ip or hostname/seat 
+If you are not going to use virtual hosting, the easiest to get going will probably to symlink `/var/www/seat/public/` to `/var/www/html/seat` and configuring apache to `AllowOverride All` in the `<Directory "/var/www/html">` section. This should have SeAT available at http://your ip or hostname/seat after you restart apache.
 
 
 ##### The VirtualHost setup #####

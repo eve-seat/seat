@@ -65,7 +65,7 @@ class SeatQueueStatus extends Command {
 			
 				$this->line(
 					'OwnerID: ' . $row->ownerID . ' | Scope: ' . $row->scope .
-				 	' | API: ' . $row->api . ' | Status: "' . $row->output .
+				 	' | API: ' . $row->api . ' | Status: "' . str_limit($row->output, 20, '...') .
 				 	'" | Created: ' . Carbon::parse($row->created_at)->diffForHumans() .
 				 	' | Last updated: ' . Carbon::parse($row->updated_at)->diffForHumans()
 				);

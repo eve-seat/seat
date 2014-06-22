@@ -38,7 +38,7 @@ function ask {
 }
 
 URL="https://www.fuzzwork.co.uk/dump/"
-EXPANSION="rubicon-1.3-95173"
+EXPANSION="kronos-1.0-98534"
 EXTENTION="sql"
 DUMPS="required_sde"
 TEMP=/tmp/SeAT-$(date | md5sum | awk '{ print $1 }')
@@ -89,7 +89,10 @@ if [ "$AUTO_IMPORT" -eq 0 ]; then
 	echo "Importing the SQL files into MySQL..."
 	cat $TEMP/*.sql | mysql -u $DB_USR --password=$DB_PSS -h $DB_SRV $DB_NAME
 	# Clean up after ourselves
+	echo "Cleaing up $TEMP"
 	rm $TEMP/* && rmdir $TEMP
+	#done
+	echo "Done"
 else
 	echo "The extracted files can be found in $TEMP."
 fi

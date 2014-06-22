@@ -9,7 +9,7 @@ return array(
 	|
 	*/
 
-	'version' => '0.8',
+	'version' => '0.9',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -51,6 +51,6 @@ return array(
 	|
 	*/
 
-	'allow_registration' => false,
+	'allow_registration' => true,
 
 );

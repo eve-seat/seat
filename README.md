@@ -2,7 +2,7 @@
 
 [![Latest Release](http://img.shields.io/github/release/eve-seat/seat.svg?style=flat)](https://github.com/eve-seat/seat/releases/latest)
 
-##### *This is very much BETA software with a ton of things not yet implemented. USE AT YOUR OWN RISK* #####
+##### *SeAT is still under heavy development and is not considered 100% stable yet. USE AT YOUR OWN RISK* #####
 
 ### Introduction ###
 SeAT attempts to be a EVE Online™ Corporation Management Tool written in PHP using the [Laravel][1] Framework driven by a MySQL database.  

@@ -41,9 +41,14 @@ class ApiKeyController extends BaseController {
 		$keys = DB::table('seat_keys')
 			->select('seat_keys.keyID', 'seat_keys.isOk', 'seat_keys.lastError', 'account_apikeyinfo.accessMask', 'account_apikeyinfo.type', 'account_apikeyinfo.expires', DB::raw('count(`banned_calls`.`ownerID`) bans'))
 			->leftJoin('account_apikeyinfo', 'seat_keys.keyID', '=', 'account_apikeyinfo.keyID')
-			->leftJoin('banned_calls', 'seat_keys.keyID', '=', 'banned_calls.ownerID')
-			->groupBy('seat_keys.keyID')
-			->get();
+			->leftJoin('banned_calls', 'seat_keys.keyID', '=', 'banned_calls.ownerID');
+
+		// If the current user is not a admin, only get the keys that they own
+		if (!Sentry::getUser()->isSuperUser())
+			$keys = $keys->where('seat_keys.user_id', Sentry::getUser()->getKey());
+
+		// And complete the query
+		$keys = $keys->groupBy('seat_keys.keyID')->get();
 
 		// Prepare the key information and characters for the view
 		$key_information = array();
@@ -192,7 +197,7 @@ class ApiKeyController extends BaseController {
 			$key_data->isOk = 1;
 			$key_data->lastError = null;
 			$key_data->deleted_at = null;
-			$key_data->user_id = 1; // TODO: Fix this when the proper user management occurs
+			$key_data->user_id = Sentry::getUser()->getKey();
 			$key_data->save();
 
 			// Queue a job to update this API **now**
@@ -206,11 +211,11 @@ class ApiKeyController extends BaseController {
 			// Based in the key type, push a update job
 			switch ($access['type']) {
 				case 'Character':
-					$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
+					$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key_data->keyID, $key_data->vCode, 'Character', 'Eve');
 					break;
 
 				case 'Corporation':
-					$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Corporation'), $key->keyID, $key->vCode, 'Corporation', 'Eve');
+					$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Corporation'), $key_data->keyID, $key_data->vCode, 'Corporation', 'Eve');
 					break;
 
 				default:
@@ -240,6 +245,11 @@ class ApiKeyController extends BaseController {
 	
 	public function getDetail($keyID)
 	{
+
+		// Ensure that this user may access the data for $keyID
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($keyID, Session::get('valid_keys')))
+				App::abort(404);
 
 		$key_information = DB::table('seat_keys')
 			->select('seat_keys.keyID', 'seat_keys.vCode', 'seat_keys.isOk', 'seat_keys.lastError', 'account_apikeyinfo.accessMask', 'account_apikeyinfo.type', 'account_apikeyinfo.expires')
@@ -283,6 +293,11 @@ class ApiKeyController extends BaseController {
 
 	public function getUpdateJob($keyID)
 	{
+
+		// Ensure that this user may access the data for $keyID
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($keyID, Session::get('valid_keys')))
+				App::abort(404);
 
 		// Get the full key and vCode
 		$key = SeatKey::where('keyID', $keyID)->first();
@@ -334,6 +349,11 @@ class ApiKeyController extends BaseController {
 	public function getEnableKey($keyID)
 	{
 
+		// Ensure that this user may access the data for $keyID
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($keyID, Session::get('valid_keys')))
+				App::abort(404);
+
 		// Get the full key and vCode
 		$key = SeatKey::where('keyID', $keyID)->first();
 
@@ -360,6 +380,11 @@ class ApiKeyController extends BaseController {
 
 	public function getDeleteKey($keyID, $delete_all_info = false)
 	{
+
+		// Ensure that this user may access the data for $keyID
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($keyID, Session::get('valid_keys')))
+				App::abort(404);
 
 		// Get the full key and vCode
 		$key = SeatKey::where('keyID', $keyID)->first();
@@ -560,31 +585,59 @@ class ApiKeyController extends BaseController {
 	public function getPeople()
 	{
 
-		// Prepare the people information
-		$people = array();
-		foreach (\SeatPeople::all() as $person) {
+		// Prepare the people information. Super admins get to see
+		// everything, where users should only see their own stuff
+		if (Sentry::getUser()->isSuperUser()) {
 
-			// For every person, get the keyID and characters on that key
-			$people[$person->personID][] = array(
+			// SUUPER ADMIN Show all the things
+			$people = array();
+			foreach (\SeatPeople::Join('seat_people_main', 'seat_people_main.personID', '=', 'seat_people.personID')->orderBy('seat_people_main.characterName', 'ASC')->get() as $person) {
 
-				'personID' => $person->personID,
-				'keyID' => $person->keyID,
-				'characters' => EveAccountAPIKeyInfoCharacters::where('keyID', $person->keyID)->get(),
-				'main' => $person->main()->first()
-			);
+				// For every person, get the keyID and characters on that key
+				$people[$person->personID][] = array(
+
+					'personID' => $person->personID,
+					'keyID' => $person->keyID,
+					'characters' => EveAccountAPIKeyInfoCharacters::where('account_apikeyinfo_characters.keyID', $person->keyID)->get(),
+					'main' => $person->main()->first()
+				);
+			}
+
+			$unaffiliated_keys = DB::table('seat_keys')
+				->whereNotIn('seat_keys.keyID', function($query) {
+
+					$query->from('seat_people')
+						->select('keyID')
+						->get();
+				})
+				->get();
+
+		} else {
+
+			// Ensure that we only get the data for this user
+			$people = array();
+			foreach (SeatPeople::whereIn('keyID', Session::get('valid_keys'))->get() as $person) {
+
+				// For every person, get the keyID and characters on that key
+				$people[$person->personID][] = array(
+
+					'personID' => $person->personID,
+					'keyID' => $person->keyID,
+					'characters' => EveAccountAPIKeyInfoCharacters::where('keyID', $person->keyID)->get(),
+					'main' => $person->main()->first()
+				);
+			}
+
+			$unaffiliated_keys = DB::table('seat_keys')
+				->whereIn('keyID', Session::get('valid_keys'))
+				->whereNotIn('seat_keys.keyID', function($query) {
+
+					$query->from('seat_people')
+						->select('keyID')
+						->get();
+				})
+				->get();
 		}
-
-		// var_dump($people[1][0]['main']->characterName);die();
-
-		$unaffiliated_keys = DB::table('seat_keys')
-			// ->leftJoin('account_apikeyinfo_characters', 'seat_keys.keyID', '=', 'account_apikeyinfo_characters.keyID')
-			->whereNotIn('seat_keys.keyID', function($query) {
-
-				$query->from('seat_people')
-					->select('keyID')
-					->get();
-			})
-			->get();
 
 		// Prepare an array with all the key characters too
 		$unaffiliated = array();
@@ -607,6 +660,11 @@ class ApiKeyController extends BaseController {
 
 	public function getNewGroup($keyID, $characterID)
 	{
+
+		// Ensure that this user may access the data for $keyID
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($keyID, Session::get('valid_keys')))
+				App::abort(404);
 
 		// Check that the key and character ids exist and is valid
 		if (!\SeatKey::where('keyID', $keyID) || !\EveAccountAPIKeyInfoCharacters::where('characterID', $characterID))
@@ -652,6 +710,11 @@ class ApiKeyController extends BaseController {
 	public function postAddToGroup()
 	{
 
+		// Ensure that this user may access the data for $keyID
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array(Input::get('affected-key'), Session::get('valid_keys')))
+				App::abort(404);
+
 		// Lets do some quick checks to ensure that the key and person exist
 		if (!SeatPeople::where('personID', Input::get('personid'))->first() || !SeatKey::where('keyID', Input::get('affected-key'))->first())
 			return Redirect::action('ApiKeyController@getPeople')
@@ -685,6 +748,11 @@ class ApiKeyController extends BaseController {
 
 	public function getDeleteFromGroup($keyID)
 	{
+
+		// Ensure that this user may access the data for $keyID
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($keyID, Session::get('valid_keys')))
+				App::abort(404);
 
 		// Lets do some quick checks to ensure that the key exists
 		if (!SeatPeople::where('keyID', $keyID)->first())

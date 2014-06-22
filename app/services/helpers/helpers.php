@@ -79,6 +79,8 @@ class Helpers {
         // is this a number?
         if(!is_numeric($number))
         	return false;
+
+        $places = 0;
        
         // now filter it;
         if($number > 1000000000000)
@@ -92,8 +94,12 @@ class Helpers {
 
         else if($number > 1000)
         	return round(($number / 1000), 1) . 'k';
+
+        else if($number > 100)
+        	$places = 2;
+        	return $number;
        
-        return number_format($number);
+        return number_format($number, $places);
     }
 	
 	/*
@@ -118,11 +124,11 @@ class Helpers {
 
 			return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
 
-		} elseif($id > 98000000 && $id < 99000000) {
+		} elseif(($id > 98000000 && $id < 99000000) || ($id > 1000000 && $id < 2000000)) {
 
 			return '//image.eveonline.com/Corporation/' . $id . '_' . $size . '.png';
 
-		} elseif($id > 99000000 && $id < 100000000) {
+		} elseif(($id > 99000000 && $id < 100000000) || ($id > 0 && $id < 1000000)) {
 
 			return '//image.eveonline.com/Alliance/' . $id . '_' . $size . '.png';
 
@@ -177,14 +183,80 @@ class Helpers {
 	|--------------------------------------------------------------------------
 	|
 	| Returns the total volume of an array of assets
+	| param $personal is passed if the assets is calculated for the person
+	| 	and not the corporation
 	|
 	*/
 
-	public static function sumVolume($array, $col_name) {
+	public static function sumVolume($array, $col_name, $personal = NULL) {
 		$volume = 0;
 		foreach($array as $item){
-			$volume += $item[$col_name];
+			if(isset($item['contents'])){
+				foreach($item['contents'] as $type){
+					if($personal)
+						$volume += ($type[$col_name] * $type['quantity']);
+					else
+						$volume += $type[$col_name];
+				}
+			}
+			if($personal)
+				$volume += ($item[$col_name] * $item['quantity']);
+			else
+				$volume += $item[$col_name];
 		}
 		return Helpers::formatBigNumber($volume);
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| numAssets()
+	|--------------------------------------------------------------------------
+	|
+	| Returns the number of assets including what is within a container
+	|
+	|
+	*/
+
+	public static function numAssets($array) {
+		$count = 0;
+		foreach($array as $item){
+			$count++;
+			if(isset($item['contents'])){
+				foreach($item['contents'] as $type){
+					$count++;
+				}
+			}
+		}		
+		return $count;
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| marketOrderType()
+	|--------------------------------------------------------------------------
+	|
+	| Returns the total of a market order type, ie:
+	| Pass in an array of market orders, with the type (col_name)
+	| you are looking for and an integer will be provided for all the 
+	| orders in that state within the array
+	| 
+	| '0' => 'Active',
+	| '1' => 'Closed',
+	| '2' => 'Expired / Fulfilled',
+	| '3' => 'Cancelled',
+	| '4' => 'Pending',
+	| '5' => 'Deleted'
+	|
+	*/
+
+	public static function marketOrderCount($array, $col_name) {
+		$count = 0;
+		foreach($array as $order){
+			if($order->orderState == $col_name){
+				$count ++;
+			}
+		}
+		return $count;
+	}
+	
 }

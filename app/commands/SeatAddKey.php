@@ -10,6 +10,7 @@ use Pheal\Pheal;
 use Seat\EveApi;
 use Seat\EveApi\BaseApi;
 use Seat\EveApi\Account;
+use Carthalyst\Sentry as Sentry;
 
 class SeatAddKey extends Command {
 
@@ -44,6 +45,19 @@ class SeatAddKey extends Command {
 	 */
 	public function fire()
 	{
+
+		// Keys added via the CLI will automatically be assigned to the admin
+		// useri as the owner. Find the 'admin' user in SeAT for later reference
+		try {
+
+			$admin = \Sentry::findUserByLogin('admin');
+
+		} catch (\Cartalyst\Sentry\Users\UserNotFoundException $e) {
+
+			$this->error('Admin account doesn\'t exist. Run seat:reset to create it.');
+			return;
+		}
+
 		$keyID = $this->argument('keyID');
 		$vCode = $this->argument('vCode');
 
@@ -87,7 +101,7 @@ class SeatAddKey extends Command {
 				$key_info->isOk = 1;
 				$key_info->lastError = null;
 				$key_info->deleted_at = null;
-				$key_info->user_id = 1; // TODO: Fix this when the proper user management occurs
+				$key_info->user_id = $admin->getKey();
 				$key_info->save();
 
 				$this->info('Successfully saved the API key to the database.');
