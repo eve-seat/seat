@@ -89,7 +89,10 @@ if [ "$AUTO_IMPORT" -eq 0 ]; then
 	echo "Importing the SQL files into MySQL..."
 	cat $TEMP/*.sql | mysql -u $DB_USR --password=$DB_PSS -h $DB_SRV $DB_NAME
 	# Clean up after ourselves
+	echo "Cleaing up $TEMP"
 	rm $TEMP/* && rmdir $TEMP
+	#done
+	echo "Done"
 else
 	echo "The extracted files can be found in $TEMP."
 fi
