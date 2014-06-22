@@ -33,6 +33,7 @@ $ php artisan seat:groupsync
 [ok] Group Market Managers created.
 ```
 
+Update your SDE data with the latest Kronos data following the Update SDE instructions form the install guide.
 
 Lastly, bring your app back online by running `php artisan up` and watch the log files for any potential errors.
 
