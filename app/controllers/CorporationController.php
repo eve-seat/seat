@@ -767,6 +767,11 @@ class CorporationController extends BaseController {
 					->where('corporation_walletjournal.corporationID', $corporationID)
 					->groupBy('corporation_walletjournal.refTypeID')
 					->orderBy('refTypeName')
+					->get(),
+				'total' => DB::table('corporation_walletjournal')
+					->select(DB::raw('sum(`amount`) `total`'))
+					->where('corporation_walletjournal.accountKey', $division->accountKey)
+					->where('corporation_walletjournal.corporationID', $corporationID)
 					->get()
 			);
 		}
@@ -849,6 +854,13 @@ class CorporationController extends BaseController {
 					->where('corporation_walletjournal.corporationID', $corporationID)
 					->groupBy('corporation_walletjournal.refTypeID')
 					->orderBy('refTypeName')
+					->get(),
+				'total' => DB::table('corporation_walletjournal')
+					->select(DB::raw('sum(`amount`) `total`'))
+					->where('corporation_walletjournal.accountKey', $division->accountKey)
+					->where('corporation_walletjournal.corporationID', $corporationID)
+					->where(DB::raw('MONTH(date)'), $month)
+					->where(DB::raw('YEAR(date)'), $year)
 					->get()
 			);
 		}

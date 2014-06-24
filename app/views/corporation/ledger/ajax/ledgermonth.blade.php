@@ -66,6 +66,18 @@
 											        </td>
 											    </tr>
 										    @endforeach
+										    <tr>
+										    	<td>Net</td>
+										    	<td>
+										    		<b>
+									    			@if ($ledger['total'][0]->total < 0)
+										        		<span class="text-red">{{ number_format($ledger['total'][0]->total, 2, '.', ' ') }} ISK</span>
+											        @else
+											        	{{ number_format($ledger['total'][0]->total, 2, '.', ' ') }} ISK
+											        @endif
+												    </b>
+												</td>
+											</tr>
 										</tbody>
 									</table>
 						        </div><!-- /.tab-pane -->
