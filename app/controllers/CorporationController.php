@@ -772,7 +772,7 @@ class CorporationController extends BaseController {
 					->select(DB::raw('sum(`amount`) `total`'))
 					->where('corporation_walletjournal.accountKey', $division->accountKey)
 					->where('corporation_walletjournal.corporationID', $corporationID)
-					->get()
+					->pluck('total')
 			);
 		}
 
@@ -861,7 +861,7 @@ class CorporationController extends BaseController {
 					->where('corporation_walletjournal.corporationID', $corporationID)
 					->where(DB::raw('MONTH(date)'), $month)
 					->where(DB::raw('YEAR(date)'), $year)
-					->get()
+					->pluck('total')
 			);
 		}
 
