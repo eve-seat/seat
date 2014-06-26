@@ -50,7 +50,7 @@ class UserController extends BaseController {
 
 		// Grab the inputs and validate them
 		$new_user = Input::only(
-			'email', 'password', 'first_name', 'last_name', 'is_admin'
+			'email', 'username', 'password', 'first_name', 'last_name', 'is_admin'
 		);
 
 		$validation = new Validators\SeatUserValidator($new_user);
@@ -58,7 +58,7 @@ class UserController extends BaseController {
 		// Should the form validation pass, continue to attempt to add this user
 		if ($validation->passes()) {
 
-			if ($user = Sentry::register(array('email' => Input::get('email'), 'password' => Input::get('password'), 'first_name' => Input::get('first_name'), 'last_name' => Input::get('last_name')), true)) {
+			if ($user = Sentry::register(array('email' => Input::get('email'), 'username' => Input::get('username'), 'password' => Input::get('password'), 'first_name' => Input::get('first_name'), 'last_name' => Input::get('last_name')), true)) {
 
 				if (Input::get('is_admin') == 'yes') {
 
@@ -181,6 +181,9 @@ class UserController extends BaseController {
 		}
 
 		$user->email = Input::get('email');
+
+		if (Input::get('username') != '')
+			$user->username = Input::get('username');
 
 		if (Input::get('password') != '')
 			$user->password = Input::get('password');
