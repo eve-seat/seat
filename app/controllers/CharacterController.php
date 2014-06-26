@@ -852,6 +852,82 @@ class CharacterController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getAjaxPlantearyInteraction()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character standings events as a ajax response
+	|
+	*/
+
+	public function getAjaxPlanetaryInteraction($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
+		// Gather the information and add to the array
+		$routes = DB::table('character_planetary_pins as source')
+			->join('character_planetary_routes as route', 'source.pinID', '=', 'route.sourcePinID')
+			->join('character_planetary_pins as destination', 'destination.PinID', '=', 'route.destinationPinID')
+			->where('source.characterID', $characterID)
+			->select('source.planetID', 'source.typeName as sourceTypeName', 'source.typeID as sourceTypeID', 'source.cycleTime', 'source.quantityPerCycle', 'source.installTime', 
+				'source.expiryTime', 'route.contentTypeID', 'route.contentTypeName', 'route.quantity',
+				'destination.typeName as destinationTypeName', 'destination.typeID as destinationTypeID')
+			->get();
+
+		$links = DB::table('character_planetary_pins as source')
+			->join('character_planetary_links as link', 'link.sourcePinID', '=', 'source.pinID')
+			->join('character_planetary_pins as destination', 'link.destinationPinID', '=', 'destination.pinID')
+			->where('source.characterID', $characterID)
+			->select('source.planetID', 'source.typeName as sourceTypeName', 'source.typeID as sourceTypeID', 'link.linkLevel', 
+				'destination.typeName as destinationTypeName', 'destination.typeID as destinationTypeID')
+			->get();
+
+		$installations = DB::table('character_planetary_pins')
+			->where('cycleTime', '=', '0')
+			->where('schematicID', '=', '0')
+			->get();
+
+		$planets = DB::table('character_planetary_colonies')
+			->where('characterID', $characterID)
+			->get();
+
+		// Prepare an empty array
+		$colonies = array();
+
+		foreach($planets as $planet){
+			$colonies[$planet->planetID] = array(
+				'planetID' => $planet->planetID,
+				'planetName' => $planet->planetName,
+				'planetTypeName' => $planet->planetTypeName,
+				'upgradeLevel' => $planet->upgradeLevel,
+				'numberOfPins' => $planet->numberOfPins
+			);
+		}
+
+		// Finally, give all this to the view to handle
+		return View::make('character.view.character_pi')
+			->with('colonies', $colonies)
+			->with('routes', $routes)
+			->with('installations', $installations)
+			->with('links', $links)
+			->with('characterID', $characterID);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getPublic()
 	|--------------------------------------------------------------------------
 	|
@@ -1125,4 +1201,5 @@ class CharacterController extends BaseController {
 
 		return Response::json($wallet_daily_delta);
 	}
+
 }
