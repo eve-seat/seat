@@ -45,6 +45,7 @@ class RegisterController extends BaseController {
 		    // Let's register a user.
 		    $user = Sentry::register(array(
 		        'email'    => Input::get('email'),
+		        'username'    => Input::get('username'),
 		        'password' => Input::get('password'),
 		    ));
 
