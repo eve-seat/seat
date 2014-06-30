@@ -111,14 +111,29 @@ class StarbaseDetail extends BaseApi {
 			$starbase_data->onAggression = $starbase_detail->combatSettings->onAggression->enabled;
 			$starbase_data->onCorporationWar = $starbase_detail->combatSettings->onCorporationWar->enabled;
 
-			// Add the fuel
+			// Add the fuel to the various fields 
 			foreach ($starbase_detail->fuel as $fuel) {
 				
 				if($fuel->typeID == 16275)
 					$starbase_data->strontium = $fuel->quantity;
 				
+				// Four different fuel block typeIDs
+				// 4051		Caldari Fuel Block
+				// 4246 	Minmatar Fuel Block
+				// 4247		Amarr Fuel Block
+				// 4312		Gallente Fuel Block
 				if(in_array($fuel->typeID, array('4051','4246','4247','4312')))
 					$starbase_data->fuelBlocks = $fuel->quantity;
+
+				// Various starbase charters
+				// 24592	Amarr Empire Starbase Charter	
+				// 24593	Caldari State Starbase Charter	
+				// 24594	Gallente Federation Starbase Charter	
+				// 24595	Minmatar Republic Starbase Charter	
+				// 24596	Khanid Kingdom Starbase Charter	
+				// 24597	Ammatar Mandate Starbase Charter
+				if(in_array($fuel->typeID, array('24592','24593','24594','24595','24596','24597')))
+					$starbase_data->starbaseCharter = $fuel->quantity;
 			}
 
 			$starbase_data->save();

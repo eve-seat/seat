@@ -555,9 +555,11 @@ class CorporationController extends BaseController {
 				'corporation_starbasedetail.allowAllianceMembers',
 				'corporation_starbasedetail.fuelBlocks',
 				'corporation_starbasedetail.strontium',
+				'corporation_starbasedetail.starbaseCharter',
 				'invTypes.typeID',
 				'invTypes.typeName',
 				'mapDenormalize.itemName',
+				'mapDenormalize.security',
 				'invNames.itemName',
 				'map_sovereignty.solarSystemName',
 				'corporation_starbasedetail.updated_at'

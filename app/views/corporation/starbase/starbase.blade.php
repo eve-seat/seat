@@ -30,6 +30,7 @@
 					            	<tr>
 						                <th>Type</th>
 						                <th>Location</th>
+						                <th>Sec</th>
 						                <th>Name</th>
 						                <th>Fuel Blocks</th>
 						                <th>State</th>
@@ -39,6 +40,7 @@
 					            <tbody>
 					            	@foreach ($starbase as $details)
 							            <tr>
+
 											{{--
 												Find the starbases name in the $item_locations array.
 												We acheive this by looping over the item_locaions we received, and check
@@ -60,6 +62,7 @@
 							                	{{ $details->typeName }}
 							                </td>
 							                <td>{{ $details->itemName }}</td>
+							                <td>{{ number_format($details->security,'1') }}</td>
 							                <td><b>{{ $posname }}</b></td>
 							                <td>{{ $details->fuelBlocks }}</td>
 							                <td>
@@ -219,6 +222,23 @@
 								    <li>Current State Since: <b> {{ $details->stateTimeStamp }}</b> ({{ Carbon\Carbon::parse($details->stateTimeStamp)->diffForHumans() }})</li>
 								    <li>Online Since: <b> {{ $details->onlineTimeStamp }}</b> ({{ Carbon\Carbon::parse($details->onlineTimeStamp)->diffForHumans() }})</li>
 								    <br>
+								    @if($details->security > 0.4 )
+									    <li>
+									    	<b>Charters Left: </b>
+									    	{{ $details->starbaseCharter }} charters 
+									    	(
+									    		@ 1 charter/h, it will go offline
+
+									    		{{-- determine if the time left is less than 3 days --}}
+									    		@if ( Carbon\Carbon::now()->addHours($details->starbaseCharter / 1)->lte(Carbon\Carbon::now()->addDays(3)))
+										    		<b><span class="text-red">{{ Carbon\Carbon::now()->addHours($details->starbaseCharter / $usage)->diffForHumans() }}</span></b>
+									    		@else
+										    		<b>{{ Carbon\Carbon::now()->addHours($details->starbaseCharter / 1)->diffForHumans() }}</b>
+									    		@endif
+									    	)
+									    	<i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated offline at {{ Carbon\Carbon::now()->addHours($details->starbaseCharter / $usage)->toDateTimeString() }}"></i>
+									    </li>
+								    @endif
 								    <li>
 								    	<b>Fuel Left: </b>
 								    	{{ $details->fuelBlocks }} blocks 
@@ -263,14 +283,14 @@
 									    <tr>
 									        <td>
 									        	<img src='//image.eveonline.com/Type/4051_32.png' style='width: 18px;height: 18px;'>
-									        	<b>Fuel Blocks:</b> {{ ($details->fuelBlocks * 5) }} m3 / {{ $bay_sizes[$details->typeID]['fuelBay'] }} m3
+									        	<b>Fuel Blocks @if($details->security > 0.4)+ Charters @endif:</b> {{ ($details->starbaseCharter) + ($details->fuelBlocks * 5) }} m3 / {{ $bay_sizes[$details->typeID]['fuelBay'] }} m3
 									        </td>
 									        <td>
 									            <div class="progress">
 									                <div class="progress-bar progress-bar-primary" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
 									            </div>
 									        </td>
-									        <td><span class="badge bg-blue pull-right">{{ round((($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
+									        <td><span class="badge bg-blue pull-right">{{ round((($details->starbaseCharter + ($details->fuelBlocks * 5)) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
 									    </tr>
 									    <tr>
 									        <td>
