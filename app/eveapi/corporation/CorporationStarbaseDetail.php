@@ -114,9 +114,10 @@ class StarbaseDetail extends BaseApi {
 			// Add the fuel
 			foreach ($starbase_detail->fuel as $fuel) {
 				
-				if ($fuel->typeID == 16275)
+				if($fuel->typeID == 16275)
 					$starbase_data->strontium = $fuel->quantity;
-				else
+				
+				if(in_array($fuel->typeID, array('4051','4246','4247','4312')))
 					$starbase_data->fuelBlocks = $fuel->quantity;
 			}
 
