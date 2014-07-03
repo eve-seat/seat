@@ -54,7 +54,9 @@
 	                    </td>
 	                    <td>
 								<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $key['keyID'])) }}" class="btn btn-default btn-xs"><i class="fa fa-cog"></i> Key Details</a>
-								<a a-keep-data="{{ action('ApiKeyController@getDeleteKey', array('keyID' => $key['keyID'])) }}" a-delete-data="{{ action('ApiKeyController@getDeleteKey', array('keyID' => $key['keyID'], 'delete_all_info'=> true)) }}" a-key-id="{{ $key['keyID'] }}" class="btn btn-danger btn-xs delete-key"><i class="fa fa-times"></i> Delete</a>
+								@if (Sentry::getUser()->hasAccess('key_manager'))
+									<a a-keep-data="{{ action('ApiKeyController@getDeleteKey', array('keyID' => $key['keyID'])) }}" a-delete-data="{{ action('ApiKeyController@getDeleteKey', array('keyID' => $key['keyID'], 'delete_all_info'=> true)) }}" a-key-id="{{ $key['keyID'] }}" class="btn btn-danger btn-xs delete-key"><i class="fa fa-times"></i> Delete</a>
+								@endif
 	                    </td>
 	                </tr>
 

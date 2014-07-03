@@ -93,6 +93,14 @@ class SeatGroupSync extends Command {
 				'permissions' => array(
 					'market_manager' => 1
 				)
+			),
+
+			// Key Managers Are Allowed to delete API Keys
+			array(
+				'name' => 'Key Manager',
+				'permissions' => array(
+					'key_manager' => 1
+				)
 			)
 		);
 
