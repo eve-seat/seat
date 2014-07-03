@@ -10,7 +10,7 @@
 		<div class="panel panel-default">
 		  <div class="panel-heading">
 		    <h3 class="panel-title">
-		    	<b>{{ $user->email }}</b>
+		    	<b>{{ $user->username }} ({{ $user->email }})</b>
 		    	<span class="pull-right">
 		    		Last Login: {{ $user->last_login }} ({{ Carbon\Carbon::parse($user->last_login)->diffForHumans() }})
 		    	</span>

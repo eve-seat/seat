@@ -8,6 +8,9 @@
 
             <div class="body bg-gray">
                 <div class="form-group">
+                    {{ Form::text('username', null, array('class' => 'form-control', 'placeholder' => 'Username'), 'required', 'autofocus') }}
+                </div>
+                <div class="form-group">
                     {{ Form::text('email', null, array('class' => 'form-control', 'placeholder' => 'Email Address'), 'required', 'autofocus') }}
                 </div>
                 <div class="form-group">

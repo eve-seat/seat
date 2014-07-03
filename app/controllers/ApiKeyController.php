@@ -386,6 +386,10 @@ class ApiKeyController extends BaseController {
 			if (!in_array($keyID, Session::get('valid_keys')))
 				App::abort(404);
 
+		// Ensure the user is allowed to delete this key
+		if (!Sentry::getUser()->hasAccess('key_manager'))
+			App::abort(404);
+
 		// Get the full key and vCode
 		$key = SeatKey::where('keyID', $keyID)->first();
 

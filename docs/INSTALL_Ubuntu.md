@@ -150,6 +150,24 @@ The passwords match. Resetting to the new 12 char one.
 Password has been changed successfully.
 ```
 
+You should also seed the default SeAT user groups with `php artisan seat:groupsync`:
+
+```bash
+$ php artisan seat:groupsync
+[info] Group POS Managers was not found. Creating it.
+[ok] Group POS Managers created.
+[info] Group Wallet Managers was not found. Creating it.
+[ok] Group Wallet Managers created.
+[info] Group Recruiters was not found. Creating it.
+[ok] Group Recruiters created.
+[info] Group Asset Managers was not found. Creating it.
+[ok] Group Asset Managers created.
+[info] Group Contract Managers was not found. Creating it.
+[ok] Group Contract Managers created.
+[info] Group Market Managers was not found. Creating it.
+[ok] Group Market Managers created.
+```
+
 You should regenerate the applications security key:
 
 ```bash

@@ -2,52 +2,74 @@
 @section('html_title', 'New Key')
 
 @section('page_content')
-
-	 <div class="box">
-		<div class="box-header">
-		    <h3 class="box-title">Add New API Key</h3>
-		</div>
-
-	    <div class="box-body table-responsive">
-
-			{{ Form::open(array('class' => 'form-horizontal', 'id' => 'key-form')) }}
-				<fieldset>
-
-				<!-- Prepended text-->
-				<div class="form-group">
-				  <label class="col-md-4 control-label" for="prependedtext">Key ID</label>
-				  <div class="col-md-4">
-				    <div class="input-group">
-				      <span class="input-group-addon"><i class="fa fa-key"></i></span>
-				      {{ Form::text('keyID', null, array('id' => 'keyID', 'class' => 'form-control', 'placeholder' => 'Key ID'), 'required', 'autofocus') }}
-				    </div>
-				  </div>
+	
+	<div class="row">
+		<div class="col-md-8">
+		 	<div class="box">
+				<div class="box-header">
+				    <h3 class="box-title">Add New API Key</h3>
 				</div>
 
-				<!-- Prepended text-->
-				<div class="form-group">
-				  <label class="col-md-4 control-label" for="prependedtext">Verification Code</label>
-				  <div class="col-md-4">
-				    <div class="input-group">
-				      <span class="input-group-addon"><i class="fa fa-magic"></i></span>
-				      {{ Form::text('vCode', null, array('id' => 'vCode', 'class' => ' form-control', 'placeholder' => 'vCode'), 'required') }}
-				    </div>
-				  </div>
+			    <div class="box-body table-responsive">
+
+					{{ Form::open(array('class' => 'form-horizontal', 'id' => 'key-form')) }}
+					<fieldset>
+
+					<!-- Prepended text-->
+					<div class="form-group">
+					  <label class="col-md-4 control-label" for="prependedtext">Key ID</label>
+					  <div class="col-md-6">
+					    <div class="input-group">
+					      <span class="input-group-addon"><i class="fa fa-key"></i></span>
+					      {{ Form::text('keyID', null, array('id' => 'keyID', 'class' => 'form-control', 'placeholder' => 'Key ID'), 'required', 'autofocus') }}
+					    </div>
+					  </div>
+					</div>
+
+					<!-- Prepended text-->
+					<div class="form-group">
+					  <label class="col-md-4 control-label" for="prependedtext">Verification Code</label>
+					  <div class="col-md-6">
+					    <div class="input-group">
+					      <span class="input-group-addon"><i class="fa fa-magic"></i></span>
+					      {{ Form::text('vCode', null, array('id' => 'vCode', 'class' => ' form-control', 'placeholder' => 'vCode'), 'required') }}
+					    </div>
+					  </div>
+					</div>
+
+					<!-- Button -->
+					<div class="form-group">
+					  <label class="col-md-4 control-label" for="singlebutton"></label>
+					  <div class="col-md-6">
+					    <button id="check-key" name="singlebutton" class="btn btn-primary">Check Key</button>
+					  </div>
+					</div>
+
+					</fieldset>
+					{{ Form::close() }}
+
+			    </div><!-- /.box-body -->
+			</div><!-- /.box -->
+		</div><!-- /.col-md-8 -->
+
+		<div class="col-md-4">
+			<div class="box">
+				<div class="box-header">
+				    <h3 class="box-title">Create a new API Key</h3>
 				</div>
 
-				<!-- Button -->
-				<div class="form-group">
-				  <label class="col-md-4 control-label" for="singlebutton"></label>
-				  <div class="col-md-4">
-				    <button id="check-key" name="singlebutton" class="btn btn-primary">Check Key</button>
-				  </div>
-				</div>
+				<div class="box-body table-responsive">
+					<ul class="list-unstyled">
+					<!-- API Links -->
+						<li>Create a new <a href="https://support.eveonline.com/api/key/CreatePredefined/268435455" target="_blank"><i class="fa fa-external-link"></i> full access</a> key (recommended).</li>
+						<li>Create a new <a href="https://support.eveonline.com/api/key/CreatePredefined/8921408" target="_blank"><i class="fa fa-external-link"></i> basic, character info only</a> key.</li>
+					</ul>
+				</div><!-- ./box-body -->
 
-				</fieldset>
-			{{ Form::close() }}
+			</div><!-- ./box -->
+		</div><!-- ./col-md-4 -->
 
-	    </div><!-- /.box-body -->
-	</div><!-- /.box -->
+	</div><!-- ./row -->
 
 	<!-- results box -->
 	<div class="box" id="result-box" style="display: none;">

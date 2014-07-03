@@ -73,6 +73,7 @@ class PermissionsController extends BaseController {
 		$character_information = DB::table('account_apikeyinfo_characters')
 			->join('seat_keys', 'account_apikeyinfo_characters.keyID', '=', 'seat_keys.keyID')
 			->where('account_apikeyinfo_characters.corporationID', $corporationID)
+			->groupBy('account_apikeyinfo_characters.characterID')
 			->get();
 
 		// Loop the array and prepare something for the template

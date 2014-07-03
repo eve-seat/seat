@@ -19,7 +19,7 @@
 
 		    <div class="form-group">
 		      <label class="col-md-4 control-label" for="email">Email Address</label>
-		      <div class="col-md-4">
+		      <div class="col-md-6">
 		        <div class="input-group">
 		          <span class="input-group-addon"><i class="fa fa-lock"></i></span>
 		          {{ Form::text('email', null, array('id' => 'email', 'class' => 'form-control', 'placeholder' => 'Email Address'), 'required', 'autofocus') }}
@@ -28,8 +28,18 @@
 		    </div>
 
 		    <div class="form-group">
+		      <label class="col-md-4 control-label" for="username">Username</label>
+		      <div class="col-md-6">
+		        <div class="input-group">
+		          <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+		          {{ Form::text('username', null, array('id' => 'username', 'class' => 'form-control', 'placeholder' => 'Username'), 'required') }}
+		        </div>
+		      </div>
+		    </div>
+
+		    <div class="form-group">
 		      <label class="col-md-4 control-label" for="password">Password</label>
-		      <div class="col-md-4">
+		      <div class="col-md-6">
 		        <div class="input-group">
 		          <span class="input-group-addon"><i class="fa fa-magic"></i></span>
 		          {{ Form::password('password', array('id' => 'password', 'class' => ' form-control', 'placeholder' => 'Password'), 'required') }}
@@ -39,7 +49,7 @@
 
 		    <div class="form-group">
 		      <label class="col-md-4 control-label" for="is_admin">Superuser?</label>
-		      <div class="col-md-4">
+		      <div class="col-md-6">
 		        <div class="input-group">
 		          {{ Form::checkbox('is_admin', 'yes') }}
 		        </div>
@@ -49,7 +59,7 @@
 		    <!-- Button -->
 		    <div class="form-group">
 		      <label class="col-md-4 control-label" for="singlebutton"></label>
-		      <div class="col-md-4">
+		      <div class="col-md-6">
 		        {{ Form::submit('Add User', array('class' => 'btn bg-olive btn-block')) }}
 		      </div>
 		    </div>
@@ -73,6 +83,7 @@
 					<thead>
 						<tr>
 							<th>Email</th>
+							<th>Username</th>
 							<th>Last Login</th>
 							<th>Administrator</th>
 							<th></th>
@@ -84,6 +95,7 @@
 
 							<tr>
 								<td>{{ $user->email }}</td>
+								<td>{{ $user->username }}</td>
 								<td>{{ $user->last_login }} ({{ Carbon\Carbon::parse($user->last_login)->diffForHumans() }})</td>
 								<td>{{ $user->isSuperUser() ? "<span class='text-red'>Yes</span>" : "No" }}</td>
 								<td>
