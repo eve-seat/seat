@@ -55,13 +55,15 @@
 		<div class="col-md-4">
 			<div class="box">
 				<div class="box-header">
-				    <h3 class="box-title">Predefined Keys</h3>
+				    <h3 class="box-title">Create a new API Key</h3>
 				</div>
 
 				<div class="box-body table-responsive">
+					<ul class="list-unstyled">
 					<!-- API Links -->
-					<a href="https://support.eveonline.com/api/key/CreatePredefined/67108863">Link</a> to access all predefined key.<br />
-					<a href="https://support.eveonline.com/api/key/CreatePredefined/8921408">Link</a> to very basic predefined key.
+						<li>Create a new <a href="https://support.eveonline.com/api/key/CreatePredefined/268435455" target="_blank"><i class="fa fa-external-link"></i> full access</a> key (recommended).</li>
+						<li>Create a new <a href="https://support.eveonline.com/api/key/CreatePredefined/8921408" target="_blank"><i class="fa fa-external-link"></i> basic, character info only</a> key.</li>
+					</ul>
 				</div><!-- ./box-body -->
 
 			</div><!-- ./box -->
