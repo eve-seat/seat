@@ -25,6 +25,16 @@
         </div>
 
         <div class="form-group">
+          <label class="col-md-4 control-label" for="username">Username</label>
+          <div class="col-md-4">
+            <div class="input-group">
+              <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+              {{ Form::text('username', $user->username, array('id' => 'email', 'class' => 'form-control', 'placeholder' => 'Username'), 'required') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
           <label class="col-md-4 control-label" for="password">Password</label>
           <div class="col-md-4">
             <div class="input-group">

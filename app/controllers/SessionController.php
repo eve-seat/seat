@@ -45,7 +45,10 @@ class SessionController extends BaseController {
 
 		try {
 
-			if (Sentry::authenticate(array('email' => $email, 'password' => $password), $remember == 'yes'))
+			$field = filter_var(Input::get('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';  
+			Cartalyst\Sentry\Users\Eloquent\User::setLoginAttributeName($field);
+
+			if(Sentry::authenticate(array($field => $email, 'password' => $password), $remember == 'yes'))
 				$destination = Redirect::intended('/');
 
 		} catch (Cartalyst\Sentry\Users\LoginRequiredException $e) {
