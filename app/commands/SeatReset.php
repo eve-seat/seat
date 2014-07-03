@@ -64,6 +64,7 @@ class SeatReset extends Command {
 
 			\Sentry::register(array(
 				'email'	 	=> 'admin',
+				'username'	=> 'admin',
 				'password'	=> $password,
 			), true);	// Set the account to be active
 
@@ -89,6 +90,7 @@ class SeatReset extends Command {
 		}
 
 		// Set the password and group membership for the admin user.
+		$admin->username = 'admin';
 		$admin->password = $password;
 		$admin->save();
 		$admin->addGroup($adminGroup);
