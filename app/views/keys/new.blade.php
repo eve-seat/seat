@@ -2,52 +2,72 @@
 @section('html_title', 'New Key')
 
 @section('page_content')
-
-	 <div class="box">
-		<div class="box-header">
-		    <h3 class="box-title">Add New API Key</h3>
-		</div>
-
-	    <div class="box-body table-responsive">
-
-			{{ Form::open(array('class' => 'form-horizontal', 'id' => 'key-form')) }}
-				<fieldset>
-
-				<!-- Prepended text-->
-				<div class="form-group">
-				  <label class="col-md-4 control-label" for="prependedtext">Key ID</label>
-				  <div class="col-md-4">
-				    <div class="input-group">
-				      <span class="input-group-addon"><i class="fa fa-key"></i></span>
-				      {{ Form::text('keyID', null, array('id' => 'keyID', 'class' => 'form-control', 'placeholder' => 'Key ID'), 'required', 'autofocus') }}
-				    </div>
-				  </div>
+	
+	<div class="row">
+		<div class="col-md-8">
+		 	<div class="box">
+				<div class="box-header">
+				    <h3 class="box-title">Add New API Key</h3>
 				</div>
 
-				<!-- Prepended text-->
-				<div class="form-group">
-				  <label class="col-md-4 control-label" for="prependedtext">Verification Code</label>
-				  <div class="col-md-4">
-				    <div class="input-group">
-				      <span class="input-group-addon"><i class="fa fa-magic"></i></span>
-				      {{ Form::text('vCode', null, array('id' => 'vCode', 'class' => ' form-control', 'placeholder' => 'vCode'), 'required') }}
-				    </div>
-				  </div>
+			    <div class="box-body table-responsive">
+
+					{{ Form::open(array('class' => 'form-horizontal', 'id' => 'key-form')) }}
+					<fieldset>
+
+					<!-- Prepended text-->
+					<div class="form-group">
+					  <label class="col-md-4 control-label" for="prependedtext">Key ID</label>
+					  <div class="col-md-6">
+					    <div class="input-group">
+					      <span class="input-group-addon"><i class="fa fa-key"></i></span>
+					      {{ Form::text('keyID', null, array('id' => 'keyID', 'class' => 'form-control', 'placeholder' => 'Key ID'), 'required', 'autofocus') }}
+					    </div>
+					  </div>
+					</div>
+
+					<!-- Prepended text-->
+					<div class="form-group">
+					  <label class="col-md-4 control-label" for="prependedtext">Verification Code</label>
+					  <div class="col-md-6">
+					    <div class="input-group">
+					      <span class="input-group-addon"><i class="fa fa-magic"></i></span>
+					      {{ Form::text('vCode', null, array('id' => 'vCode', 'class' => ' form-control', 'placeholder' => 'vCode'), 'required') }}
+					    </div>
+					  </div>
+					</div>
+
+					<!-- Button -->
+					<div class="form-group">
+					  <label class="col-md-4 control-label" for="singlebutton"></label>
+					  <div class="col-md-6">
+					    <button id="check-key" name="singlebutton" class="btn btn-primary">Check Key</button>
+					  </div>
+					</div>
+
+					</fieldset>
+					{{ Form::close() }}
+
+			    </div><!-- /.box-body -->
+			</div><!-- /.box -->
+		</div><!-- /.col-md-8 -->
+
+		<div class="col-md-4">
+			<div class="box">
+				<div class="box-header">
+				    <h3 class="box-title">Predefined Keys</h3>
 				</div>
 
-				<!-- Button -->
-				<div class="form-group">
-				  <label class="col-md-4 control-label" for="singlebutton"></label>
-				  <div class="col-md-4">
-				    <button id="check-key" name="singlebutton" class="btn btn-primary">Check Key</button>
-				  </div>
-				</div>
+				<div class="box-body table-responsive">
+					<!-- API Links -->
+					<a href="https://support.eveonline.com/api/key/CreatePredefined/67108863">Link</a> to access all predefined key.<br />
+					<a href="https://support.eveonline.com/api/key/CreatePredefined/8921408">Link</a> to very basic predefined key.
+				</div><!-- ./box-body -->
 
-				</fieldset>
-			{{ Form::close() }}
+			</div><!-- ./box -->
+		</div><!-- ./col-md-4 -->
 
-	    </div><!-- /.box-body -->
-	</div><!-- /.box -->
+	</div><!-- ./row -->
 
 	<!-- results box -->
 	<div class="box" id="result-box" style="display: none;">
