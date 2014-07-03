@@ -1,4 +1,4 @@
-## Upgrade Notes for SeAT v0.8 -> v0.9
+## Upgrade Notes for SeAT v0.9 -> v0.9.1
 
 This guide details special steps that you should take to ensure a clean and successful upgrade.
 
