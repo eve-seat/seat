@@ -23,6 +23,10 @@ class CorporationController extends BaseController {
 		else
 			$corporations = $corporations->get();
 
+		if(count($corporations) == 1){
+			return Redirect::action('CorporationController@getJournal', array($corporations[0]->corporationID));
+		}
+
 		return View::make('corporation.walletjournal.listjournals')
 			->with('corporations', $corporations);
 	}
@@ -82,6 +86,10 @@ class CorporationController extends BaseController {
 		else
 			$corporations = $corporations->get();
 
+		if(count($corporations) == 1){
+			return Redirect::action('CorporationController@getTransactions', array($corporations[0]->corporationID));
+		}
+
 		return View::make('corporation.wallettransactions.listtransactions')
 			->with('corporations', $corporations);
 	}
@@ -138,6 +146,10 @@ class CorporationController extends BaseController {
 			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
 		else
 			$corporations = $corporations->get();
+
+		if(count($corporations) == 1){
+			return Redirect::action('CorporationController@getMemberTracking', array($corporations[0]->corporationID));
+		}
 
 		return View::make('corporation.membertracking.listmembertracking')
 			->with('corporations', $corporations);
@@ -199,6 +211,10 @@ class CorporationController extends BaseController {
 			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
 		else
 			$corporations = $corporations->get();
+
+		if(count($corporations) == 1){
+			return Redirect::action('CorporationController@getAssets', array($corporations[0]->corporationID));
+		}
 
 		return View::make('corporation.assets.listasset')
 			->with('corporations', $corporations);
@@ -348,6 +364,10 @@ class CorporationController extends BaseController {
 			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
 		else
 			$corporations = $corporations->get();
+
+		if(count($corporations) == 1){
+			return Redirect::action('CorporationController@getContracts', array($corporations[0]->corporationID));
+		}
 
 		return View::make('corporation.contracts.listcontract')
 			->with('corporations', $corporations);
@@ -515,6 +535,10 @@ class CorporationController extends BaseController {
 			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
 		else
 			$corporations = $corporations->get();
+
+		if(count($corporations) == 1){
+			return Redirect::action('CorporationController@getStarBase', array($corporations[0]->corporationID));
+		}
 
 		return View::make('corporation.starbase.liststarbase')
 			->with('corporations', $corporations);
@@ -708,6 +732,10 @@ class CorporationController extends BaseController {
 			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
 		else
 			$corporations = $corporations->get();
+
+		if(count($corporations) == 1){
+			return Redirect::action('CorporationController@getLedgerSummary', array($corporations[0]->corporationID));
+		}
 
 		return View::make('corporation.ledger.listledger')
 			->with('corporations', $corporations);
@@ -954,6 +982,10 @@ class CorporationController extends BaseController {
 		else
 			$corporations = $corporations->get();
 
+		if(count($corporations) == 1){
+			return Redirect::action('CorporationController@getMemberSecurity', array($corporations[0]->corporationID));
+		}
+
 		return View::make('corporation.membersecurity.listmembersecurity')
 			->with('corporations', $corporations);
 	}
@@ -1082,6 +1114,10 @@ class CorporationController extends BaseController {
 		else
 			$corporations = $corporations->get();
 
+		if(count($corporations) == 1){
+			return Redirect::action('CorporationController@getMarketOrders', array($corporations[0]->corporationID));
+		}
+
 		return View::make('corporation.marketorders.listmarketorders')
 			->with('corporations', $corporations);
 	}
@@ -1179,6 +1215,10 @@ class CorporationController extends BaseController {
 			->where('account_apikeyinfo.type', 'Corporation')
 			->get();
 
+		if(count($corporations) == 1){
+			return Redirect::action('CorporationController@getMemberStandings', array($corporations[0]->corporationID));
+		}
+		
 		return View::make('corporation.memberstandings.listmemberstandings')
 			->with('corporations', $corporations);
 	}
