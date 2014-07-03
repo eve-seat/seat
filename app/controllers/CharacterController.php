@@ -852,6 +852,46 @@ class CharacterController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getAjaxResearchAgents()
+	|--------------------------------------------------------------------------
+	|
+	| Return the character wallet journal as a ajax response
+	|
+	*/
+
+	public function getAjaxResearchAgents($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
+		// Get the wallet journal
+		$research = DB::table('character_research')
+			->join('invNames', 'character_research.agentID', '=', 'invNames.itemID')
+			->join('invTypes', 'character_research.skillTypeID', '=', 'invTypes.typeID')
+			->where('characterID', $characterID)
+			->get();
+
+		// Finally, give all this to the view to handle
+		return View::make('character.view.character_research')
+			->with('research', $research)
+			->with('characterID', $characterID);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getPublic()
 	|--------------------------------------------------------------------------
 	|
