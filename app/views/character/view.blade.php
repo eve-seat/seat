@@ -102,7 +102,7 @@
 	            <li><a href="#market_orders" data-toggle="tab" id="load-tab" a-tab-id="market_orders">Market Orders</a></li>
 	            <li><a href="#calendar_events" data-toggle="tab" id="load-tab" a-tab-id="calendar_events">Calendar Events</a></li>
 	            <li><a href="#character_standings" data-toggle="tab" id="load-tab" a-tab-id="character_standings">Standings</a></li>
-	            <li><a href="#character_research" data-toggle="tab" id="load-tab" a-tab-id="character_research">Research</a></li>
+	            <li><a href="#character_research" data-toggle="tab" id="load-tab" a-tab-id="character_research">Research Agents</a></li>
 	            <li class="pull-right">
 	            	<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" class="text-muted" data-toggle="tooltip" title="" data-placement="top" data-original-title="API Key Details">
 	            		<i class="fa fa-gear"></i>
@@ -143,7 +143,7 @@
 			"market_orders" : "{{ action('CharacterController@getAjaxMarketOrders', array('characterID' => $character->characterID)) }}",
 			"calendar_events" : "{{ action('CharacterController@getAjaxCalendarEvents', array('characterID' => $character->characterID)) }}",
 			"character_standings" : "{{ action('CharacterController@getAjaxStandings', array('characterID' => $character->characterID)) }}",
-			"character_research" : "{{ action('CharacterController@getAjaxResearch', array('characterID' => $character->characterID)) }}"
+			"character_research" : "{{ action('CharacterController@getAjaxResearchAgents', array('characterID' => $character->characterID)) }}"
 		}
 
 		// Populate the tab based on the url in locations
