@@ -287,10 +287,10 @@
 									        </td>
 									        <td> 
 									            <div class="progress">
-									                <div class="progress-bar @if( ($details->starbaseCharter > 24) || ($details->fuelBlocks / $usage > 24 )) progress-bar-primary @else progress-bar-danger @endif" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
+									                <div class="progress-bar @if( ($details->starbaseCharter > 24 && $details->security > 0.4) || ($details->fuelBlocks / $usage > 24 )) progress-bar-primary @else progress-bar-danger @endif" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
 									            </div>
 									        </td>
-									        <td><span class="badge @if( ($details->starbaseCharter > 24) || ($details->fuelBlocks / $usage > 24 )) bg-blue @else bg-red @endif pull-right">{{ round((($details->starbaseCharter + ($details->fuelBlocks * 5)) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
+									        <td><span class="badge @if( ($details->starbaseCharter > 24 && $details->security > 0.4) || ($details->fuelBlocks / $usage > 24 )) bg-blue @else bg-red @endif pull-right">{{ round((($details->starbaseCharter + ($details->fuelBlocks * 5)) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
 									    </tr>
 									    <tr>
 									        <td>
