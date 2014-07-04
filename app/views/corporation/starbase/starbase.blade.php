@@ -277,7 +277,7 @@
 										        	<span class="text-red">Full Fuel Usage</span>
 										        @endif
 									        </th>
-									        <th>Fuel Reserve Details</th>
+									        <th>Fuel Reserve Details</th> 
 									        <th></th>
 									    </tr>
 									    <tr>
@@ -285,12 +285,12 @@
 									        	<img src='//image.eveonline.com/Type/4051_32.png' style='width: 18px;height: 18px;'>
 									        	<b>Fuel Blocks @if($details->security > 0.4)+ Charters @endif:</b> {{ ($details->starbaseCharter) + ($details->fuelBlocks * 5) }} m3 / {{ $bay_sizes[$details->typeID]['fuelBay'] }} m3
 									        </td>
-									        <td>
+									        <td> 
 									            <div class="progress">
-									                <div class="progress-bar progress-bar-primary" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
+									                <div class="progress-bar @if( ($details->starbaseCharter > 24) || ($details->fuelBlocks / $usage > 24 )) progress-bar-primary @else progress-bar-danger @endif" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
 									            </div>
 									        </td>
-									        <td><span class="badge bg-blue pull-right">{{ round((($details->starbaseCharter + ($details->fuelBlocks * 5)) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
+									        <td><span class="badge @if( ($details->starbaseCharter > 24) || ($details->fuelBlocks / $usage > 24 )) bg-blue @else bg-red @endif pull-right">{{ round((($details->starbaseCharter + ($details->fuelBlocks * 5)) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
 									    </tr>
 									    <tr>
 									        <td>
