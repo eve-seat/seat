@@ -22,7 +22,7 @@
 		            <tr>
 		                <td>{{ $note->notificationID }}</td>
 		                <td data-order="{{ $note->sentDate }}">
-		                	<spanp data-toggle="tooltip" title="" data-original-title="{{ $note->sentDate }}">
+		                	<span data-toggle="tooltip" title="" data-original-title="{{ $note->sentDate }}">
 		                		{{ Carbon\Carbon::parse($note->sentDate)->diffForHumans() }}
 		                	</span>
 		                </td>
