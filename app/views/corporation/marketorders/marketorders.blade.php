@@ -66,7 +66,7 @@
 					             	@endif
 			                </td>									                
 			                <td>{{ $order->issued }}</td>
-			                <td>
+			                <td data-order="{{ Carbon\Carbon::parse($order->issued)->addDays($order->duration) }}">
 			                	{{ Carbon\Carbon::parse($order->issued)->addDays($order->duration)->diffForHumans() }}
 			                </td>
 			                <td>

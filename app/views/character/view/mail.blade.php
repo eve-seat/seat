@@ -26,8 +26,8 @@
 				@foreach ($mail as $message)
 		            <tr>
 		                <td>{{ $message->messageID }}</td>
-		                <td>
-		                	<spanp data-toggle="tooltip" title="" data-original-title="{{ $message->sentDate }}">
+		                <td data-order="{{ $message->sentDate }}">
+		                	<span data-toggle="tooltip" title="" data-original-title="{{ $message->sentDate }}">
 		                		{{ Carbon\Carbon::parse($message->sentDate)->diffForHumans() }}
 		                	</span>
 		                </td>

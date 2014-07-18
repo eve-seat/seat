@@ -31,8 +31,8 @@
                 <tbody>
                   @foreach ($wallet_journal as $e)
                     <tr @if ($e->amount < 0)class="danger" @endif>
-                        <td>
-                        	<spanp data-toggle="tooltip" title="" data-original-title="{{ $e->date }}">
+                        <td data-order="{{ $e->date }}">
+                        	<span data-toggle="tooltip" title="" data-original-title="{{ $e->date }}">
                         		{{ Carbon\Carbon::parse($e->date)->diffForHumans() }}
                         	</span>
                         </td>
