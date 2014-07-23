@@ -162,6 +162,7 @@ class CharacterController extends BaseController {
 		$skill_queue = DB::table('character_skillqueue')
 			->join('invTypes', 'character_skillqueue.typeID', '=', 'invTypes.typeID')
 			->where('characterID', $characterID)
+			->orderBy('queuePosition')
 			->get();
 
 		// Finally, give all this to the view to handle
