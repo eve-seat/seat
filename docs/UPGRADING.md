@@ -38,7 +38,7 @@ If you get a error such as `error: You have local changes to 'app/config/app.php
 * Ensure that you have the latest vendor packages. Assuming you have the composer.phar saved in the project root it may look something like this:
 
 ```bash
-$ /var/www/seat/composer.phar update
+$ php /var/www/seat/composer.phar update
 Loading composer repositories with package information
 Updating dependencies (including require-dev)
 Generating autoload files
@@ -48,7 +48,7 @@ Generating optimized class loader
 * Regenerate the composer autoload classes:
 
 ```bash
-$ /var/www/seat/composer.phar dump-autoload
+$ php /var/www/seat/composer.phar dump-autoload
 Generating autoload files
 ```
 
