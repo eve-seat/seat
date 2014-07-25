@@ -64,9 +64,6 @@ class SeatQueueUnstuck extends ScheduledCommand {
         
         $db_queue_count = \SeatQueueInformation::where('status', '=', 'Queued')->count();
         $db_working_count = \SeatQueueInformation::where('status', '=', 'Working')->count();
-
-        \Log::debug('db_queue_count: ' . $db_queue_count);
-        \Log::debug('db_working_count: ' . $db_working_count);
         
         if($db_queue_count!=0)
         {
@@ -76,9 +73,7 @@ class SeatQueueUnstuck extends ScheduledCommand {
                 $timeDelta = \Carbon\Carbon::now()->diffInMinutes($job['updated_at']);
                 if($timeDelta >= 60)
                 {
-                    \Log::debug('queuedJob - jobID:' . $job['jobID'] . $job['api'] . '/' . $job['scope'] . ', status: ' . $job['status'] . ', updated_at: ' . $job['updated_at'] . ', timeDelta: ' . $timeDelta);
                     \SeatQueueInformation::where('jobID', '=', $job['jobID'])->update(array('status' => 'Error'));
-                    \Log::debug('queuedJob - jobID:' . $job['jobID'] . 'set to error');
                 }
             }
         }
@@ -91,13 +86,9 @@ class SeatQueueUnstuck extends ScheduledCommand {
                 $timeDelta = \Carbon\Carbon::now()->diffInMinutes($job['updated_at']);
                 if($timeDelta >= 60)
                 {
-                    \Log::debug('queuedJob - jobID:' . $job['jobID'] . $job['api'] . '/' . $job['scope'] . ', status: ' . $job['status'] . ', updated_at: ' . $job['updated_at'] . ', timeDelta: ' . $timeDelta);
                     \SeatQueueInformation::where('jobID', '=', $job['jobID'])->update(array('status' => 'Error'));
-                    \Log::debug('queuedJob - jobID:' . $job['jobID'] . 'set to error');
                 }
             }
         }
-
-        \Log::info('Completed command ' . $this->name, array('src' => __CLASS__));
     }
 }
