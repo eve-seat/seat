@@ -60,7 +60,7 @@ class SeatQueueCleanup extends ScheduledCommand {
           ->orWhere('status','=', 'Working')
           ->get() as $job
         ) {
-            if(\Carbon\Carbon::now()->diffInMinutes0($job['updated_at']) > 60)
+            if(\Carbon\Carbon::now()->diffInMinutes($job['updated_at']) > 60)
             {
                 \SeatQueueInformation::where('jobID', '=', $job['jobID'])
                     ->update(
