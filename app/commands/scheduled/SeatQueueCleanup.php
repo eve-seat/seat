@@ -57,10 +57,18 @@ class SeatQueueCleanup extends ScheduledCommand {
 
         foreach(\SeatQueueInformation::where('status', '=', 'Queued')
           ->orWhere('status','=', 'Working')
-          ->where('updated_at', '<=', \Carbon\Carbon::now()->subHour())
           ->get() as $job
         ) {
-            \SeatQueueInformation::where('jobID', '=', $job['jobID'])->update(array('status' => 'Error'));
+            if(\Carbon\Carbon::now()->diffInMinutes0($job['updated_at']) > 60)
+            {
+                \SeatQueueInformation::where('jobID', '=', $job['jobID'])
+                    ->update(
+                        array(
+                            'status' => 'Error',
+                            'output' => '60 Minute Job Runtime Limit Exceeded'
+                            )
+                        );
+            }
         }
     }
 }
