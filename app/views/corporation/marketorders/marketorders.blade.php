@@ -26,7 +26,11 @@
 		    </div> <!-- nav-tabs -->
 		     	<div class="tab-content">
 						@foreach($order_states as $key => $value)
-							<div class="tab-pane active" id="{{ $key }}">
+							@if($key==0)
+                                <div class="tab-pane active" id="{{ $key }}">
+                            @else
+                                <div class="tab-pane" id="{{ $key }}">
+                            @endif
 			        <table class="table table-hover table-condensed" id="datatable">
 		            <thead>
 			            <tr>
