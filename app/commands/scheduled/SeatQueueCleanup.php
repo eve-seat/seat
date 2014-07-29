@@ -55,6 +55,7 @@ class SeatQueueCleanup extends ScheduledCommand {
     {
         \Log::info('Started command ' . $this->name, array('src' => __CLASS__));
 
+        // TODO: Query only Jobs with 'update_at' > 1h to optimize
         foreach(\SeatQueueInformation::where('status', '=', 'Queued')
           ->orWhere('status','=', 'Working')
           ->get() as $job
