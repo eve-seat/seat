@@ -5,8 +5,8 @@
 ##### *SeAT is still under heavy development and is not considered 100% stable yet. USE AT YOUR OWN RISK* #####
 
 ### Introduction ###
-SeAT attempts to be a EVE Online™ Corporation Management Tool written in PHP using the [Laravel][1] Framework driven by a MySQL database.  
-The SeAT backend is *highly* influenced by YAPEAL. SeAT itself is the result of a rewrite of the original Corporation Management Tool that I wrote for our corp and figured there may be others out there that may need similar tools.
+SeAT attempts to be a EVE Online Corporation Management Tool written in PHP using the [Laravel][1] Framework driven by a MySQL database.  
+SeAT itself is the result of a rewrite of the original Corporation Management Tool that I wrote for our corp and figured there may be others out there that may need similar tools.
 
 ### Features ###
 SeAT allows corporation CEO's and directors to manage member API keys, store member wallet & mail history, monitor corporaton poses, wallets, transactions, account ledgers etc.
@@ -14,6 +14,11 @@ SeAT allows corporation CEO's and directors to manage member API keys, store mem
 ### Technical Summary ###
 API Keys are stored in the backend database and get updated as the schedule is configured. A cronjob gets kicked off every minute that checks which jobs need to be scheduled and actions as required.  
 A 'job' can be defined as a set of categorized API calls to update certain part of a Character, Corporation, Eve or Map related information in the backend. More than 55 API Endpoints have been implemented and form part of these jobs.
+
+The SeAT backend can be run completely independant (without the frontend) and simply used to keep the database up to date, using the data in our own tools.
+
+### Demo Site ###
+You can test out SeAT at [http://eveseat.com/](http://eveseat.com/)
 
 ### Screenshots ###
 
