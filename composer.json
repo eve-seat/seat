@@ -5,9 +5,9 @@
 	"license": "MIT",
 	"require": {
 		"laravel/framework": "4.1.*",
-		"3rdpartyeve/phealng": "0.3.*",
+		"3rdpartyeve/phealng": "1.2.*",
 		"rmccue/requests": ">=1.0",
-		"indatus/dispatcher": "1.2.1",
+		"indatus/dispatcher": "1.4.*",
 		"cartalyst/sentry": "2.1.*"
 	},
 	"autoload": {
