@@ -143,6 +143,30 @@
     </div><!-- /.col -->
 
     <div class="col-md-4">
+
+        @if(Sentry::getUser()->isSuperUser())
+            <div class="box box-solid">
+                <div class="box-header">
+                    <h3 class="box-title">Key Ownership</h3>
+                    <div class="box-tools pull-right">
+                        <button class="btn btn-default btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                        <button class="btn btn-default btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <ul class="list-unstyled">
+                        @foreach($key_owner as $owner)
+                            <li><a href="{{ action('UserController@getDetail', array('userID' => $owner->id)) }}"><i class="fa fa-user"></i> {{ $owner->username }}</a> ({{ $owner->email }})</li>
+                        @endforeach
+                    </ul>
+
+                </div><!-- /.box-body -->
+                <div class="box-footer">
+                    <a id="transfer" data-toggle="modal" data-target="#transfer-modal" class="btn btn-primary btn-xs">Transfer Key Ownership</a>
+                </div>                
+            </div>
+        @endif
+
         <!-- Success box -->
         <div class="box box-solid box-success">
             <div class="box-header">
@@ -265,6 +289,47 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<!-- transfer ownership modal -->
+<div class="modal fade" id="transfer-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"> Transfer Key Ownership to Another SeAT Account</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ Form::open(array('class' => 'form-horizontal', 'action' => 'ApiKeyController@postTransferOwnership')) }}
+                            <fieldset>
+
+                                <!-- Prepended text-->
+                                <div class="form-group">
+                                  <label class="col-md-4 control-label" for="searchinput"></label>
+                                    <div class="input-group">
+                                      {{ Form::text('accountid', null, array('id' => 'searchinput', 'class' => 'form-control'), 'required', 'autofocus') }}
+                                    </div>
+                                </div>
+
+                                <input id="keyID" name="keyID" type="hidden" value="{{ $key_information->keyID }}">
+
+                                <div class="form-group">
+                                  <label class="col-md-4 control-label"></label>
+                                    <div class="input-group">
+                                      {{ Form::submit('Transfer', array('class' => 'btn bg-olive')) }}
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                        {{ Form::close() }}                     
+                    </div>
+                </div>
+            
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 @stop
 
 @section('javascript')
@@ -310,6 +375,26 @@
                 parent.remove();
             }
         });
+    });
+
+    // Search for avaialble accounts
+    $('#searchinput').select2({
+        multiple: false,
+        width: "250",
+        placeholder: "Select the destination account username",
+        minimumInputLength: 1,
+        ajax: {
+          url: "{{ action('HelperController@getAccounts') }}",
+          dataType: 'json',
+          data: function (term, page) {
+            return {
+              q: term
+            };
+          },
+          results: function (data, page) {
+            return { results: data };
+          }
+        }
     });
 </script>
 @stop

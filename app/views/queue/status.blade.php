@@ -76,12 +76,12 @@
 <hr>
 <div class="row">
 	<div class="col-md-4">
-		<div class="box box-solid box-primary">
+		<div class="box box-solid box-info">
 			<div class="box-header">
 			    <h3 class="box-title">Queued Jobs</h3>
 			    <div class="box-tools pull-right">
-			        <button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
-			        <button class="btn btn-primary btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+			        <button class="btn btn-info btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+			        <button class="btn btn-info btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
 			    </div>
 			</div>
 			<div class="box-body no-padding">

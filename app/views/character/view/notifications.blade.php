@@ -21,8 +21,8 @@
 				@foreach ($notifications as $note)
 		            <tr>
 		                <td>{{ $note->notificationID }}</td>
-		                <td>
-		                	<spanp data-toggle="tooltip" title="" data-original-title="{{ $note->sentDate }}">
+		                <td data-order="{{ $note->sentDate }}">
+		                	<span data-toggle="tooltip" title="" data-original-title="{{ $note->sentDate }}">
 		                		{{ Carbon\Carbon::parse($note->sentDate)->diffForHumans() }}
 		                	</span>
 		                </td>

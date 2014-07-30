@@ -271,13 +271,19 @@ class ApiKeyController extends BaseController {
 			->take(25)
 			->get();
 
+		$key_owner = DB::table('seat_keys')
+			->join('users', 'seat_keys.user_id', '=', 'users.id')
+			->where('seat_keys.keyID', $keyID)
+			->get();
+
 		//TODO: Cached untill for the characerID's
 
 		return View::make('keys.detail')
 			->with('key_information', $key_information)
 			->with('key_characters', $key_characters)
 			->with('key_bans', $key_bans)
-			->with('recent_jobs', $recent_jobs);
+			->with('recent_jobs', $recent_jobs)
+			->with('key_owner', $key_owner);
 	}
 
 	/*
@@ -812,5 +818,37 @@ class ApiKeyController extends BaseController {
 
 		return Redirect::action('ApiKeyController@getPeople')
 			->with('success', 'Group has had its main updated to ' . $main->characterName);
+	}
+
+
+	/*
+	|--------------------------------------------------------------------------
+	| postTransferOwnership()
+	|--------------------------------------------------------------------------
+	|
+	| Set a new owner for a API key
+	|
+	*/
+
+	public function postTransferOwnership()
+	{
+
+		// Ensure that this user is a super admin
+		if (!Sentry::getUser()->isSuperUser())
+			App::abort(404);
+
+		// Find the API Key and user...
+		$key_information  = SeatKey::where('keyID', Input::get('keyID'))->first();
+		$seat_user = User::where('id', Input::get('accountid'))->first();
+
+		// ... and check that they exist
+		if (!$key_information || !$seat_user)
+			App::abort(404);
+
+		$key_information->user_id = Input::get('accountid');
+		$key_information->save();
+
+		return Redirect::action('ApiKeyController@getDetail', array(Input::get('keyID')))
+			->with('success', 'API Key Ownership has been transferred');
 	}
 }

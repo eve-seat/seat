@@ -39,7 +39,7 @@
                     <tbody>
                         @foreach ($wallet_transactions as $e)
                             <tr @if ($e->transactionType == 'buy')class="danger" @endif>
-                                <td>
+                                <td data-order="{{ $e->transactionDateTime }}">
                                 	<span data-toggle="tooltip" title="" data-original-title="{{ $e->transactionDateTime }}">
                                 		{{ Carbon\Carbon::parse($e->transactionDateTime)->diffForHumans() }}
                                 	</span>

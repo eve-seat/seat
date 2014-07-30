@@ -170,4 +170,24 @@ class HelperController extends BaseController {
 
 		return Response::json($people);
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getAccounts()
+	|--------------------------------------------------------------------------
+	|
+	| Return the currently available SeAT accounts
+	|
+	*/
+
+	public function getAccounts()
+	{
+
+		$accounts = DB::table('users')
+			->select('id', DB::raw('username as text'))
+			->where('username', 'like', '%' . Input::get('q') . '%')
+			->get();
+
+		return Response::json($accounts);
+	}
 }
