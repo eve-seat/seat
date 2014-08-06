@@ -18,6 +18,8 @@ class CharacterController extends BaseController {
 			->leftJoin('seat_keys', 'account_apikeyinfo_characters.keyID', '=', 'seat_keys.keyID')
 			->join('character_charactersheet', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
 			->join('character_skillintraining', 'account_apikeyinfo_characters.characterID', '=', 'character_skillintraining.characterID')
+			->orderBy('seat_keys.isOk', 'asc')
+			->orderBy('account_apikeyinfo_characters.characterName', 'asc')
 			->groupBy('account_apikeyinfo_characters.characterID');
 
 		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
