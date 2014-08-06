@@ -38,16 +38,6 @@ Refer to the `docs/` directory for installation instructions. It is suggested th
 Please refer to the UPGRADING guide in `docs/UPDGRADING.md`
 
 ### Todo ###
-There really is a TON of stuff that still needs to be done:
-
-- ~~Corporation Wallet Ledger~~
-- ~~Asset Search~~
-- ~~Skill Search~~
-- ~~Clone Overview~~
-- Character Interactions (ie Player Tradings, Mails etc.)
-- ~~Starbase Fuel Time Left calculations~~ as well as Silo input/output end etas.
-- ~~Corporation Sheets with Member Security Roles view~~
-
 There is a metric ton of information pulled via the API that is not yet exposed on the web front end... so *lots* to do still :)
 
 A much longer term goal would be to get the system to such a state where corporation members are able to register and view thier own keys and administrators are able to delegate roles such as recruiters etc.
