@@ -62,7 +62,7 @@
 					<ul class="list-unstyled">
 					<!-- API Links -->
 						<li>Create a new <a href="https://support.eveonline.com/api/key/CreatePredefined/268435455" target="_blank"><i class="fa fa-external-link"></i> full access</a> key (recommended).</li>
-						<li>Create a new <a href="https://support.eveonline.com/api/key/CreatePredefined/8921408" target="_blank"><i class="fa fa-external-link"></i> basic, character info only</a> key.</li>
+						<li>Create a new <a href="https://support.eveonline.com/api/key/CreatePredefined/176693568" target="_blank"><i class="fa fa-external-link"></i> basic, character info only</a> key.</li>
 					</ul>
 				</div><!-- ./box-body -->
 
