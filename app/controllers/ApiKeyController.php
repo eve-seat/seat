@@ -211,6 +211,10 @@ class ApiKeyController extends BaseController {
 			// Based in the key type, push a update job
 			switch ($access['type']) {
 				case 'Character':
+                    // fix for Api Corporation type banned call <<
+                    Account\AccountStatus::update($keyID, $vCode);
+                    // >>
+
 					$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key_data->keyID, $key_data->vCode, 'Character', 'Eve');
 					break;
 
@@ -328,11 +332,14 @@ class ApiKeyController extends BaseController {
 
 		// Only process Character keys here
 		if ($access['type'] == 'Character') {
+            // fix for Api Corporation type banned call <<
+            Account\AccountStatus::update($keyID, $key->vCode);
+            // >>
 
 			$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
 
 			return Response::json(array('state' => 'new', 'jobID' => $jobID));
-		}elseif( $access['type'] == 'Corporation' ){
+		} elseif( $access['type'] == 'Corporation' ){
 
 			$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Corporation'), $key->keyID, $key->vCode, 'Corporation', 'Eve');
 
