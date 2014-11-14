@@ -85,7 +85,6 @@ class MemberSecurity extends BaseApi {
 
 				// a) Roles Update
 				\EveCorporationMemberSecurityRoles::where('characterID', '=', $security->characterID)
-					->where('corporationID', '=', $corporationID)
 					->delete();
 
 				foreach ($security->roles as $role) {
@@ -104,7 +103,6 @@ class MemberSecurity extends BaseApi {
 
 				// b) grantableRoles Update
 				\EveCorporationMemberSecurityGrantableRoles::where('characterID', '=', $security->characterID)
-					->where('corporationID', '=', $corporationID)
 					->delete();
 
 				foreach ($security->grantableRoles as $role) {
@@ -122,7 +120,6 @@ class MemberSecurity extends BaseApi {
 
 				// c) rolesAtHQ Update
 				\EveCorporationMemberSecurityRolesAtHQ::where('characterID', '=', $security->characterID)
-					->where('corporationID', '=', $corporationID)
 					->delete();
 					
 				foreach ($security->rolesAtHQ as $role) {
@@ -140,7 +137,6 @@ class MemberSecurity extends BaseApi {
 
 				// d) grantableRolesAtHQ Update
 				\EveCorporationMemberSecurityGrantableRolesAtHQ::where('characterID', '=', $security->characterID)
-					->where('corporationID', '=', $corporationID)
 					->delete();
 					
 				foreach ($security->grantableRolesAtHQ as $role) {
@@ -158,7 +154,6 @@ class MemberSecurity extends BaseApi {
 
 				// e) rolesAtBase Update
 				\EveCorporationMemberSecurityRolesAtBase::where('characterID', '=', $security->characterID)
-					->where('corporationID', '=', $corporationID)
 					->delete();
 					
 				foreach ($security->rolesAtBase as $role) {
@@ -176,7 +171,6 @@ class MemberSecurity extends BaseApi {
 
 				// f) grantableRolesAtBase Update
 				\EveCorporationMemberSecurityGrantableRolesAtBase::where('characterID', '=', $security->characterID)
-					->where('corporationID', '=', $corporationID)
 					->delete();
 					
 				foreach ($security->grantableRolesAtBase as $role) {
@@ -194,7 +188,6 @@ class MemberSecurity extends BaseApi {
 
 				// g) rolesAtOther Update
 				\EveCorporationMemberSecurityRolesAtOther::where('characterID', '=', $security->characterID)
-					->where('corporationID', '=', $corporationID)
 					->delete();
 					
 				foreach ($security->rolesAtOther as $role) {
@@ -212,7 +205,6 @@ class MemberSecurity extends BaseApi {
 
 				// h) grantableRolesAtOther Update
 				\EveCorporationMemberSecurityGrantableRolesAtOther::where('characterID', '=', $security->characterID)
-					->where('corporationID', '=', $corporationID)
 					->delete();
 					
 				foreach ($security->grantableRolesAtOther as $role) {
@@ -236,7 +228,6 @@ class MemberSecurity extends BaseApi {
 				if (isset($security->titles)) {
 
 					\EveCorporationMemberSecurityTitles::where('characterID', '=', $security->characterID)
-						->where('corporationID', '=', $corporationID)
 						->delete();
 
 					foreach ($security->titles as $role) {
