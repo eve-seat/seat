@@ -319,8 +319,10 @@ class BaseApi {
 		Account\APIKeyInfo::update($keyID, $key->vCode);
 		$key_mask_info = \EveAccountAPIKeyInfo::where('keyID', '=', $keyID)->first();
 
+                // Fix for issue #182 <<
 		// TODO: Where to put this call????
-		Account\AccountStatus::update($keyID, $key->vCode);
+		// Account\AccountStatus::update($keyID, $key->vCode);
+		// >>
 
 		// If we still can't determine mask information, leave everything
 		if (!$key_mask_info)
