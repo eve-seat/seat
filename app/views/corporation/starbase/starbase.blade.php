@@ -231,12 +231,12 @@
 
 									    		{{-- determine if the time left is less than 3 days --}}
 									    		@if ( Carbon\Carbon::now()->addHours($details->starbaseCharter / 1)->lte(Carbon\Carbon::now()->addDays(3)))
-										    		<b><span class="text-red">{{ Carbon\Carbon::now()->addHours($details->starbaseCharter / $usage)->diffForHumans() }}</span></b>
+										    		<b><span class="text-red">{{ Carbon\Carbon::now()->addHours($details->starbaseCharter / 1)->diffForHumans() }}</span></b>
 									    		@else
 										    		<b>{{ Carbon\Carbon::now()->addHours($details->starbaseCharter / 1)->diffForHumans() }}</b>
 									    		@endif
 									    	)
-									    	<i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated offline at {{ Carbon\Carbon::now()->addHours($details->starbaseCharter / $usage)->toDateTimeString() }}"></i>
+									    	<i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated offline at {{ Carbon\Carbon::now()->addHours($details->starbaseCharter / 1)->toDateTimeString() }}"></i>
 									    </li>
 								    @endif
 								    <li>
