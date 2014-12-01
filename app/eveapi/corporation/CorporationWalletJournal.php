@@ -45,6 +45,9 @@ class WalletJournal extends BaseApi {
 		// Prepare the Pheal instance
 		$pheal = new Pheal($keyID, $vCode);
 
+		// Prepare a blank wallet_journal to start
+		$wallet_journal = null;
+
 		// Next, start our loop over the wallet divisions for this corporation
 		foreach (\EveCorporationAccountBalance::where('corporationID', '=', $corporationID)->get() as $walletdivision) {
 
@@ -73,7 +76,7 @@ class WalletJournal extends BaseApi {
 						$first_request = false;
 
 					} else {
-					
+
 						$wallet_journal = $pheal
 							->corpScope
 							->WalletJournal(array('characterID' => $characters[0], 'rowCount' => $row_count, 'accountKey'=> $walletdivision->accountKey, 'fromID' => $from_id));

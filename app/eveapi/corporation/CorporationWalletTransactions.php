@@ -45,6 +45,9 @@ class WalletTransactions extends BaseApi {
 		// Prepare the Pheal instance
 		$pheal = new Pheal($keyID, $vCode);
 
+		// Prepare blank wallet_transactions to start
+		$wallet_transactions = null;
+
 		// Next, start our loop over the wallet divisions for this corporation
 		foreach (\EveCorporationAccountBalance::where('corporationID', '=', $corporationID)->get() as $walletdivision) {
 
@@ -73,7 +76,7 @@ class WalletTransactions extends BaseApi {
 						$first_request = false;
 
 					} else {
-					
+
 						$wallet_transactions = $pheal
 							->corpScope
 							->WalletTransactions(array('characterID' => $characters[0], 'rowCount' => $row_count, 'accountKey'=> $walletdivision->accountKey, 'fromID' => $from_id));
