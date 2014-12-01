@@ -69,8 +69,13 @@ class EveCharacterUpdater extends ScheduledCommand {
 			}
 
 			// Only process Character keys here
-			if ($access['type'] == 'Character')
+			if ($access['type'] == 'Character') {
+                // fix for Api Corporation type banned call <<
+                Account\AccountStatus::update($key->keyID, $key->vCode);
+                // >>
+
 				\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
+            }
 
 		}
 	}
