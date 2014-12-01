@@ -56,7 +56,7 @@ class EveCharacterUpdater extends ScheduledCommand {
 	 */
 	public function fire()
 	{
-		
+
 		\Log::info('Started command ' . $this->name, array('src' => __CLASS__));
 
 		// Get the keys, and process them
@@ -70,10 +70,9 @@ class EveCharacterUpdater extends ScheduledCommand {
 
 			// Only process Character keys here
 			if ($access['type'] == 'Character') {
-                // fix for Api Corporation type banned call <<
-                Account\AccountStatus::update($key->keyID, $key->vCode);
-                // >>
 
+				// Do a fresh AccountStatus lookup
+				Account\AccountStatus::update($key->keyID, $key->vCode);
 				\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
             }
 

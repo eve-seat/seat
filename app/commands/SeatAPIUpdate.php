@@ -66,17 +66,16 @@ class SeatAPIUpdate extends Command {
 
 			switch ($access['type']) {
 				case 'Character':
-                    // fix for Api Corporation type banned call <<
-                    Account\AccountStatus::update($key->keyID, $key->vCode);
-                    // >>
 
+					// Do a fresh AccountStatus lookup
+					Account\AccountStatus::update($key->keyID, $key->vCode);
 					\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
 					break;
 
 				case 'Corporation':
 					\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Corporation'), $key->keyID, $key->vCode, 'Corporation', 'Eve');
 					break;
-				
+
 				default:
 					# code...
 					break;
