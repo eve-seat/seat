@@ -8,7 +8,16 @@
  <div class="box">
 
 	<div class="box-header">
-	    <h3 class="box-title">All API Keys @if (count($key_info) > 0) ({{ count($key_info) }}) @endif</h3>
+	    <h3 class="box-title">
+            All API Keys @if (count($key_info) > 0) ({{ count($key_info) }}) @endif
+        </h3>
+        @if (Sentry::getUser()->hasAccess('key_manager'))
+            <div class="box-tools">
+                <a href="{{ action('ApiKeyController@getRemoveAllBans') }}" class="btn btn-default btn-sm pull-right">
+                    <i class="fa fa-refresh"></i> Enable All Keys and Clear Bans
+                </a>
+            </div>
+        @endif
 	</div>
 
     <div class="box-body no-padding">
