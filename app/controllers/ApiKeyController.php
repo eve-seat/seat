@@ -603,7 +603,7 @@ class ApiKeyController extends BaseController {
 
         // Enable all of the keys
         SeatKey::where('isOk', 0)
-            ->update(array('isOk' => 1));
+            ->update(array('isOk' => 1, 'lastError' => null));
 
 
         // Redirect with a message
