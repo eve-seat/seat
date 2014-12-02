@@ -38,7 +38,7 @@ function ask {
 }
 
 URL="https://www.fuzzwork.co.uk/dump/"
-EXPANSION="crius-1.0-100038"
+EXPANSION="phoebe-1.0-107269"
 EXTENTION="sql"
 DUMPS="required_sde"
 TEMP=/tmp/SeAT-$(date | md5sum | awk '{ print $1 }')
