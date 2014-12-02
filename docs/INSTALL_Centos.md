@@ -48,7 +48,7 @@ As any user, run:
 
 #### 2. Install & Configure PHP / Apache ####
 PHP & MySQL is pretty easy too:  
-    - `yum install httpd php php-mysql php-cli php-mcrypt php-process`  
+    - `yum install httpd php php-mysql php-cli php-mcrypt php-process php-mbstring`  
     - `chkconfig httpd on`  
     - `/etc/init.d/httpd start`  
     
