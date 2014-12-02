@@ -44,10 +44,24 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
+	| Eve API Error Count Maximum
+	|--------------------------------------------------------------------------
+	|
+	| Specifies the maximum amount of errors that should occur before the SeAT
+	| API updator workers will stop processing update jobs. This allows us
+	| be aware of the fact that the EVE API may be down/sick and prevent
+	| the storm ahead with updates.
+	|
+	*/
+
+	'error_limit' => 120,
+
+	/*
+	|--------------------------------------------------------------------------
 	| Allow Registrations
 	|--------------------------------------------------------------------------
 	|
-	|	Specify whether the website is currently allow registrations 
+	|	Specify whether the website is currently allow registrations
 	|
 	*/
 

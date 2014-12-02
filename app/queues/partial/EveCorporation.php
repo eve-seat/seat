@@ -11,7 +11,7 @@ class Corporation {
 
         $keyID = $data['keyID'];
         $vCode = $data['vCode'];
-        
+
         $job_record = \SeatQueueInformation::where('jobID', '=', $job->getJobId())->first();
 
         // Check that we have a valid jobid
@@ -95,10 +95,22 @@ class Corporation {
             EveApi\Corporation\StarbaseDetail::Update($keyID, $vCode);
 
             $job_record->status = 'Done';
-            $job_record->output = null;        
+            $job_record->output = null;
             $job_record->save();
 
             $job->delete();
+
+        } catch (\Seat\EveApi\Exception\APIServerDown $e) {
+
+            // The API Server is down according to \Seat\EveApi\bootstrap().
+            // Due to this fact, we can simply take this job and put it
+            // back in the queue to be processed later.
+            $job_record->status = 'Queued';
+            $job_record->output = 'The API Server appears to be down. Job has been re-queued.';
+            $job_record->save();
+
+            // Re-queue the job to try again in 10 minutes
+            $job->release(60 * 10);
 
         } catch (\Exception $e) {
 
