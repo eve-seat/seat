@@ -40,7 +40,7 @@
 		  	</span>
 		  </div>
 		</div>
-	</div>	
+	</div>
 
 </div>
 <div class="row">
@@ -59,7 +59,7 @@
             </div>
             <div class="modal-body">
               	<p class="text-center">
-	              	{{ Form::open(array('action' => 'UserController@postChangePassword', 'class' => 'form-horizontal')) }}
+	              	{{ Form::open(array('action' => 'ProfileController@postChangePassword', 'class' => 'form-horizontal')) }}
 						<fieldset>
 
 						<div class="form-group">
