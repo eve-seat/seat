@@ -46,7 +46,7 @@
             </div>
         </div>
     </div><!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
+    <div class="col-lg-2 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-green">
             <div class="inner">
@@ -59,7 +59,7 @@
             </div>
         </div>
     </div><!-- ./col -->
-    <div class="col-lg-3 col-xs-6">
+    <div class="col-lg-2 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-red">
             <div class="inner">
@@ -70,6 +70,25 @@
                     Error Jobs
                 </p>
             </div>
+        </div>
+    </div><!-- ./col -->
+    <div class="col-lg-2 col-xs-6">
+        <!-- small box -->
+        <div class="small-box bg-maroon">
+			<div class="inner">
+				<h3>
+					@if (\Cache::has('eve_api_error_count'))
+						{{ (\Cache::get('eve_api_error_count') / \Config::get('seat.error_limit')) * 100 }}%
+						<small>{{ \Cache::get('eve_api_error_count') }} / {{ \Config::get('seat.error_limit') }}</small>
+					@else
+						{{ (0 / \Config::get('seat.error_limit')) * 100 }}%
+						<small>0 / {{ \Config::get('seat.error_limit') }}</small>
+					@endif
+				</h3>
+				<p>
+					EVE API Error Threshold
+				</p>
+			</div>
         </div>
     </div><!-- ./col -->
 </div> <!-- ./row -->
@@ -129,7 +148,7 @@
 	            <div class="box-tools pull-right">
 	            	<button class="btn btn-warning btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
 	            	<button class="btn btn-warning btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
-	            </div> 
+	            </div>
 	        </div>
 	        <div class="box-body no-padding">
 	        	@if (count($db_working) > 0)
@@ -303,7 +322,7 @@
 				url: "{{ action('QueueController@getDeleteAllErrors') }}",
 			});
 		});
-		
+
 		// Ajax Error Messages Deletion
 		$("i#delete-queue").click(function() {
 
