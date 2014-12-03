@@ -56,15 +56,4 @@ return array(
 
 	'error_limit' => 120,
 
-	/*
-	|--------------------------------------------------------------------------
-	| Allow Registrations
-	|--------------------------------------------------------------------------
-	|
-	|	Specify whether the website is currently allow registrations
-	|
-	*/
-
-	'allow_registration' => true,
-
 );

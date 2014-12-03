@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder {
 		$this->call('EveApiCalllistTableSeeder');
         	$this->call('EveNotificationTypesSeeder');
 		$this->call('EveCorporationRolemapSeeder');
+		$this->call('SeatSettingSeeder');
 	}
 }

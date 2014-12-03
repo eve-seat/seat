@@ -35,7 +35,7 @@
           <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
     </head>
-    <body class="skin-blue fixed">
+    <body class="skin-{{ SeatSetting::find('color_scheme')->value }} fixed">
 
         @include('layouts.components.header')
 

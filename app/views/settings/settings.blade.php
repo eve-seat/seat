@@ -1,38 +1,57 @@
 @extends('layouts.masterLayout')
-@section('html_title', 'New Key')
+
+@section('html_title', 'SeAT Settings')
 
 @section('page_content')
-	
+
 	<div class="row">
 		<div class="col-md-8">
-		 	<div class="box">
+		 	<div class="box" id="result">
 				<div class="box-header">
-				    <h3 class="box-title">Add New API Key</h3>
+				    <h3 class="box-title">SeAT Settings</h3>
 				</div>
 
 			    <div class="box-body table-responsive">
 
-					{{ Form::open(array('class' => 'form-horizontal', 'id' => 'key-form')) }}
+					{{ Form::open(array('class' => 'form-horizontal', 'id' => 'settings-form')) }}
 					<fieldset>
 
 					<!-- Prepended text-->
 					<div class="form-group">
-					  <label class="col-md-4 control-label" for="prependedtext">Key ID</label>
+					  <label class="col-md-4 control-label" for="prependedtext">Application Name</label>
 					  <div class="col-md-6">
 					    <div class="input-group">
-					      <span class="input-group-addon"><i class="fa fa-key"></i></span>
-					      {{ Form::text('keyID', null, array('id' => 'keyID', 'class' => 'form-control', 'placeholder' => 'Key ID'), 'required', 'autofocus') }}
+					      {{ Form::text('app_name', $app_name, array('id' => 'app_name', 'class' => 'form-control'), 'required', 'autofocus') }}
 					    </div>
 					  </div>
 					</div>
 
 					<!-- Prepended text-->
 					<div class="form-group">
-					  <label class="col-md-4 control-label" for="prependedtext">Verification Code</label>
+					  <label class="col-md-4 control-label" for="prependedtext">Regisration Enabled</label>
 					  <div class="col-md-6">
 					    <div class="input-group">
-					      <span class="input-group-addon"><i class="fa fa-magic"></i></span>
-					      {{ Form::text('vCode', null, array('id' => 'vCode', 'class' => ' form-control', 'placeholder' => 'vCode'), 'required') }}
+					    	{{ Form::select('registration_enabled', array('true' => 'Yes', 'false' => 'No'), $registration_enabled) }}
+					    </div>
+					  </div>
+					</div>
+
+					<!-- Prepended text-->
+					<div class="form-group">
+					  <label class="col-md-4 control-label" for="prependedtext">Required API Mask</label>
+					  <div class="col-md-6">
+					    <div class="input-group">
+					      {{ Form::text('required_mask', $required_mask, array('id' => 'required_mask', 'class' => 'form-control'), 'required') }}
+					    </div>
+					  </div>
+					</div>
+
+					<!-- Prepended text-->
+					<div class="form-group">
+					  <label class="col-md-4 control-label" for="prependedtext">Color Scheme</label>
+					  <div class="col-md-6">
+					    <div class="input-group">
+					    	{{ Form::select('color_scheme', array('black' => 'black', 'blue' => 'blue'), $color_scheme) }}
 					    </div>
 					  </div>
 					</div>
@@ -41,7 +60,7 @@
 					<div class="form-group">
 					  <label class="col-md-4 control-label" for="singlebutton"></label>
 					  <div class="col-md-6">
-					    <button id="check-key" name="singlebutton" class="btn btn-primary">Check Key</button>
+					    <button id="check-key" name="singlebutton" class="btn btn-success">Update Settings</button>
 					  </div>
 					</div>
 
@@ -55,33 +74,16 @@
 		<div class="col-md-4">
 			<div class="box">
 				<div class="box-header">
-				    <h3 class="box-title">Create a new API Key</h3>
+				    <h3 class="box-title">Module Manager</h3>
 				</div>
 
 				<div class="box-body table-responsive">
-					<ul class="list-unstyled">
-					<!-- API Links -->
-						<li>Create a new <a href="https://support.eveonline.com/api/key/CreatePredefined/268435455" target="_blank"><i class="fa fa-external-link"></i> full access</a> key (recommended).</li>
-						<li>The minimum access mask is {{ SeatSetting::find('required_mask')->value }}, click <a href="https://support.eveonline.com/api/key/CreatePredefined/{{ SeatSetting::find('required_mask')->value }}" target="_blank"><i class="fa fa-external-link"></i>here</a> to make a key with this mask.</li>
-					</ul>
+					Not yet, but sooooooooon!
 				</div><!-- ./box-body -->
 
 			</div><!-- ./box -->
 		</div><!-- ./col-md-4 -->
-
 	</div><!-- ./row -->
-
-	<!-- results box -->
-	<div class="box" id="result-box" style="display: none;">
-		<div class="box-header">
-		    <h3 class="box-title">API Key Check Results</h3>
-		</div>
-
-	    <div class="box-body">
-	    	<div id="result">
-	    	</div>
-	    </div><!-- /.box-body -->
-	</div><!-- /.box -->
 
 @stop
 
@@ -90,7 +92,7 @@
 		// variable to hold request
 		var request;
 		// bind to the submit event of our form
-		$("#key-form").submit(function(event){
+		$("#settings-form").submit(function(event){
 		    // abort any pending request
 		    if (request) {
 		        request.abort();
@@ -113,14 +115,15 @@
 
 		    // fire off the request to /form.php
 		    request = $.ajax({
-		        url: "{{ action('ApiKeyController@postNewKey') }}",
+		        url: "{{ action('SettingsController@postUpdateSetting') }}",
 		        type: "post",
 		        data: serializedData
 		    });
 
 		    // callback handler that will be called on success
 		    request.done(function (response, textStatus, jqXHR){
-		        $("div#result").html(response);
+		        //$("div#result").html(response);
+		        location.reload();
 		    });
 
 		    // callback handler that will be called on failure
