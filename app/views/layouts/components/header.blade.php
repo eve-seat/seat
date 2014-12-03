@@ -2,7 +2,7 @@
 <header class="header">
     <a href="{{ URL::to('/') }}" class="logo">
         <!-- Add the class icon to your logo image or logo icon to add the margining -->
-        <i class="fa fa-terminal"></i> SeAT
+        <i class="fa fa-terminal"></i> {{ SeatSetting::find('app_name')->value }}
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top" role="navigation">
@@ -42,7 +42,11 @@
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
-                        <li class="user-header bg-light-blue">
+                        @if(SeatSetting::find('color_scheme')->value == "blue")
+                            <li class="user-header bg-light-blue">
+                        @else
+                            <li class="user-header bg-black">
+                        @endif
                             <p>
                                 {{ Sentry::getUser()->email }}
                                 <small>Joined: {{ Sentry::getUser()->created_at }}</small>
