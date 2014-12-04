@@ -1,1 +1,1 @@
-["crius-1.0-100038"]
+{"version":"phoebe-1.0-107269","url":"https:\/\/www.fuzzwork.co.uk\/dump\/phoebe-1.0-107269\/","format":".sql.bz2","tables":["dgmTypeAttributes","invBlueprintTypes","invCategories","invContrabandTypes","invControlTowerResourcePurposes","invControlTowerResources","invFlags","invGroups","invItems","invMarketGroups","invMetaGroups","invMetaTypes","invNames","invPositions","invTypeMaterials","invTypeReactions","invTypes","invUniqueNames","mapDenormalize","staStations"]}
