@@ -76,42 +76,24 @@ After seat is downloaded, we need to get composer to help us install the applica
     - `curl -sS https://getcomposer.org/installer | php`  
     - `php composer.phar install`  
 
-#### 5. Get EVE SDE's ####
-Again, assuming you used `/var/www` as the location to install SeAT, a tool to download the required static data exports can be found in `/var/www/seat/evesde/update_sde.sh`.
-This tool can be run with:  
-    - `cd /var/www/seat/evesde`  
-    - `sh update_sde.sh`  
-
-The downloader can automatically import the required SDE's into MySQL too. A sample run with the automatic updates may look like:
-
-```bash
-[root@seat evesde]# sh update_sde.sh
-Automatically import required SQL files? [y/N] y
-Enter database user: seat
-Enter database password:
-Enter database server (empty for localhost):
-Enter database name: seat
-Creating temp directory /tmp/SeAT-3b722357aa3e44e16869877ca3924665...
-Getting dump dgmTypeAttributes from https://www.fuzzwork.co.uk/dump/rubicon-1.3-95173/dgmTypeAttributes.sql.bz2...
-Extracting /tmp/SeAT-3b722357aa3e44e16869877ca3924665/dgmTypeAttributes.sql.bz2 ...
-<snip>
-Importing the SQL files into MySQL...
-[root@seat evesde]#
-```
-
-If you chose not to automatically import the SQL, a directory with a name starting with `SeAT-` will be located in `/tmp` on your machine. This directory containts the static data that can just be imported into your database. The command will look something like:
-
-`cat /var/SeAT-109831-39871098278970987/*.sql | mysql -u seat -p seat`
-
-Once the import has been completed, you can safely delete the `/tmp/SeAT-*` directory.    
-
-#### 6. Configure SeAT ####
+#### 5. Configure SeAT ####
 SeAT configuration lives in `app/config`. Assuming you cloned to `/var/www`, the configs will be in `/var/www/seat/app/config`.  
 
-Edit the fowlling files:  
+Edit the following files:  
     - `database.php` (set your configured username/password)  
-    - `cache.php`  (may not require any changes, depending on how you wish to setup SeAT)
-    
+
+#### 6. Get EVE SDE's ####
+SeAT makes use of the EVE [Static Data Exports](https://developers.eveonline.com/resource/static-data-export). As SeAT is built on top of MySQL, conversions of the official CCP exports are used that are found on [https://www.fuzzwork.co.uk/dump/](https://www.fuzzwork.co.uk/dump/).
+
+In order to update your installations SDE, simply run:
+
+```bash
+php artisan seat:update-sde
+```
+
+It is important for the database settings to already be configured as per point 5.  
+It is also safe to re-run the migration update at any time. It will simply re-import the affected tables without affecting data in your SeAT install.
+
 #### 7. Run the SeAT database migrations & seeds ####
 SeAT has all of the database schemas stored in 'migration' scripts in `app/database/migrations`. Run them with:
 
