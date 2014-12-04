@@ -54,6 +54,6 @@ return array(
 	|
 	*/
 
-	'error_limit' => 120,
+	'error_limit' => 60,
 
 );
