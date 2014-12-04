@@ -66,6 +66,10 @@ class Character {
             $job_record->save();
             EveApi\Character\Info::Update($keyID, $vCode);
 
+            $job_record->output = 'Started KillMails Update';
+            $job_record->save();
+            EveApi\Character\KillMails::Update($keyID, $vCode);
+
             $job_record->output = 'Started MailMessages Update';
             $job_record->save();
             EveApi\Character\MailMessages::Update($keyID, $vCode);
