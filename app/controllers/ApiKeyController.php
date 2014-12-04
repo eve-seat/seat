@@ -138,7 +138,7 @@ class ApiKeyController extends BaseController {
 						->with('key_info', $key_info)
 						->with('existance', SeatKey::where('keyID', Input::get('keyID'))->count());
 				}
-				elseif($key_info->key->type > SeatSetting::find('required_mask')->value)
+				elseif($key_info->key->accessMask < SeatSetting::find('required_mask')->value)
 				{
 					return View::make('keys.ajax.errors')
 						->withErrors(array('error' => 'Invalid API Mask!'));
