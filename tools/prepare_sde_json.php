@@ -7,7 +7,6 @@ $d = [
    'format' => '.sql.bz2',
    'tables' => [
       'dgmTypeAttributes',
-      'invBlueprintTypes',
       'invCategories',
       'invContrabandTypes',
       'invControlTowerResourcePurposes',
