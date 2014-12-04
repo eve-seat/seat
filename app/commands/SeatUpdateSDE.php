@@ -6,9 +6,6 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-use Seat\EveApi;
-use Seat\EveApi\Account;
-
 class SeatUpdateSDE extends Command {
 
 	/**
@@ -61,10 +58,10 @@ class SeatUpdateSDE extends Command {
 			// repository. First though, we setup some default headers and options
 			// that will be used in Requests in this script
 			$headers = array('Accept' => 'application/json');
-	        $options = array(
-	            'timeout'   => 120,
-	            'useragent' => 'SeAT-Updater/' . \Config::get('seat.version')
-	        );
+			$options = array(
+				'timeout'   => 120,
+				'useragent' => 'SeAT-Updater/' . \Config::get('seat.version')
+			);
 
 	        // Now, attempt the actual request.
 			$request = \Requests::get(
