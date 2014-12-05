@@ -155,15 +155,38 @@
                 <div class="box-body">
                     <dl class="dl-horizontal">
                         <dt>Jump Fatigue</dt>
-                        <dd>{{ $character->jumpFatigue }} (ends {{ Carbon\Carbon::parse($character->jumpFatigue)->diffForHumans() }} ago)</dd>
-                        <dt>Jump Activation</dt>
-                        <dd>{{ $character->jumpActivation }} (ends {{ Carbon\Carbon::parse($character->jumpFatigue)->diffForHumans() }} ago)</dd>
+                        <dd>
+                            @if(Carbon\Carbon::parse($character->jumpFatigue)->gt(Carbon\Carbon::now()))
+                                {{ $character->jumpFatigue }} (ends in aprox. {{ Carbon\Carbon::parse($character->jumpFatigue)->diffForHumans() }})
+                            @else
+                                None
+                            @endif
+                        </dd>
+                        {{-- only show the difference in time if there is jump fatigue --}}
+                        @if(Carbon\Carbon::parse($character->jumpFatigue)->gt(Carbon\Carbon::now()))
+                            <dt>Jump Activation</dt>
+                            <dd>
+                                Approx {{ Carbon\Carbon::parse($character->jumpActivation)->diffInHours(Carbon\Carbon::parse($character->jumpFatigue)) }} hour
+                            </dd>
+                        @endif
                     </dl>
-                    <ul class="list-unstyled">
-                        @foreach($jump_clones as $jump_clone)
-                            <li>{{ $jump_clone->locationID }}</li>
-                        @endforeach
-                    </ul>
+
+                    @if(count($jump_clones) > 0)
+                        <b>{{ count($jump_clones) }} jump clones:</b>
+                        <ul class="list-unstyled">
+                            @foreach($jump_clones as $jump_clone)
+                                <li>
+                                    {{ $jump_clone->typeName }}
+                                    @if(strlen($jump_clone->cloneName))
+                                        <i>(called '{{ $jump_clone->cloneName }}')</i>
+                                    @endif
+                                    located at <b>{{ $jump_clone->location }}</b>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        This character has no jump clones
+                    @endif
                 </div><!-- /.box-body -->
         </div><!-- /.box -->
 
@@ -175,11 +198,15 @@
                 </div>
             </div>
             <div class="box-body">
-                <ul class="list-unstyled">
-                    @foreach($implants as $implant)
-                        <li>{{ $implant->typeName }}</li>
-                    @endforeach
-                </ul>
+                <ol>
+                    @if(count($implants) > 0)
+                        @foreach($implants as $implant)
+                            <li>{{ $implant->typeName }}</li>
+                        @endforeach
+                    @else
+                        This character currently has no implants installed.
+                    @endif
+                </ol>
             </div><!-- /.box-body -->
         </div><!-- /.box -->
     </div> <!-- ./col-md-6 -->
