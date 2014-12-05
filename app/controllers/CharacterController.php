@@ -886,6 +886,49 @@ class CharacterController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getAjaxKillMails()
+	|--------------------------------------------------------------------------
+	|
+	| Return the killmail information for the character
+	|
+	*/
+
+	public function getAjaxKillMails($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
+		// Killmails
+		$killmails = DB::table('character_killmails')
+			->select(DB::raw('*, `mapDenormalize`.`itemName` AS solarSystemName'))
+			->leftJoin('character_killmail_detail', 'character_killmails.killID', '=', 'character_killmail_detail.killID')
+			->leftJoin('invTypes', 'character_killmail_detail.shipTypeID', '=', 'invTypes.typeID')
+			->leftJoin('mapDenormalize', 'character_killmail_detail.solarSystemID', '=', 'mapDenormalize.itemID')
+			->where('character_killmails.characterID', $characterID)
+			->orderBy('character_killmail_detail.killTime', 'desc')
+			->get();
+
+		// Finally, give all this to the view to handle
+		return View::make('character.view.killmails')
+			->with('characterID', $characterID)
+			->with('killmails', $killmails);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getAjaxResearchAgents()
 	|--------------------------------------------------------------------------
 	|
