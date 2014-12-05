@@ -37,7 +37,7 @@
 								<li><b>Joined: </b>{{ Carbon\Carbon::parse($character->startDateTime)->diffForHumans() }}</li>
 								<li><b>Last Logon: </b>{{ Carbon\Carbon::parse($character->logonDateTime)->diffForHumans() }}</li>
 								<li><b>Last Logoff: </b>{{ Carbon\Carbon::parse($character->logoffDateTime)->diffForHumans() }}</li>
-								@if($character->logonDateTime > date('Y-m-d H:i:s', strtotime('-1 month')))
+								@if(Carbon\Carbon::parse($character->logonDateTime)->lt(Carbon\Carbon::now()->subMonth()))
 									<span class="text-red">Over a month since last login</span>
 								@endif
 
@@ -74,7 +74,7 @@
 							</ul>
 						</div>
 					@if($character->isOk == 1)</a>@endif
-				@endforeach	
+				@endforeach
 			</div>
 			<hr>
 		@endforeach
