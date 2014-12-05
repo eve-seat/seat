@@ -54,6 +54,10 @@ class Corporation {
             $job_record->save();
             EveApi\Corporation\IndustryJobs::Update($keyID, $vCode);
 
+            $job_record->output = 'Started KillMails Update';
+            $job_record->save();
+            EveApi\Corporation\KillMails::Update($keyID, $vCode);
+
             $job_record->output = 'Started MarketOrders Update';
             $job_record->save();
             EveApi\Corporation\MarketOrders::Update($keyID, $vCode);
