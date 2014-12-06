@@ -103,61 +103,33 @@ class WalletJournal extends BaseApi {
 					// Generate a transaction hash. It would seem that refID's could possibly be cycled.
 					$transaction_hash = md5(implode(',', array($corporationID, $walletdivision->accountKey, $transaction->date, $transaction->ownerID1, $transaction->refID)));
 
-					// Update the database
-					\EveCorporationWalletJournal::firstOrCreate(
+					$transaction_data  = \EveCorporationWalletJournal::where('corporationID', '=', $corporationID)
+						->where('hash', '=', $transaction_hash)
+						->first();
 
-						// Match the transaction hash that we have caclulated
-						array('hash' => $transaction_hash),
+					if (!$transaction_data)
+						$transaction_data = new \EveCorporationWalletJournal;
+					else
+						continue;
 
-						// If we need to create a new entry, set the information
-						array(
-							'corporationID' => $corporationID,
-							'hash' 			=> $transaction_hash,
-							'accountKey' 	=> $walletdivision->accountKey, // From the outer foreach
-							'refID' 		=> $transaction->refID,
-							'date'			=> $transaction->date,
-							'refTypeID' 	=> $transaction->refTypeID,
-							'ownerName1'	=> $transaction->ownerName1,
-							'ownerID1'		=> $transaction->ownerID1,
-							'ownerName2'	=> $transaction->ownerName2,
-							'ownerID2'		=> $transaction->ownerID2,
-							'argName1'		=> $transaction->argName1,
-							'argID1'		=> $transaction->argID1,
-							'amount'		=> $transaction->amount,
-							'balance'		=> $transaction->balance,
-							'reason'		=> $transaction->reason,
-							'owner1TypeID'	=> $transaction->owner1TypeID,
-							'owner2TypeID'	=> $transaction->owner2TypeID
-						)
-					);
-
-					// $transaction_data  = \EveCorporationWalletJournal::where('corporationID', '=', $corporationID)
-					// 	->where('hash', '=', $transaction_hash)
-					// 	->first();
-
-					// if (!$transaction_data)
-					// 	$transaction_data = new \EveCorporationWalletJournal;
-					// else
-					// 	continue;
-
-					// $transaction_data->corporationID = $corporationID;
-					// $transaction_data->hash = $transaction_hash;
-					// $transaction_data->accountKey = $walletdivision->accountKey; // From the outer foreach
-					// $transaction_data->refID = $transaction->refID;
-					// $transaction_data->date = $transaction->date;
-					// $transaction_data->refTypeID = $transaction->refTypeID;
-					// $transaction_data->ownerName1 = $transaction->ownerName1;
-					// $transaction_data->ownerID1 = $transaction->ownerID1;
-					// $transaction_data->ownerName2 = $transaction->ownerName2;
-					// $transaction_data->ownerID2 = $transaction->ownerID2;
-					// $transaction_data->argName1 = $transaction->argName1;
-					// $transaction_data->argID1 = $transaction->argID1;
-					// $transaction_data->amount = $transaction->amount;
-					// $transaction_data->balance = $transaction->balance;
-					// $transaction_data->reason = $transaction->reason;
-					// $transaction_data->owner1TypeID = $transaction->owner1TypeID;
-					// $transaction_data->owner2TypeID = $transaction->owner2TypeID;
-					// $transaction_data->save();
+					$transaction_data->corporationID = $corporationID;
+					$transaction_data->hash = $transaction_hash;
+					$transaction_data->accountKey = $walletdivision->accountKey; // From the outer foreach
+					$transaction_data->refID = $transaction->refID;
+					$transaction_data->date = $transaction->date;
+					$transaction_data->refTypeID = $transaction->refTypeID;
+					$transaction_data->ownerName1 = $transaction->ownerName1;
+					$transaction_data->ownerID1 = $transaction->ownerID1;
+					$transaction_data->ownerName2 = $transaction->ownerName2;
+					$transaction_data->ownerID2 = $transaction->ownerID2;
+					$transaction_data->argName1 = $transaction->argName1;
+					$transaction_data->argID1 = $transaction->argID1;
+					$transaction_data->amount = $transaction->amount;
+					$transaction_data->balance = $transaction->balance;
+					$transaction_data->reason = $transaction->reason;
+					$transaction_data->owner1TypeID = $transaction->owner1TypeID;
+					$transaction_data->owner2TypeID = $transaction->owner2TypeID;
+					$transaction_data->save();
 				}
 
 				// Check how many entries we got back. If it us less that $row_count, we know we have

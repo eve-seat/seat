@@ -92,59 +92,32 @@ class WalletTransactions extends BaseApi {
 					// could possibly be cycled.
 					$transaction_hash = md5(implode(',', array($characterID, $transaction->transactionDateTime, $transaction->clientID, $transaction->transactionID)));
 
-					// Update the database
-					\EveCharacterWalletTransactions::firstOrCreate(
+					$transaction_data  = \EveCharacterWalletTransactions::where('characterID', '=', $characterID)
+						->where('hash', '=', $transaction_hash)
+						->first();
 
-						// Match the transaction hash that we have caclulated
-						array('hash' => $transaction_hash),
+					if (!$transaction_data)
+						$transaction_data = new \EveCharacterWalletTransactions;
+					else
+						continue;
 
-						// If we need to create a new entry, set the information
-						array(
-							'characterID' 			=> $characterID,
-							'hash' 					=> $transaction_hash,
-							'transactionID' 		=> $transaction->transactionID,
-							'transactionDateTime'	=> $transaction->transactionDateTime,
-							'quantity' 				=> $transaction->quantity,
-							'typeName'				=> $transaction->typeName,
-							'typeID'				=> $transaction->typeID,
-							'price'					=> $transaction->price,
-							'clientID'				=> $transaction->clientID,
-							'clientName'			=> $transaction->clientName,
-							'stationID'				=> $transaction->stationID,
-							'stationName'			=> $transaction->stationName,
-							'transactionType'		=> $transaction->transactionType,
-							'transactionFor'		=> $transaction->transactionFor,
-							'journalTransactionID'	=> $transaction->journalTransactionID,
-							'clientTypeID'			=> $transaction->clientTypeID
-						)
-					);
-
-					// $transaction_data  = \EveCharacterWalletTransactions::where('characterID', '=', $characterID)
-					// 	->where('hash', '=', $transaction_hash)
-					// 	->first();
-
-					// if (!$transaction_data)
-					// 	$transaction_data = new \EveCharacterWalletTransactions;
-					// else
-					// 	continue;
-
-					// $transaction_data->characterID = $characterID;
-					// $transaction_data->hash = $transaction_hash;
-					// $transaction_data->transactionID = $transaction->transactionID;
-					// $transaction_data->transactionDateTime = $transaction->transactionDateTime;
-					// $transaction_data->quantity = $transaction->quantity;
-					// $transaction_data->typeName = $transaction->typeName;
-					// $transaction_data->typeID = $transaction->typeID;
-					// $transaction_data->price = $transaction->price;
-					// $transaction_data->clientID = $transaction->clientID;
-					// $transaction_data->clientName = $transaction->clientName;
-					// $transaction_data->stationID = $transaction->stationID;
-					// $transaction_data->stationName = $transaction->stationName;
-					// $transaction_data->transactionType = $transaction->transactionType;
-					// $transaction_data->transactionFor = $transaction->transactionFor;
-					// $transaction_data->journalTransactionID = $transaction->journalTransactionID;
-					// $transaction_data->clientTypeID = $transaction->clientTypeID;
-					// $transaction_data->save();
+					$transaction_data->characterID = $characterID;
+					$transaction_data->hash = $transaction_hash;
+					$transaction_data->transactionID = $transaction->transactionID;
+					$transaction_data->transactionDateTime = $transaction->transactionDateTime;
+					$transaction_data->quantity = $transaction->quantity;
+					$transaction_data->typeName = $transaction->typeName;
+					$transaction_data->typeID = $transaction->typeID;
+					$transaction_data->price = $transaction->price;
+					$transaction_data->clientID = $transaction->clientID;
+					$transaction_data->clientName = $transaction->clientName;
+					$transaction_data->stationID = $transaction->stationID;
+					$transaction_data->stationName = $transaction->stationName;
+					$transaction_data->transactionType = $transaction->transactionType;
+					$transaction_data->transactionFor = $transaction->transactionFor;
+					$transaction_data->journalTransactionID = $transaction->journalTransactionID;
+					$transaction_data->clientTypeID = $transaction->clientTypeID;
+					$transaction_data->save();
 				}
 
 				// Check how many entries we got back. If it us less than $row_count, we know we have
