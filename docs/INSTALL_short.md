@@ -28,8 +28,8 @@ The quick and dirty to install SeAT:
 - Install `supervisord` and edit the config to start workers to process queued jobs. A sample worker config is included in `docs/`. See note below
 - Setup the SeAT cronjob: `* * * * * php <path to artisan> scheduled:run 1>> /dev/null 2>&1`
 - Regenerate the application security key with `php artisan key:generate`
-
-The web interface has a default password of `seat!admin` and it is *highly* reccomended that you change this using the `seat:reset` artisan command
+- Create the `admin` user with `php artisan seat:reset`
+- Optionally setup logrotate for the `app/storage/logs/*.log` files.
 
 Note:  
 With supervisord 2 you need to copy the sample and rename to seat2, seat3 etc to start multipe workers. supervisord 3 I beleive introduces a `numprocs` option, that you can just specify to start multiple workers.

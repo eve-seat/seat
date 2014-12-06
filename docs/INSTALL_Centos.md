@@ -233,6 +233,28 @@ With that done, we continue to configure Apache for our VirtualHost:
 
 SeAT *should* now be available at http://your.domain/seat
 
+##### Logrotate #####
+SeAT logs a large amount of internals to 3 main log files:
+
+   - `app/storage/logs/laravel.log`  
+   - `app/storage/logs/pheal_access.log`  
+   - `app/storage/logs/pheal_error.log`
+
+Over time, these logs may explode in size (see [this](https://github.com/eve-seat/seat/issues/216)). While not a requirement for SeAT, it is however reccomended that you setup logrotate for the log files. A sample configuration that you can dump into `/etc/logrotate.d/` is:
+
+```bash
+/var/www/seat/app/storage/logs/*.log {
+    monthly
+    missingok
+    rotate 12
+    compress
+    notifempty
+    create 750 apache apache
+}
+```
+
+Ensure the path matches where you intalled SeAT, and the user `apache apache` matches the user your web server is running as.
+
   [1]: http://laravel.com/
   [2]: http://www.php.net/
   [3]: http://httpd.apache.org/
