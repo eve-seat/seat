@@ -81,8 +81,7 @@ App::after(function($request, $response)
 Route::filter('auth', function()
 {
 	if (!Sentry::check())
-		return Redirect::action('SessionController@getSignIn')
-			->with('warning', 'Please Sign In first to continue');
+		return Redirect::action('SessionController@getSignIn');
 });
 
 
