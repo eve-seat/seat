@@ -10,7 +10,7 @@ class WalletTransactions extends BaseApi {
 	public static function Update($keyID, $vCode)
 	{
 
-		$row_count = 1000;
+		$row_count = 500;
 
 		// Start and validate they key pair
 		BaseApi::bootstrap();
@@ -51,7 +51,7 @@ class WalletTransactions extends BaseApi {
 			// ignore the DB level one and rely entirely on pheal-ng to cache the XML's
 
 			$first_request = true;
-			$from_id = 9223372036854775807; // Max integer for 64bit PHP
+			$from_id = PHP_INT_MAX; // Use the maximum size for this PHP arch
 			while (true) {
 
 				// Do the actual API call. pheal-ng actually handles some internal
@@ -64,7 +64,7 @@ class WalletTransactions extends BaseApi {
 							->charScope
 							->WalletTransactions(array('characterID' => $characterID, 'rowCount' => $row_count));
 					} else {
-					
+
 						$wallet_transactions = $pheal
 							->charScope
 							->WalletTransactions(array('characterID' => $characterID, 'rowCount' => $row_count, 'fromID' => $from_id));
@@ -82,15 +82,14 @@ class WalletTransactions extends BaseApi {
 					throw $e;
 				}
 
-
 				// Process the transactions
 				foreach ($wallet_transactions->transactions as $transaction) {
 
 					// Ensure that $from_id is at its lowest
 					$from_id = min($transaction->transactionID, $from_id);
 
-					// Generate a transaction hash. It would seem that transactionID's could possibly be
-					// cycled. 
+					// Generate a transaction hash. It would seem that transactionID's
+					// could possibly be cycled.
 					$transaction_hash = md5(implode(',', array($characterID, $transaction->transactionDateTime, $transaction->clientID, $transaction->transactionID)));
 
 					$transaction_data  = \EveCharacterWalletTransactions::where('characterID', '=', $characterID)

@@ -53,7 +53,7 @@ class ApiKeyController extends BaseController {
 		// Prepare the key information and characters for the view
 		$key_information = array();
 		foreach ($keys as $key) {
-			
+
 			$key_information[$key->keyID] = array(
 
 				'keyID' => $key->keyID,
@@ -64,11 +64,11 @@ class ApiKeyController extends BaseController {
 				'type' => $key->type,
 				'expires' => $key->expires,
 				'expires_human' => (is_null($key->expires) ? 'Never' : \Carbon\Carbon::parse($key->expires)->diffForHumans()),
-			);	
+			);
 
 			// Add the key characters
 			foreach (EveAccountAPIKeyInfoCharacters::where('keyID', $key->keyID)->get() as $character) {
-				
+
 				$key_information[$key->keyID]['characters'][] = array(
 					'characterID' => $character->characterID,
 					'characterName' => $character->characterName
@@ -91,7 +91,7 @@ class ApiKeyController extends BaseController {
 
 	public function getNewKey()
 	{
-		return View::make('keys.new');	
+		return View::make('keys.new');
 	}
 
 	/*
@@ -112,7 +112,7 @@ class ApiKeyController extends BaseController {
 			$validation = new APIKeyValidator;
 
 			if ($validation->passes()) {
-				
+
 				// Setup a pheal instance and get some API data :D
 				BaseApi::bootstrap();
 				$pheal = new Pheal(Input::get('keyID'), Input::get('vCode'));
@@ -137,6 +137,11 @@ class ApiKeyController extends BaseController {
 						->with('vCode', Input::get('vCode'))
 						->with('key_info', $key_info)
 						->with('existance', SeatKey::where('keyID', Input::get('keyID'))->count());
+				}
+				elseif($key_info->key->accessMask < SeatSetting::find('required_mask')->value)
+				{
+					return View::make('keys.ajax.errors')
+						->withErrors(array('error' => 'Invalid API Mask!'));
 				}
 
 				// Get API Account Status Information
@@ -211,6 +216,9 @@ class ApiKeyController extends BaseController {
 			// Based in the key type, push a update job
 			switch ($access['type']) {
 				case 'Character':
+
+					// Do a fresh AccountStatus lookup
+					Account\AccountStatus::update($keyID, $vCode);
 					$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key_data->keyID, $key_data->vCode, 'Character', 'Eve');
 					break;
 
@@ -242,7 +250,7 @@ class ApiKeyController extends BaseController {
 	| queue information for it.
 	|
 	*/
-	
+
 	public function getDetail($keyID)
 	{
 
@@ -329,10 +337,12 @@ class ApiKeyController extends BaseController {
 		// Only process Character keys here
 		if ($access['type'] == 'Character') {
 
+			// Do a fresh AccountStatus lookup
+			Account\AccountStatus::update($keyID, $key->vCode);
 			$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
 
 			return Response::json(array('state' => 'new', 'jobID' => $jobID));
-		}elseif( $access['type'] == 'Corporation' ){
+		} elseif( $access['type'] == 'Corporation' ){
 
 			$jobID = \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Corporation'), $key->keyID, $key->vCode, 'Corporation', 'Eve');
 
@@ -472,7 +482,7 @@ class ApiKeyController extends BaseController {
 						// that we only have 1 key for them. If more than one keys have this character, we will
 						// simply ignore the cleanup and add a message about it
 						foreach ($characters as $id => $character) {
-							
+
 							// Check how many keys know about this character
 							if (\EveAccountAPIKeyInfoCharacters::where('characterID', $character)->count() > 1) {
 
@@ -526,7 +536,7 @@ class ApiKeyController extends BaseController {
 					\EveAccountAPIKeyInfoCharacters::where('keyID', $keyID)->delete();
 
 					return Redirect::action('ApiKeyController@getAll')
-						->with('success', 'Key has been deleted');	
+						->with('success', 'Key has been deleted');
 
 				} else {
 
@@ -541,7 +551,7 @@ class ApiKeyController extends BaseController {
 					\EveAccountAPIKeyInfoCharacters::where('keyID', $keyID)->delete();
 
 					return Redirect::action('ApiKeyController@getAll')
-						->with('success', 'Key has been deleted');					
+						->with('success', 'Key has been deleted');
 				}
 
 				break;
@@ -557,7 +567,7 @@ class ApiKeyController extends BaseController {
 				return Redirect::action('ApiKeyController@getAll')
 					->with('success', 'Key has been deleted');
 
-				break;			
+				break;
 		}
 
 
@@ -581,6 +591,35 @@ class ApiKeyController extends BaseController {
 
 		return Response::json();
 	}
+
+    /*
+    |--------------------------------------------------------------------------
+    | getRemoveAllBans()
+    |--------------------------------------------------------------------------
+    |
+    | Removes all bans and enables all keys
+    |
+    */
+
+    public function getRemoveAllBans()
+    {
+
+        // Ensure that this is SuperUser
+        if (!Sentry::getUser()->isSuperUser())
+            App::abort(404);
+
+        // Trash all of the banned calls information
+        EveBannedCall::truncate();
+
+        // Enable all of the keys
+        SeatKey::where('isOk', 0)
+            ->update(array('isOk' => 1, 'lastError' => null));
+
+
+        // Redirect with a message
+        return Redirect::action('ApiKeyController@getAll')
+            ->with('success', 'All API keys have been enabled and their bans removed.');
+    }
 
 	/*
 	|--------------------------------------------------------------------------

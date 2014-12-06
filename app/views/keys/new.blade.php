@@ -62,7 +62,7 @@
 					<ul class="list-unstyled">
 					<!-- API Links -->
 						<li>Create a new <a href="https://support.eveonline.com/api/key/CreatePredefined/268435455" target="_blank"><i class="fa fa-external-link"></i> full access</a> key (recommended).</li>
-						<li>Create a new <a href="https://support.eveonline.com/api/key/CreatePredefined/8921408" target="_blank"><i class="fa fa-external-link"></i> basic, character info only</a> key.</li>
+						<li>The minimum access mask is {{ SeatSetting::find('required_mask')->value }}, click <a href="https://support.eveonline.com/api/key/CreatePredefined/{{ SeatSetting::find('required_mask')->value }}" target="_blank"><i class="fa fa-external-link"></i>here</a> to make a key with this mask.</li>
 					</ul>
 				</div><!-- ./box-body -->
 

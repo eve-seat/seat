@@ -11,7 +11,7 @@ class Character {
 
         $keyID = $data['keyID'];
         $vCode = $data['vCode'];
-        
+
 		$job_record = \SeatQueueInformation::where('jobID', '=', $job->getJobId())->first();
 
         // Check that we have a valid jobid
@@ -39,86 +39,102 @@ class Character {
             EveApi\Character\AccountBalance::Update($keyID, $vCode);
 
             $job_record->output = 'Started AssetList Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\AssetList::Update($keyID, $vCode);
 
             $job_record->output = 'Started CharacterSheet Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\CharacterSheet::Update($keyID, $vCode);
 
             $job_record->output = 'Started ContactList Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\ContactList::Update($keyID, $vCode);
 
             $job_record->output = 'Started ContactNotifications Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\ContactNotifications::Update($keyID, $vCode);
 
             $job_record->output = 'Started Contracts Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\Contracts::Update($keyID, $vCode);
 
             $job_record->output = 'Started IndustryJobs Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\IndustryJobs::Update($keyID, $vCode);
 
             $job_record->output = 'Started CharacterInfo Update';
             $job_record->save();
             EveApi\Character\Info::Update($keyID, $vCode);
 
+            $job_record->output = 'Started KillMails Update';
+            $job_record->save();
+            EveApi\Character\KillMails::Update($keyID, $vCode);
+
             $job_record->output = 'Started MailMessages Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\MailMessages::Update($keyID, $vCode);
 
             $job_record->output = 'Started MailingLists Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\MailingLists::Update($keyID, $vCode);
 
             $job_record->output = 'Started Notifications Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\Notifications::Update($keyID, $vCode);
-            
+
             $job_record->output = 'Started PlanetaryColonies Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\PlanetaryColonies::Update($keyID, $vCode);
 
             $job_record->output = 'Started MarketOrders Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\MarketOrders::Update($keyID, $vCode);
 
             $job_record->output = 'Started Research Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\Research::Update($keyID, $vCode);
 
             $job_record->output = 'Started SkillInTraining Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\SkillInTraining::Update($keyID, $vCode);
 
             $job_record->output = 'Started SkillQueue Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\SkillQueue::Update($keyID, $vCode);
 
             $job_record->output = 'Started Standings Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\Standings::Update($keyID, $vCode);
 
             $job_record->output = 'Started UpcomingCalendarEvents Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\UpcomingCalendarEvents::Update($keyID, $vCode);
 
             $job_record->output = 'Started WalletJournal Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\WalletJournal::Update($keyID, $vCode);
 
             $job_record->output = 'Started WalletTransactions Update';
-            $job_record->save();        
+            $job_record->save();
             EveApi\Character\WalletTransactions::Update($keyID, $vCode);
 
             $job_record->status = 'Done';
-            $job_record->output = null;        
+            $job_record->output = null;
             $job_record->save();
 
             $job->delete();
+
+        } catch (\Seat\EveApi\Exception\APIServerDown $e) {
+
+            // The API Server is down according to \Seat\EveApi\bootstrap().
+            // Due to this fact, we can simply take this job and put it
+            // back in the queue to be processed later.
+            $job_record->status = 'Queued';
+            $job_record->output = 'The API Server appears to be down. Job has been re-queued.';
+            $job_record->save();
+
+            // Re-queue the job to try again in 10 minutes
+            $job->release(60 * 10);
 
         } catch (\Exception $e) {
 

@@ -66,13 +66,16 @@ class SeatAPIUpdate extends Command {
 
 			switch ($access['type']) {
 				case 'Character':
+
+					// Do a fresh AccountStatus lookup
+					Account\AccountStatus::update($key->keyID, $key->vCode);
 					\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
 					break;
 
 				case 'Corporation':
 					\App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Corporation'), $key->keyID, $key->vCode, 'Corporation', 'Eve');
 					break;
-				
+
 				default:
 					# code...
 					break;

@@ -45,6 +45,11 @@ class SeatDiagnose extends Command {
 		$this->info('Running SeAT ' . \Config::get('seat.version') . ' Diagnostics');
 		$this->line('');
 
+		$this->comment('If you are not already doing so, it is reccomended that you run this as the user the workers are running as.');
+		$this->comment('Eg: `sudo -u apache /usr/bin/php /var/www/seat/artisan seat:diagnose`.');
+		$this->comment('This allows you to ensure the correct permissions are in place as required.');
+		$this->line('');
+
 		// SeAT & Laravel
 		$this->info('SeAT configuration:');
 		if (\Config::get('app.debug'))
@@ -80,8 +85,8 @@ class SeatDiagnose extends Command {
 			$this->line('[ok] Successfully connected to database `' . \DB::connection()->getDatabaseName() . '` (did not test schema)');
 
 		} catch (\Exception $e) {
-		
-			$this->error('[error] Unable to obtain a MySQL connection. The error was: ' . $e->getCode() . ': ' . $e->getMessage());	
+
+			$this->error('[error] Unable to obtain a MySQL connection. The error was: ' . $e->getCode() . ': ' . $e->getMessage());
 		}
 		$this->line('');
 
@@ -107,7 +112,7 @@ class SeatDiagnose extends Command {
 		} catch (\Exception $e) {
 
 			$this->error('[error] Redis test failed. The last error was: ' . $e->getCode() . ': ' . $e->getMessage());
-			
+
 		}
 		$this->line('');
 
@@ -119,7 +124,7 @@ class SeatDiagnose extends Command {
 		$pheal = new Pheal();
 
 		try {
-			
+
 			$server_status = $pheal->serverScope->ServerStatus();
 			$this->line('[ok] Testing the ServerStatus API call returned a response reporting ' . $server_status->onlinePlayers . ' online players, with the result cache expiring ' . \Carbon\Carbon::parse($server_status->cached_until)->diffForHumans());
 

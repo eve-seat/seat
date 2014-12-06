@@ -23,34 +23,17 @@ class APIKeyInfo extends BaseApi {
 		// Do the actual API call. pheal-ng actually handles some internal
 		// caching too.
 		try {
-			
+
 			$key_info = $pheal
 				->accountScope
 				->APIKeyInfo();
 
 		} catch (\Pheal\Exceptions\APIException $e) {
 
-			// If we cant get key information, just disable the key as its probably
-			// not valid...
-
-			// ... unless its actually *not* invalid but the API server is sick.
-			// Think we'll just check if the error we got is one in an array we have
-			// of ones we can 'safely' ignore. Typically temp errors.
-			$ignore_error_codes = array(
-				520 => 'Unexpected failure accessing database.'
-			);
-
-			// Check if we should ignore or disable
-			if (!in_array($e->getCode(), $ignore_error_codes)) {
-
-				BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
+				// Process a ban request as needed
+				BaseApi::banCall($api, $scope, $keyID, 0, $e->getCode() . ': ' . $e->getMessage());
 				return;
 
-			} else {
-
-			    return;
-			}
-		    
 		} catch (\Pheal\Exceptions\PhealException $e) {
 
 			throw $e;
@@ -86,7 +69,7 @@ class APIKeyInfo extends BaseApi {
 				// Check if we need to update || insert
 				$character_data = \EveAccountAPIKeyInfoCharacters::where('keyID', '=', $keyID)
 					->where('characterID', '=', $character->characterID)->first();
-			
+
 				if (!$character_data)
 					$character_data = new \EveAccountAPIKeyInfoCharacters;
 
@@ -110,7 +93,7 @@ class APIKeyInfo extends BaseApi {
 			// Update the cached_until time in the database for this api call
 			BaseApi::setDbCache($scope, $api, $key_info->cached_until, $keyID);
 		}
-		
+
 		return $key_info;
 	}
 }

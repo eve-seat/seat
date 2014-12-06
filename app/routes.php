@@ -38,6 +38,8 @@ Route::group(array('before' => 'auth|csrf|key.required'), function() {
 
     Route::controller('permissions', 'PermissionsController');
 
+    Route::controller('settings', 'SettingsController');
+
     Route::controller('helpers', 'HelperController');
     Route::controller('user', 'UserController');
     Route::controller('debug', 'DebugController');
@@ -48,3 +50,5 @@ Route::group(array('before' => 'auth|csrf|key.required'), function() {
 });
 
 Route::when('user/*', 'auth.superuser');
+
+Route::when('settings/*', 'auth.superuser');

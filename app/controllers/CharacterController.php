@@ -18,6 +18,8 @@ class CharacterController extends BaseController {
 			->leftJoin('seat_keys', 'account_apikeyinfo_characters.keyID', '=', 'seat_keys.keyID')
 			->join('character_charactersheet', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
 			->join('character_skillintraining', 'account_apikeyinfo_characters.characterID', '=', 'character_skillintraining.characterID')
+			->orderBy('seat_keys.isOk', 'asc')
+			->orderBy('account_apikeyinfo_characters.characterName', 'asc')
 			->groupBy('account_apikeyinfo_characters.characterID');
 
 		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
@@ -165,13 +167,44 @@ class CharacterController extends BaseController {
 			->orderBy('queuePosition')
 			->get();
 
+		$jump_clones = DB::table(DB::raw('character_charactersheet_jumpclones as a'))
+			->select(DB::raw("
+				*, CASE
+				when a.locationID BETWEEN 66000000 AND 66014933 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.locationID-6000001)
+				when a.locationID BETWEEN 66014934 AND 67999999 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.locationID-6000000)
+				when a.locationID BETWEEN 60014861 AND 60014928 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.locationID)
+				when a.locationID BETWEEN 60000000 AND 61000000 then
+					(SELECT s.stationName FROM staStations AS s
+					  WHERE s.stationID=a.locationID)
+				when a.locationID>=61000000 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					  WHERE c.stationID=a.locationID)
+				else (SELECT m.itemName FROM mapDenormalize AS m
+					WHERE m.itemID=a.locationID) end
+					AS location,a.locationId AS locID"))
+			->join('invTypes', 'a.typeID', '=', 'invTypes.typeID')
+			->where('a.characterID', $characterID)
+			->get();
+
+		$implants = DB::table('character_charactersheet_implants')
+			->where('characterID', $characterID)
+			->get();
+
 		// Finally, give all this to the view to handle
 		return View::make('character.view.character_sheet')
 			->with('character', $character)
 			->with('character_info', $character_info)
 			->with('employment_history', $employment_history)
 			->with('skillpoints', $skillpoints)
-			->with('skill_queue', $skill_queue);
+			->with('skill_queue', $skill_queue)
+			->with('jump_clones', $jump_clones)
+			->with('implants', $implants);
 	}
 
 	/*
@@ -223,7 +256,7 @@ class CharacterController extends BaseController {
 		// TODO: Look at the possibility of lists() and specifying the groupID as key
 		$character_skills = array();
 		foreach ($character_skills_information as $key => $value) {
-			
+
 			$character_skills[$value->groupID][] =  array(
                 'typeID' => $value->typeID,
                 'groupName' => $value->groupName,
@@ -465,7 +498,7 @@ class CharacterController extends BaseController {
 			->where('a.characterID', $characterID)
 			->groupBy(DB::raw('a.itemID, a.typeID'))
 			->get();
-		
+
 		// Create an array that is easy to loop over in the template to display the data
 		$assets_list = array();
 		$assets_count = 0; //start counting items
@@ -614,17 +647,17 @@ class CharacterController extends BaseController {
 				AS endlocation "))
 			->where('a.characterID', $characterID)
 			->get();
-		
+
 		// Character contract item
 		$contract_list_item = DB::table('character_contracts_items')
 			->leftJoin('invTypes', 'character_contracts_items.typeID', '=', 'invTypes.typeID')
 			->where('characterID', $characterID)
 			->get();
-		
+
 		// Create 2 array for seperate Courier and Other Contracts
 		$contracts_courier = array();
 		$contracts_other = array();
-		
+
 		// Loops the contracts list and fill arrays
 		foreach ($contract_list as $key => $value) {
 
@@ -668,7 +701,7 @@ class CharacterController extends BaseController {
 					'startlocation' => $value->startlocation
 				);
 			}
-			
+
 			// Loop the Item in contracts and add it to his parent
 			foreach( $contract_list_item as $contents) {
 
@@ -853,6 +886,49 @@ class CharacterController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
+	| getAjaxKillMails()
+	|--------------------------------------------------------------------------
+	|
+	| Return the killmail information for the character
+	|
+	*/
+
+	public function getAjaxKillMails($characterID)
+	{
+
+		// Check the character existance
+		$character = DB::table('account_apikeyinfo_characters')
+			->where('characterID', $characterID)
+			->first();
+
+		// Check if whave knowledge of this character, else, 404
+		if(count($character) <= 0)
+			App::abort(404);
+
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
+			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
+				App::abort(404);
+
+		// Killmails
+		$killmails = DB::table('character_killmails')
+			->select(DB::raw('*, `mapDenormalize`.`itemName` AS solarSystemName'))
+			->leftJoin('character_killmail_detail', 'character_killmails.killID', '=', 'character_killmail_detail.killID')
+			->leftJoin('invTypes', 'character_killmail_detail.shipTypeID', '=', 'invTypes.typeID')
+			->leftJoin('mapDenormalize', 'character_killmail_detail.solarSystemID', '=', 'mapDenormalize.itemID')
+			->where('character_killmails.characterID', $characterID)
+			->orderBy('character_killmail_detail.killTime', 'desc')
+			->get();
+
+		// Finally, give all this to the view to handle
+		return View::make('character.view.killmails')
+			->with('characterID', $characterID)
+			->with('killmails', $killmails);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
 	| getAjaxResearchAgents()
 	|--------------------------------------------------------------------------
 	|
@@ -923,7 +999,7 @@ class CharacterController extends BaseController {
 			->join('character_planetary_routes as route', 'source.pinID', '=', 'route.sourcePinID')
 			->join('character_planetary_pins as destination', 'destination.PinID', '=', 'route.destinationPinID')
 			->where('source.characterID', $characterID)
-			->select('source.planetID', 'source.typeName as sourceTypeName', 'source.typeID as sourceTypeID', 'source.cycleTime', 'source.quantityPerCycle', 'source.installTime', 
+			->select('source.planetID', 'source.typeName as sourceTypeName', 'source.typeID as sourceTypeID', 'source.cycleTime', 'source.quantityPerCycle', 'source.installTime',
 				'source.expiryTime', 'route.contentTypeID', 'route.contentTypeName', 'route.quantity',
 				'destination.typeName as destinationTypeName', 'destination.typeID as destinationTypeID')
 			->get();
@@ -932,7 +1008,7 @@ class CharacterController extends BaseController {
 			->join('character_planetary_links as link', 'link.sourcePinID', '=', 'source.pinID')
 			->join('character_planetary_pins as destination', 'link.destinationPinID', '=', 'destination.pinID')
 			->where('source.characterID', $characterID)
-			->select('source.planetID', 'source.typeName as sourceTypeName', 'source.typeID as sourceTypeID', 'link.linkLevel', 
+			->select('source.planetID', 'source.typeName as sourceTypeName', 'source.typeID as sourceTypeID', 'link.linkLevel',
 				'destination.typeName as destinationTypeName', 'destination.typeID as destinationTypeID')
 			->get();
 

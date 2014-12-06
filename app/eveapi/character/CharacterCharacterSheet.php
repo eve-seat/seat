@@ -44,7 +44,7 @@ class CharacterSheet extends BaseApi {
 			// Do the actual API call. pheal-ng actually handles some internal
 			// caching too.
 			try {
-				
+
 				$character_sheet = $pheal
 					->charScope
 					->CharacterSheet(array('characterID' => $characterID));
@@ -85,49 +85,26 @@ class CharacterSheet extends BaseApi {
 				$new_data->cloneSkillPoints = $character_sheet->cloneSkillPoints;
 				$new_data->balance = $character_sheet->balance;
 				$new_data->intelligence = $character_sheet->attributes->intelligence;
-				if(isset($character_sheet->attributeEnhancers->intelligenceBonus)){
-					$new_data->intelligenceAugmentatorName = $character_sheet->attributeEnhancers->intelligenceBonus->augmentatorName;
-					$new_data->intelligenceAugmentatorValue = $character_sheet->attributeEnhancers->intelligenceBonus->augmentatorValue;
-				} else {
-					$new_data->intelligenceAugmentatorName = null;
-					$new_data->intelligenceAugmentatorValue = null;
-				}
-
 				$new_data->memory = $character_sheet->attributes->memory;
-				if(isset($character_sheet->attributeEnhancers->memoryBonus)){
-					$new_data->memoryAugmentatorName = $character_sheet->attributeEnhancers->memoryBonus->augmentatorName;
-					$new_data->memoryAugmentatorValue = $character_sheet->attributeEnhancers->memoryBonus->augmentatorValue;
-				} else {
-					$new_data->memoryAugmentatorName = null;
-					$new_data->memoryAugmentatorValue = null;
-				}
-
 				$new_data->charisma = $character_sheet->attributes->charisma;
-				if(isset($character_sheet->attributeEnhancers->charismaBonus)){
-					$new_data->charismaAugmentatorName = $character_sheet->attributeEnhancers->charismaBonus->augmentatorName;
-					$new_data->charismaAugmentatorValue = $character_sheet->attributeEnhancers->charismaBonus->augmentatorValue;
-				} else {
-					$new_data->charismaAugmentatorName = null;
-					$new_data->charismaAugmentatorValue = null;
-				}
-
 				$new_data->perception = $character_sheet->attributes->perception;
-				if(isset($character_sheet->attributeEnhancers->perceptionBonus)){
-					$new_data->perceptionAugmentatorName = $character_sheet->attributeEnhancers->perceptionBonus->augmentatorName;
-					$new_data->perceptionAugmentatorValue = $character_sheet->attributeEnhancers->perceptionBonus->augmentatorValue;
-				} else {
-					$new_data->perceptionAugmentatorName = null;
-					$new_data->perceptionAugmentatorValue = null;
-				}
-
 				$new_data->willpower = $character_sheet->attributes->willpower;
-				if(isset($character_sheet->attributeEnhancers->willpowerBonus)){
-					$new_data->willpowerAugmentatorName = $character_sheet->attributeEnhancers->willpowerBonus->augmentatorName;
-					$new_data->willpowerAugmentatorValue = $character_sheet->attributeEnhancers->willpowerBonus->augmentatorValue;
-				} else {
-					$new_data->willpowerAugmentatorName = null;
-					$new_data->willpowerAugmentatorValue = null;
-				}
+
+				// New stuff from Phoebe
+				$new_data->homeStationID = $character_sheet->homeStationID;
+				$new_data->factionName = $character_sheet->factionName;
+				$new_data->factionID = $character_sheet->factionID;
+				$new_data->cloneTypeID = $character_sheet->cloneTypeID;
+				$new_data->freeRespecs = $character_sheet->freeRespecs;
+				$new_data->cloneJumpDate = $character_sheet->cloneJumpDate;
+				$new_data->lastRespecDate = $character_sheet->lastRespecDate;
+				$new_data->lastTimedRespec = $character_sheet->lastTimedRespec;
+				$new_data->remoteStationDate = $character_sheet->remoteStationDate;
+				$new_data->jumpActivation = $character_sheet->jumpActivation;
+				$new_data->jumpFatigue = $character_sheet->jumpFatigue;
+				$new_data->jumpLastUpdate = $character_sheet->jumpLastUpdate;
+
+				// Save the information
 				$new_data->save();
 
 				// Update the characters skills
@@ -148,6 +125,63 @@ class CharacterSheet extends BaseApi {
 					$skill_info->level = $skill->level;
 					$skill_info->published = $skill->published;
 					$new_data->skills()->save($skill_info);
+				}
+
+				// Update the Jump Clones.
+				// First thing we need to do is clear out all of the  known clones for
+				// this character. We cant really say that clones will remain, so to
+				// be safe, clear all of the clones, and populate the new ones.
+
+				// So, lets get to the deletion part. We need to keep in mind that a characterID
+				// my have multiple jumpClones. Each clone in turn may have multiple implants
+				// which in turn are linked back to a jumpClone and then to a chacterID
+				\EveCharacterCharacterSheetJumpClones::where('characterID', $characterID)->delete();
+				\EveCharacterCharacterSheetJumpCloneImplants::where('characterID', $characterID)->delete();
+
+				// Next, loop over the clones we got in the API response
+				foreach ($character_sheet->jumpClones as $jump_clone) {
+
+					$clone_data = new \EveCharacterCharacterSheetJumpClones;
+
+					$clone_data->jumpCloneID = $jump_clone->jumpCloneID;
+					$clone_data->characterID = $characterID;
+					$clone_data->typeID = $jump_clone->typeID;
+					$clone_data->locationID = $jump_clone->locationID;
+					$clone_data->cloneName = $jump_clone->cloneName;
+
+					$clone_data->save();
+				}
+
+				// With the jump clones populated, we move on to the implants per
+				// jump clone.
+				foreach ($character_sheet->jumpCloneImplants as $jump_clone_implants) {
+
+					$implant_data = new \EveCharacterCharacterSheetJumpCloneImplants;
+
+					$implant_data->jumpCloneID = $jump_clone_implants->jumpCloneID;
+					$implant_data->characterID = $characterID;
+					$implant_data->typeID = $jump_clone_implants->typeID;
+					$implant_data->typeName = $jump_clone_implants->typeName;
+
+					$implant_data->save();
+				}
+
+				// Finally, we update the character with the implants that they have.
+				// Again, we can not assume that the implants they had in the
+				// previous update is the same as the current, so, delete
+				// everything and populate again.
+				\EveCharacterCharacterSheetImplants::where('characterID', $characterID)->delete();
+
+				// Now, loop over the implants from the API response and populate them.
+				foreach ($character_sheet->implants as $implant) {
+
+					$implant_data = new \EveCharacterCharacterSheetImplants;
+
+					$implant_data->characterID = $characterID;
+					$implant_data->typeID = $implant->typeID;
+					$implant_data->typeName = $implant->typeName;
+
+					$implant_data->save();
 				}
 
 				// Update the cached_until time in the database for this api call

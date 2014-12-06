@@ -2,6 +2,7 @@
 
 namespace Seat\EveApi;
 
+use Seat\EveApi\Exception;
 use Pheal\Pheal;
 use Pheal\Core\Config as PhealConfig;
 use Carbon\Carbon;
@@ -37,6 +38,20 @@ class BaseApi {
 		PhealConfig::getInstance()->http_user_agent = 'SeAT ' . \Config::get('seat.version') . 'API Fetcher';
 		PhealConfig::getInstance()->api_customkeys = true;
 		PhealConfig::getInstance()->http_method = 'curl';
+
+		// Should the EVE api be determined as 'down', set the cache value for 'eve_api_down'
+		// with a expiration of 30 minutes. We will also decrement the current error count
+		// by 10 to allow for some calls to happen after the value has expired out of
+		// cache
+		if (\Cache::get('eve_api_error_count') >= \Config::get('seat.error_limit')) {
+
+			\Cache::set('eve_api_down', true, 30);
+			\Cache::decrement('eve_api_error_count', 10);
+		}
+
+		// Check if the EVE Api has been detected as 'down'.
+		if (\Cache::has('eve_api_down'))
+			throw new Exception\APIServerDown;
 
 		// Disable the Laravel query log. Some of the API calls do.. a lot of queries :P
 		\DB::connection()->disableQueryLog();
@@ -87,7 +102,7 @@ class BaseApi {
 
 	public static function disableKey($keyID, $error = null)
 	{
-		$key = \SeatKey::where('keyID', '=', $keyID)->first();	
+		$key = \SeatKey::where('keyID', '=', $keyID)->first();
 
 		if (!$key)
 			throw new Exception('Unable to find the entry in `seat_keys` to disable key: ' . $keyID);
@@ -139,7 +154,7 @@ class BaseApi {
 		\Log::warning('Ban limit reached. Actioning ban for api: ' . $api . ' scope: ' . $scope . ' owner: ' . $owner, array('src' => __CLASS__));
 
 		// We _should_ only get here once the ban limit has been reached
-		$banned = \EveBannedCall::where('hash', '=', $hash)->first();	
+		$banned = \EveBannedCall::where('hash', '=', $hash)->first();
 		if (!$banned)
 			$banned = new \EveBannedCall;
 
@@ -151,6 +166,13 @@ class BaseApi {
 		$banned->reason = $reason;
 		$banned->save();
 
+		// We also need to keep in mind how many errors have occured so far.
+		// This is mainly for the checks that are done in bootstrap()
+		// allowing us to pause and not cause a IP to be banned.
+		if (\Cache::has('eve_api_error_count'))
+			\Cache::increment('eve_api_error_count');
+		else
+			\Cache::put('eve_api_error_count', 1);
 	}
 
 	/*
@@ -170,7 +192,7 @@ class BaseApi {
 			$accessMask = \EveAccountAPIKeyInfo::where('keyID', '=', $owner)->pluck('accessMask');
 
 		$hash = BaseApi::makeCallHash($api, $scope, $owner . $accessMask);
-		$banned = \EveBannedCall::where('hash', '=', $hash)->first();	
+		$banned = \EveBannedCall::where('hash', '=', $hash)->first();
 
 		if ($banned)
 			return true;
@@ -319,8 +341,8 @@ class BaseApi {
 		Account\APIKeyInfo::update($keyID, $key->vCode);
 		$key_mask_info = \EveAccountAPIKeyInfo::where('keyID', '=', $keyID)->first();
 
-		// TODO: Where to put this call????
-		Account\AccountStatus::update($keyID, $key->vCode);
+		// Potential cause for #182. Comment out for now.
+		// Account\AccountStatus::update($keyID, $key->vCode);
 
 		// If we still can't determine mask information, leave everything
 		if (!$key_mask_info)
@@ -332,7 +354,7 @@ class BaseApi {
 
 		// Loop over all the masks we have, and return those we have access to for this key
 		foreach (\EveApiCalllist::where('type', '=', $type)->get() as $mask) {
-			
+
 			if ($key_mask_info->accessMask & $mask->accessMask)
 				$return_access['access'][] = array('type' => $mask->type, 'name' => $mask->name);
 		}

@@ -44,7 +44,7 @@ class SkillInTraining extends BaseApi {
 			// Do the actual API call. pheal-ng actually handles some internal
 			// caching too.
 			try {
-				
+
 				$skill_in_training = $pheal
 					->charScope
 					->SkillInTraining(array('characterID' => $characterID));

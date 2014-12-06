@@ -177,6 +177,7 @@ class CorporationController extends BaseController {
 			->leftJoin(DB::raw('seat_keys as k'), 'account_apikeyinfo_characters.keyID', '=', 'k.keyID')
 			->leftJoin(DB::raw('account_apikeyinfo as ap'), 'k.keyID', '=', 'ap.keyID')
 			->where('cmt.corporationID', $corporationID)
+			->orderBy('k.isOk', 'asc')
 			->orderBy('cmt.name', 'asc')
 			->groupBy('cmt.characterID')
 			->get();

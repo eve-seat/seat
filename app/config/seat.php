@@ -9,7 +9,7 @@ return array(
 	|
 	*/
 
-	'version' => '0.9.2',
+	'version' => '0.10.0',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -44,13 +44,16 @@ return array(
 
 	/*
 	|--------------------------------------------------------------------------
-	| Allow Registrations
+	| Eve API Error Count Maximum
 	|--------------------------------------------------------------------------
 	|
-	|	Specify whether the website is currently allow registrations 
+	| Specifies the maximum amount of errors that should occur before the SeAT
+	| API updator workers will stop processing update jobs. This allows us
+	| be aware of the fact that the EVE API may be down/sick and prevent
+	| the storm ahead with updates.
 	|
 	*/
 
-	'allow_registration' => true,
+	'error_limit' => 60,
 
 );

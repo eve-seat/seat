@@ -44,7 +44,7 @@ class ContactList extends BaseApi {
 			// Do the actual API call. pheal-ng actually handles some internal
 			// caching too.
 			try {
-				
+
 				$contact_list = $pheal
 					->charScope
 					->ContactList(array('characterID' => $characterID));
@@ -78,12 +78,12 @@ class ContactList extends BaseApi {
 
 				// Loop over the list we got from the api and update the db
 				foreach ($contact_list->contactList as $contact) {
-					
+
 					$new_contact = new \EveCharacterContactList;
 					$new_contact->characterID = $characterID;
 					$new_contact->contactID = $contact->contactID;
 					$new_contact->contactName = $contact->contactName;
-					$new_contact->inWatchlist = (isset($contact->inWatchlist) ? $contact->inWatchlist : null);
+					$new_contact->inWatchlist = (($contact->inWatchlist == True) ? 1 : 0);
 					$new_contact->standing = $contact->standing;
 					$new_contact->contactTypeID = $contact->contactTypeID;
 					$new_contact->save();
@@ -95,7 +95,7 @@ class ContactList extends BaseApi {
 
 				// Loop over the list we got from the api and update the db
 				foreach ($contact_list->corporateContactList as $contact) {
-					
+
 					$new_contact = new \EveCharacterContactListCorporate;
 					$new_contact->characterID = $characterID;
 					$new_contact->contactID = $contact->contactID;
@@ -111,7 +111,7 @@ class ContactList extends BaseApi {
 
 				// Loop over the list we got from the api and update the db
 				foreach ($contact_list->allianceContactList as $contact) {
-					
+
 					$new_contact = new \EveCharacterContactListAlliance;
 					$new_contact->characterID = $characterID;
 					$new_contact->contactID = $contact->contactID;

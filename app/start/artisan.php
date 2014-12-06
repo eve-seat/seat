@@ -23,6 +23,8 @@ Artisan::add(new \Seat\Commands\SeatAddKey);
 Artisan::add(new \Seat\Commands\SeatVersion);
 Artisan::add(new \Seat\Commands\SeatDiagnose);
 Artisan::add(new \Seat\Commands\SeatGroupSync);
+Artisan::add(new \Seat\Commands\SeatClearCache);
+Artisan::add(new \Seat\Commands\SeatUpdateSDE);
 
 // Scheduled SeAT Commands
 Artisan::add(new \Seat\Commands\Scheduled\EveCharacterUpdater);

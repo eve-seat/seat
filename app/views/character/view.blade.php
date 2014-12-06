@@ -66,7 +66,7 @@
 											<a href="{{ action('CharacterController@getView', array('characterID' => $person->characterID)) }}">
 												<img src='//image.eveonline.com/Character/{{ $person->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
 												{{ $person->characterName }}
-											</a>				                	
+											</a>
 										</li>
 					                @endforeach
 					            </ul>
@@ -102,6 +102,7 @@
 	            <li><a href="#market_orders" data-toggle="tab" id="load-tab" a-tab-id="market_orders">Market Orders</a></li>
 	            <li><a href="#calendar_events" data-toggle="tab" id="load-tab" a-tab-id="calendar_events">Calendar Events</a></li>
 	            <li><a href="#character_standings" data-toggle="tab" id="load-tab" a-tab-id="character_standings">Standings</a></li>
+	            <li><a href="#killmails" data-toggle="tab" id="load-tab" a-tab-id="killmails">Kill Mails</a></li>
 	            <li><a href="#character_research" data-toggle="tab" id="load-tab" a-tab-id="character_research">Research Agents</a></li>
 	            <li><a href="#character_pi" data-toggle="tab" id="load-tab" a-tab-id="character_pi">Planetary Interaction</a></li>
 	            <li class="pull-right">
@@ -113,7 +114,7 @@
 	        <div class="tab-content" id="tab-results">
 	        </div><!-- /.tab-content -->
 	    </div><!-- nav-tabs-custom -->
-	</div><!-- ./col-md-12 -->  
+	</div><!-- ./col-md-12 -->
 </div><!-- ./row -->
 @stop
 
@@ -144,6 +145,7 @@
 			"market_orders" : "{{ action('CharacterController@getAjaxMarketOrders', array('characterID' => $character->characterID)) }}",
 			"calendar_events" : "{{ action('CharacterController@getAjaxCalendarEvents', array('characterID' => $character->characterID)) }}",
 			"character_standings" : "{{ action('CharacterController@getAjaxStandings', array('characterID' => $character->characterID)) }}",
+			"killmails" : "{{ action('CharacterController@getAjaxKillMails', array('characterID' => $character->characterID)) }}",
 			"character_research" : "{{ action('CharacterController@getAjaxResearchAgents', array('characterID' => $character->characterID)) }}",
 			"character_pi" : "{{ action('CharacterController@getAjaxPlanetaryInteraction', array('characterID' => $character->characterID)) }}"
 		}
@@ -215,12 +217,12 @@
 		// get the tag direct after the button
 		if($(this).hasClass('contracts')){
 			// if we are in Contracts view, we check the next Div Tag
-			var contents = $(this).closest( "table").next( "div" ); 
+			var contents = $(this).closest( "table").next( "div" );
 		} else {
 			// if we are in Asset view, we check the next Tbody tag
-			var contents = $(this).closest( "tbody").next( "tbody" ); 
+			var contents = $(this).closest( "tbody").next( "tbody" );
 		}
-		
+
 		// Show or hide
 		contents.toggle();
 
@@ -230,12 +232,12 @@
 			$(this).closest("tr").css( "background-color", "#EBEBEB" ); // change the background color of container (for easy see where we are)
 			contents.css( "background-color", "#EBEBEB" ); // change the background color of content (for easy see where we are)
 		} else {
-			$(this).removeClass('fa-minus').addClass('fa-plus'); 
+			$(this).removeClass('fa-minus').addClass('fa-plus');
 			$(this).closest("tr").css( "background-color", "#FFFFFF" ); // reset the background color on container when we hide content
-		}		
+		}
 	});
 
-	// Wallet delta graph	
+	// Wallet delta graph
 	$("li#journal_graph").click(function() {
 		var options = { chart: {
 			renderTo: 'chart',

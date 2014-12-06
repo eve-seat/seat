@@ -11,4 +11,14 @@ class EveCharacterCharacterSheet extends Eloquent {
 	{
 		return $this->hasMany('EveCharacterCharacterSheetSkills', 'characterID', 'characterID');
 	}
+
+    public function jumpClones()
+    {
+        return $this->hasMany('EveCharacterCharacterSheetJumpClones', 'characterID', 'characterID');
+    }
+
+    public function implants()
+    {
+        return $this->hasMany('EveCharacterCharacterSheetImplants', 'characterID', 'characterID');
+    }
 }

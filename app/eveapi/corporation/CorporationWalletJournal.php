@@ -10,7 +10,7 @@ class WalletJournal extends BaseApi {
 	public static function Update($keyID, $vCode)
 	{
 
-		$row_count = 1000;
+		$row_count = 500;
 
 		// Start and validate they key pair
 		BaseApi::bootstrap();
@@ -45,6 +45,9 @@ class WalletJournal extends BaseApi {
 		// Prepare the Pheal instance
 		$pheal = new Pheal($keyID, $vCode);
 
+		// Prepare a blank wallet_journal to start
+		$wallet_journal = null;
+
 		// Next, start our loop over the wallet divisions for this corporation
 		foreach (\EveCorporationAccountBalance::where('corporationID', '=', $corporationID)->get() as $walletdivision) {
 
@@ -56,7 +59,7 @@ class WalletJournal extends BaseApi {
 			// ignore the DB level one and rely entirely on pheal-ng to cache the XML's
 
 			$first_request = true;
-			$from_id = 9223372036854775807; // Max integer for 64bit PHP
+			$from_id = PHP_INT_MAX; // Use the maximum size for this PHP arch
 			while (true) {
 
 				// Do the actual API call. pheal-ng actually handles some internal
@@ -73,7 +76,7 @@ class WalletJournal extends BaseApi {
 						$first_request = false;
 
 					} else {
-					
+
 						$wallet_journal = $pheal
 							->corpScope
 							->WalletJournal(array('characterID' => $characters[0], 'rowCount' => $row_count, 'accountKey'=> $walletdivision->accountKey, 'fromID' => $from_id));

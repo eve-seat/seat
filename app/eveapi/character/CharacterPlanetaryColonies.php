@@ -44,7 +44,7 @@ class PlanetaryColonies extends BaseApi {
 			// Do the actual API call. pheal-ng actually handles some internal
 			// caching too.
 			try {
-				
+
 				$planetary_colonies = $pheal
 					->charScope
 					->PlanetaryColonies(array('characterID' => $characterID));
@@ -104,147 +104,179 @@ class PlanetaryColonies extends BaseApi {
 					// Next we process the pins, links and routes for this planetID
 					//
 
-					// First, the pins
-					try {
-						
-						$planetary_pins = $pheal
-							->charScope
-							->PlanetaryPins(array('characterID' => $characterID, 'planetID' => $colony->planetID));
+					// Check if the pin check is banned
+					if (!BaseApi::isLockedCall('PlanetaryPins', $scope, $characterID)) {
 
-					} catch (\Pheal\Exceptions\PhealException $e) {
+						// First, the pins
+						try {
 
-						// Assuming the API has already been available, we will throw on any error here as
-						// technically we should never hit one if the PlanetaryColonies call worked
-						throw $e;
+							$planetary_pins = $pheal
+								->charScope
+								->PlanetaryPins(array('characterID' => $characterID, 'planetID' => $colony->planetID));
+
+						} catch (\Pheal\Exceptions\APIException $e) {
+
+							// Process a ban for this call. Both the call and id is changed
+							// from $api->'custom' && $keyID -> $characterID
+							BaseApi::banCall('PlanetaryPins', $scope, $characterID, 0, $e->getCode() . ': ' . $e->getMessage());
+							return;
+
+						} catch (\Pheal\Exceptions\PhealException $e) {
+
+							// Assuming the API has already been available, we will throw on any error here as
+							// technically we should never hit one if the PlanetaryColonies call worked
+							throw $e;
+						}
+
+						// Process the pins from the API for this planet
+						foreach ($planetary_pins->pins as $pin) {
+
+							// Find the pin in the database or create a new one
+							$pin_data = \EveCharacterPlanetaryPins::where('characterID', $characterID)
+								->where('planetID', $colony->planetID)
+								->where('pinID', $pin->pinID)
+								->first();
+
+							if (!$pin_data)
+								$pin_data = new \EveCharacterPlanetaryPins;
+
+							$pin_data->characterID = $characterID;
+							$pin_data->planetID = $colony->planetID;
+							$pin_data->pinID = $pin->pinID;
+							$pin_data->typeID = $pin->typeID;
+							$pin_data->typeName = $pin->typeName;
+							$pin_data->schematicID = $pin->schematicID;
+							$pin_data->lastLaunchTime = $pin->lastLaunchTime;
+							$pin_data->cycleTime = $pin->cycleTime;
+							$pin_data->quantityPerCycle = $pin->quantityPerCycle;
+							$pin_data->installTime = $pin->installTime;
+							$pin_data->expiryTime = $pin->expiryTime;
+							$pin_data->contentTypeID = $pin->contentTypeID;
+							$pin_data->contentTypeName = $pin->contentTypeName;
+							$pin_data->contentQuantity = $pin->contentQuantity;
+							$pin_data->longitude = $pin->longitude;
+							$pin_data->latitude = $pin->latitude;
+							$pin_data->save();
+
+							// Add this pin to the known pins
+							$known_pins[] = $pin->pinID;
+						}
+
+						// Remove the old pins
+						if (count($known_pins) > 0)
+							\EveCharacterPlanetaryPins::where('characterID', $characterID)
+								->where('planetID', $colony->planetID)
+								->whereNotIn('pinID', $known_pins)
+								->delete();
 					}
-
-					// Process the pins from the API for this planet
-					foreach ($planetary_pins->pins as $pin) {
-
-						// Find the pin in the database or create a new one
-						$pin_data = \EveCharacterPlanetaryPins::where('characterID', $characterID)
-							->where('planetID', $colony->planetID)
-							->where('pinID', $pin->pinID)
-							->first();
-
-						if (!$pin_data)
-							$pin_data = new \EveCharacterPlanetaryPins;
-
-						$pin_data->characterID = $characterID;
-						$pin_data->planetID = $colony->planetID;
-						$pin_data->pinID = $pin->pinID;
-						$pin_data->typeID = $pin->typeID;
-						$pin_data->typeName = $pin->typeName;
-						$pin_data->schematicID = $pin->schematicID;
-						$pin_data->lastLaunchTime = $pin->lastLaunchTime;
-						$pin_data->cycleTime = $pin->cycleTime;
-						$pin_data->quantityPerCycle = $pin->quantityPerCycle;
-						$pin_data->installTime = $pin->installTime;
-						$pin_data->expiryTime = $pin->expiryTime;
-						$pin_data->contentTypeID = $pin->contentTypeID;
-						$pin_data->contentTypeName = $pin->contentTypeName;
-						$pin_data->contentQuantity = $pin->contentQuantity;
-						$pin_data->longitude = $pin->longitude;
-						$pin_data->latitude = $pin->latitude;
-						$pin_data->save();
-
-						// Add this pin to the known pins
-						$known_pins[] = $pin->pinID;
-					}
-
-					// Remove the old pins
-					if (count($known_pins) > 0)
-						\EveCharacterPlanetaryPins::where('characterID', $characterID)
-							->where('planetID', $colony->planetID)
-							->whereNotIn('pinID', $known_pins)
-							->delete();
 
 					// Next, the routes
-					try {
-						
-						$planetary_routes = $pheal
-							->charScope
-							->PlanetaryRoutes(array('characterID' => $characterID, 'planetID' => $colony->planetID));
+					if (!BaseApi::isLockedCall('PlanetaryRoutes', $scope, $characterID)) {
 
-					} catch (\Pheal\Exceptions\PhealException $e) {
+						try {
 
-						// Assuming the API has already been available, we will throw on any error here as
-						// technically we should never hit one if the PlanetaryColonies call worked
-						throw $e;
+							$planetary_routes = $pheal
+								->charScope
+								->PlanetaryRoutes(array('characterID' => $characterID, 'planetID' => $colony->planetID));
+
+						} catch (\Pheal\Exceptions\APIException $e) {
+
+							// Process a ban for this call. Both the call and id is changed
+							// from $api->'custom' && $keyID -> $characterID
+							BaseApi::banCall('PlanetaryRoutes', $scope, $characterID, 0, $e->getCode() . ': ' . $e->getMessage());
+							return;
+
+						} catch (\Pheal\Exceptions\PhealException $e) {
+
+							// Assuming the API has already been available, we will throw on any error here as
+							// technically we should never hit one if the PlanetaryColonies call worked
+							throw $e;
+						}
+
+						// Process the pins from the API for this planet
+						foreach ($planetary_routes->routes as $route) {
+
+							// Find the pin in the database or create a new one
+							$route_data = \EveCharacterPlanetaryRoutes::where('characterID', $characterID)
+								->where('planetID', $colony->planetID)
+								->where('routeID', $route->routeID)
+								->first();
+
+							if (!$route_data)
+								$route_data = new \EveCharacterPlanetaryRoutes;
+
+							$route_data->characterID = $characterID;
+							$route_data->planetID = $colony->planetID;
+							$route_data->routeID = $route->routeID;
+							$route_data->sourcePinID = $route->sourcePinID;
+							$route_data->destinationPinID = $route->destinationPinID;
+							$route_data->contentTypeID = $route->contentTypeID;
+							$route_data->contentTypeName = $route->contentTypeName;
+							$route_data->quantity = $route->quantity;
+							$route_data->waypoint1 = $route->waypoint1;
+							$route_data->waypoint2 = $route->waypoint2;
+							$route_data->waypoint3 = $route->waypoint3;
+							$route_data->waypoint4 = $route->waypoint4;
+							$route_data->waypoint5 = $route->waypoint5;
+							$route_data->save();
+
+							// Add this route to the known routes
+							$known_routes[] = $route->routeID;
+						}
+
+						// Remove the old routes
+						if (count($known_routes) > 0)
+							\EveCharacterPlanetaryRoutes::where('characterID', $characterID)
+								->where('planetID', $colony->planetID)
+								->whereNotIn('routeID', $known_routes)
+								->delete();
 					}
 
-					// Process the pins from the API for this planet
-					foreach ($planetary_routes->routes as $route) {
-
-						// Find the pin in the database or create a new one
-						$route_data = \EveCharacterPlanetaryRoutes::where('characterID', $characterID)
-							->where('planetID', $colony->planetID)
-							->where('routeID', $route->routeID)
-							->first();
-
-						if (!$route_data)
-							$route_data = new \EveCharacterPlanetaryRoutes;
-
-						$route_data->characterID = $characterID;
-						$route_data->planetID = $colony->planetID;
-						$route_data->routeID = $route->routeID;
-						$route_data->sourcePinID = $route->sourcePinID;
-						$route_data->destinationPinID = $route->destinationPinID;
-						$route_data->contentTypeID = $route->contentTypeID;
-						$route_data->contentTypeName = $route->contentTypeName;
-						$route_data->quantity = $route->quantity;
-						$route_data->waypoint1 = $route->waypoint1;
-						$route_data->waypoint2 = $route->waypoint2;
-						$route_data->waypoint3 = $route->waypoint3;
-						$route_data->waypoint4 = $route->waypoint4;
-						$route_data->waypoint5 = $route->waypoint5;
-						$route_data->save();
-
-						// Add this route to the known routes
-						$known_routes[] = $route->routeID;
-					}
-
-					// Remove the old routes
-					if (count($known_routes) > 0)
-						\EveCharacterPlanetaryRoutes::where('characterID', $characterID)
-							->where('planetID', $colony->planetID)
-							->whereNotIn('routeID', $known_routes)
-							->delete();
 
 					// Lastly the links information
-					try {
-						
-						$planetary_links = $pheal
-							->charScope
-							->PlanetaryLinks(array('characterID' => $characterID, 'planetID' => $colony->planetID));
+					if (!BaseApi::isLockedCall('PlanetaryRoutes', $scope, $characterID)) {
 
-					} catch (\Pheal\Exceptions\PhealException $e) {
+						try {
 
-						// Assuming the API has already been available, we will throw on any error here as
-						// technically we should never hit one if the PlanetaryColonies call worked
-						throw $e;
-					}
+							$planetary_links = $pheal
+								->charScope
+								->PlanetaryLinks(array('characterID' => $characterID, 'planetID' => $colony->planetID));
 
-					// TODO: The logic for keeping the links up to date needs some more thinking as
-					// it does not have a unique 'linkID' or something that can be referenced.
-					// For now I am just going to drop all the links for this planet and recreate
-					// them all.
-					\EveCharacterPlanetaryLinks::where('characterID', $characterID)
-						->where('planetID', $colony->planetID)
-						->delete();
+						} catch (\Pheal\Exceptions\APIException $e) {
 
-					// Process the links from the API for this colony
-					foreach ($planetary_links->links as $link) {
+							// Process a ban for this call. Both the call and id is changed
+							// from $api->'custom' && $keyID -> $characterID
+							BaseApi::banCall('PlanetaryLinks', $scope, $characterID, 0, $e->getCode() . ': ' . $e->getMessage());
+							return;
 
-						$link_data = new \EveCharacterPlanetaryLinks;
+						} catch (\Pheal\Exceptions\PhealException $e) {
 
-						$link_data->characterID = $characterID;
-						$link_data->planetID = $colony->planetID;
-						$link_data->sourcePinID = $link->sourcePinID;
-						$link_data->destinationPinID = $link->destinationPinID;
-						$link_data->linkLevel = $link->linkLevel;
-						$link_data->save();
+							// Assuming the API has already been available, we will throw on any error here as
+							// technically we should never hit one if the PlanetaryColonies call worked
+							throw $e;
+						}
 
+						// TODO: The logic for keeping the links up to date needs some more thinking as
+						// it does not have a unique 'linkID' or something that can be referenced.
+						// For now I am just going to drop all the links for this planet and recreate
+						// them all.
+						\EveCharacterPlanetaryLinks::where('characterID', $characterID)
+							->where('planetID', $colony->planetID)
+							->delete();
+
+						// Process the links from the API for this colony
+						foreach ($planetary_links->links as $link) {
+
+							$link_data = new \EveCharacterPlanetaryLinks;
+
+							$link_data->characterID = $characterID;
+							$link_data->planetID = $colony->planetID;
+							$link_data->sourcePinID = $link->sourcePinID;
+							$link_data->destinationPinID = $link->destinationPinID;
+							$link_data->linkLevel = $link->linkLevel;
+							$link_data->save();
+
+						}
 					}
 				}
 			}

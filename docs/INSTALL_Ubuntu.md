@@ -60,25 +60,23 @@ After seat is downloaded, we need to get composer to help us install the applica
     - `curl -sS https://getcomposer.org/installer | php`  
     - `php composer.phar install`  
 
-#### 5. Get EVE SDE's ####
-Again, assuming you used `/var/www`, a tool to download the required static data exports can be found in `/var/www/seat/evesde/update_sde.sh`. The script is written for `sh`, however Ubuntu in all their wisdom appears to have dropped this in favour of Dash. Therefore, we need to get you back to sh so that the updator works.
-This tool can be prepared and run with:  
-    - `update-alternatives --install /bin/sh sh /bin/bash 1`  
-    - `cd /var/www/seat/evesde`  
-    - `sh update_sde.sh` (the script will probably error with 'update_sde.sh: 34: update_sde.sh: +: not found. Don't worry, progress reporting us just broken the rest is fine :<)  
-
-Once it completes the downloads, a directory with a name starting with `SeAT-` will be located in `/tmp` on your machine. This directory contains static data that can just be imported into your database. The command will look something like:
-
-`cat /var/SeAT-109831-39871098278970987/*.sql | mysql -u seat -p seat`
-
-Once the import has been completed, you can safely delete the `/tmp/SeAT-*` directory.    
-
-#### 6. Configure SeAT ####
+#### 5. Configure SeAT ####
 SeAT configuration lives in `app/config`. Assuming you cloned to `/var/www`, the configs will be in `/var/www/seat/app/config`.  
 
-Edit the fowlling files:  
-    - database.php (set your configured username/password)  
-    - app.php  
+Edit the following files:  
+    - `database.php` (set your configured username/password)  
+
+#### 6. Get EVE SDE's ####
+SeAT makes use of the EVE [Static Data Exports](https://developers.eveonline.com/resource/static-data-export). As SeAT is built on top of MySQL, conversions of the official CCP exports are used that are found on [https://www.fuzzwork.co.uk/dump/](https://www.fuzzwork.co.uk/dump/).
+
+In order to update your installations SDE, simply run:
+
+```bash
+php artisan seat:update-sde
+```
+
+It is important for the database settings to already be configured as per point 5.  
+It is also safe to re-run the migration update at any time. It will simply re-import the affected tables without affecting data in your SeAT install. 
     
 #### 7. Run the SeAT database migrations & seeds ####
 SeAT has all of the database schemas stored in 'migration' scripts in `app/database/migrations`. Run them with:
@@ -217,6 +215,28 @@ Lastly, we enable this site by symlinking it to `sites-enabled`:
 Lastly, restart apache `/etc/init.d/apache2 restart`
 
 SeAT *should* now be available at http://your.domain/seat
+
+##### Logrotate #####
+SeAT logs a large amount of internals to 3 main log files:
+
+   - `app/storage/logs/laravel.log`  
+   - `app/storage/logs/pheal_access.log`  
+   - `app/storage/logs/pheal_error.log`
+
+Over time, these logs may explode in size (see [this](https://github.com/eve-seat/seat/issues/216)). While not a requirement for SeAT, it is however reccomended that you setup logrotate for the log files. A sample configuration that you can dump into `/etc/logrotate.d/` is:
+
+```bash
+/var/www/seat/app/storage/logs/*.log {
+    monthly
+    missingok
+    rotate 12
+    compress
+    notifempty
+    create 750 apache apache
+}
+```
+
+Ensure the path matches where you intalled SeAT, and the user `apache apache` matches the user your web server is running as.
 
   [1]: http://laravel.com/
   [2]: http://www.php.net/

@@ -10,7 +10,7 @@ class WalletJournal extends BaseApi {
 	public static function Update($keyID, $vCode)
 	{
 
-		$row_count = 1000;
+		$row_count = 500;
 
 		// Start and validate they key pair
 		BaseApi::bootstrap();
@@ -51,7 +51,7 @@ class WalletJournal extends BaseApi {
 			// ignore the DB level one and rely entirely on pheal-ng to cache the XML's
 
 			$first_request = true;
-			$from_id = 9223372036854775807; // Max integer for 64bit PHP
+			$from_id = PHP_INT_MAX; // Use the maximum size for this PHP arch
 			while (true) {
 
 				// Do the actual API call. pheal-ng actually handles some internal
@@ -68,7 +68,7 @@ class WalletJournal extends BaseApi {
 						$first_request = false;
 
 					} else {
-					
+
 						$wallet_journal = $pheal
 							->charScope
 							->WalletJournal(array('characterID' => $characterID, 'rowCount' => $row_count, 'fromID' => $from_id));

@@ -43,12 +43,14 @@ App::before(function($request)
 			Session::put('corporation_affiliations', $corporation_affiliation);
 
 			// Determine which corporations the user is a director for
-			$is_director = EveCorporationMemberSecurityRoles::whereIn('corporationID', $corporation_affiliation)
-				->where('roleID', 1)
-				->groupBy('corporationID')
-				->lists('corporationID');
+			if(!empty($corporation_affiliation)){
+				$is_director = EveCorporationMemberSecurityRoles::whereIn('corporationID', $corporation_affiliation)
+					->where('roleID', '=', '1')
+					->groupBy('corporationID')
+					->lists('corporationID');
 
-			Session::put('is_director', $is_director);
+				Session::put('is_director', $is_director);
+			}
 
 		} else {
 
@@ -79,8 +81,7 @@ App::after(function($request, $response)
 Route::filter('auth', function()
 {
 	if (!Sentry::check())
-		return Redirect::action('SessionController@getSignIn')
-			->with('warning', 'Please Sign In first to continue');
+		return Redirect::action('SessionController@getSignIn');
 });
 
 
