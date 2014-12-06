@@ -59,6 +59,22 @@ $ php artisan migrate
 Migrated: 2014_04_16_173335_LaravelUpdate4_1_26_RememberMe  # will show 'Nothing to migrate.' if nothing is outstanding
 ```
 
+* Ensure that you have the latest EVE SDE's
+
+```bash
+$ php artisan seat:update-sde
+Warning! This Laravel command uses exec() to execute a mysql shell command to import a extracted dump.
+Due to the way the command is constructed, should someone view the current running processes of your server, they will be able to see your SeAT database users password.
+
+Ensure that you understand this before continuing.
+Are you sure you want to update to the latest EVE SDE? [yes|no] y
+Checking for SDE updates at https://raw.githubusercontent.com/eve-seat/seat/resources/sde_version.json ...
+The current SDE version is phoebe-1.0-107269
+19 dumps will be downloaded from https://www.fuzzwork.co.uk/dump/phoebe-1.0-107269/ in .sql.bz2 format and imported into mysql://127.0.0.1/seat
+
+[.. snip ..]
+```
+
 * Check if the version you are upgrading to has any special instructions in `docs/upgrade_specifics`. Eg. SeAT v0.7 -> v0.8 had some extra table seeds to be run, and includes the instructions in a file for this.
 
 * Bring the application out of maintenance mode:
