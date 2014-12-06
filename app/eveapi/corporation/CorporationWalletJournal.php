@@ -10,7 +10,7 @@ class WalletJournal extends BaseApi {
 	public static function Update($keyID, $vCode)
 	{
 
-		$row_count = 1000;
+		$row_count = 500;
 
 		// Start and validate they key pair
 		BaseApi::bootstrap();
@@ -59,7 +59,7 @@ class WalletJournal extends BaseApi {
 			// ignore the DB level one and rely entirely on pheal-ng to cache the XML's
 
 			$first_request = true;
-			$from_id = 9223372036854775807; // Max integer for 64bit PHP
+			$from_id = PHP_INT_MAX; // Use the maximum size for this PHP arch
 			while (true) {
 
 				// Do the actual API call. pheal-ng actually handles some internal
@@ -103,33 +103,61 @@ class WalletJournal extends BaseApi {
 					// Generate a transaction hash. It would seem that refID's could possibly be cycled.
 					$transaction_hash = md5(implode(',', array($corporationID, $walletdivision->accountKey, $transaction->date, $transaction->ownerID1, $transaction->refID)));
 
-					$transaction_data  = \EveCorporationWalletJournal::where('corporationID', '=', $corporationID)
-						->where('hash', '=', $transaction_hash)
-						->first();
+					// Update the database
+					\EveCorporationWalletJournal::firstOrCreate(
 
-					if (!$transaction_data)
-						$transaction_data = new \EveCorporationWalletJournal;
-					else
-						continue;
+						// Match the transaction hash that we have caclulated
+						array('hash' => $transaction_hash),
 
-					$transaction_data->corporationID = $corporationID;
-					$transaction_data->hash = $transaction_hash;
-					$transaction_data->accountKey = $walletdivision->accountKey; // From the outer foreach
-					$transaction_data->refID = $transaction->refID;
-					$transaction_data->date = $transaction->date;
-					$transaction_data->refTypeID = $transaction->refTypeID;
-					$transaction_data->ownerName1 = $transaction->ownerName1;
-					$transaction_data->ownerID1 = $transaction->ownerID1;
-					$transaction_data->ownerName2 = $transaction->ownerName2;
-					$transaction_data->ownerID2 = $transaction->ownerID2;
-					$transaction_data->argName1 = $transaction->argName1;
-					$transaction_data->argID1 = $transaction->argID1;
-					$transaction_data->amount = $transaction->amount;
-					$transaction_data->balance = $transaction->balance;
-					$transaction_data->reason = $transaction->reason;
-					$transaction_data->owner1TypeID = $transaction->owner1TypeID;
-					$transaction_data->owner2TypeID = $transaction->owner2TypeID;
-					$transaction_data->save();
+						// If we need to create a new entry, set the information
+						array(
+							'corporationID' => $corporationID,
+							'hash' 			=> $transaction_hash,
+							'accountKey' 	=> $walletdivision->accountKey, // From the outer foreach
+							'refID' 		=> $transaction->refID,
+							'date'			=> $transaction->date,
+							'refTypeID' 	=> $transaction->refTypeID,
+							'ownerName1'	=> $transaction->ownerName1,
+							'ownerID1'		=> $transaction->ownerID1,
+							'ownerName2'	=> $transaction->ownerName2,
+							'ownerID2'		=> $transaction->ownerID2,
+							'argName1'		=> $transaction->argName1,
+							'argID1'		=> $transaction->argID1,
+							'amount'		=> $transaction->amount,
+							'balance'		=> $transaction->balance,
+							'reason'		=> $transaction->reason,
+							'owner1TypeID'	=> $transaction->owner1TypeID,
+							'owner2TypeID'	=> $transaction->owner2TypeID
+						)
+					);
+
+					// $transaction_data  = \EveCorporationWalletJournal::where('corporationID', '=', $corporationID)
+					// 	->where('hash', '=', $transaction_hash)
+					// 	->first();
+
+					// if (!$transaction_data)
+					// 	$transaction_data = new \EveCorporationWalletJournal;
+					// else
+					// 	continue;
+
+					// $transaction_data->corporationID = $corporationID;
+					// $transaction_data->hash = $transaction_hash;
+					// $transaction_data->accountKey = $walletdivision->accountKey; // From the outer foreach
+					// $transaction_data->refID = $transaction->refID;
+					// $transaction_data->date = $transaction->date;
+					// $transaction_data->refTypeID = $transaction->refTypeID;
+					// $transaction_data->ownerName1 = $transaction->ownerName1;
+					// $transaction_data->ownerID1 = $transaction->ownerID1;
+					// $transaction_data->ownerName2 = $transaction->ownerName2;
+					// $transaction_data->ownerID2 = $transaction->ownerID2;
+					// $transaction_data->argName1 = $transaction->argName1;
+					// $transaction_data->argID1 = $transaction->argID1;
+					// $transaction_data->amount = $transaction->amount;
+					// $transaction_data->balance = $transaction->balance;
+					// $transaction_data->reason = $transaction->reason;
+					// $transaction_data->owner1TypeID = $transaction->owner1TypeID;
+					// $transaction_data->owner2TypeID = $transaction->owner2TypeID;
+					// $transaction_data->save();
 				}
 
 				// Check how many entries we got back. If it us less that $row_count, we know we have

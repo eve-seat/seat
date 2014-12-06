@@ -10,7 +10,7 @@ class WalletTransactions extends BaseApi {
 	public static function Update($keyID, $vCode)
 	{
 
-		$row_count = 1000;
+		$row_count = 500;
 
 		// Start and validate they key pair
 		BaseApi::bootstrap();
@@ -51,7 +51,7 @@ class WalletTransactions extends BaseApi {
 			// ignore the DB level one and rely entirely on pheal-ng to cache the XML's
 
 			$first_request = true;
-			$from_id = 9223372036854775807; // Max integer for 64bit PHP
+			$from_id = PHP_INT_MAX; // Use the maximum size for this PHP arch
 			while (true) {
 
 				// Do the actual API call. pheal-ng actually handles some internal
@@ -64,7 +64,7 @@ class WalletTransactions extends BaseApi {
 							->charScope
 							->WalletTransactions(array('characterID' => $characterID, 'rowCount' => $row_count));
 					} else {
-					
+
 						$wallet_transactions = $pheal
 							->charScope
 							->WalletTransactions(array('characterID' => $characterID, 'rowCount' => $row_count, 'fromID' => $from_id));
@@ -82,43 +82,69 @@ class WalletTransactions extends BaseApi {
 					throw $e;
 				}
 
-
 				// Process the transactions
 				foreach ($wallet_transactions->transactions as $transaction) {
 
 					// Ensure that $from_id is at its lowest
 					$from_id = min($transaction->transactionID, $from_id);
 
-					// Generate a transaction hash. It would seem that transactionID's could possibly be
-					// cycled. 
+					// Generate a transaction hash. It would seem that transactionID's
+					// could possibly be cycled.
 					$transaction_hash = md5(implode(',', array($characterID, $transaction->transactionDateTime, $transaction->clientID, $transaction->transactionID)));
 
-					$transaction_data  = \EveCharacterWalletTransactions::where('characterID', '=', $characterID)
-						->where('hash', '=', $transaction_hash)
-						->first();
+					// Update the database
+					\EveCharacterWalletTransactions::firstOrCreate(
 
-					if (!$transaction_data)
-						$transaction_data = new \EveCharacterWalletTransactions;
-					else
-						continue;
+						// Match the transaction hash that we have caclulated
+						array('hash' => $transaction_hash),
 
-					$transaction_data->characterID = $characterID;
-					$transaction_data->hash = $transaction_hash;
-					$transaction_data->transactionID = $transaction->transactionID;
-					$transaction_data->transactionDateTime = $transaction->transactionDateTime;
-					$transaction_data->quantity = $transaction->quantity;
-					$transaction_data->typeName = $transaction->typeName;
-					$transaction_data->typeID = $transaction->typeID;
-					$transaction_data->price = $transaction->price;
-					$transaction_data->clientID = $transaction->clientID;
-					$transaction_data->clientName = $transaction->clientName;
-					$transaction_data->stationID = $transaction->stationID;
-					$transaction_data->stationName = $transaction->stationName;
-					$transaction_data->transactionType = $transaction->transactionType;
-					$transaction_data->transactionFor = $transaction->transactionFor;
-					$transaction_data->journalTransactionID = $transaction->journalTransactionID;
-					$transaction_data->clientTypeID = $transaction->clientTypeID;
-					$transaction_data->save();
+						// If we need to create a new entry, set the information
+						array(
+							'characterID' 			=> $characterID,
+							'hash' 					=> $transaction_hash,
+							'transactionID' 		=> $transaction->transactionID,
+							'transactionDateTime'	=> $transaction->transactionDateTime,
+							'quantity' 				=> $transaction->quantity,
+							'typeName'				=> $transaction->typeName,
+							'typeID'				=> $transaction->typeID,
+							'price'					=> $transaction->price,
+							'clientID'				=> $transaction->clientID,
+							'clientName'			=> $transaction->clientName,
+							'stationID'				=> $transaction->stationID,
+							'stationName'			=> $transaction->stationName,
+							'transactionType'		=> $transaction->transactionType,
+							'transactionFor'		=> $transaction->transactionFor,
+							'journalTransactionID'	=> $transaction->journalTransactionID,
+							'clientTypeID'			=> $transaction->clientTypeID
+						)
+					);
+
+					// $transaction_data  = \EveCharacterWalletTransactions::where('characterID', '=', $characterID)
+					// 	->where('hash', '=', $transaction_hash)
+					// 	->first();
+
+					// if (!$transaction_data)
+					// 	$transaction_data = new \EveCharacterWalletTransactions;
+					// else
+					// 	continue;
+
+					// $transaction_data->characterID = $characterID;
+					// $transaction_data->hash = $transaction_hash;
+					// $transaction_data->transactionID = $transaction->transactionID;
+					// $transaction_data->transactionDateTime = $transaction->transactionDateTime;
+					// $transaction_data->quantity = $transaction->quantity;
+					// $transaction_data->typeName = $transaction->typeName;
+					// $transaction_data->typeID = $transaction->typeID;
+					// $transaction_data->price = $transaction->price;
+					// $transaction_data->clientID = $transaction->clientID;
+					// $transaction_data->clientName = $transaction->clientName;
+					// $transaction_data->stationID = $transaction->stationID;
+					// $transaction_data->stationName = $transaction->stationName;
+					// $transaction_data->transactionType = $transaction->transactionType;
+					// $transaction_data->transactionFor = $transaction->transactionFor;
+					// $transaction_data->journalTransactionID = $transaction->journalTransactionID;
+					// $transaction_data->clientTypeID = $transaction->clientTypeID;
+					// $transaction_data->save();
 				}
 
 				// Check how many entries we got back. If it us less than $row_count, we know we have
