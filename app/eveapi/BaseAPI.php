@@ -172,7 +172,7 @@ class BaseApi {
 		if (\Cache::has('eve_api_error_count'))
 			\Cache::increment('eve_api_error_count');
 		else
-			\Cache::put('eve_api_error_count', 1);
+			\Cache::put('eve_api_error_count', 1, 30);
 	}
 
 	/*
