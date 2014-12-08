@@ -108,6 +108,7 @@ return array(
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Indatus\Dispatcher\ServiceProvider',	// Schedules
 		'Cartalyst\Sentry\SentryServiceProvider',	// ACL
+		'Barryvdh\Debugbar\ServiceProvider',	// Laravel Debug Bar
 
 	),
 
@@ -175,6 +176,7 @@ return array(
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
 		'Sentry'					=> 'Cartalyst\Sentry\Facades\Laravel\Sentry',	// ACL
+		'Debugbar' => 'Barryvdh\Debugbar\Facade',	// Laravel Debug Bar
 	),
 
 );

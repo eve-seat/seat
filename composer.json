@@ -1,14 +1,15 @@
 {
-	"name": "laravel/laravel",
-	"description": "The Laravel Framework.",
-	"keywords": ["framework", "laravel"],
+	"name": "eve-seat/seat",
+	"description": "SeAT - Simple EVE Online API Tool",
+	"keywords": ["api", "tool", "eve", "online", "corporation", "management"],
 	"license": "MIT",
 	"require": {
 		"laravel/framework": "4.1.*",
 		"3rdpartyeve/phealng": "1.3.*",
 		"rmccue/requests": ">=1.0",
 		"indatus/dispatcher": "1.4.*",
-		"cartalyst/sentry": "2.1.*"
+		"cartalyst/sentry": "2.1.*",
+		"barryvdh/laravel-debugbar": "~1.8"
 	},
 	"autoload": {
 		"classmap": [
