@@ -27,7 +27,7 @@
         <link href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css" rel="stylesheet" type="text/css">
         <!-- Theme style -->
         <link href="{{ URL::asset('assets/css/app.css') }}" rel="stylesheet" type="text/css">
-        
+
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -44,7 +44,7 @@
             @include('layouts.components.sidebar')
 
             <!-- Right side column. Contains the navbar and content of the page -->
-            <aside class="right-side">                
+            <aside class="right-side">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
@@ -64,12 +64,12 @@
                 </section>
 
                 <!-- Main content -->
-                <section class="content">
+                <section class="content" id="main-content">
 
                     <!-- flash messages -->
                     @include('layouts.components.flash')
-                
-                    <!-- sub view contect --> 
+
+                    <!-- sub view contect -->
                     @yield('page_content')
 
                 </section><!-- /.content -->
@@ -80,7 +80,7 @@
         <!-- // <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script> -->
         <script src="{{ URL::asset('assets/js/jquery-2.1.0.min.js') }}"></script>
         <!-- Bootstrap -->
-        <script src="{{ URL::asset('assets/js/bootstrap.min.js') }}" type="text/javascript"></script> 
+        <script src="{{ URL::asset('assets/js/bootstrap.min.js') }}" type="text/javascript"></script>
         <!-- Bootbox -->
         <script src="{{ URL::asset('assets/js/bootbox.min.js') }}" type="text/javascript"></script>
         <!-- highcharts -->
@@ -101,7 +101,7 @@
             (function worker() {
               $.ajax({
                 type: "get",
-                url: "{{ URL::to('queue/short-status') }}", 
+                url: "{{ URL::to('queue/short-status') }}",
                 success: function(data) {
                   $("span#queue_count").text(data.queue_count);
                   $("span#working_count").text(data.working_count);
@@ -113,6 +113,9 @@
                 }
               });
             })();
+
+            // Specify the location of the search controller
+            var search_location = "{{ action('DashboardController@getSearch') }}"
         </script>
 
         <!-- view specific js -->

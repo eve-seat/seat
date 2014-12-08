@@ -36,11 +36,11 @@ $(function() {
     $("[data-toggle='tooltip']").tooltip();
     $("[data-toggle='popover']").popover();
 
-    /*     
+    /*
      * Add collapse and remove events to boxes
      */
     $("[data-widget='collapse']").click(function() {
-        //Find the box parent        
+        //Find the box parent
         var box = $(this).parents(".box").first();
         //Find the body and the footer
         var bf = box.find(".box-body, .box-footer");
@@ -54,7 +54,7 @@ $(function() {
     });
 
     $("[data-widget='remove']").click(function() {
-        //Find the box parent        
+        //Find the box parent
         var box = $(this).parents(".box").first();
         box.slideUp();
     });
@@ -62,7 +62,7 @@ $(function() {
     /* Sidebar tree view */
     $(".sidebar .treeview").tree();
 
-    /* 
+    /*
      * Make sure that the sidebar is streched full height
      * ---------------------------------------------
      * We are gonna assign a min-height value every time the
@@ -96,13 +96,13 @@ $(function() {
  * SIDEBAR MENU
  * ------------
  * This is a custom plugin for the sidebar menu. It provides a tree view.
- * 
+ *
  * Usage:
  * $(".sidebar).tree();
- * 
+ *
  * Note: This plugin does not accept any options. Instead, it only requires a class
  *       added to the element that contains a sub-menu.
- *       
+ *
  * When used with the sidebar, for example, it would look something like this:
  * <ul class='sidebar-menu'>
  *      <li class="treeview active">
@@ -112,7 +112,7 @@ $(function() {
  *          </ul>
  *      </li>
  * </ul>
- * 
+ *
  * Add .active class to <li> elements if you want the menu to be open automatically
  * on page load. See above for an example.
  */
@@ -224,3 +224,65 @@ $(document).on("click", "a.confirmlink", function(event){
 (function($) {
     $("[id^=datatable]").dataTable({ paging:false, order:[] });
 }(jQuery));
+
+// Bind the search ajax to the search form and prepare the search
+// logic.
+// search_location comes from masterLayout.blade.php as a variable
+function performSearch() {
+    var request;
+    var q = $("input#search-field").val();
+    if (q.length >= 2) {
+
+        // abort any pending request
+        if (request) {
+            request.abort();
+        }
+        // Show the results box and a loader
+        $("section#main-content")
+            .html("<i class='fa fa-cog fa-spin'></i> Searching...");
+
+        // fire off the request to /form.php
+        request = $.ajax({
+            url: search_location,
+            type: "GET",
+            data: {'q' : q}
+        });
+
+        // callback handler that will be called on success
+        request.done(function (response, textStatus, jqXHR){
+            $("section#main-content").html(response);
+
+            // Init datatables if required
+            if ($.fn.dataTable.isDataTable('table#datatable')) {
+                $('table#datatable').DataTable();
+            }
+            else {
+                table = $('table#datatable').DataTable( {
+                    paging: false
+                });
+            }
+        });
+
+        // callback handler that will be called on failure
+        request.fail(function (jqXHR, textStatus, errorThrown){
+            // log the error to the console
+            console.error(
+                "The following error occured: " + textStatus, errorThrown
+            );
+        });
+
+    }
+}
+
+// Prevent the search form from being submitted
+$("form#sidebar-form").submit(function(e) {
+    e.preventDefault();
+});
+
+// Listen for events on the input
+$("input#search-field").keyup(function(e) {
+
+    // Ignore some speacial keytypes
+    if (e.keyCode == 16 || e.keyCode == 18 || e.keyCode == 9 || e.keyCode == 17 ) return;
+    performSearch();
+});
