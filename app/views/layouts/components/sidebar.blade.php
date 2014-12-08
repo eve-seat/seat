@@ -1,5 +1,5 @@
 <!-- Left side column. contains the logo and sidebar -->
-<aside class="left-side sidebar-offcanvas">                
+<aside class="left-side sidebar-offcanvas">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
         <!-- search form -->
@@ -45,6 +45,9 @@
                     @if(Sentry::getUser()->hasAccess('contract_manager'))
                         <li><a href="{{ action('CorporationController@getListContracts') }}"><i class="fa fa-angle-double-right"></i> Contracts</a></li>
                     @endif
+                    @if(Sentry::getUser()->hasAccess('recruiter'))
+                        <li><a href="{{ action('CorporationController@getListKillMails') }}"><i class="fa fa-angle-double-right"></i> Kill Mails</a></li>
+                    @endif
                     @if (Sentry::getUser()->hasAccess('wallet_manager'))
                         <li><a href="{{ action('CorporationController@getListJournals') }}"><i class="fa fa-angle-double-right"></i> Wallet Journal</a></li>
                         <li><a href="{{ action('CorporationController@getListTransactions') }}"><i class="fa fa-angle-double-right"></i> Wallet Transactions</a></li>
@@ -67,8 +70,8 @@
                 </a>
                 <ul class="treeview-menu">
                     <li><a href="{{ action('CharacterController@getAll') }}"><i class="fa fa-angle-double-right"></i> All Characters</a></li>
-                    <li><a href="{{ action('MailController@getSubjects') }}"><i class="fa fa-angle-double-right"></i> Mail Subjects</a></li>                                
-                    <li><a href="{{ action('MailController@getTimeline') }}"><i class="fa fa-angle-double-right"></i> Mail Timeline</a></li>                                
+                    <li><a href="{{ action('MailController@getSubjects') }}"><i class="fa fa-angle-double-right"></i> Mail Subjects</a></li>
+                    <li><a href="{{ action('MailController@getTimeline') }}"><i class="fa fa-angle-double-right"></i> Mail Timeline</a></li>
                     <li><a href="{{ action('CharacterController@getSearchAssets') }}"><i class="fa fa-angle-double-right"></i> Asset Search</a></li>
                     <li><a href="{{ action('CharacterController@getSearchSkills') }}"><i class="fa fa-angle-double-right"></i> Skill Search</a></li>
                 </ul>

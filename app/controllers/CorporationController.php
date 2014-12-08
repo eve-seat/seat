@@ -287,7 +287,7 @@ class CorporationController extends BaseController {
 		$station_assets_count = $space_assets_count = 0; //start counting item
 
 		// Loop over and split by locationID 60000000-67999999 are stationIDs
-		foreach ($assets as $key => $value) {	
+		foreach ($assets as $key => $value) {
 			if($value->locationID > 60000000 && $value->locationID < 67999999){
 				$station_assets_list[$value->location][$value->itemID] =  array(
 					'quantity' => $value->quantity,
@@ -433,22 +433,22 @@ class CorporationController extends BaseController {
 					  WHERE c.stationID=a.endStationID)
 				else (SELECT m.itemName FROM mapDenormalize AS m
 					WHERE m.itemID=a.endStationID) end
-				AS endlocation 
+				AS endlocation
 				FROM `corporation_contracts` AS a
 					WHERE a.`corporationID` = ?',
 			array($corporationID)
 		);
-		
+
 		// Character contract item
 		$contract_list_item = DB::table('corporation_contracts_items')
 			->leftJoin('invTypes', 'corporation_contracts_items.typeID', '=', 'invTypes.typeID')
 			->where('corporationID', $corporationID)
 			->get();
-		
+
 		// Create 2 array for seperate Courier and Other Contracts
 		$contracts_courier = array();
 		$contracts_other = array();
-		
+
 		// Loops the contracts list and fill arrays
 		foreach ($contract_list as $key => $value) {
 
@@ -492,7 +492,7 @@ class CorporationController extends BaseController {
 					'startlocation' => $value->startlocation
 				);
 			}
-			
+
 			// Loop the Item in contracts and add it to his parent
 			foreach( $contract_list_item as $contents) {
 
@@ -508,7 +508,7 @@ class CorporationController extends BaseController {
 				}
 			}
 		}
-		
+
 
 		return View::make('corporation.contracts.contracts')
 			->with('corporation_name', $corporation_name)
@@ -659,7 +659,7 @@ class CorporationController extends BaseController {
 		// array that can just be referenced and looped in the view. We will use the mapID as the
 		// key in the resulting array to be able to associate the item to a tower.
 		//
-		// We will 
+		// We will
 		$item_locations = DB::table('corporation_assetlist_locations')
 			->leftJoin('corporation_assetlist', 'corporation_assetlist_locations.itemID', '=', 'corporation_assetlist.itemID')
 			->leftJoin('invTypes', 'corporation_assetlist.typeID', '=', 'invTypes.typeID')
@@ -771,7 +771,7 @@ class CorporationController extends BaseController {
 		$ledger_dates = array();
 		foreach ($available_dates as $date)
 			$ledger_dates[] = Carbon\Carbon::createFromDate($date->year, $date->month)->toDateString();
-		
+
 		arsort($ledger_dates);
 
 		// Get some data for the global ledger prepared
@@ -902,7 +902,7 @@ class CorporationController extends BaseController {
 			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
 			->whereIn('corporation_walletjournal.refTypeID', array(17,85)) // Ref type ids: 17: Bounty Prize; 85: Bounty Prizes
 			->where(DB::raw('MONTH(date)'), $month)
-			->where(DB::raw('YEAR(date)'), $year)		
+			->where(DB::raw('YEAR(date)'), $year)
 			->where('corporation_walletjournal.corporationID', $corporationID)
 			->groupBy('corporation_walletjournal.ownerName2')
 			->orderBy('total', 'desc')
@@ -912,7 +912,7 @@ class CorporationController extends BaseController {
 			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
 			->whereIn('corporation_walletjournal.refTypeID', array(33,34)) // Ref type ids: 33: Mission Reward; 34: Mission Time Bonus
 			->where(DB::raw('MONTH(date)'), $month)
-			->where(DB::raw('YEAR(date)'), $year)		
+			->where(DB::raw('YEAR(date)'), $year)
 			->where('corporation_walletjournal.corporationID', $corporationID)
 			->groupBy('corporation_walletjournal.ownerName2')
 			->orderBy('total', 'desc')
@@ -922,7 +922,7 @@ class CorporationController extends BaseController {
 			->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
 			->whereIn('corporation_walletjournal.refTypeID', array(96,97,98)) // Ref type ids: 96: Planetary Import Tax; 97: Planetary Export Tax; 98: Planetary Construction
 			->where(DB::raw('MONTH(date)'), $month)
-			->where(DB::raw('YEAR(date)'), $year)			
+			->where(DB::raw('YEAR(date)'), $year)
 			->where('corporation_walletjournal.corporationID', $corporationID)
 			->groupBy('corporation_walletjournal.ownerName1')
 			->orderBy('total', 'desc')
@@ -1221,7 +1221,7 @@ class CorporationController extends BaseController {
 		if(count($corporations) == 1){
 			return Redirect::action('CorporationController@getMemberStandings', array($corporations[0]->corporationID));
 		}
-		
+
 		return View::make('corporation.memberstandings.listmemberstandings')
 			->with('corporations', $corporations);
 	}
@@ -1258,6 +1258,62 @@ class CorporationController extends BaseController {
 			->with('agent_standings', $agent_standings)
 			->with('faction_standings', $faction_standings)
 			->with('npc_standings', $npc_standings)
+			->with('corporation_name', $corporation_name);
+	}
+
+
+	/*
+	|--------------------------------------------------------------------------
+	| getListKillMails()
+	|--------------------------------------------------------------------------
+	|
+	| Get a list of the corporations that we can display killmails for
+	|
+	*/
+
+	public function getListKillMails()
+	{
+
+		$corporations = DB::table('account_apikeyinfo')
+			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->where('account_apikeyinfo.type', 'Corporation')
+			->get();
+
+		if(count($corporations) == 1)
+			return Redirect::action('CorporationController@getKillMails', array($corporations[0]->corporationID));
+
+		return View::make('corporation.killmails.listkillmails.blade')
+			->with('corporations', $corporations);
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| getKillMails()
+	|--------------------------------------------------------------------------
+	|
+	| Display the corporation Kill Mails
+	|
+	*/
+
+	public function getKillMails($corporationID)
+	{
+
+		$corporation_name = DB::table('account_apikeyinfo_characters')
+			->where('corporationID', $corporationID)
+			->first();
+
+		$killmails = DB::table('corporation_killmails')
+			->select(DB::raw('*, `mapDenormalize`.`itemName` AS solarSystemName'))
+			->leftJoin('corporation_killmail_detail', 'corporation_killmails.killID', '=', 'corporation_killmail_detail.killID')
+			->leftJoin('invTypes', 'corporation_killmail_detail.shipTypeID', '=', 'invTypes.typeID')
+			->leftJoin('mapDenormalize', 'corporation_killmail_detail.solarSystemID', '=', 'mapDenormalize.itemID')
+			->where('corporation_killmails.corporationID', $corporationID)
+			->orderBy('corporation_killmail_detail.killTime', 'desc')
+			->get();
+
+		return View::make('corporation.killmails.killmails')
+			->with('killmails', $killmails)
+			->with('corporationID', $corporationID)
 			->with('corporation_name', $corporation_name);
 	}
 
