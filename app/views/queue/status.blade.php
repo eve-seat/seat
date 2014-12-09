@@ -78,7 +78,7 @@
 			<div class="inner">
 				<h3>
 					@if (\Cache::has('eve_api_error_count'))
-						{{ (\Cache::get('eve_api_error_count') / \Config::get('seat.error_limit')) * 100 }}%
+						{{ number_format((\Cache::get('eve_api_error_count') / \Config::get('seat.error_limit')) * 100, 2, '.', ' ') }}%
 						<small>{{ \Cache::get('eve_api_error_count') }} / {{ \Config::get('seat.error_limit') }}</small>
 					@else
 						{{ (0 / \Config::get('seat.error_limit')) * 100 }}%
