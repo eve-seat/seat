@@ -44,7 +44,7 @@ class Contracts extends BaseApi {
 			// Do the actual API call. pheal-ng actually handles some internal
 			// caching too.
 			try {
-				
+
 				$contracts = $pheal
 					->charScope
 					->Contracts(array('characterID' => $characterID));
@@ -60,6 +60,23 @@ class Contracts extends BaseApi {
 
 				throw $e;
 			}
+
+			// Before we start looping over the contracts, we need to add some more
+			// logic to this Updater. The ContractItems call seems to be flaky
+			// in the sense that when we call the char/Contracts API, we get
+			// a list of contractID's. These ID's are checked for existence
+			// in the database and updated accordingly. If its a new
+			// contract, we call ContractItems to get the details.
+			// This is where shit falls apart and :ccp: thiks its
+			// clever to error out for ID's we *JUST* got back.
+			//
+			// So, to reduce the chances of getting the calling IP banned due to
+			// ~reasons~, we will have a local counter to limit the amount of
+			// errors caused by this this call. If we hit this limit, we
+			// return the function, and wait for the next run to update
+			// again. We will also run banCall() so that the global
+			// error counter is also aware of this.
+			$error_limit = 25;
 
 			// Check if the data in the database is still considered up to date.
 			// checkDbCache will return true if this is the case
@@ -84,7 +101,7 @@ class Contracts extends BaseApi {
 						$new_data = $contract_data;
 						$get_items = false;
 					}
-					
+
 					$new_data->characterID = $characterID;
 					$new_data->contractID = $contract->contractID;
 					$new_data->issuerID = $contract->issuerID;
@@ -114,17 +131,32 @@ class Contracts extends BaseApi {
 					if ($get_items) {
 
 						try {
-							
+
 							$contracts_items = $pheal
 								->charScope
 								->ContractItems(array('characterID' => $characterID, 'contractID' => $contract->contractID));
 
-						// We wont use the ban logic here as the accessmask does not differ
-						// from the call that got us as far as this.
+						// :ccp: Seems to give you a list of ID's for a call, and then
+						// complain seconds later that the itemID is incorrect. This
+						// after we *just* got it from them! ffs. Anyways, we will
+						// process banning here so that the global error counter
+						// in the \Cache::has('eve_api_error_count') can inc
+						// and we dont cause too many exceptions.
+						//
+						// We will also dec the $error_limit and break if we hit 0.
 						} catch (\Pheal\Exceptions\APIException $e) {
-							
-							// What to do with a invalid id?
-							continue;
+
+							// Dec $error_limit
+							$error_limit--;
+
+							// Process the banning for the update of the global eve_api_error_count
+							BaseApi::banCall('ContractItems', $scope, $keyID, 0, $e->getCode() . ': ' . $e->getMessage());
+
+							// Check the state of the $error_limit and decide what to do
+							if($error_limit <= 0)
+								return;
+							else
+								continue;
 
 						} catch (\Pheal\Exceptions\PhealException $e) {
 
