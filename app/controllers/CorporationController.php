@@ -1316,5 +1316,116 @@ class CorporationController extends BaseController {
 			->with('corporationID', $corporationID)
 			->with('corporation_name', $corporation_name);
 	}
+	
+		/*
+	|--------------------------------------------------------------------------
+	| getListJobs()
+	|--------------------------------------------------------------------------
+	|
+	| Display the list of corporations that we can offer industry view
+	|
+	*/
+	public function getListJobs()
+	{
+		$corporations = DB::table('account_apikeyinfo')
+			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->where('account_apikeyinfo.type', 'Corporation');
+		if (!Sentry::getUser()->isSuperUser())
+			$corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+		else
+			$corporations = $corporations->get();
+		if(count($corporations) == 1){
+			return Redirect::action('CorporationController@getIndustry', array($corporations[0]->corporationID));
+		}
+		return View::make('corporation.industry.listjobs')
+			->with('corporations', $corporations);
+	}
+	
+	/*
+	|--------------------------------------------------------------------------
+	| getJobs()
+	|--------------------------------------------------------------------------
+	|
+	| Returns the jobs history (running and ended)
+	|
+	*/
+	
+	public function getJobs($corporationID)
+	{
+		// Next, check if the current user has access. Superusers may see all the things,
+		// normal users may only see their own stuffs
+		if (!Sentry::getUser()->isSuperUser())
+			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('asset_manager'))
+				App::abort(404);
+		// Get current working jobs
+		$jobs = DB::table('corporation_industryjobs as a')
+			->select(DB::raw("
+				*, CASE
+				when a.stationID BETWEEN 66000000 AND 66014933 then
+					(SELECT s.stationName FROM staStations AS s
+					 WHERE s.stationID=a.stationID-6000001)
+				when a.stationID BETWEEN 66014934 AND 67999999 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					 WHERE c.stationID=a.stationID-6000000)
+				when a.stationID BETWEEN 60014861 AND 60014928 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					 WHERE c.stationID=a.stationID)
+				when a.stationID BETWEEN 60000000 AND 61000000 then
+					(SELECT s.stationName FROM staStations AS s
+					 WHERE s.stationID=a.stationID)
+				when a.stationID>=61000000 then
+					(SELECT IFNULL(
+						(SELECT mapName FROM corporation_assetlist_locations WHERE itemID = a.stationID),
+							(IFNULL((SELECT stationName FROM eve_conquerablestationlist WHERE stationID = a.stationID),
+									(SELECT solarSystemName FROM corporation_industryjobs WHERE id = a.id)
+							))
+					))
+				else (SELECT m.itemName FROM mapDenormalize AS m
+					  WHERE m.itemID=a.stationID)
+				end
+				AS location, a.stationID as locID"))
+			->where('a.corporationID', $corporationID)
+			->where('endDate', '>', date('Y-m-d H:i:s'))
+			->orderBy('endDate', 'asc')
+			->get();
+		// Get past jobs
+		$finish = DB::table('corporation_industryjobs as a')
+			->select(DB::raw("
+				*, CASE
+				when a.stationID BETWEEN 66000000 AND 66014933 then
+					(SELECT s.stationName FROM staStations AS s
+					 WHERE s.stationID=a.stationID-6000001)
+				when a.stationID BETWEEN 66014934 AND 67999999 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					 WHERE c.stationID=a.stationID-6000000)
+				when a.stationID BETWEEN 60014861 AND 60014928 then
+					(SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+					 WHERE c.stationID=a.stationID)
+				when a.stationID BETWEEN 60000000 AND 61000000 then
+					(SELECT s.stationName FROM staStations AS s
+					 WHERE s.stationID=a.stationID)
+				when a.stationID>=61000000 then
+					(SELECT IFNULL(
+						(SELECT mapName FROM corporation_assetlist_locations WHERE itemID = a.stationID),
+							(IFNULL((SELECT stationName FROM eve_conquerablestationlist WHERE stationID = a.stationID),
+									(SELECT solarSystemName FROM corporation_industryjobs WHERE id = a.id)
+							))
+					))
+				else (SELECT m.itemName FROM mapDenormalize AS m
+					  WHERE m.itemID=a.stationID)
+				end
+				AS location, a.stationID as locID"))
+			->where('a.corporationID', $corporationID)
+			->where('endDate', '<=', date('Y-m-d H:i:s'))
+			->orderBy('endDate', 'desc')
+			->get();
+		$corporation_name = DB::table('account_apikeyinfo_characters')
+			->where('corporationID', $corporationID)
+			->first();
+		return View::make('corporation.industry.jobs')
+			->with('corporation', $corporation_name)
+			->with('jobs', $jobs)
+			->with('finish', $finish);
+	}
 
 }
