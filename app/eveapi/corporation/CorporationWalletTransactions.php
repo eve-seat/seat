@@ -103,33 +103,63 @@ class WalletTransactions extends BaseApi {
 					// Generate a transaction hash. It would seem that refID's could possibly be cycled.
 					$transaction_hash = md5(implode(',', array($corporationID, $walletdivision->accountKey, $transaction->transactionDateTime, $transaction->clientID, $transaction->transactionID)));
 
-					$transaction_data  = \EveCorporationWalletTransactions::where('corporationID', '=', $corporationID)
-						->where('hash', '=', $transaction_hash)
-						->first();
+					// In order try try and relieve some strain on the database, we will
+					// cache the hashes that we find we have knowledge of. The main
+					// goal of this is to make the lookups faster, and leave
+					// MySQL to do stuff it should rather be doing
 
-					if (!$transaction_data)
-						$transaction_data = new \EveCorporationWalletTransactions;
-					else
+					// First, find thee entry in the cache. The cache key is determined
+					// as: <transaction hash + corporationID + apitype>
+					if (!\Cache::has($transaction_hash . $corporationID . $api)) {
+
+						// If the $transaction_hash is not in the Cache, ask the database
+						// if it knows about it. Again, if it exists, we will continue,
+						// but we will also add a new Cache entry to make the next
+						// lookip faster
+						$transaction_data  = \EveCorporationWalletTransactions::where('corporationID', '=', $corporationID)
+							->where('hash', '=', $transaction_hash)
+							->first();
+
+						// Check if the database found the entry.
+						if (!$transaction_data) {
+
+							$transaction_data = new \EveCorporationWalletTransactions;
+
+						} else {
+
+							// This entry exists in the database. Put a new Cache entry
+							// so that the next lookup may be faster. This cache
+							// entry will live for 1 week.
+							\Cache::put($transaction_hash . $corporationID . $api, true, 60 * 24 * 7);
+
+							// Continue to the next transaction
+							continue;
+						}
+
+						$transaction_data->corporationID = $corporationID;
+						$transaction_data->hash = $transaction_hash;
+						$transaction_data->accountKey = $walletdivision->accountKey;
+						$transaction_data->transactionID = $transaction->transactionID;
+						$transaction_data->transactionDateTime = $transaction->transactionDateTime;
+						$transaction_data->quantity = $transaction->quantity;
+						$transaction_data->typeName = $transaction->typeName;
+						$transaction_data->typeID = $transaction->typeID;
+						$transaction_data->price = $transaction->price;
+						$transaction_data->clientID = $transaction->clientID;
+						$transaction_data->clientName = $transaction->clientName;
+						$transaction_data->stationID = $transaction->stationID;
+						$transaction_data->stationName = $transaction->stationName;
+						$transaction_data->transactionType = $transaction->transactionType;
+						$transaction_data->transactionFor = $transaction->transactionFor;
+						$transaction_data->journalTransactionID = $transaction->journalTransactionID;
+						$transaction_data->clientTypeID = $transaction->clientTypeID;
+						$transaction_data->save();
+
+					} else {
+
+						// This entry already exists as the hash is cached.
 						continue;
-
-					$transaction_data->corporationID = $corporationID;
-					$transaction_data->hash = $transaction_hash;
-					$transaction_data->accountKey = $walletdivision->accountKey;
-					$transaction_data->transactionID = $transaction->transactionID;
-					$transaction_data->transactionDateTime = $transaction->transactionDateTime;
-					$transaction_data->quantity = $transaction->quantity;
-					$transaction_data->typeName = $transaction->typeName;
-					$transaction_data->typeID = $transaction->typeID;
-					$transaction_data->price = $transaction->price;
-					$transaction_data->clientID = $transaction->clientID;
-					$transaction_data->clientName = $transaction->clientName;
-					$transaction_data->stationID = $transaction->stationID;
-					$transaction_data->stationName = $transaction->stationName;
-					$transaction_data->transactionType = $transaction->transactionType;
-					$transaction_data->transactionFor = $transaction->transactionFor;
-					$transaction_data->journalTransactionID = $transaction->journalTransactionID;
-					$transaction_data->clientTypeID = $transaction->clientTypeID;
-					$transaction_data->save();
+					}
 				}
 
 				// Check how many entries we got back. If it us less that $row_count, we know we have

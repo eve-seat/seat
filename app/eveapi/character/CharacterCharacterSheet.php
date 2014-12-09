@@ -81,8 +81,6 @@ class CharacterSheet extends BaseApi {
 				$new_data->gender = $character_sheet->gender;
 				$new_data->corporationName = $character_sheet->corporationName;
 				$new_data->corporationID = $character_sheet->corporationID;
-				$new_data->cloneName = $character_sheet->cloneName;
-				$new_data->cloneSkillPoints = $character_sheet->cloneSkillPoints;
 				$new_data->balance = $character_sheet->balance;
 				$new_data->intelligence = $character_sheet->attributes->intelligence;
 				$new_data->memory = $character_sheet->attributes->memory;
@@ -94,7 +92,6 @@ class CharacterSheet extends BaseApi {
 				$new_data->homeStationID = $character_sheet->homeStationID;
 				$new_data->factionName = $character_sheet->factionName;
 				$new_data->factionID = $character_sheet->factionID;
-				$new_data->cloneTypeID = $character_sheet->cloneTypeID;
 				$new_data->freeRespecs = $character_sheet->freeRespecs;
 				$new_data->cloneJumpDate = $character_sheet->cloneJumpDate;
 				$new_data->lastRespecDate = $character_sheet->lastRespecDate;

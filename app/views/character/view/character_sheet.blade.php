@@ -23,18 +23,9 @@
 
                     <dt>Date of Birth</dt>
                     <dd>{{ $character->DoB }} ({{ Carbon\Carbon::parse($character->DoB)->diffForHumans() }})</dd>
+
                     <dt>Skillpoints</dt>
                     <dd>{{ number_format($skillpoints, 0, '.', ' ') }}</dd>
-
-                    <dt>Clone Grade</dt>
-                    <dd>
-                    	{{ $character->cloneName }} covering {{ number_format($character->cloneSkillPoints, 0, '.', ' ') }} skillpoints
-                    	@if ($skillpoints > $character->cloneSkillPoints)
-                    		<span class="text-red"><i class="fa fa-exclamation"></i> Clone out of date</span>
-                    	@else
-                    		<span class="text-green"><i class="fa fa-check"></i> Clone OK</span>
-                    	@endif
-                    </dd>
 
                     <dt>Wallet Balance</dt>
                     <dd>{{ number_format($character->balance, 2, '.', ' ') }} ISK</dd>

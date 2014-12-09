@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Services\Helpers;
- 
+
 class Helpers {
 
 	/*
@@ -13,7 +13,7 @@ class Helpers {
 	| a certain skillID is.
 	|
 	*/
- 
+
 	public static function findSkillLevel($character_skills, $skillID) {
 
 		foreach ($character_skills as $skill_group) {
@@ -61,7 +61,7 @@ class Helpers {
 		// Return the populated array
 		return $return;
     }
-	
+
 	/*
 	|--------------------------------------------------------------------------
 	| formatBigNumber()
@@ -70,18 +70,18 @@ class Helpers {
 	| Format a number to condesed format with suffix
 	|
 	*/
-	
+
 	public static function formatBigNumber($number) {
 
         // first strip any formatting;
         $number = (0 + str_replace(',', '', $number));
-       
+
         // is this a number?
         if(!is_numeric($number))
         	return false;
 
         $places = 0;
-       
+
         // now filter it;
         if($number > 1000000000000)
         	return round(($number / 1000000000000), 1) . 't';
@@ -98,18 +98,47 @@ class Helpers {
         else if($number > 100)
         	$places = 2;
         	return $number;
-       
+
         return number_format($number, $places);
     }
-	
+
+    /*
+    |--------------------------------------------------------------------------
+    | highlightKeyword()
+    |--------------------------------------------------------------------------
+    |
+    | Replaces a word in a string with a highlighted version. Sourced from
+    | http://www.webdevdoor.com/php/highlight-search-keyword-string-function/
+    |
+    */
+
+    public static function highlightKeyword($str, $search) {
+
+        $highlightcolor = "#a94442";
+        $occurrences = substr_count(strtolower($str), strtolower($search));
+        $newstring = $str;
+        $match = array();
+
+        for ($i=0; $i<$occurrences; $i++) {
+
+            $match[$i] = stripos($str, $search, $i);
+            $match[$i] = substr($str, $match[$i], strlen($search));
+            $newstring = str_replace($match[$i], '[#]'.$match[$i].'[@]', strip_tags($newstring));
+        }
+
+        $newstring = str_replace('[#]', '<span style="color: '.$highlightcolor.';">', $newstring);
+        $newstring = str_replace('[@]', '</span>', $newstring);
+        return $newstring;
+    }
+
 	/*
 	|--------------------------------------------------------------------------
 	| generateEveImage()
 	|--------------------------------------------------------------------------
 	|
-	| Return the URL of image for a given ID and check if it's a character, 
+	| Return the URL of image for a given ID and check if it's a character,
 	| 	corporation or Alliance ID
-	| There no way to find if id is character, corporation or alliance before 
+	| There no way to find if id is character, corporation or alliance before
 	| 	the 64bits move. For that if the ID given is not in range we consider
 	|	it's a character ID.
 	| From here: https://forums.eveonline.com/default.aspx?g=posts&m=716708#post716708
@@ -117,9 +146,9 @@ class Helpers {
 	| TODO: Find a way to fix the id before 64bits move.
 	|
 	*/
-	
+
 	public static function generateEveImage($id, $size) {
-	
+
  		if($id > 90000000 && $id < 98000000) {
 
 			return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
@@ -226,7 +255,7 @@ class Helpers {
 					$count++;
 				}
 			}
-		}		
+		}
 		return $count;
 	}
 
@@ -237,9 +266,9 @@ class Helpers {
 	|
 	| Returns the total of a market order type, ie:
 	| Pass in an array of market orders, with the type (col_name)
-	| you are looking for and an integer will be provided for all the 
+	| you are looking for and an integer will be provided for all the
 	| orders in that state within the array
-	| 
+	|
 	| '0' => 'Active',
 	| '1' => 'Closed',
 	| '2' => 'Expired / Fulfilled',
@@ -258,5 +287,5 @@ class Helpers {
 		}
 		return $count;
 	}
-	
+
 }
