@@ -5,7 +5,7 @@
 @section('page_content')
 
     <div class="form-box" id="login-box">
-        <div class="header">SeAT | Sign In</div>
+        <div class="header">{{ SeatSetting::find('app_name')->value }} | Sign In</div>
 
         {{ Form::open(array('action' => 'SessionController@postSignIn')) }}
 
