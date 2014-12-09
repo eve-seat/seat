@@ -2,8 +2,8 @@
 
 // Prepare the data that we want represented as JSON
 $d = [
-   'version' => 'phoebe-1.0-107269',
-   'url' => 'https://www.fuzzwork.co.uk/dump/phoebe-1.0-107269/',
+   'version' => 'rhea-1.0-109013',
+   'url' => 'https://www.fuzzwork.co.uk/dump/rhea-1.0-109013/',
    'format' => '.sql.bz2',
    'tables' => [
       'dgmTypeAttributes',
