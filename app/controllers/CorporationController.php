@@ -1282,7 +1282,7 @@ class CorporationController extends BaseController {
 		if(count($corporations) == 1)
 			return Redirect::action('CorporationController@getKillMails', array($corporations[0]->corporationID));
 
-		return View::make('corporation.killmails.listkillmails.blade')
+		return View::make('corporation.killmails.listkillmails')
 			->with('corporations', $corporations);
 	}
 
