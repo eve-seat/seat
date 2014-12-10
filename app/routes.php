@@ -36,6 +36,8 @@ Route::group(array('before' => 'auth|csrf|key.required'), function() {
     Route::controller('eve', 'EveController');
     Route::controller('queue', 'QueueController');
 
+    Route::controller('groups', 'GroupsController');
+
     Route::controller('permissions', 'PermissionsController');
 
     Route::controller('settings', 'SettingsController');
@@ -52,3 +54,5 @@ Route::group(array('before' => 'auth|csrf|key.required'), function() {
 Route::when('user/*', 'auth.superuser');
 
 Route::when('settings/*', 'auth.superuser');
+
+Route::when('groups/*', 'auth.superuser');
