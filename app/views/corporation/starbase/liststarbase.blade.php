@@ -18,7 +18,7 @@
 			<div class="icon">
 				<img src="http://image.eveonline.com/Corporation/{{ $corp->corporationID }}_32.png" class="img-circle" />
 			</div>
-			<a href="{{ action('CorporationController@getStarBase', array('corporationID' => $corp->corporationID)) }}" class="small-box-footer">
+			<a href="{{ action('CorporationController@getStarbase', array('corporationID' => $corp->corporationID)) }}" class="small-box-footer">
 				View Corporation Starbases <i class="fa fa-arrow-circle-right"></i>
 			</a>
 		</div>

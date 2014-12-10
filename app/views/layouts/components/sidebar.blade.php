@@ -60,7 +60,7 @@
                         <li><a href="{{ action('CorporationController@getListMemberStandings') }}"><i class="fa fa-angle-double-right"></i> Standings</a></li>
                     @endif
                     @if(Sentry::getUser()->hasAccess('pos_manager'))
-                        <li><a href="{{ action('CorporationController@getListStarBase') }}"><i class="fa fa-angle-double-right"></i> Starbases</a></li>
+                        <li><a href="{{ action('CorporationController@getListStarbase') }}"><i class="fa fa-angle-double-right"></i> Starbases</a></li>
                     @endif
 
                     @if (Sentry::getUser()->hasAccess('wallet_manager'))
