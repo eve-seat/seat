@@ -518,14 +518,14 @@ class CorporationController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
-	| getListStarBase()
+	| getListStarbase()
 	|--------------------------------------------------------------------------
 	|
 	| Get a list of the corporations that we can display Member Tracking for
 	|
 	*/
 
-	public function getListStarBase()
+	public function getListStarbase()
 	{
 
 		$corporations = DB::table('account_apikeyinfo')
@@ -538,7 +538,7 @@ class CorporationController extends BaseController {
 			$corporations = $corporations->get();
 
 		if(count($corporations) == 1){
-			return Redirect::action('CorporationController@getStarBase', array($corporations[0]->corporationID));
+			return Redirect::action('CorporationController@getStarbase', array($corporations[0]->corporationID));
 		}
 
 		return View::make('corporation.starbase.liststarbase')
@@ -547,7 +547,7 @@ class CorporationController extends BaseController {
 
 	/*
 	|--------------------------------------------------------------------------
-	| getStarBase()
+	| getStarbase()
 	|--------------------------------------------------------------------------
 	|
 	| List Corporation Starbase details.
@@ -557,7 +557,7 @@ class CorporationController extends BaseController {
 	|
 	*/
 
-	public function getStarBase($corporationID)
+	public function getStarbase($corporationID)
 	{
 
 		if (!Sentry::getUser()->isSuperUser())
