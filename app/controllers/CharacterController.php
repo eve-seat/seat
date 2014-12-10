@@ -1318,32 +1318,36 @@ class CharacterController extends BaseController {
 
 		return Response::json($wallet_daily_delta);
 	}
-	
+
 	/*
 	|--------------------------------------------------------------------------
-	| getAjaxJobs()
+	| getAjaxIndustry()
 	|--------------------------------------------------------------------------
 	|
-	| Returns the jobs history (running and ended) as an ajax reponse
+	| Returns the industry jobs (running and ended) as an ajax reponse
 	|
 	*/
-	
-	public function getAjaxJobs($characterID)
+
+	public function getAjaxIndustry($characterID)
 	{
+
 		// Check the character existance
 		$character = DB::table('account_apikeyinfo_characters')
 			->where('characterID', $characterID)
 			->first();
+
 		// Check if whave knowledge of this character, else, 404
 		if(count($character) <= 0)
 			App::abort(404);
+
 		// Next, check if the current user has access. Superusers may see all the things,
 		// normal users may only see their own stuffs
 		if (!Sentry::getUser()->isSuperUser() && !Sentry::getUser()->hasAccess('recruiter'))
 			if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
 				App::abort(404);
+
 		// Get current working jobs
-		$jobs = DB::table('character_industryjobs as a')
+		$current_jobs = DB::table('character_industryjobs as a')
 			->select(DB::raw("
 				*, CASE
 				when a.stationID BETWEEN 66000000 AND 66014933 then
@@ -1368,8 +1372,9 @@ class CharacterController extends BaseController {
 			->where('endDate', '>', date('Y-m-d H:i:s'))
 			->orderBy('endDate', 'asc')
 			->get();
-		// Get past jobs
-		$finish = DB::table('character_industryjobs as a')
+
+		// Get the passed jobs
+		$finished_jobs = DB::table('character_industryjobs as a')
 			->select(DB::raw("
 				*, CASE
 				when a.stationID BETWEEN 66000000 AND 66014933 then
@@ -1394,10 +1399,12 @@ class CharacterController extends BaseController {
 			->where('endDate', '<=', date('Y-m-d H:i:s'))
 			->orderBy('endDate', 'desc')
 			->get();
-		return View::make('character.view.jobs')
+
+		// Return the view
+		return View::make('character.view.industry')
 			->with('characterID', $characterID)
-			->with('jobs', $jobs)
-			->with('finish', $finish);
+			->with('current_jobs', $current_jobs)
+			->with('finished_jobs', $finished_jobs);
 	}
 
 }

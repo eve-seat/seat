@@ -38,10 +38,13 @@
                 <ul class="treeview-menu">
                     @if(Sentry::getUser()->hasAccess('asset_manager'))
                         <li><a href="{{ action('CorporationController@getListAssets') }}"><i class="fa fa-angle-double-right"></i> Assets</a></li>
-                        <li><a href="{{ action('CorporationController@getListJobs') }}"><i class="fa fa-angle-double-right"></i> Assets</a></li>
+
                     @endif
                     @if(Sentry::getUser()->hasAccess('contract_manager'))
                         <li><a href="{{ action('CorporationController@getListContracts') }}"><i class="fa fa-angle-double-right"></i> Contracts</a></li>
+                    @endif
+                    @if(Sentry::getUser()->hasAccess('asset_manager'))
+                        <li><a href="{{ action('CorporationController@getListIndustry') }}"><i class="fa fa-angle-double-right"></i> Industry</a></li>
                     @endif
                     @if(Sentry::getUser()->hasAccess('recruiter'))
                         <li><a href="{{ action('CorporationController@getListKillMails') }}"><i class="fa fa-angle-double-right"></i> Kill Mails</a></li>

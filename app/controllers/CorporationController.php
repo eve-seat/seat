@@ -1316,16 +1316,16 @@ class CorporationController extends BaseController {
 			->with('corporationID', $corporationID)
 			->with('corporation_name', $corporation_name);
 	}
-	
-		/*
+
+	/*
 	|--------------------------------------------------------------------------
-	| getListJobs()
+	| getListIndustry()
 	|--------------------------------------------------------------------------
 	|
-	| Display the list of corporations that we can offer industry view
+	| Display the list of corporations that we can display industry for
 	|
 	*/
-	public function getListJobs()
+	public function getListIndustry()
 	{
 		$corporations = DB::table('account_apikeyinfo')
 			->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
@@ -1337,10 +1337,10 @@ class CorporationController extends BaseController {
 		if(count($corporations) == 1){
 			return Redirect::action('CorporationController@getIndustry', array($corporations[0]->corporationID));
 		}
-		return View::make('corporation.industry.listjobs')
+		return View::make('corporation.industry.listindustry')
 			->with('corporations', $corporations);
 	}
-	
+
 	/*
 	|--------------------------------------------------------------------------
 	| getJobs()
@@ -1349,16 +1349,18 @@ class CorporationController extends BaseController {
 	| Returns the jobs history (running and ended)
 	|
 	*/
-	
-	public function getJobs($corporationID)
+
+	public function getIndustry($corporationID)
 	{
+
 		// Next, check if the current user has access. Superusers may see all the things,
 		// normal users may only see their own stuffs
 		if (!Sentry::getUser()->isSuperUser())
 			if (!in_array($corporationID, Session::get('valid_keys')) && !Sentry::getUser()->hasAccess('asset_manager'))
 				App::abort(404);
+
 		// Get current working jobs
-		$jobs = DB::table('corporation_industryjobs as a')
+		$current_jobs = DB::table('corporation_industryjobs as a')
 			->select(DB::raw("
 				*, CASE
 				when a.stationID BETWEEN 66000000 AND 66014933 then
@@ -1388,8 +1390,9 @@ class CorporationController extends BaseController {
 			->where('endDate', '>', date('Y-m-d H:i:s'))
 			->orderBy('endDate', 'asc')
 			->get();
-		// Get past jobs
-		$finish = DB::table('corporation_industryjobs as a')
+
+		// Get the passed jobs
+		$finished_jobs = DB::table('corporation_industryjobs as a')
 			->select(DB::raw("
 				*, CASE
 				when a.stationID BETWEEN 66000000 AND 66014933 then
@@ -1419,13 +1422,17 @@ class CorporationController extends BaseController {
 			->where('endDate', '<=', date('Y-m-d H:i:s'))
 			->orderBy('endDate', 'desc')
 			->get();
+
+		// Get the name of the corporation in question
 		$corporation_name = DB::table('account_apikeyinfo_characters')
 			->where('corporationID', $corporationID)
 			->first();
-		return View::make('corporation.industry.jobs')
+
+		// Return the view
+		return View::make('corporation.industry.industry')
 			->with('corporation', $corporation_name)
-			->with('jobs', $jobs)
-			->with('finish', $finish);
+			->with('current_jobs', $current_jobs)
+			->with('finished_jobs', $finished_jobs);
 	}
 
 }

@@ -37,7 +37,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									@foreach ($jobs as $job)
+									@foreach ($current_jobs as $job)
 									<tr>
 										<td>
 											<span data-toggle="tooltip" data-placement="top" title="{{ $job->startDate }}">{{ Carbon\Carbon::parse($job->startDate)->diffForHumans() }}</span>
@@ -71,7 +71,7 @@
 										<td>{{ $job->runs }}</td>
 										<td><img src="//image.eveonline.com/Type/{{ $job->blueprintTypeID }}_32.png" /> {{ $job->blueprintTypeName }}</td>
 										<td><img src="//image.eveonline.com/Type/{{ $job->productTypeID }}_32.png" /> {{ $job->productTypeName }}</td>
-										<td>{{ $job->stationName }}</td>
+										<td>{{ $job->location }}</td>
 									</tr>
 									@endforeach
 								</tbody>
@@ -92,7 +92,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									@foreach ($finish as $job)
+									@foreach ($finished_jobs as $job)
 									<tr>
 										<td>
 											<span data-toggle="tooltip" data-placement="top" title="{{ $job->startDate }}">{{ Carbon\Carbon::parse($job->startDate)->diffForHumans() }}</span>
@@ -119,7 +119,7 @@
 										<td>{{ $job->runs }}</td>
 										<td><img src="//image.eveonline.com/Type/{{ $job->blueprintTypeID }}_32.png" /> {{ $job->blueprintTypeName }}</td>
 										<td><img src="//image.eveonline.com/Type/{{ $job->productTypeID }}_32.png" /> {{ $job->productTypeName }}</td>
-										<td>{{ $job->stationName }}</td>
+										<td>{{ $job->location }}</td>
 									</tr>
 									@endforeach
 								</tbody>
