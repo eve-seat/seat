@@ -97,6 +97,7 @@
 	            <li><a href="#mail" data-toggle="tab" id="load-tab" a-tab-id="mail">Mail</a></li>
 	            <li><a href="#notifications" data-toggle="tab" id="load-tab" a-tab-id="notifications">Notifications</a></li>
 	            <li><a href="#assets" data-toggle="tab" id="load-tab" a-tab-id="assets">Assets</a></li>
+	            <li><a href="#jobs" data-toggle="tab" id="load-tab" a-tab-id="assets">Jobs</a></li>
 	            <li><a href="#contacts" data-toggle="tab" id="load-tab" a-tab-id="contacts">Contacts</a></li>
 	            <li><a href="#contracts" data-toggle="tab" id="load-tab" a-tab-id="contracts">Contracts</a></li>
 	            <li><a href="#market_orders" data-toggle="tab" id="load-tab" a-tab-id="market_orders">Market Orders</a></li>
@@ -140,6 +141,7 @@
 			"mail" : "{{ action('CharacterController@getAjaxMail', array('characterID' => $character->characterID)) }}",
 			"notifications" : "{{ action('CharacterController@getAjaxNotifications', array('characterID' => $character->characterID)) }}",
 			"assets" : "{{ action('CharacterController@getAjaxAssets', array('characterID' => $character->characterID)) }}",
+			"jobs" : "{{ action('CharacterController@getAjaxJobs', array('characterID' => $character->characterID)) }}",
 			"contacts" : "{{ action('CharacterController@getAjaxContacts', array('characterID' => $character->characterID)) }}",
 			"contracts" : "{{ action('CharacterController@getAjaxContracts', array('characterID' => $character->characterID)) }}",
 			"market_orders" : "{{ action('CharacterController@getAjaxMarketOrders', array('characterID' => $character->characterID)) }}",
