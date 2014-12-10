@@ -1,8 +1,8 @@
-<?php // SeAT Configuration Created: 2014-12-10 10:55:37
+<?php // SeAT Sample .env.php
 
 return array (
   'mysql_hostname' => '127.0.0.1',
-  'mysql_database' => 'iseat',
+  'mysql_database' => 'seat',
   'mysql_username' => 'root',
   'mysql_password' => '',
   'redis_host' => '127.0.0.1',
