@@ -50,7 +50,7 @@ class SeatUpdateSDE extends Command {
 		// will be thrown if this fails.
 		\DB::connection()->getDatabaseName();
 
-		if ($this->confirm('Are you sure you want to update to the latest EVE SDE? [yes|no]', true)) {
+		if ($this->option('confirm') || $this->confirm('Are you sure you want to update to the latest EVE SDE? [yes|no]', true)) {
 
 			$this->info('Checking for SDE updates at https://raw.githubusercontent.com/eve-seat/seat/resources/sde_version.json ...');
 
@@ -95,7 +95,7 @@ class SeatUpdateSDE extends Command {
 				'/' . \Config::get('database.connections.mysql.database'));
 
 			// Prepare a final confirmation before work comences for the update
-			if ($this->confirm('Does the above look OK? [yes|no]', true)) {
+			if ($this->option('confirm') || $this->confirm('Does the above look OK? [yes|no]', true)) {
 
 				// Prepare the filesystem for the dumps
 				$storage = storage_path() . '/sde/' . $sde_data->version . '/';
@@ -216,5 +216,20 @@ class SeatUpdateSDE extends Command {
 				$this->comment('Warning: SDE Update aborted');
 			}
 		}
+	}
+
+	/**
+	 * Get the console command options.
+	 *
+	 * @return array
+	 */
+	protected function getOptions()
+	{
+
+		return array(
+
+			// Allow for the command to be confirmed inline
+			array('confirm', null, InputOption::VALUE_NONE, 'Confirm the update should be run.', null),
+		);
 	}
 }

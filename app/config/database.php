@@ -54,10 +54,10 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => '127.0.0.1',
-			'database'  => 'seat',
-			'username'  => 'root',
-			'password'  => '',
+			'host'      => $_ENV['mysql_hostname'],
+			'database'  => $_ENV['mysql_database'],
+			'username'  => $_ENV['mysql_username'],
+			'password'  => $_ENV['mysql_password'],
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
@@ -114,8 +114,8 @@ return array(
 		'cluster' => false,
 
 		'default' => array(
-			'host'     => '127.0.0.1',
-			'port'     => 6379,
+			'host'     => $_ENV['redis_host'],
+			'port'     => $_ENV['redis_port'],
 			'database' => 0,
 		),
 

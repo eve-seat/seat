@@ -19,7 +19,7 @@
                 <img src="http://image.eveonline.com/Corporation/{{ $corp->corporationID }}_32.png" class="img-circle" />
             </div>
             <a href="{{ action('CorporationController@getKillMails', array('corporationID' => $corp->corporationID)) }}" class="small-box-footer">
-                View Standings <i class="fa fa-arrow-circle-right"></i>
+                View Kill Mails <i class="fa fa-arrow-circle-right"></i>
             </a>
         </div>
     </div>

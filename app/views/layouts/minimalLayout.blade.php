@@ -5,7 +5,7 @@
         <title>
             @if (trim($__env->yieldContent('html_title')))
                 @yield('html_title') |
-            @endif SeAT
+            @endif {{ SeatSetting::find('app_name')->value }}
         </title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
         <!-- bootstrap 3.0.2 -->
