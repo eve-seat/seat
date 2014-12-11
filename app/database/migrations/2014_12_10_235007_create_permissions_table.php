@@ -14,7 +14,7 @@ class CreatePermissionsTable extends Migration {
 	{
 		Schema::create('seat_permissions', function(Blueprint $table)
 		{
-			$table->string('permission')->unique;
+			$table->string('permission')->unique();
 		});
 	}
 

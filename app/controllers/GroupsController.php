@@ -155,6 +155,7 @@ class GroupsController extends BaseController {
 		try
 		{
 		    $group = Sentry::findGroupById($groupID);
+		    
 		    if($group->name == "Administrators")
 		    {
 		    	return Redirect::action('GroupsController@getAll')
