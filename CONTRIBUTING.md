@@ -78,6 +78,7 @@ while(true) {
 foreach($this->thing as $other) {
 
 }
+```
 
 **NOTE** If a control structure is followed by only one line, the parenthesis is omitted entirely. Multiline control structures have to to be enclosed in parenthesis.
 
