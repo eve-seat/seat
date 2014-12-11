@@ -38,7 +38,7 @@ class GroupsController extends BaseController {
 			$users = Sentry::findAllUsersInGroup($group);
 			$counter[$group->name] = count($users);
 		}
-		
+
 		return View::make('groups.all')
 			->with('groups', $groups)
 			->with('counter', $counter);
