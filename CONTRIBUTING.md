@@ -33,9 +33,11 @@ This section describes some details about how code should be styled. Styling is 
 
 Never. Not. Comment. You can hardly ever write too much comments. If you can, try to mimmic the Laravel indenting style of -3 characters per line for your comments. ie:
 
-123456789
-123456
-123
+```php
+// 123456789
+// 123456
+// 123
+```
 
 This is not a hard rule though.
 
@@ -118,6 +120,10 @@ Or in camel case:
 ```php
 FileName.php
 ```
+
+## General
+
+- Files must end with one (1) newline.
 
 Generally this depends on where in the application the file is, so try and follow a existing convention.
 
