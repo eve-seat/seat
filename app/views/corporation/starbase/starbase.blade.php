@@ -15,8 +15,7 @@
 		    <div class="box-header">
 		        <h3 class="box-title">Starbase Summaries ({{ count($starbases) }})</h3>
 		        <div class="box-tools pull-right">
-		            <button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
-		            <button class="btn btn-primary btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+		            <button class="btn btn-primary btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>
 		        </div>
 		    </div>
 		    <div class="box-body no-padding">
