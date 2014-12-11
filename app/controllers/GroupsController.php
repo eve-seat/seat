@@ -185,6 +185,20 @@ class GroupsController extends BaseController {
 	public function getRemoveUser($userID, $groupID)
 	{
 		
+		$group = Sentry::findGroupById($groupID);
+		$user = Sentry::findUserById($userID);
+
+		if($userID == 1 AND $group->name == "Administrators")
+	    {
+	        return Redirect::action('GroupsController@getDetail', array('groupID' => $groupID))
+					->withErrors('You cant remove the admin from this group!');
+	    }
+	    else
+	    {
+	    	$user->removeGroup($group);
+	        return Redirect::action('GroupsController@getDetail', array('groupID' => $groupID))
+					->with('success', 'User has been removed!');
+	    }
 	}
 
 }
