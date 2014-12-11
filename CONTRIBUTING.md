@@ -93,4 +93,32 @@ while($we == 'not finished')
 
 ```
 
+## General Naming Conventions
+
+### Variables
+
+In almost all cases, variables should be in the format:
+
+```php
+$var_name
+```
+
+`varName`, `VarName` etc are not acceptable.
+
+### File Names
+
+File names are generally in 2 formats. Either entirely lower case:
+
+```php
+file.php
+```
+
+Or in camel case:
+
+```php
+FileName.php
+```
+
+Generally this depends on where in the application the file is, so try and follow a existing convention.
+
 * #wcs-pub IRC channel on coldfront.net
