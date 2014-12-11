@@ -77,10 +77,13 @@ After seat is downloaded, we need to get composer to help us install the applica
     - `php composer.phar install`  
 
 #### 5. Configure SeAT ####
-SeAT configuration lives in `app/config`. Assuming you cloned to `/var/www`, the configs will be in `/var/www/seat/app/config`.  
+SeAT configuration lives in a file named `.env.php`. Assuming you cloned to `/var/www`, a sample configuration file will be in `/var/www/seat/app/config/env-sample.php`. Copy this file to `/var/www/seat/` (the same folder as `composer.json`) with something like:
 
-Edit the following files:  
-    - `database.php` (set your configured username/password)  
+```bash
+$ cp /var/www/seat/app/config/env-sample.php /var/www/seat/.env.php
+```
+
+Once the file is copied, edit the values in `.env.php` to match your environment.
 
 #### 6. Get EVE SDE's ####
 SeAT makes use of the EVE [Static Data Exports](https://developers.eveonline.com/resource/static-data-export). As SeAT is built on top of MySQL, conversions of the official CCP exports are used that are found on [https://www.fuzzwork.co.uk/dump/](https://www.fuzzwork.co.uk/dump/).
