@@ -12,7 +12,7 @@
 							<h3 class="box-title">{{ $colony['planetName'] }} {{ $colony['planetTypeName'] }}</h3>
 							<div class="box-tools pull-right">
 								Upgrade Level: {{ $colony['upgradeLevel']}} Installations: {{ $colony['numberOfPins']}}
-								<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
+								<button class="btn btn-primary btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>	
 							</div>
 						</div>
 						<div class="box-body no-padding">	

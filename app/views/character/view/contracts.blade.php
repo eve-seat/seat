@@ -15,7 +15,7 @@
 					<div class="box-header">
 						<h3 class="box-title">Item Exchange &amp; Auction ({{ count($contracts_other) }})</h3>
 						<div class="box-tools pull-right">
-							<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
+							<button class="btn btn-primary btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>	
 						</div>
 					</div>
 					<div class="box-body no-padding">	
@@ -169,7 +169,7 @@
 					<div class="box-header">
 						<h3 class="box-title">Courier ({{ count($contracts_courier) }})</h3>
 						<div class="box-tools pull-right">
-							<button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>	
+							<button class="btn btn-primary btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>	
 						</div>
 					</div>
 					<div class="box-body no-padding">	
