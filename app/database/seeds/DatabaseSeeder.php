@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder {
         	$this->call('EveNotificationTypesSeeder');
 		$this->call('EveCorporationRolemapSeeder');
 		$this->call('SeatSettingSeeder');
+		$this->call('SeatPermissionsSeeder');
 	}
 }

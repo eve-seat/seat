@@ -111,14 +111,25 @@ class UserController extends BaseController {
 		try {
 
 			$user = Sentry::findUserById($userID);
+			$allGroups = Sentry::findAllGroups();
+			$tmp = $user->getGroups();
+			$hasGroups = array();
+			foreach($tmp as $group)
+			{
+				$hasGroups = array_add($hasGroups, $group->name, '1');
+			}
 
-		} catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
+		} 
+		catch (Cartalyst\Sentry\Users\UserNotFoundException $e) 
+		{
 
 			App::abort(404);
 		}
 
 		return View::make('user.detail')
-			->with('user', $user);
+			->with('user', $user)
+			->with('availableGroups', $allGroups)
+			->with('hasGroups', $hasGroups);
 	}
 
 	/*
@@ -191,10 +202,24 @@ class UserController extends BaseController {
 		$user->first_name = Input::get('first_name');
 		$user->last_name = Input::get('last_name');
 
-		if (Input::get('is_admin') == 'yes')
-			$user->addGroup($adminGroup);
-		else
-			$user->removeGroup($adminGroup);
+		$groups = Input::except('_token', 'username', 'password', 'first_name', 'last_name', 'userID', 'email');
+		
+		// This section is probably super-inneficcient, but its late and i'm fucking tired/drunk
+		// Future me: fix this somehow
+
+		$tmp = $user->getGroups();
+		foreach($tmp as $currentGroup)
+		{
+			$user->removeGroup($currentGroup);
+		}
+
+		foreach($groups as $group => $value)
+		{
+			$thisGroup = Sentry::findGroupByName(str_replace("_", " ", $group));
+			$user->addGroup($thisGroup);
+		}
+
+		// MESSAGE ENDS
 
 		if ($user->save())
 			return Redirect::action('UserController@getDetail', array($user->getKey()))
