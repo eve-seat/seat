@@ -38,9 +38,13 @@
                 <ul class="treeview-menu">
                     @if(Sentry::getUser()->hasAccess('asset_manager'))
                         <li><a href="{{ action('CorporationController@getListAssets') }}"><i class="fa fa-angle-double-right"></i> Assets</a></li>
+
                     @endif
                     @if(Sentry::getUser()->hasAccess('contract_manager'))
                         <li><a href="{{ action('CorporationController@getListContracts') }}"><i class="fa fa-angle-double-right"></i> Contracts</a></li>
+                    @endif
+                    @if(Sentry::getUser()->hasAccess('asset_manager'))
+                        <li><a href="{{ action('CorporationController@getListIndustry') }}"><i class="fa fa-angle-double-right"></i> Industry</a></li>
                     @endif
                     @if(Sentry::getUser()->hasAccess('recruiter'))
                         <li><a href="{{ action('CorporationController@getListKillMails') }}"><i class="fa fa-angle-double-right"></i> Kill Mails</a></li>
@@ -56,7 +60,7 @@
                         <li><a href="{{ action('CorporationController@getListMemberStandings') }}"><i class="fa fa-angle-double-right"></i> Standings</a></li>
                     @endif
                     @if(Sentry::getUser()->hasAccess('pos_manager'))
-                        <li><a href="{{ action('CorporationController@getListStarBase') }}"><i class="fa fa-angle-double-right"></i> Starbases</a></li>
+                        <li><a href="{{ action('CorporationController@getListStarbase') }}"><i class="fa fa-angle-double-right"></i> Starbases</a></li>
                     @endif
 
                     @if (Sentry::getUser()->hasAccess('wallet_manager'))

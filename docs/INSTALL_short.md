@@ -22,8 +22,7 @@ The quick and dirty to install SeAT:
 - Install Redis
 - Clone the SeAT repository into a webroot such as `/var/www/seat`
 - Get [composer](https://getcomposer.org/) and run `composer install` from the project root to install its dependencies.
-- Configure SeAT to match your environment. Files of interest are `app/config/database.php` and `app/config/cache.php`
-- Run the SDE updater with `php artisan seat:update-sde`  
+- Copy `app/config/env-sample.php` to `.env.php` (same folder as `composer.json`) and edit accordingly.  
 - Run the database migration and seeding scripts with `php artisan migrate` & `php artisan db:seed`
 - Install `supervisord` and edit the config to start workers to process queued jobs. A sample worker config is included in `docs/`. See note below
 - Setup the SeAT cronjob: `* * * * * php <path to artisan> scheduled:run 1>> /dev/null 2>&1`

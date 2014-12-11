@@ -25,6 +25,7 @@ Artisan::add(new \Seat\Commands\SeatDiagnose);
 Artisan::add(new \Seat\Commands\SeatGroupSync);
 Artisan::add(new \Seat\Commands\SeatClearCache);
 Artisan::add(new \Seat\Commands\SeatUpdateSDE);
+Artisan::add(new \Seat\Commands\SeatInstall);
 
 // Scheduled SeAT Commands
 Artisan::add(new \Seat\Commands\Scheduled\EveCharacterUpdater);

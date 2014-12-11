@@ -15,7 +15,7 @@ return array(
 	|
 	*/
 
-	'driver' => 'sendmail',
+	'driver' => $_ENV['mail_driver'],
 
 	/*
 	|--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ return array(
 	|
 	*/
 
-	'host' => '127.0.0.1',
+	'host' => $_ENV['smtp_hostname'],
 
 	/*
 	|--------------------------------------------------------------------------
@@ -54,7 +54,12 @@ return array(
 	|
 	*/
 
-	'from' => array('address' => 'seatadmin@localhost', 'name' => 'SeAT Admin'),
+	'from' => array(
+
+		'address' => $_ENV['mail_from'],
+		'name' => $_ENV['mail_from_name']
+
+	),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -80,7 +85,7 @@ return array(
 	|
 	*/
 
-	'username' => null,
+	'username' => $_ENV['smtp_username'],
 
 	/*
 	|--------------------------------------------------------------------------
@@ -93,7 +98,7 @@ return array(
 	|
 	*/
 
-	'password' => null,
+	'password' => $_ENV['smtp_password'],
 
 	/*
 	|--------------------------------------------------------------------------

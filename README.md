@@ -1,6 +1,5 @@
 ## SeAT - Simple (or Stupid) EVE Online API Tool ##
-
-[![Latest Release](http://img.shields.io/github/release/eve-seat/seat.svg?style=flat)](https://github.com/eve-seat/seat/releases/latest)
+[![Latest Stable Version](https://poser.pugx.org/eve-seat/seat/v/stable.svg)](https://packagist.org/packages/eve-seat/seat) [![Total Downloads](https://poser.pugx.org/eve-seat/seat/downloads.svg)](https://packagist.org/packages/eve-seat/seat) [![Latest Unstable Version](https://poser.pugx.org/eve-seat/seat/v/unstable.svg)](https://packagist.org/packages/eve-seat/seat) [![License](https://poser.pugx.org/eve-seat/seat/license.svg)](https://packagist.org/packages/eve-seat/seat)
 
 ##### *SeAT is still under heavy development and is not considered 100% stable yet. USE AT YOUR OWN RISK* #####
 
