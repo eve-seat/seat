@@ -1,141 +1,165 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 use App\Services\Permissions\PermissionHelper;
 
-class PermissionsController extends BaseController {
+class PermissionsController extends BaseController
+{
 
-	/*
-	|--------------------------------------------------------------------------
-	| getShow()
-	|--------------------------------------------------------------------------
-	|
-	| Show the corporations that permissions can be set for
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | getShow()
+    |--------------------------------------------------------------------------
+    |
+    | Show the corporations that permissions can be set for
+    |
+    */
 
-	public function getShowAll()
-	{
+    public function getShowAll()
+    {
 
-		// First, ensure that this user has the minimum access required. The
-		// user should be at least a superuser of a director of one of the corporations
-		// he has characters in
-		if (!Sentry::getUser()->isSuperUser())
-			App::abort(404);
+        // First, ensure that this user has the minimum access required. The
+        // user should be at least a superuser of a director of one of the corporations
+        // he has characters in
+        if (!Sentry::getUser()->isSuperUser())
+            App::abort(404);
 
-		// Get the corporations
-		$corporations = EveCorporationCorporationSheet::all();
+        // Get the corporations
+        $corporations = EveCorporationCorporationSheet::all();
 
-		return View::make('permissions.all')
-			->with('corporations', $corporations);
-	}
+        return View::make('permissions.all')
+            ->with('corporations', $corporations);
+    }
 
-	/*
-	|--------------------------------------------------------------------------
-	| getCorporation()
-	|--------------------------------------------------------------------------
-	|
-	| Get the members of a corporatino and their permissions
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | getCorporation()
+    |--------------------------------------------------------------------------
+    |
+    | Get the members of a corporatino and their permissions
+    |
+    */
 
-	public function getCorporation($corporationID)
-	{
+    public function getCorporation($corporationID)
+    {
 
-		// Very first check is to ensure the user has the required access
-		if (!Sentry::getUser()->isSuperUser())
-			App::abort(404);
+        // Very first check is to ensure the user has the required access
+        if (!Sentry::getUser()->isSuperUser())
+            App::abort(404);
 
-		// Lets get the SeAT accounts with keys having members in this corporation
-		$seat_users = DB::table('users')
-			->select(DB::raw('`users`.`id`'), DB::raw('`users`.`email`'))
-			->join('seat_keys', 'seat_keys.user_id', '=', 'users.id')
-			->join('account_apikeyinfo_characters', 'seat_keys.keyID', '=', 'account_apikeyinfo_characters.keyID')
-			->where('account_apikeyinfo_characters.corporationID', $corporationID)
-			->groupBy('users.id')
-			->get();
+        // Lets get the SeAT accounts with keys having members in this corporation
+        $seat_users = DB::table('users')
+            ->select(DB::raw('`users`.`id`'), DB::raw('`users`.`email`'))
+            ->join('seat_keys', 'seat_keys.user_id', '=', 'users.id')
+            ->join('account_apikeyinfo_characters', 'seat_keys.keyID', '=', 'account_apikeyinfo_characters.keyID')
+            ->where('account_apikeyinfo_characters.corporationID', $corporationID)
+            ->groupBy('users.id')
+            ->get();
 
-		// Get all of the configured groups in the system and prepare a array of it.
-		// We check that the Administrators group is not added as these should only
-		// really be modified in the user management
-		$available_groups = array();
-		foreach (Sentry::findAllGroups() as $available_group)
-			if ($available_group->name <> 'Administrators')
-				$available_groups[] = $available_group->name;
+        // Get all of the configured groups in the system and prepare a array of it.
+        // We check that the Administrators group is not added as these should only
+        // really be modified in the user management
+        $available_groups = array();
+        foreach (Sentry::findAllGroups() as $available_group)
+            if ($available_group->name <> 'Administrators')
+                $available_groups[] = $available_group->name;
 
-		// With the seat_users now known, we will loop over them and extract all of the
-		// groups that they belong to
-		$group_memberships = array();
-		foreach ($seat_users as $user)
-			foreach (Sentry::findUserById($user->id)->getGroups() as $group)
-				$group_memberships[$user->id][] = $group->name;
+        // With the seat_users now known, we will loop over them and extract all of the
+        // groups that they belong to
+        $group_memberships = array();
+        foreach ($seat_users as $user)
+            foreach (Sentry::findUserById($user->id)->getGroups() as $group)
+                $group_memberships[$user->id][] = $group->name;
 
-		// Get the accounts & characters for each SeAT user
-		$character_information = DB::table('account_apikeyinfo_characters')
-			->join('seat_keys', 'account_apikeyinfo_characters.keyID', '=', 'seat_keys.keyID')
-			->where('account_apikeyinfo_characters.corporationID', $corporationID)
-			->groupBy('account_apikeyinfo_characters.characterID')
-			->get();
+        // Get the accounts & characters for each SeAT user
+        $character_information = DB::table('account_apikeyinfo_characters')
+            ->join('seat_keys', 'account_apikeyinfo_characters.keyID', '=', 'seat_keys.keyID')
+            ->where('account_apikeyinfo_characters.corporationID', $corporationID)
+            ->groupBy('account_apikeyinfo_characters.characterID')
+            ->get();
 
-		// Loop the array and prepare something for the template
-		$user_characters = array();
-		foreach ($character_information as $char)
-			$user_characters[$char->user_id][] = array('characterID' => $char->characterID, 'characterName' => $char->characterName);
+        // Loop the array and prepare something for the template
+        $user_characters = array();
+        foreach ($character_information as $char)
+            $user_characters[$char->user_id][] = array('characterID' => $char->characterID, 'characterName' => $char->characterName);
 
-		return View::make('permissions.ajax.detail')
-			->with('seat_users', $seat_users)
-			->with('user_characters', $user_characters)
-			->with('available_groups', $available_groups)
-			->with('group_memberships', $group_memberships);
-	}
+        return View::make('permissions.ajax.detail')
+            ->with('seat_users', $seat_users)
+            ->with('user_characters', $user_characters)
+            ->with('available_groups', $available_groups)
+            ->with('group_memberships', $group_memberships);
+    }
 
-	/*
-	|--------------------------------------------------------------------------
-	| postSetPermission()
-	|--------------------------------------------------------------------------
-	|
-	| Sets a permission
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | postSetPermission()
+    |--------------------------------------------------------------------------
+    |
+    | Sets a permission
+    |
+    */
 
-	public function postSetPermission()
-	{
+    public function postSetPermission()
+    {
 
-		// Very first check is to ensure the user has the required access
-		if (!Sentry::getUser()->isSuperUser())
-			App::abort(404);
+        // Very first check is to ensure the user has the required access
+        if (!Sentry::getUser()->isSuperUser())
+            App::abort(404);
 
-		$group = Input::get('group');
-		$user = Input::get('user');
+        $group = Input::get('group');
+        $user = Input::get('user');
 
-		// Lets validate the post values.
-		// First the group
-		try {
+        // Lets validate the post values.
+        // First the group
+        try {
 
-			$group = Sentry::findGroupByName($group);
-			
-		} catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
+            $group = Sentry::findGroupByName($group);
 
-			App::abort(404);
-		}
+        } catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
 
-		// Then the user
-		try {
+            App::abort(404);
+        }
 
-			$user = Sentry::findUserById($user);	
+        // Then the user
+        try {
 
-		} catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
-			
-			App::abort(404);
+            $user = Sentry::findUserById($user);
 
-		} catch (Cartalyst\Sentry\Users\UserNotActivatedException $e) {
-			
-			App::abort(401);
-		}
+        } catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
 
-		// Determine if the user is in the group. If so, remove the user. If not, add the user
-		if ($user->inGroup($group))
-			$user->removeGroup($group);
-		else
-			$user->addGroup($group);
-	}
+            App::abort(404);
+
+        } catch (Cartalyst\Sentry\Users\UserNotActivatedException $e) {
+
+            App::abort(401);
+        }
+
+        // Determine if the user is in the group. If so, remove the user. If not, add the user
+        if ($user->inGroup($group))
+            $user->removeGroup($group);
+        else
+            $user->addGroup($group);
+    }
 }

@@ -1,4 +1,27 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 namespace Seat\Commands;
 
@@ -9,92 +32,97 @@ use Carthalyst\Sentry as Sentry;
 
 class SeatReset extends Command {
 
-	/**
-	 * The console command name.
-	 *
-	 * @var string
-	 */
-	protected $name = 'seat:reset';
+    /**
+     * The console command name.
+     *
+     * @var string
+     */
+    protected $name = 'seat:reset';
 
-	/**
-	 * The console command description.
-	 *
-	 * @var string
-	 */
-	protected $description = 'Reset the SeAT Web Administrator Password.';
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Reset the SeAT Web Administrator Password.';
 
-	/**
-	 * Create a new command instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-	/**
-	 * Execute the console command.
-	 *
-	 * @return mixed
-	 */
-	public function fire()
-	{
-		$this->error('WARNING!!! This will RESET the current Administrator password!');
-		$this->line('');
+    /**
+     * Execute the console command.
+     *
+     * @return mixed
+     */
+    public function fire()
+    {
 
-		$password = $this->secret('What is the new password to use for the admin user? : ');
-		$password2 = $this->secret('Retype that password please: ');
+        // Print a warning about what this command will do
+        $this->error('WARNING!!! This will RESET the current Administrator password!');
+        $this->line('');
 
-		if ($password <> $password2) {
+        // Get the password from the user
+        $password = $this->secret('What is the new password to use for the admin user? : ');
+        $password2 = $this->secret('Retype that password please: ');
 
-			$this->error('The passwords do not match. Not resetting');
-			return;
-		}
+        // Ensure that the user typed the password twice
+        // without a problem.
+        if ($password <> $password2) {
 
-		$this->info('The passwords match. Resetting to the new ' . strlen($password) . ' char one.');
+            $this->error('The passwords do not match. Not resetting');
+            return;
+        }
 
-		// Attempt to find the admin user usnig Sentry helper functions.
-		// If the user does not exist, we create it.
-		try {
+        $this->info('The passwords match. Resetting to the new ' . strlen($password) . ' char one.');
 
-			$admin = \Sentry::findUserByLogin('admin');
+        // Attempt to find the admin user usnig Sentry helper functions.
+        // If the user does not exist, we create it.
+        try {
 
-		} catch (\Cartalyst\Sentry\Users\UserNotFoundException $e) {
+            $admin = \Sentry::findUserByLogin('admin');
 
-			\Sentry::register(array(
-				'email'	 	=> 'admin',
-				'username'	=> 'admin',
-				'password'	=> $password,
-			), true);	// Set the account to be active
+        } catch (\Cartalyst\Sentry\Users\UserNotFoundException $e) {
 
-			$admin = \Sentry::findUserByLogin('admin');
-		}
+            \Sentry::register(array(
+                'email'     => 'admin',
+                'username'  => 'admin',
+                'password'  => $password,
+            ), true);   // Set the account to be active
 
-		// Next, we check for the existance of the admin group and create it if it
-		// does not exist
-		try {
+            $admin = \Sentry::findUserByLogin('admin');
+        }
 
-			$adminGroup = \Sentry::findGroupByName('Administrators');
+        // Next, we check for the existance of the admin group and create it if it
+        // does not exist
+        try {
 
-		} catch (\Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
+            $adminGroup = \Sentry::findGroupByName('Administrators');
 
-			\Sentry::createGroup(array(
-			    'name'        => 'Administrators',
-			    'permissions' => array(
-			        'superuser' => 1,
-			    ),
-			));
+        } catch (\Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
 
-			$adminGroup = \Sentry::findGroupByName('Administrators');
-		}
+            \Sentry::createGroup(array(
+                'name'        => 'Administrators',
+                'permissions' => array(
+                    'superuser' => 1,
+                ),
+            ));
 
-		// Set the password and group membership for the admin user.
-		$admin->username = 'admin';
-		$admin->password = $password;
-		$admin->save();
-		$admin->addGroup($adminGroup);
+            $adminGroup = \Sentry::findGroupByName('Administrators');
+        }
 
-		$this->info('Password has been changed successfully.');
-	}
+        // Set the password and group membership for the admin user.
+        $admin->username = 'admin';
+        $admin->password = $password;
+        $admin->save();
+        $admin->addGroup($adminGroup);
+
+        $this->info('Password has been changed successfully.');
+    }
 }

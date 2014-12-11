@@ -1,4 +1,27 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 namespace Seat\Commands\Scheduled;
 
@@ -9,7 +32,8 @@ use Indatus\Dispatcher\Drivers\Cron\Scheduler;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class SeatQueueCleanup extends ScheduledCommand {
+class SeatQueueCleanup extends ScheduledCommand
+{
 
     /**
      * The console command name.
@@ -53,15 +77,18 @@ class SeatQueueCleanup extends ScheduledCommand {
      */
     public function fire()
     {
+
+        // Log what we are going to do in the laravel.log file
         \Log::info('Started command ' . $this->name, array('src' => __CLASS__));
 
-        // TODO: Query only Jobs with 'update_at' > 1h to optimize
-        foreach(\SeatQueueInformation::where('status', '=', 'Queued')
-          ->orWhere('status','=', 'Working')
-          ->get() as $job
-        ) {
+        // Grab the 'Queued' or 'Working' jobs that we have record
+        // of so that we can process a time related check on
+        // them
+        foreach(\SeatQueueInformation::where('status', 'Queued')->orWhere('status', 'Working')->get() as $job)
+
+            // If the Job has been in the queue for more than 1 hour,
+            // move it over to a Error status.
             if(\Carbon\Carbon::now()->diffInMinutes($job['updated_at']) > 60)
-            {
                 \SeatQueueInformation::where('jobID', '=', $job['jobID'])
                     ->update(
                         array(
@@ -69,7 +96,5 @@ class SeatQueueCleanup extends ScheduledCommand {
                             'output' => '60 Minute Job Runtime Limit Exceeded'
                             )
                         );
-            }
-        }
     }
 }

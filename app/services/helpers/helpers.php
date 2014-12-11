@@ -1,103 +1,127 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 namespace App\Services\Helpers;
 
-class Helpers {
+class Helpers
+{
 
-	/*
-	|--------------------------------------------------------------------------
-	| findSkillLevel()
-	|--------------------------------------------------------------------------
-	|
-	| Take a the characters skills array and search for the level at which
-	| a certain skillID is.
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | findSkillLevel()
+    |--------------------------------------------------------------------------
+    |
+    | Take a the characters skills array and search for the level at which
+    | a certain skillID is.
+    |
+    */
 
-	public static function findSkillLevel($character_skills, $skillID) {
+    public static function findSkillLevel($character_skills, $skillID) {
 
-		foreach ($character_skills as $skill_group) {
+        foreach ($character_skills as $skill_group) {
 
-			foreach ($skill_group as $skill) {
+            foreach ($skill_group as $skill) {
 
-				if ($skill['typeID'] == $skillID)
-					return $skill['level'];
-			}
-		}
+                if ($skill['typeID'] == $skillID)
+                    return $skill['level'];
+            }
+        }
 
-		// If we can not find the skill, then it is 0
-		return 0;
+        // If we can not find the skill, then it is 0
+        return 0;
     }
 
-	/*
-	|--------------------------------------------------------------------------
-	| processAccessMask()
-	|--------------------------------------------------------------------------
-	|
-	| Run through the api calllist, checking which calls a accessmask has
-	| access to
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | processAccessMask()
+    |--------------------------------------------------------------------------
+    |
+    | Run through the api calllist, checking which calls a accessmask has
+    | access to
+    |
+    */
 
-	public static function processAccessMask($mask, $type) {
+    public static function processAccessMask($mask, $type) {
 
-		// Prepare the return array
-		$return = array();
+        // Prepare the return array
+        $return = array();
 
-		// Loop over the call list, populating the array, based on the type
-		if ($type == 'Corporation') {
+        // Loop over the call list, populating the array, based on the type
+        if ($type == 'Corporation') {
 
-			// Loop over the call list, populating the array
-			foreach (\EveApiCalllist::where('type', 'Corporation')->get() as $call)
-				$return[$call->name] = (int)$call->accessMask & (int)$mask ? 'true' : 'false';
+            // Loop over the call list, populating the array
+            foreach (\EveApiCalllist::where('type', 'Corporation')->get() as $call)
+                $return[$call->name] = (int)$call->accessMask & (int)$mask ? 'true' : 'false';
 
-		} else {
+        } else {
 
-			// Loop over the call list, populating the array
-			foreach (\EveApiCalllist::where('type', 'Character')->get() as $call)
-				$return[$call->name] = (int)$call->accessMask & (int)$mask ? 'true' : 'false';
-		}
+            // Loop over the call list, populating the array
+            foreach (\EveApiCalllist::where('type', 'Character')->get() as $call)
+                $return[$call->name] = (int)$call->accessMask & (int)$mask ? 'true' : 'false';
+        }
 
-		// Return the populated array
-		return $return;
+        // Return the populated array
+        return $return;
     }
 
-	/*
-	|--------------------------------------------------------------------------
-	| formatBigNumber()
-	|--------------------------------------------------------------------------
-	|
-	| Format a number to condesed format with suffix
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | formatBigNumber()
+    |--------------------------------------------------------------------------
+    |
+    | Format a number to condesed format with suffix
+    |
+    */
 
-	public static function formatBigNumber($number) {
+    public static function formatBigNumber($number) {
 
         // first strip any formatting;
         $number = (0 + str_replace(',', '', $number));
 
         // is this a number?
         if(!is_numeric($number))
-        	return false;
+            return false;
 
         $places = 0;
 
         // now filter it;
         if($number > 1000000000000)
-        	return round(($number / 1000000000000), 1) . 't';
+            return round(($number / 1000000000000), 1) . 't';
 
         else if($number > 1000000000)
-        	return round(($number / 1000000000), 1) . 'b';
+            return round(($number / 1000000000), 1) . 'b';
 
         else if($number > 1000000)
-        	return round(($number / 1000000), 1) . 'm';
+            return round(($number / 1000000), 1) . 'm';
 
         else if($number > 1000)
-        	return round(($number / 1000), 1) . 'k';
+            return round(($number / 1000), 1) . 'k';
 
         else if($number > 100)
-        	$places = 2;
-        	return $number;
+            $places = 2;
+            return $number;
 
         return number_format($number, $places);
     }
@@ -131,41 +155,41 @@ class Helpers {
         return $newstring;
     }
 
-	/*
-	|--------------------------------------------------------------------------
-	| generateEveImage()
-	|--------------------------------------------------------------------------
-	|
-	| Return the URL of image for a given ID and check if it's a character,
-	| 	corporation or Alliance ID
-	| There no way to find if id is character, corporation or alliance before
-	| 	the 64bits move. For that if the ID given is not in range we consider
-	|	it's a character ID.
-	| From here: https://forums.eveonline.com/default.aspx?g=posts&m=716708#post716708
-	| Valid size is: 32, 64, 128, 256, 512
-	| TODO: Find a way to fix the id before 64bits move.
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | generateEveImage()
+    |--------------------------------------------------------------------------
+    |
+    | Return the URL of image for a given ID and check if it's a character,
+    |   corporation or Alliance ID
+    | There no way to find if id is character, corporation or alliance before
+    |   the 64bits move. For that if the ID given is not in range we consider
+    |   it's a character ID.
+    | From here: https://forums.eveonline.com/default.aspx?g=posts&m=716708#post716708
+    | Valid size is: 32, 64, 128, 256, 512
+    | TODO: Find a way to fix the id before 64bits move.
+    |
+    */
 
-	public static function generateEveImage($id, $size) {
+    public static function generateEveImage($id, $size) {
 
- 		if($id > 90000000 && $id < 98000000) {
+        if($id > 90000000 && $id < 98000000) {
 
-			return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
+            return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
 
-		} elseif(($id > 98000000 && $id < 99000000) || ($id > 1000000 && $id < 2000000)) {
+        } elseif(($id > 98000000 && $id < 99000000) || ($id > 1000000 && $id < 2000000)) {
 
-			return '//image.eveonline.com/Corporation/' . $id . '_' . $size . '.png';
+            return '//image.eveonline.com/Corporation/' . $id . '_' . $size . '.png';
 
-		} elseif(($id > 99000000 && $id < 100000000) || ($id > 0 && $id < 1000000)) {
+        } elseif(($id > 99000000 && $id < 100000000) || ($id > 0 && $id < 1000000)) {
 
-			return '//image.eveonline.com/Alliance/' . $id . '_' . $size . '.png';
+            return '//image.eveonline.com/Alliance/' . $id . '_' . $size . '.png';
 
-		} else {
+        } else {
 
-			return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
-		}
-	}
+            return '//image.eveonline.com/Character/' . $id . '_' . $size . '.jpg';
+        }
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -177,115 +201,136 @@ class Helpers {
     |
     */
 
-    public static function parseCorpSecurityRoleLog($roleString) {
-        if($roleString == "[]" and is_string($roleString)) {
-            return "";
-        } elseif ($roleString <> "" and is_string($roleString)) {
-            $t = implode(', ',get_object_vars(json_decode($roleString)));
-            return str_replace("role","",$t);
+    public static function parseCorpSecurityRoleLog($role_string) {
+
+        if($role_string == '[]' and is_string($role_string)) {
+
+            return '';
+
+        } elseif ($role_string <> '' and is_string($role_string)) {
+
+            $t = implode(', ',get_object_vars(json_decode($role_string)));
+            return str_replace('role','',$t);
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | makePrettyMemberRoleList()
+    |--------------------------------------------------------------------------
+    |
+    | Returns a pretty Corporation Member Role List
+    | TODO: More Documentation.
+    |
+    */
+
+    public static function makePrettyMemberRoleList($string_to_format) {
+
+        if($string_to_format == '' or is_null ($string_to_format)) {
+
+            return '';
+
+        } else  {
+
+            return str_replace(',',', ',$string_to_format);
         }
 
     }
 
     /*
-	|--------------------------------------------------------------------------
-	| makePrettyMemberRoleList()
-	|--------------------------------------------------------------------------
-	|
-	| Returns a pretty Corporation Member Role List
-	| TODO: More Documentation.
-	|
-	*/
+    |--------------------------------------------------------------------------
+    | sumVolume()
+    |--------------------------------------------------------------------------
+    |
+    | Returns the total volume of an array of assets
+    | param $personal is passed if the assets is calculated for the person
+    |   and not the corporation
+    |
+    */
 
-	public static function makePrettyMemberRoleList($stringToFormat) {
-		if($stringToFormat == "" or is_null ($stringToFormat)) {
-			return "";
-		} else  {
-			return str_replace(",",", ",$stringToFormat);
-		}
+    public static function sumVolume($array, $col_name, $personal = NULL) {
 
-	}
+        $volume = 0;
+        foreach($array as $item) {
 
-	/*
-	|--------------------------------------------------------------------------
-	| sumVolume()
-	|--------------------------------------------------------------------------
-	|
-	| Returns the total volume of an array of assets
-	| param $personal is passed if the assets is calculated for the person
-	| 	and not the corporation
-	|
-	*/
+            if(isset($item['contents'])) {
 
-	public static function sumVolume($array, $col_name, $personal = NULL) {
-		$volume = 0;
-		foreach($array as $item){
-			if(isset($item['contents'])){
-				foreach($item['contents'] as $type){
-					if($personal)
-						$volume += ($type[$col_name] * $type['quantity']);
-					else
-						$volume += $type[$col_name];
-				}
-			}
-			if($personal)
-				$volume += ($item[$col_name] * $item['quantity']);
-			else
-				$volume += $item[$col_name];
-		}
-		return Helpers::formatBigNumber($volume);
-	}
+                foreach($item['contents'] as $type) {
 
-	/*
-	|--------------------------------------------------------------------------
-	| numAssets()
-	|--------------------------------------------------------------------------
-	|
-	| Returns the number of assets including what is within a container
-	|
-	|
-	*/
+                    if($personal)
+                        $volume += ($type[$col_name] * $type['quantity']);
+                    else
+                        $volume += $type[$col_name];
+                }
+            }
 
-	public static function numAssets($array) {
-		$count = 0;
-		foreach($array as $item){
-			$count++;
-			if(isset($item['contents'])){
-				foreach($item['contents'] as $type){
-					$count++;
-				}
-			}
-		}
-		return $count;
-	}
+            if($personal)
+                $volume += ($item[$col_name] * $item['quantity']);
+            else
+                $volume += $item[$col_name];
+        }
 
-	/*
-	|--------------------------------------------------------------------------
-	| marketOrderType()
-	|--------------------------------------------------------------------------
-	|
-	| Returns the total of a market order type, ie:
-	| Pass in an array of market orders, with the type (col_name)
-	| you are looking for and an integer will be provided for all the
-	| orders in that state within the array
-	|
-	| '0' => 'Active',
-	| '1' => 'Closed',
-	| '2' => 'Expired / Fulfilled',
-	| '3' => 'Cancelled',
-	| '4' => 'Pending',
-	| '5' => 'Deleted'
-	|
-	*/
+        return Helpers::formatBigNumber($volume);
+    }
 
-	public static function marketOrderCount($array, $col_name) {
-		$count = 0;
-		foreach($array as $order){
-			if($order->orderState == $col_name){
-				$count ++;
-			}
-		}
-		return $count;
-	}
+    /*
+    |--------------------------------------------------------------------------
+    | numAssets()
+    |--------------------------------------------------------------------------
+    |
+    | Returns the number of assets including what is within a container
+    |
+    |
+    */
 
+    public static function numAssets($array) {
+
+        $count = 0;
+
+        foreach($array as $item){
+
+            $count++;
+
+            if(isset($item['contents'])) {
+
+                foreach($item['contents'] as $type)
+                    $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | marketOrderType()
+    |--------------------------------------------------------------------------
+    |
+    | Returns the total of a market order type, ie:
+    | Pass in an array of market orders, with the type (col_name)
+    | you are looking for and an integer will be provided for all the
+    | orders in that state within the array
+    |
+    | '0' => 'Active',
+    | '1' => 'Closed',
+    | '2' => 'Expired / Fulfilled',
+    | '3' => 'Cancelled',
+    | '4' => 'Pending',
+    | '5' => 'Deleted'
+    |
+    */
+
+    public static function marketOrderCount($array, $col_name) {
+
+        $count = 0;
+
+        foreach($array as $order) {
+
+            if($order->orderState == $col_name)
+                $count ++;
+
+        }
+
+        return $count;
+    }
 }

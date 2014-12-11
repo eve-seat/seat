@@ -1,4 +1,27 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 /*
 |--------------------------------------------------------------------------
@@ -13,58 +36,58 @@
 
 App::before(function($request)
 {
-	// Users have keys allocated to them from the `seat_keys` table.
-	// We can check if the user is authed and if so, get the keyID's
-	// this user is valid for.
+    // Users have keys allocated to them from the `seat_keys` table.
+    // We can check if the user is authed and if so, get the keyID's
+    // this user is valid for.
 
-	// We will also get a list of corporation ID's that the user is
-	// affiliated to. This can be used to check the permissions then
-	// later for specific functions such as starbases etc.
+    // We will also get a list of corporation ID's that the user is
+    // affiliated to. This can be used to check the permissions then
+    // later for specific functions such as starbases etc.
 
-	// We will also check if the user has any director roles in any
-	// of the affiliated corporations. Directors will be allowed to
-	// assign permissions to other members of their corporation
-	if (Sentry::check()) {
+    // We will also check if the user has any director roles in any
+    // of the affiliated corporations. Directors will be allowed to
+    // assign permissions to other members of their corporation
+    if (Sentry::check()) {
 
-		// Valid API Keys
-		$valid_keys = SeatKey::where('user_id', Sentry::getUser()->id)
-			->lists('keyID');
+        // Valid API Keys
+        $valid_keys = SeatKey::where('user_id', Sentry::getUser()->id)
+            ->lists('keyID');
 
-		Session::put('valid_keys', $valid_keys);
+        Session::put('valid_keys', $valid_keys);
 
-		// Affiliated corporationID's.
-		if (!empty($valid_keys)) {
+        // Affiliated corporationID's.
+        if (!empty($valid_keys)) {
 
-			// Get the list of corporationID's that the user is affiliated with
-			$corporation_affiliation = EveAccountAPIKeyInfoCharacters::whereIn('keyID', $valid_keys)
-				->groupBy('corporationID')
-				->lists('corporationID');
+            // Get the list of corporationID's that the user is affiliated with
+            $corporation_affiliation = EveAccountAPIKeyInfoCharacters::whereIn('keyID', $valid_keys)
+                ->groupBy('corporationID')
+                ->lists('corporationID');
 
-			Session::put('corporation_affiliations', $corporation_affiliation);
+            Session::put('corporation_affiliations', $corporation_affiliation);
 
-			// Determine which corporations the user is a director for
-			if(!empty($corporation_affiliation)){
-				$is_director = EveCorporationMemberSecurityRoles::whereIn('corporationID', $corporation_affiliation)
-					->where('roleID', '=', '1')
-					->groupBy('corporationID')
-					->lists('corporationID');
+            // Determine which corporations the user is a director for
+            if(!empty($corporation_affiliation)){
+                $is_director = EveCorporationMemberSecurityRoles::whereIn('corporationID', $corporation_affiliation)
+                    ->where('roleID', '=', '1')
+                    ->groupBy('corporationID')
+                    ->lists('corporationID');
 
-				Session::put('is_director', $is_director);
-			}
+                Session::put('is_director', $is_director);
+            }
 
-		} else {
+        } else {
 
-			// Just to ensure that we dont have some strange errors later, lets
-			// define a empty array in the session for corporation_affiliations
-			Session::put('corporation_affiliations', array());
-			Session::put('is_director', array());
-		}
-	}
+            // Just to ensure that we dont have some strange errors later, lets
+            // define a empty array in the session for corporation_affiliations
+            Session::put('corporation_affiliations', array());
+            Session::put('is_director', array());
+        }
+    }
 });
 
 App::after(function($request, $response)
 {
-	//
+    //
 });
 
 /*
@@ -80,15 +103,15 @@ App::after(function($request, $response)
 
 Route::filter('auth', function()
 {
-	if (!Sentry::check())
-		return Redirect::action('SessionController@getSignIn');
+    if (!Sentry::check())
+        return Redirect::action('SessionController@getSignIn');
 });
 
 
 Route::filter('auth.superuser', function()
 {
-	if (!Sentry::check() || !Sentry::getUser()->isSuperUser())
-		return Redirect::to('/');
+    if (!Sentry::check() || !Sentry::getUser()->isSuperUser())
+        return Redirect::to('/');
 });
 
 
@@ -105,7 +128,7 @@ Route::filter('auth.superuser', function()
 
 Route::filter('guest', function()
 {
-	if (!Sentry::check()) return Redirect::to('/');
+    if (!Sentry::check()) return Redirect::to('/');
 });
 
 /*
@@ -122,22 +145,22 @@ Route::filter('guest', function()
 Route::filter('csrf', function()
 {
 
-	// Check ajax requests for token validity via the header.
-	// app.js has the code to grab form tokens and put it in
-	// a header, well validate it here if its a post AJAX
-	if (Request::ajax() && Request::getMethod() == 'POST')
-	{
-		if (Session::getToken() != Request::header('X-CSRF-Token'))
-		{
-			throw new Illuminate\Session\TokenMismatchException;
-		}
+    // Check ajax requests for token validity via the header.
+    // app.js has the code to grab form tokens and put it in
+    // a header, well validate it here if its a post AJAX
+    if (Request::ajax() && Request::getMethod() == 'POST')
+    {
+        if (Session::getToken() != Request::header('X-CSRF-Token'))
+        {
+            throw new Illuminate\Session\TokenMismatchException;
+        }
 
-	} else {
-	    if (Request::getMethod() == 'POST' && Session::token() != Input::get('_token'))
-	    {
-	        throw new Illuminate\Session\TokenMismatchException;
-	    }
-	}
+    } else {
+        if (Request::getMethod() == 'POST' && Session::token() != Input::get('_token'))
+        {
+            throw new Illuminate\Session\TokenMismatchException;
+        }
+    }
 });
 
 /*
@@ -153,25 +176,25 @@ Route::filter('csrf', function()
 Route::filter('key.required', function()
 {
 
-	// The below array defines a few routes that require
-	// the user to have keys defined before anything useful
-	// can be shown
-	$key_requied_routes = array(
-		"api-key/people*", "corporation/*", "character/*"
-	);
+    // The below array defines a few routes that require
+    // the user to have keys defined before anything useful
+    // can be shown
+    $key_requied_routes = array(
+        "api-key/people*", "corporation/*", "character/*"
+    );
 
-	// Loop over the required routes, and ensure that there
-	// are keys as required
-	foreach ($key_requied_routes as $match) {
+    // Loop over the required routes, and ensure that there
+    // are keys as required
+    foreach ($key_requied_routes as $match) {
 
-		// Check if the current request matches $match
-		if (Request::is($match)) {
+        // Check if the current request matches $match
+        if (Request::is($match)) {
 
-			// Check that we havea some valid keys defined in Session::get('valid_keys')
-			if (!Sentry::getUser()->isSuperUser() && count(Session::get('valid_keys')) <= 0)
-				return Redirect::action('ApiKeyController@getNewKey')
-					->with('warning', 'No API Keys are defined to show you any information. Please enter at least one.');
-		}
-	}
+            // Check that we havea some valid keys defined in Session::get('valid_keys')
+            if (!Sentry::getUser()->isSuperUser() && count(Session::get('valid_keys')) <= 0)
+                return Redirect::action('ApiKeyController@getNewKey')
+                    ->with('warning', 'No API Keys are defined to show you any information. Please enter at least one.');
+        }
+    }
 
 });

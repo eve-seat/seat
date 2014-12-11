@@ -1,204 +1,221 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 use App\Services\Validators;
 
-class GroupsController extends BaseController {
+class GroupsController extends BaseController
+{
 
-	/*
-	|--------------------------------------------------------------------------
-	| __construct()
-	|--------------------------------------------------------------------------
-	|
-	| Sets up the class to ensure that CSRF tokens are validated on the POST
-	| verb
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | __construct()
+    |--------------------------------------------------------------------------
+    |
+    | Sets up the class to ensure that CSRF tokens are validated on the POST
+    | verb
+    |
+    */
 
-	public function __construct()
-	{
-		$this->beforeFilter('csrf', array('on' => 'post'));
-	}
+    public function __construct()
+    {
+        $this->beforeFilter('csrf', array('on' => 'post'));
+    }
 
-	/*
-	|--------------------------------------------------------------------------
-	| getAll()
-	|--------------------------------------------------------------------------
-	|
-	| Get details about ALL THE THINGS!
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | getAll()
+    |--------------------------------------------------------------------------
+    |
+    | Get details about ALL THE THINGS!
+    |
+    */
 
-	public function getAll()
-	{
-		$groups = Sentry::findAllGroups();
-		$counter = array();
+    public function getAll()
+    {
 
-		foreach($groups as $group)
-		{
-			$users = Sentry::findAllUsersInGroup($group);
-			$counter[$group->name] = count($users);
-		}
+        $groups = Sentry::findAllGroups();
+        $counter = array();
 
-		return View::make('groups.all')
-			->with('groups', $groups)
-			->with('counter', $counter);
-	}
+        foreach($groups as $group) {
 
-	/*
-	|--------------------------------------------------------------------------
-	| getDetail()
-	|--------------------------------------------------------------------------
-	|
-	| Get the shizzle about this group
-	|
-	*/
+            $users = Sentry::findAllUsersInGroup($group);
+            $counter[$group->name] = count($users);
+        }
 
-	public function getDetail($groupID)
-	{
-		try 
-		{
-			$group = Sentry::findGroupById($groupID);
-			$users = Sentry::findAllUsersInGroup($group);
-			$availablePermissions = SeatPermissions::all();
-		} 
-		catch (Cartalyst\Sentry\Groups\GroupExistsException $e) 
-		{
-			App::abort(404);
-		}
+        return View::make('groups.all')
+            ->with('groups', $groups)
+            ->with('counter', $counter);
+    }
 
-		return View::make('groups.detail')
-			->with('group', $group)
-			->with('users', $users)
-			->with('hasPermissions', $group->getPermissions())
-			->with('availablePermissions', $availablePermissions);
-	}
+    /*
+    |--------------------------------------------------------------------------
+    | getDetail()
+    |--------------------------------------------------------------------------
+    |
+    | Get the shizzle about this group
+    |
+    */
 
-	/*
-	|--------------------------------------------------------------------------
-	| getDetail()
-	|--------------------------------------------------------------------------
-	|
-	| Update this shizzle!
-	|
-	*/
+    public function getDetail($groupID)
+    {
 
-	public function postUpdateGroup($groupID)
-	{
-		$permissions = Input::except('_token');
+        try {
 
-		$group = Sentry::findGroupById($groupID);
-		$group->permissions = $permissions;
+            $group = Sentry::findGroupById($groupID);
+            $users = Sentry::findAllUsersInGroup($group);
+            $availablePermissions = SeatPermissions::all();
 
-		if ($group->save())
-	    {
-	        return Redirect::action('GroupsController@getDetail', $groupID)
-				->with('success', 'Permissions updated!');
-	    }
-	    else
-	    {
-	        return Redirect::action('GroupsController@getDetail', $groupID)
-				->withErrors('Permissions failed to update :(');
-	    }
-	}
+        } catch (Cartalyst\Sentry\Groups\GroupExistsException $e) {
 
-	/*
-	|--------------------------------------------------------------------------
-	| postNewGroup()
-	|--------------------------------------------------------------------------
-	|
-	| Add this!
-	|
-	*/
+            App::abort(404);
+        }
 
-	public function postNewGroup()
-	{
+        return View::make('groups.detail')
+            ->with('group', $group)
+            ->with('users', $users)
+            ->with('hasPermissions', $group->getPermissions())
+            ->with('availablePermissions', $availablePermissions);
+    }
 
-		$newGroup = Input::All();
-		$validation = new Validators\SeatGroupValidator($newGroup);
+    /*
+    |--------------------------------------------------------------------------
+    | getDetail()
+    |--------------------------------------------------------------------------
+    |
+    | Update this shizzle!
+    |
+    */
 
-		if ($validation->passes()) 
-		{
-			try
-			{
-			    // Create the group
-			    $group = Sentry::createGroup(array(
-			        'name'        => Input::get('groupName')
-			    ));
+    public function postUpdateGroup($groupID)
+    {
 
-			    return Redirect::action('GroupsController@getAll')
-					->with('success', 'Group has been added!');
-			}
-			catch (Cartalyst\Sentry\Groups\GroupExistsException $e)
-			{
-			    return Redirect::action('GroupsController@getAll')
-					->withErrors('The robot seems to think that this group already exists...');
-			}
-		}
-		else
-		{
-			return Redirect::action('GroupsController@getAll')
-					->withErrors('You need to provide a name for the new group!');
-		}
-	}
+        $permissions = Input::except('_token');
 
-	/*
-	|--------------------------------------------------------------------------
-	| getDeleteGroup()
-	|--------------------------------------------------------------------------
-	|
-	| This group can go to hell!
-	|
-	*/
+        $group = Sentry::findGroupById($groupID);
+        $group->permissions = $permissions;
 
-	public function getDeleteGroup($groupID)
-	{
-		try
-		{
-		    $group = Sentry::findGroupById($groupID);
-		    
-		    if($group->name == "Administrators")
-		    {
-		    	return Redirect::action('GroupsController@getAll')
-					->withErrors('You cannot delete the Administrators group, stupid!');
-		    }
+        if ($group->save())
+            return Redirect::action('GroupsController@getDetail', $groupID)
+                ->with('success', 'Permissions updated!');
 
-		    $group->delete();
+        return Redirect::action('GroupsController@getDetail', $groupID)
+            ->withErrors('Permissions failed to update :(');
+    }
 
-		    return Redirect::action('GroupsController@getAll')
-				->with('success', 'Group has been deleted');
-		}
-		catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e)
-		{
-		    App::abort(404);
-		}
-	}
+    /*
+    |--------------------------------------------------------------------------
+    | postNewGroup()
+    |--------------------------------------------------------------------------
+    |
+    | Add this!
+    |
+    */
 
-	/*
-	|--------------------------------------------------------------------------
-	| getRemoveUser()
-	|--------------------------------------------------------------------------
-	|
-	| ACCESS DENIED!
-	|
-	*/
+    public function postNewGroup()
+    {
 
-	public function getRemoveUser($userID, $groupID)
-	{
-		
-		$group = Sentry::findGroupById($groupID);
-		$user = Sentry::findUserById($userID);
+        $newGroup = Input::All();
+        $validation = new Validators\SeatGroupValidator($newGroup);
 
-		if($userID == 1 AND $group->name == "Administrators")
-	    {
-	        return Redirect::action('GroupsController@getDetail', array('groupID' => $groupID))
-					->withErrors('You cant remove the admin from this group!');
-	    }
-	    else
-	    {
-	    	$user->removeGroup($group);
-	        return Redirect::action('GroupsController@getDetail', array('groupID' => $groupID))
-					->with('success', 'User has been removed!');
-	    }
-	}
+        if ($validation->passes()) {
 
+            try {
+
+                // Create the group
+                $group = Sentry::createGroup(array(
+                    'name' => Input::get('groupName')
+                ));
+
+                return Redirect::action('GroupsController@getAll')
+                    ->with('success', 'Group has been added!');
+
+            } catch (Cartalyst\Sentry\Groups\GroupExistsException $e) {
+
+                return Redirect::action('GroupsController@getAll')
+                    ->withErrors('The robot seems to think that this group already exists...');
+            }
+
+        } else {
+
+            return Redirect::action('GroupsController@getAll')
+                ->withErrors($validation->errors);
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | getDeleteGroup()
+    |--------------------------------------------------------------------------
+    |
+    | This group can go to hell!
+    |
+    */
+
+    public function getDeleteGroup($groupID)
+    {
+
+        try {
+
+            $group = Sentry::findGroupById($groupID);
+
+            if($group->name == 'Administrators')
+                return Redirect::action('GroupsController@getAll')
+                    ->withErrors('You cannot delete the Administrators group, stupid!');
+
+            $group->delete();
+
+            return Redirect::action('GroupsController@getAll')
+                ->with('success', 'Group has been deleted');
+
+        } catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
+
+            App::abort(404);
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | getRemoveUser()
+    |--------------------------------------------------------------------------
+    |
+    | Remove a user from a group
+    |
+    */
+
+    public function getRemoveUser($userID, $groupID)
+    {
+
+        $group = Sentry::findGroupById($groupID);
+        $user = Sentry::findUserById($userID);
+
+        if($userID == 1 AND $group->name == 'Administrators')
+            return Redirect::action('GroupsController@getDetail', array('groupID' => $groupID))
+                    ->withErrors('You cant remove the admin from this group!');
+
+        $user->removeGroup($group);
+        return Redirect::action('GroupsController@getDetail', array('groupID' => $groupID))
+            ->with('success', 'User has been removed!');
+    }
 }
