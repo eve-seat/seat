@@ -94,7 +94,7 @@
 
       {{-- superuser only features --}}
       @if (Sentry::getUser()->isSuperUser())
-        <li class="treeview @if (Request::is('user/*')) active @endif">
+        <li class="treeview @if (Request::is('configuration/*')) active @endif">
           <a href="#">
             <i class="fa fa-cogs"></i> <span>Configuration</span>
             <i class="fa fa-angle-left pull-right"></i>
