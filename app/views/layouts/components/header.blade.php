@@ -36,6 +36,13 @@
             </a>
           </li>
         @endif
+        <li class="dropdown tasks-menu">
+          <a href="{{ action('NotificationController@getStatus') }}" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="User Notifications">
+            <i class="fa fa-bolt"></i>
+            <span class="label label-info" id="notification_count">0</span>
+          </a>
+        </li>
+
         <!-- User Account: style can be found in dropdown.less -->
         <li class="dropdown user user-menu">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
