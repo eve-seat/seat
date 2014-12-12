@@ -74,6 +74,10 @@ class Notify
             $job_record->save();
 
             Notifications\Api\KeyCheck::Update();
+            $job_record->output = 'Started Corporation Member Check';
+            $job_record->save();
+
+            Notifications\Corporation\MemberStatus::Update();
 
             $job_record->status = 'Done';
             $job_record->output = null;
