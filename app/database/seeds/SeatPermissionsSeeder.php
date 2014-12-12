@@ -31,6 +31,8 @@ class SeatPermissionsSeeder extends Seeder
         // Temporarily disable mass assignment restrictions
         Eloquent::unguard();
 
+        DB::table('seat_permissions')->truncate();
+
         SeatPermissions::create(array('permission' => 'pos_manager'));
         SeatPermissions::create(array('permission' => 'wallet_manager'));
         SeatPermissions::create(array('permission' => 'recruiter'));
@@ -38,5 +40,6 @@ class SeatPermissionsSeeder extends Seeder
         SeatPermissions::create(array('permission' => 'contract_manger'));
         SeatPermissions::create(array('permission' => 'market_manager'));
         SeatPermissions::create(array('permission' => 'key_manager'));
+        SeatPermissions::create(array('permission' => 'queue_manager'));
     }
 }

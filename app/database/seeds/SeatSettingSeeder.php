@@ -31,6 +31,8 @@ class SeatSettingSeeder extends Seeder
         // Temporarily disable mass assignment restrictions
         Eloquent::unguard();
 
+        DB::table('seat_settings')->truncate();
+
         SeatSetting::create(array('setting' => 'app_name', 'value' => 'SeAT'));
         SeatSetting::create(array('setting' => 'color_scheme', 'value' => 'blue'));
         SeatSetting::create(array('setting' => 'required_mask', 'value' => '176693568'));

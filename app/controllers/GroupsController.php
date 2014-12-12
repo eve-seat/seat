@@ -112,9 +112,20 @@ class GroupsController extends BaseController
     {
 
         $permissions = Input::except('_token');
+        $availablePermissions = SeatPermissions::all();
+        $setPermissions = array();
+
+        foreach($availablePermissions as $availablePermission)
+        {
+            if(array_key_exists($availablePermission->permission, $permissions))
+                $setPermissions = array_add($setPermissions, $availablePermission->permission, 1);
+            else
+                $setPermissions = array_add($setPermissions, $availablePermission->permission, 0);
+        }
 
         $group = Sentry::findGroupById($groupID);
-        $group->permissions = $permissions;
+
+        $group->permissions = $setPermissions;
 
         if ($group->save())
             return Redirect::action('GroupsController@getDetail', $groupID)
