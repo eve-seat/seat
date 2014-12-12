@@ -1,13 +1,38 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 namespace Seat\Notifications\Starbase;
 
 use Seat\Notifications\BaseNotify;
 
-class StarbaseFuel extends BaseNotify {
+class StarbaseFuel extends BaseNotify
+{
 
     public static function update()
     {
+
         $stabases = \EveCorporationStarbaseDetail::all();
 
         $fuelNeeded = array();
@@ -38,23 +63,25 @@ class StarbaseFuel extends BaseNotify {
         // basically, here we check if the names Small/Medium exists in the tower name. Then,
         // if the tower is in the sov_tower array, set the value for usage
 
-        foreach($stabases as $starbase){
+        foreach($stabases as $starbase) {
+
             $sov_tower = false;
 
             $alliance_id = \DB::table('corporation_corporationsheet')
                 ->where('corporationID', $starbase->corporationID)
                 ->pluck('allianceID');
 
-            if($alliance_id){
+            if($alliance_id) {
+
                 $location = \DB::table('map_sovereignty')
                     ->select('solarSystemID')
                     ->where('factionID', 0)
                     ->where('allianceID', $alliance_id);
-                
+
                 if($location)
                     $sov_tower = true;
             }
-            
+
             if (strpos($starbase->typeName, 'Small') !== false) {
 
                 $stront_usage = $stront_small;
@@ -63,6 +90,7 @@ class StarbaseFuel extends BaseNotify {
                     $usage = $sov_small_usage;
                 else
                     $usage = $small_usage;
+
             } elseif (strpos($starbase->typeName, 'Medium') !== false) {
 
                 $stront_usage = $stront_medium;
@@ -71,6 +99,7 @@ class StarbaseFuel extends BaseNotify {
                     $usage = $sov_medium_usage;
                 else
                     $usage = $medium_usage;
+
             } else {
 
                 $stront_usage = $stront_large;
@@ -78,7 +107,8 @@ class StarbaseFuel extends BaseNotify {
                 if ($sov_tower)
                     $usage = $sov_large_usage;
                 else
-                    $usage = $large_usage;  
+                    $usage = $large_usage;
+
             }
 
             if(\Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->lte(\Carbon\Carbon::now()->addDays(3)))
@@ -97,9 +127,9 @@ class StarbaseFuel extends BaseNotify {
                         $notification->title = "Low Fuel!";
                         $notification->text = "One of your starbases has only ".$posNeedsFuelData[0]." fuel blocks left, this will last for ".$posNeedsFuelData[1];
                         $notification->save();
-                    } 
+                    }
                 }
-            } 
+            }
         }
     }
 }

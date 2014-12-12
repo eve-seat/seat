@@ -114,19 +114,21 @@
         });
       })();
 
+      // Periodically check the top status bar for notication
+      // related information
       (function worker() {
-              $.ajax({
-                type: "get",
-                url: "{{ URL::to('notification/short-status') }}",
-                success: function(data) {
-                  $("span#notification_count").text(data.notification_count);
-                },
-                complete: function() {
-                  // Schedule the next request when the current one's complete
-                  setTimeout(worker, 10000); // 10 Seconds
-                }
-              });
-            })();
+        $.ajax({
+          type: "get",
+          url: "{{ URL::to('notification/short-status') }}",
+          success: function(data) {
+            $("span#notification_count").text(data.notification_count);
+          },
+          complete: function() {
+            // Schedule the next request when the current one's complete
+            setTimeout(worker, 10000); // 10 Seconds
+          }
+        });
+      })();
 
       // Specify the location of the search controller
       var search_location = "{{ action('DashboardController@getSearch') }}"
