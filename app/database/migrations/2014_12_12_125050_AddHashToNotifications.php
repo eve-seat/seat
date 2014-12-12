@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddHashToNotifications extends Migration 
+class AddHashToNotifications extends Migration
 {
 
 	/**
@@ -15,7 +15,7 @@ class AddHashToNotifications extends Migration
 	{
 		Schema::table('seat_notifications', function($table)
 		{
-		    $table->string('hash');
+		    $table->string('hash')->after('read');
 		});
 	}
 
@@ -26,7 +26,10 @@ class AddHashToNotifications extends Migration
 	 */
 	public function down()
 	{
-		//
+		Schema::table('seat_notifications', function($table)
+		{
+		    $table->dropColumn('hash');
+		});
 	}
 
 }
