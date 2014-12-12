@@ -33,7 +33,7 @@ class StarbaseFuel extends BaseNotify
     public static function update()
     {
 
-        $stabases = \EveCorporationStarbaseDetail::all();
+        $starbases = \EveCorporationStarbaseDetail::all();
 
         $fuelNeeded = array();
 
@@ -63,7 +63,7 @@ class StarbaseFuel extends BaseNotify
         // basically, here we check if the names Small/Medium exists in the tower name. Then,
         // if the tower is in the sov_tower array, set the value for usage
 
-        foreach($stabases as $starbase) {
+        foreach($starbases as $starbase) {
 
             $sov_tower = false;
 
