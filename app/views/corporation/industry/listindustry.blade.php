@@ -20,7 +20,7 @@
             <div class="icon">
               <img src="http://image.eveonline.com/Corporation/{{ $corp->corporationID }}_32.png" class="img-circle" />
             </div>
-            <a href="{{ action('CorporationController@getJobs', array('corporationID' => $corp->corporationID)) }}" class="small-box-footer">
+            <a href="{{ action('CorporationController@getIndustry', array('corporationID' => $corp->corporationID)) }}" class="small-box-footer">
               View Corporation Jobs <i class="fa fa-arrow-circle-right"></i>
             </a>
           </div>
