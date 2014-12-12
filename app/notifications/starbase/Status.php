@@ -34,30 +34,41 @@ class StarbaseStatus extends BaseNotify
     {
         $stabases = \EveCorporationStarbaseDetail::all();
 
-        $stateNeeded = array();
+        $state_needed = array();
 
         foreach($stabases as $starbase) {
 
             if($starbase->state == 1)
-                $stateNeeded = array_add($stateNeeded, $starbase->id, array("Anchored / Offline", $starbase->corporationID));
+                $state_needed = array_add($state_needed, $starbase->id, array("Anchored / Offline", $starbase->corporationID));
 
             elseif($starbase->state == 3)
-                $stateNeeded = array_add($stateNeeded, $starbase->id, array("Reinforced", $starbase->corporationID));
+                $state_needed = array_add($state_needed, $starbase->id, array("Reinforced", $starbase->corporationID));
 
         }
 
-        $posUsers = \Sentry::findAllUsersWithAccess('pos_manager');
+        $pos_users = \Sentry::findAllUsersWithAccess('pos_manager');
 
-        if(!empty($stateNeeded)) {
-            foreach($stateNeeded as $posNeedsChecked => $posNeedsCheckedData) {
-                foreach($posUsers as $posUser) {
-                    if(BaseNotify::canAccessCorp($posUser->id, $posNeedsCheckedData[1])) {
-                        $notification = new \SeatNotification;
-                        $notification->user_id = $posUser->id;
-                        $notification->type = "POS";
-                        $notification->title = "POS Status!";
-                        $notification->text = "One of your starbases has the following status: ".$posNeedsCheckedData[0];
-                        $notification->save();
+        if(!empty($state_needed)) {
+            foreach($state_needed as $pos_needs_checked => $pos_needs_checked_data) {
+                foreach($pos_users as $pos_user) {
+                    if(BaseNotify::canAccessCorp($pos_user->id, $pos_needs_checked_data[1])) {
+                        $notification_type = "POS";
+                        $notification_title = "Low Fuel!";
+                        $notification_text = "One of your starbases has the following status: ".$pos_needs_checked_data[0];
+                        $hash = BaseNotify::makeNotificationHash($super_user->id, $notification_type, $notification_title, $notification_text);
+
+                        $check = \SeatNotification::where('hash', '=', $hash)->exists();
+
+                        if(!$check) {
+
+                            $notification = new \SeatNotification;
+                            $notification->user_id = $pos_user->id;
+                            $notification->type = $notification_type;
+                            $notification->title = $notification_title;
+                            $notification->text = $notification_text;
+                            $notification->hash = $hash;
+                            $notification->save();
+                        }
                     }
                 }
             }

@@ -65,6 +65,16 @@ class Notify
 
             Notifications\Starbase\StarbaseStatus::Update();
 
+            $job_record->output = 'Started API Banned Calls Check';
+            $job_record->save();
+
+            Notifications\Api\BannedCall::Update();
+
+            $job_record->output = 'Started Key Check';
+            $job_record->save();
+
+            Notifications\Api\KeyCheck::Update();
+
             $job_record->status = 'Done';
             $job_record->output = null;
             $job_record->save();

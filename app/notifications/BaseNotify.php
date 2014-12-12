@@ -63,4 +63,19 @@ class BaseNotify
         return false;
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | makeCallHash()
+    |--------------------------------------------------------------------------
+    |
+    | Generate a MD5 hash based on the 3 received arguements for caching related
+    | information in the database.
+    |
+    */
+
+    public static function makeNotificationHash($userID, $type, $title, $text)
+    {
+        return md5(implode(',', array($userID, $type, $title, $text)));
+    }
+
 }
