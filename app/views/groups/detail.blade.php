@@ -47,11 +47,11 @@
 					{{ Form::open(array('action' => array('GroupsController@postUpdateGroup', $group->id), 'class' => 'form-horizontal')) }}
 						<fieldset>
 
-							@foreach ($availablePermissions as $permission)
+							@foreach ($available_permissions as $permission)
 								<div class="form-group">
 									<label class="col-md-6 control-label" for="singlebutton">{{ ucwords(str_replace("_", " ", $permission->permission)) }}</label>
 						  			<div class="form-group">
-						  				{{ Form::checkbox($permission->permission, '1', (isset($hasPermissions[$permission->permission]) ? true : false)) }}
+						  				{{ Form::checkbox($permission->permission, '1', (isset($has_permissions[$permission->permission]) ? true : false)) }}
 						  			</div>
 						  		</div>
 						  	@endforeach
@@ -59,16 +59,16 @@
 						  	<div class="form-group">
 								<label class="col-md-6 control-label" for="singlebutton">Super User</label>
 					  			<div class="form-group">
-					  				{{ Form::checkbox('superuser', '1', (isset($hasPermissions['superuser']) ? true : false)) }}
+					  				{{ Form::checkbox('superuser', '1', (isset($has_permissions['superuser']) ? true : false)) }}
 					  			</div>
 					  		</div>
 
 							<!-- Button -->
-							
+
 							<div class="col-md-6">
-								{{ Form::submit('Update Group Permissions', array('class' => 'btn bg-olive btn-block')) }}            
+								{{ Form::submit('Update Group Permissions', array('class' => 'btn bg-olive btn-block')) }}
 							</div>
-							
+
 						</fieldset>
 					{{ Form::close() }}
 				</div><!-- /.box-body -->
@@ -96,7 +96,7 @@
         },
         danger: {
           label: "Delete Group",
-          className: "btn-danger", 
+          className: "btn-danger",
           callback: function() {
             window.location = remove_user;
           }

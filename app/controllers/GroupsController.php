@@ -85,7 +85,7 @@ class GroupsController extends BaseController
 
             $group = Sentry::findGroupById($groupID);
             $users = Sentry::findAllUsersInGroup($group);
-            $availablePermissions = SeatPermissions::all();
+            $available_permissions = SeatPermissions::all();
 
         } catch (Cartalyst\Sentry\Groups\GroupExistsException $e) {
 
@@ -95,8 +95,8 @@ class GroupsController extends BaseController
         return View::make('groups.detail')
             ->with('group', $group)
             ->with('users', $users)
-            ->with('hasPermissions', $group->getPermissions())
-            ->with('availablePermissions', $availablePermissions);
+            ->with('has_permissions', $group->getPermissions())
+            ->with('available_permissions', $available_permissions);
     }
 
     /*
@@ -112,20 +112,18 @@ class GroupsController extends BaseController
     {
 
         $permissions = Input::except('_token');
-        $availablePermissions = SeatPermissions::all();
-        $setPermissions = array();
+        $available_permissions = SeatPermissions::all();
+        $set_permissions = array();
 
-        foreach($availablePermissions as $availablePermission)
-        {
-            if(array_key_exists($availablePermission->permission, $permissions))
-                $setPermissions = array_add($setPermissions, $availablePermission->permission, 1);
+        foreach($available_permissions as $available_permission)
+            if(array_key_exists($available_permission->permission, $permissions))
+                $set_permissions = array_add($set_permissions, $available_permission->permission, 1);
             else
-                $setPermissions = array_add($setPermissions, $availablePermission->permission, 0);
-        }
+                $set_permissions = array_add($set_permissions, $available_permission->permission, 0);
 
         $group = Sentry::findGroupById($groupID);
 
-        $group->permissions = $setPermissions;
+        $group->permissions = $set_permissions;
 
         if ($group->save())
             return Redirect::action('GroupsController@getDetail', $groupID)
@@ -147,8 +145,8 @@ class GroupsController extends BaseController
     public function postNewGroup()
     {
 
-        $newGroup = Input::All();
-        $validation = new Validators\SeatGroupValidator($newGroup);
+        $new_group = Input::All();
+        $validation = new Validators\SeatGroupValidator($new_group);
 
         if ($validation->passes()) {
 
