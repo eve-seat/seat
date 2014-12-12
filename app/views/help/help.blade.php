@@ -10,7 +10,7 @@
         <div class="box-header">
           <h3 class="box-title">Getting Help <small>with SeAT only sorry >:)</small></h3>
           <div class="box-tools pull-right">
-            <button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-primary btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>
             <button class="btn btn-primary btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
           </div>
         </div>
@@ -36,7 +36,7 @@
         <div class="box-header">
           <h3 class="box-title">Version Information</h3>
           <div class="box-tools pull-right">
-            <button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-primary btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>
             <button class="btn btn-primary btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
           </div>
         </div>

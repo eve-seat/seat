@@ -90,7 +90,7 @@
         <div class="box-header">
           <h3 class="box-title">Queued Jobs</h3>
           <div class="box-tools pull-right">
-            <button class="btn btn-info btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-info btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>
             <button class="btn btn-info btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
           </div>
         </div>
@@ -147,7 +147,7 @@
         <div class="box-header">
           <h3 class="box-title">Current Working Jobs</h3>
           <div class="box-tools pull-right">
-            <button class="btn btn-warning btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-warning btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>
             <button class="btn btn-warning btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
           </div>
         </div>
@@ -211,7 +211,7 @@
                 <button id="delete-all-errors" class="btn btn-danger btn-sm" data-widget="remove"><i class="fa fa-eraser"></i> Delete All</button> |
               @endif
 
-              <button class="btn btn-danger btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+              <button class="btn btn-danger btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>
               <button class="btn btn-danger btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
             </div>
           </div>
@@ -265,7 +265,7 @@
         <div class="box-header">
           <h3 class="box-title">Job History (Last {{ count($db_history) }})</h3>
           <div class="box-tools pull-right">
-            <button class="btn btn-success btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button class="btn btn-success btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>
             <button class="btn btn-success btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
           </div>
         </div>
