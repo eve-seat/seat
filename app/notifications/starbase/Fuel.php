@@ -35,7 +35,7 @@ class StarbaseFuel extends BaseNotify
 
         $starbases = \EveCorporationStarbaseDetail::all();
 
-        $fuelNeeded = array();
+        $fuel_needed = array();
 
         // Set some base usage values ...
 
@@ -112,21 +112,32 @@ class StarbaseFuel extends BaseNotify
             }
 
             if(\Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->lte(\Carbon\Carbon::now()->addDays(3)))
-                $fuelNeeded = array_add($fuelNeeded, $starbase->id, array($starbase->fuelBlocks, \Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->diffForHumans(), $starbase->corporationID));
+                $fuel_needed = array_add($fuel_needed, $starbase->id, array($starbase->fuelBlocks, \Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->diffForHumans(), $starbase->corporationID));
         }
 
-        $posUsers = \Sentry::findAllUsersWithAccess('pos_manager');
+        $pos_users = \Sentry::findAllUsersWithAccess('pos_manager');
 
-        if(!empty($fuelNeeded)) {
-            foreach($fuelNeeded as $posNeedsFuelID => $posNeedsFuelData) {
-                foreach($posUsers as $posUser) {
-                    if(BaseNotify::canAccessCorp($posUser->id, $posNeedsFuelData[2])) {
-                        $notification = new \SeatNotification;
-                        $notification->user_id = $posUser->id;
-                        $notification->type = "POS";
-                        $notification->title = "Low Fuel!";
-                        $notification->text = "One of your starbases has only ".$posNeedsFuelData[0]." fuel blocks left, this will last for ".$posNeedsFuelData[1];
-                        $notification->save();
+        if(!empty($fuel_needed)) {
+            foreach($fuel_needed as $pos_needs_fuel_id => $pos_needs_fuel_data) {
+                foreach($pos_users as $pos_user) {
+                    if(BaseNotify::canAccessCorp($pos_user->id, $pos_needs_fuel_data[2])) {
+                        $notification_type = "POS";
+                        $notification_title = "Low Fuel!";
+                        $notification_text = "One of your starbases has only ".$pos_needs_fuel_data[0]." fuel blocks left, this will last for ".$pos_needs_fuel_data[1];
+                        $hash = BaseNotify::makeNotificationHash($super_user->id, $notification_type, $notification_title, $notification_text);
+
+                        $check = \SeatNotification::where('hash', '=', $hash)->exists();
+
+                        if(!$check) {
+
+                            $notification = new \SeatNotification;
+                            $notification->user_id = $pos_user->id;
+                            $notification->type = $notification_type;
+                            $notification->title = $notification_title;
+                            $notification->text = $notification_text;
+                            $notification->hash = $hash;
+                            $notification->save();
+                        }
                     }
                 }
             }
