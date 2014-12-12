@@ -59,23 +59,19 @@ Route::group(array('before' => 'auth|csrf|key.required'), function() {
     Route::controller('eve', 'EveController');
     Route::controller('queue', 'QueueController');
 
-    Route::controller('groups', 'GroupsController');
+    // Super users are the only ones that should be accessing
+    // the following controllers
+    Route::group(array('prefix' => 'configuration', 'before' => 'auth.superuser'), function() {
+
+        Route::controller('user', 'UserController');
+        Route::controller('settings', 'SettingsController');
+        Route::controller('groups', 'GroupsController');
+    });
 
     Route::controller('permissions', 'PermissionsController');
-
-    Route::controller('settings', 'SettingsController');
-
     Route::controller('helpers', 'HelperController');
-    Route::controller('user', 'UserController');
     Route::controller('debug', 'DebugController');
-
     Route::controller('profile', 'ProfileController');
     Route::controller('help', 'HelpController');
 
 });
-
-Route::when('user/*', 'auth.superuser');
-
-Route::when('settings/*', 'auth.superuser');
-
-Route::when('groups/*', 'auth.superuser');
