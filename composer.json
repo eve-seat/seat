@@ -19,6 +19,7 @@
 			"app/models",
 			"app/queues",
 			"app/eveapi",
+			"app/notifications",
 			"app/database/migrations",
 			"app/database/seeds",
 			"app/services",

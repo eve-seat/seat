@@ -58,6 +58,7 @@ Route::group(array('before' => 'auth|csrf|key.required'), function() {
     Route::controller('corporation', 'CorporationController');
     Route::controller('eve', 'EveController');
     Route::controller('queue', 'QueueController');
+    Route::controller('notification', 'NotificationController');
 
     // Super users are the only ones that should be accessing
     // the following controllers

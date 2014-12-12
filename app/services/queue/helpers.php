@@ -37,10 +37,7 @@ class QueueHelper
     |
     */
 
-    public static function addToQueue($queue, $ownerID, $vCode, $api, $scope) {
-
-        // Set the root namesace for queued commands
-        $command_namespace = 'Seat\EveQueues\\';
+    public static function addToQueue($queue, $ownerID, $vCode, $api, $scope, $command_namespace = '\Seat\EveQueues\\') {
 
         // Prepare the auth array
         if($vCode != NULL)
