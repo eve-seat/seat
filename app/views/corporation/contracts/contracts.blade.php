@@ -1,6 +1,6 @@
 @extends('layouts.masterLayout')
 
-@section('html_title', 'Corporation Assets')
+@section('html_title', 'Corporation Contracts')
 
 @section('page_content')
 
