@@ -386,4 +386,35 @@ class SeatGuard extends \Illuminate\Auth\Guard
         return $users;
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | findAllUsersWithAccess()
+    |--------------------------------------------------------------------------
+    |
+    | Returns all users that have access to a specific permission
+    |
+    */
+    public function findAllUsersWithAccess($permission)
+    {
+
+        // Lets start by specifying a empty array that
+        // will house the user objects that have
+        // access to the $permission
+        $permitted_users = array();
+
+        // Move on to getting all of the systems users
+        $users = \User::all();
+
+        // Move on to iterating over all of the systems
+        // users, checking if they have access to the
+        // specified permission
+        foreach(\User::all() as $user)
+
+            // Check the permission state
+            if ($this->hasAccess($user, $permission))
+                $permitted_users[] = $user;
+
+        return $permitted_users;
+    }
+
 }
