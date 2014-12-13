@@ -27,37 +27,46 @@ namespace Seat\Notifications\Api;
 
 use Seat\Notifications\BaseNotify;
 
+/*
+|--------------------------------------------------------------------------
+| Banned API Calls Notification
+|--------------------------------------------------------------------------
+|
+| This notification looks up the banned calls tied to API keys. Once
+| a key has received a banned call a notification will be sent.
+|
+*/
+
 class BannedCall extends BaseNotify
 {
 
-    public static function update()
+    public static function Update()
     {
+
+        // Learn about all of the banned calls that
+        // we are aware of
         $banned_calls = \EveBannedCall::all();
 
+        // For every banned call that we have, prepare
+        // a notification to send
         foreach($banned_calls as $banned_call) {
 
-            $super_users = \Sentry::findAllUsersWithAccess('superuser');
+            // Super users will be receiving this notification,
+            // so loop over the current superusers that we
+            // have
+            foreach(\Auth::findAllUsersWithAccess('superuser') as $super_user) {
 
-            foreach($super_users as $super_user) {
+                // Compile the full notification
+                $notification_type = 'API';
+                $notification_title = 'Banned Call';
+                $notification_text = 'An API key as triggered a banned call. Owner ID: ' .
+                        $banned_call->ownerID . ', Call: ' . $banned_call->api. ', Scope: ' .
+                        $banned_call->scope. ', Reason: ' . $banned_call->reason;
 
-                $notification_type = "API";
-                $notification_title = "Banned Call";
-                $notification_text = "An API key as triggered a banned call. Owner ID: ".$banned_call->ownerID.", Call: ".$banned_call->api.", Scope:".$banned_call->scope.", Reason: ".$banned_call->reason;
-                $hash = BaseNotify::makeNotificationHash($super_user->id, $notification_type, $notification_title, $notification_text);
+                // Send the notification
+                BaseNotify::sendNotification($super_user->id, $notification_type, $notification_title, $notification_text);
 
-                $check = \SeatNotification::where('hash', '=', $hash)->exists();
-
-                if(!$check) {
-
-                    $notification = new \SeatNotification;
-                    $notification->user_id = $super_user->id;
-                    $notification->type = $notification_type;
-                    $notification->title = $notification_title;
-                    $notification->text = $notification_text;
-                    $notification->hash = $hash;
-                    $notification->save();     
-                }   
             }
-        }        
+        }
     }
 }

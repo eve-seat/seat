@@ -58,12 +58,12 @@ class Notify
             $job_record->output = 'Started Starbase Fuel Check';
             $job_record->save();
 
-            Notifications\Starbase\StarbaseFuel::Update();
+            Notifications\Starbase\Fuel::Update();
 
             $job_record->output = 'Started Starbase Status Check';
             $job_record->save();
 
-            Notifications\Starbase\StarbaseStatus::Update();
+            Notifications\Starbase\Status::Update();
 
             $job_record->output = 'Started API Banned Calls Check';
             $job_record->save();
@@ -77,7 +77,7 @@ class Notify
             $job_record->output = 'Started Corporation Member Check';
             $job_record->save();
 
-            Notifications\Corporation\MemberStatus::Update();
+            Notifications\Corporation\MemberInactivity::Update();
 
             $job_record->status = 'Done';
             $job_record->output = null;

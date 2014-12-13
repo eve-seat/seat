@@ -27,48 +27,94 @@ namespace Seat\Notifications\Starbase;
 
 use Seat\Notifications\BaseNotify;
 
-class StarbaseStatus extends BaseNotify
+/*
+|--------------------------------------------------------------------------
+| Status Status Notification
+|--------------------------------------------------------------------------
+|
+| This notification looks up the starbases that SeAT is aware of. Each
+| starbase is then checked for it's status and notified if it if
+| changed
+|
+*/
+
+class Status extends BaseNotify
 {
 
-    public static function update()
+    public static function Update()
     {
+
+        // Before we even bother getting to the point of
+        // determining which starbases would need a
+        // notification to be sent, check if there
+        // are any users configured that have
+        // ther required roles
+        $pos_role_users = \Auth::findAllUsersWithAccess('pos_manager');
+
+        // If there are none with the role, just stop
+        if(count($pos_role_users) <= 0)
+            return;
+
+        // Next, grab the starbases that we know of
         $stabases = \EveCorporationStarbaseDetail::all();
 
         $state_needed = array();
 
+        // Looping over the starbases, check what the status of it.
+        // Currently we only send a notification if it went
+        // offline or has been re-inforced
         foreach($stabases as $starbase) {
 
-            if($starbase->state == 1)
-                $state_needed = array_add($state_needed, $starbase->id, array("Anchored / Offline", $starbase->corporationID));
+            // Check the status of the starbase and
+            // switch between them, updating the
+            // state of the tower for a message
+            $starbase_status = null;
 
-            elseif($starbase->state == 3)
-                $state_needed = array_add($state_needed, $starbase->id, array("Reinforced", $starbase->corporationID));
+            switch ($starbase->state) {
 
-        }
+                case 1:
+                    $starbase_status = 'Anchored / Offline';
+                    break;
 
-        $pos_users = \Sentry::findAllUsersWithAccess('pos_manager');
+                case 3:
+                    $starbase_status = 'Reinforced';
 
-        if(!empty($state_needed)) {
-            foreach($state_needed as $pos_needs_checked => $pos_needs_checked_data) {
-                foreach($pos_users as $pos_user) {
-                    if(BaseNotify::canAccessCorp($pos_user->id, $pos_needs_checked_data[1])) {
-                        $notification_type = "POS";
-                        $notification_title = "Low Fuel!";
-                        $notification_text = "One of your starbases has the following status: ".$pos_needs_checked_data[0];
-                        $hash = BaseNotify::makeNotificationHash($super_user->id, $notification_type, $notification_title, $notification_text);
+                default:
+                    # code...
+                    break;
+            }
 
-                        $check = \SeatNotification::where('hash', '=', $hash)->exists();
+            // If the starbase was in any of the statusses
+            // that we case about, attempt to find users
+            // to notify
+            if(!is_null($starbase_status)) {
 
-                        if(!$check) {
+                foreach ($pos_role_users as $pos_user) {
 
-                            $notification = new \SeatNotification;
-                            $notification->user_id = $pos_user->id;
-                            $notification->type = $notification_type;
-                            $notification->title = $notification_title;
-                            $notification->text = $notification_text;
-                            $notification->hash = $hash;
-                            $notification->save();
-                        }
+                    // A last check is done now to make sure we
+                    // don't let everyone for every corp know
+                    // about a specific corp. No, we first
+                    // check that the user we want to
+                    // send to has the role for that
+                    // specific corp too!
+                    if(BaseNotify::canAccessCorp($pos_user->id, $starbase->corporationID)) {
+
+                        // Ok! Time to finally get to pushing the
+                        // notification out! :D
+
+                        // We will make sure that we don't spam the user
+                        // with notifications, so lets hash the event
+                        // and ensure that its not present in the
+                        // database yet
+
+                        // Prepare the total notification
+                        $notification_type = 'Starbase';
+                        $notification_title = 'Dangerous Status';
+                        $notification_text = 'One of your starbases is: ' . $starbase_status;
+
+                        // Send the notification
+                        BaseNotify::sendNotification($pos_user->id, $notification_type, $notification_title, $notification_text);
+
                     }
                 }
             }

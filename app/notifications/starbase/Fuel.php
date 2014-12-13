@@ -27,61 +27,107 @@ namespace Seat\Notifications\Starbase;
 
 use Seat\Notifications\BaseNotify;
 
-class StarbaseFuel extends BaseNotify
+/*
+|--------------------------------------------------------------------------
+| Starbase Fuel Notification
+|--------------------------------------------------------------------------
+|
+| This notification looks up the starbases that SeAT is aware of. Each
+| starbase is then checked for it's fuel levels based on on its
+| type. Once a starbase is determined as low on fuel, people
+| with access to that tower will be sent a notification
+| about it.
+|
+*/
+
+class Fuel extends BaseNotify
 {
 
-    public static function update()
+    public static function Update()
     {
 
+        // Before we even bother getting to the point of
+        // determining which starbases would need a
+        // notification to be sent, check if there
+        // are any users configured that have
+        // ther required roles
+        $pos_role_users = \Auth::findAllUsersWithAccess('pos_manager');
+
+        // If there are none with the role, just stop
+        if(count($pos_role_users) <= 0)
+            return;
+
+        // Next, grab the list of starbases that we are aware of
         $starbases = \EveCorporationStarbaseDetail::all();
 
-        $fuel_needed = array();
+        // To determine the fuel needed, we need to get some
+        // values out there that tell us *how* much fuel
+        // certain towers need. So, we will set a base
+        // amount for each of them. Should this
+        // change in the future, then we can
+        // simply edit the value here
 
-        // Set some base usage values ...
-
+        // The final usage once we have determined the tower
+        // type
         $usage = 0;
         $stront_usage =0;
 
+        // The base values for the tower sizes
         // ... fuel for non sov towers ...
-
         $large_usage = 40;
         $medium_usage = 20;
         $small_usage = 10;
 
         // ... and sov towers
-
         $sov_large_usage = 30;
         $sov_medium_usage = 15;
         $sov_small_usage = 8;
 
         // Stront usage
-
         $stront_large = 400;
         $stront_medium = 200;
         $stront_small = 100;
 
-        // basically, here we check if the names Small/Medium exists in the tower name. Then,
-        // if the tower is in the sov_tower array, set the value for usage
-
+        // Now, we will loop over the starbases that we know if and determine
+        // the size of the tower, along with the location of the tower.
+        // Towers anchored in sov space get to use less fuel.
+        //
+        // The result of this loop should have $usage and $stront_usage
+        // populated with the correct value for the tower in question
         foreach($starbases as $starbase) {
 
+            // Lets check if the tower is anchored in space where the
+            // owner of it holds sov.
             $sov_tower = false;
 
+            // Get the allianceID that the corporation is a member of
             $alliance_id = \DB::table('corporation_corporationsheet')
                 ->where('corporationID', $starbase->corporationID)
                 ->pluck('allianceID');
 
-            if($alliance_id) {
+            // Check if the alliance_id was actually determined. If so,
+            // do the sov_towers loop, else we just set the
+            if ($alliance_id) {
 
-                $location = \DB::table('map_sovereignty')
-                    ->select('solarSystemID')
-                    ->where('factionID', 0)
-                    ->where('allianceID', $alliance_id);
+                // Lets see if this tower is in a sov system
+                $sov_location = \DB::table('corporation_starbaselist')
+                    ->whereIn('locationID', function($location) use ($alliance_id) {
 
-                if($location)
+                        $location->select('solarSystemID')
+                            ->from('map_sovereignty')
+                            ->where('factionID', 0)
+                            ->where('allianceID', $alliance_id);
+                    })->where('corporationID', $starbase->corporationID)
+                    ->where('itemID', $starbase->itemID)
+                    ->first();
+
+                if ($sov_location)
                     $sov_tower = true;
+
             }
 
+            // With the soverenity status known, move on to
+            // determine the size of the tower.
             if (strpos($starbase->typeName, 'Small') !== false) {
 
                 $stront_usage = $stront_small;
@@ -111,36 +157,48 @@ class StarbaseFuel extends BaseNotify
 
             }
 
-            if(\Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->lte(\Carbon\Carbon::now()->addDays(3)))
-                $fuel_needed = array_add($fuel_needed, $starbase->id, array($starbase->fuelBlocks, \Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->diffForHumans(), $starbase->corporationID));
-        }
+            // Now we finally have $usage and $stront_usage known!
+            // Lets get to the part where we finally check if
+            // there is enough reserves. If not, do what
+            // we came for and notify someone
 
-        $pos_users = \Sentry::findAllUsersWithAccess('pos_manager');
+            // If now plus (the fuel amount devided by the usage) muliplied
+            // by hours is less that 3 days, send a notification
+            if(\Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->lte(\Carbon\Carbon::now()->addDays(3))) {
 
-        if(!empty($fuel_needed)) {
-            foreach($fuel_needed as $pos_needs_fuel_id => $pos_needs_fuel_data) {
-                foreach($pos_users as $pos_user) {
-                    if(BaseNotify::canAccessCorp($pos_user->id, $pos_needs_fuel_data[2])) {
-                        $notification_type = "POS";
-                        $notification_title = "Low Fuel!";
-                        $notification_text = "One of your starbases has only ".$pos_needs_fuel_data[0]." fuel blocks left, this will last for ".$pos_needs_fuel_data[1];
-                        $hash = BaseNotify::makeNotificationHash($super_user->id, $notification_type, $notification_title, $notification_text);
+                // OK! We need to tell someone that their towers fuel is
+                // going to be running out soon!
+                foreach ($pos_role_users as $pos_user) {
 
-                        $check = \SeatNotification::where('hash', '=', $hash)->exists();
+                    // A last check is done now to make sure we
+                    // don't let everyone for every corp know
+                    // about a specific corp. No, we first
+                    // check that the user we want to
+                    // send to has the role for that
+                    // specific corp too!
+                    if(BaseNotify::canAccessCorp($pos_user->id, $starbase->corporationID)) {
 
-                        if(!$check) {
+                        // Ok! Time to finally get to pushing the
+                        // notification out! :D
 
-                            $notification = new \SeatNotification;
-                            $notification->user_id = $pos_user->id;
-                            $notification->type = $notification_type;
-                            $notification->title = $notification_title;
-                            $notification->text = $notification_text;
-                            $notification->hash = $hash;
-                            $notification->save();
-                        }
+                        // We will make sure that we don't spam the user
+                        // with notifications, so lets hash the event
+                        // and ensure that its not present in the
+                        // database yet
+
+                        // Prepare the total notification
+                        $notification_type = 'Starbase';
+                        $notification_title = 'Low Fuel!';
+                        $notification_text = 'One of your starbases has only ' .
+                            $starbase->fuelBlocks . ' fuel blocks left, this will last for ' .
+                            \Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->diffForHumans();
+
+                        // Send the notification
+                        BaseNotify::sendNotification($pos_user->id, $notification_type, $notification_title, $notification_text);
+
                     }
                 }
-            }
+            }   // End fuel left over if()
         }
     }
 }

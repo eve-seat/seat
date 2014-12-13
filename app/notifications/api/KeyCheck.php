@@ -27,40 +27,49 @@ namespace Seat\Notifications\Api;
 
 use Seat\Notifications\BaseNotify;
 
+/*
+|--------------------------------------------------------------------------
+| Disabled API Keys Notification
+|--------------------------------------------------------------------------
+|
+| This notification looks up disabled API keys. Once a key has been
+| determined as disabled, or 'isOk == 0', a notification will be
+| send to a super user
+|
+*/
+
 class KeyCheck extends BaseNotify
 {
 
-    public static function update()
+    public static function Update()
     {
+
+        // Grab all of the API keys that SeAT
+        // is aware of
         $seat_keys = \SeatKey::all();
 
+        // Looping over all of the keys, we will find
+        // the superusers and send them the
+        // notification about this
         foreach ($seat_keys as $seat_key) {
 
             if($seat_key->isOk == 0) {
 
-                $super_users = \Sentry::findAllUsersWithAccess('superuser');
+                // We have a key that is not OK, find
+                // some people to tell about thits!
+                foreach(\Auth::findAllUsersWithAccess('superuser') as $super_user) {
 
-                foreach($super_users as $super_user) {
+                    // Compile the full notification
+                    $notification_type = 'API';
+                    $notification_title = 'Disabled Key';
+                    $notification_text = 'An API key is no longer okay. KeyID: '. $seat_key->keyID . ', vCode: ' .
+                            $seat_key->vCode . ', lastError: ' . $seat_key->lastError;
 
-                    $notification_type = "API";
-                    $notification_title = "Key Not Okay";
-                    $notification_text = "An API key is no longer okay. KeyID: ".$seat_key->keyID.", vCode: ".$seat_key->vCode.", lastError: ".$seat_key->lastError;
-                    $hash = BaseNotify::makeNotificationHash($super_user->id, $notification_type, $notification_title, $notification_text);
+                    // Send the Notification
+                    BaseNotify::sendNotification($super_user->id, $notification_type, $notification_title, $notification_text);
 
-                    $check = \SeatNotification::where('hash', '=', $hash)->exists();
-
-                    if(!$check) {
-
-                        $notification = new \SeatNotification;
-                        $notification->user_id = $super_user->id;
-                        $notification->type = $notification_type;
-                        $notification->title = $notification_title;
-                        $notification->text = $notification_text;
-                        $notification->hash = $hash;
-                        $notification->save();     
-                    }   
                 }
-            }    
-        }       
+            }
+        }
     }
 }
