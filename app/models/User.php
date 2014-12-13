@@ -97,8 +97,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface
     }
 
     public function groups()
-    {   
+    {
         return $this->belongsToMany('Group', 'seat_group_user');
     }
+
+    public function logins()
+    {
+        return $this->hasMany('SeatLoginHistory');
+    }
+
 
 }

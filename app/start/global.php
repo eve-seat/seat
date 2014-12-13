@@ -135,3 +135,16 @@ Auth::extend('cushion', function()
 */
 
 require app_path().'/filters.php';
+
+/*
+|--------------------------------------------------------------------------
+| Require The Events File
+|--------------------------------------------------------------------------
+|
+| Next we will load the events file for the application. This gives us
+| a nice separate location to store our event information and allows
+| for neat declarations of them
+|
+*/
+
+require app_path().'/events.php';
