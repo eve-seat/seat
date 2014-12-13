@@ -77,7 +77,7 @@ class ProfileController extends BaseController
 
         if($validation->passes()) {
 
-            if(Auth::validate(array('email' => $email, 'password' => Hash::make(Input::get('oldPassword'))))) {
+            if(Auth::validate(array('email' => Auth::User()->email, 'password' => Input::get('oldPassword')))) {
 
                 $user->password = \Hash::make(Input::get('newPassword_confirmation'));
                 $user->save();
