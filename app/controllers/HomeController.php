@@ -58,13 +58,19 @@ class HomeController extends BaseController
 
                 $total_keys = SeatKey::whereIn('keyID', Session::get('valid_keys'))->count();
                 $total_characters = EveCharacterCharacterSheet::join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
-                    ->whereIn('keyID', Session::get('valid_keys'))
+                    ->join('account_apikeyinfo', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+                    ->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
+                    ->where('account_apikeyinfo.type','=','Character')
                     ->count();
                 $total_isk = EveCharacterCharacterSheet::join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
-                    ->whereIn('keyID', Session::get('valid_keys'))
+                    ->join('account_apikeyinfo', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+                    ->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
+                    ->where('account_apikeyinfo.type','=','Character')
                     ->sum('balance');
                 $total_skillpoints = EveCharacterCharacterSheetSkills::join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet_skills.characterID')
-                    ->whereIn('keyID', Session::get('valid_keys'))
+                    ->join('account_apikeyinfo', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+                    ->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
+                    ->where('account_apikeyinfo.type','=','Character')
                     ->sum('skillpoints');
 
             } else {
