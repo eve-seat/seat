@@ -207,7 +207,7 @@ class HelperController extends BaseController
     public function getAccounts()
     {
 
-        $accounts = DB::table('users')
+        $accounts = DB::table('seat_users')
             ->select('id', DB::raw('username as text'))
             ->where('username', 'like', '%' . Input::get('q') . '%')
             ->get();

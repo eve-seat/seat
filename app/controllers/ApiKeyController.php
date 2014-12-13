@@ -314,7 +314,7 @@ class ApiKeyController extends BaseController
             ->get();
 
         $key_owner = DB::table('seat_keys')
-            ->join('users', 'seat_keys.user_id', '=', 'users.id')
+            ->join('seat_users', 'seat_keys.user_id', '=', 'seat_users.id')
             ->where('seat_keys.keyID', $keyID)
             ->get();
 

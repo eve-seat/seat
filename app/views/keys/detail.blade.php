@@ -146,7 +146,7 @@
 
     <div class="col-md-4">
 
-      @if(Sentry::getUser()->isSuperUser())
+      @if(Auth::isSuperUser(\Auth::User()))
 
         <div class="box box-solid">
           <div class="box-header">
