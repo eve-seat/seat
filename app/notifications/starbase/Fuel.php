@@ -199,6 +199,57 @@ class Fuel extends BaseNotify
                     }
                 }
             }   // End fuel left over if()
+
+            // Check how many starbase charters are left. We
+            // will hace to check the security of the
+            // anchored system to ensure we dont
+            // spazz out and notifify about
+            // 0sec towers
+            $starbase_sec = \DB::table('mapDenormalize')
+                ->join('corporation_starbaselist', 'corporation_starbaselist.locationID', '=', 'mapDenormalize.solarSystemID')
+                ->where('corporation_starbaselist.itemID', $starbase->itemID)
+                ->pluck('mapDenormalize.security');
+
+            // If the security status of the system the tower
+            // is anchored in is > 5, check the charters
+            if ($starbase_sec >= 5) {
+
+                if(Carbon\Carbon::now()->addHours($starbase->starbaseCharter / 1)->lte(Carbon\Carbon::now()->addDays(3))) {
+
+                    // OK! We need to tell someone that their towers charters is
+                    // going to be running out soon!
+                    foreach ($pos_role_users as $pos_user) {
+
+                        // A last check is done now to make sure we
+                        // don't let everyone for every corp know
+                        // about a specific corp. No, we first
+                        // check that the user we want to
+                        // send to has the role for that
+                        // specific corp too!
+                        if(BaseNotify::canAccessCorp($pos_user->id, $starbase->corporationID)) {
+
+                            // Ok! Time to finally get to pushing the
+                            // notification out! :D
+
+                            // We will make sure that we don't spam the user
+                            // with notifications, so lets hash the event
+                            // and ensure that its not present in the
+                            // database yet
+
+                            // Prepare the total notification
+                            $notification_type = 'Starbase';
+                            $notification_title = 'Low Charter Count!';
+                            $notification_text = 'One of your starbases has only ' .
+                                $starbase->starbaseCharter . ' starbase charters left, this will last for ' .
+                                \Carbon\Carbon::now()->addHours($starbase->starbaseCharter / 1)->diffForHumans();
+
+                            // Send the notification
+                            BaseNotify::sendNotification($pos_user->id, $notification_type, $notification_title, $notification_text);
+
+                        }
+                    }
+                }
+            }
         }
     }
 }
