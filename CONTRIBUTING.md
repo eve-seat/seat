@@ -25,6 +25,16 @@ If changes are needed due to vendor packages, please supply a link to the accomp
 * Push your changes to a topic branch in your fork of the repository.
 * Submit a pull request to the `seat/dev` repository on Github.
 
+## So you made a mistake in your PR?
+This happens more often then you would think, it could be a simple spelling mistake or a missing semicolon. Not to worry, the fix is quite simple
+
+### Steps to follow are:
+* Through the terminal reset your git history back by using the ```git reset HEAD~X``` command (where X is the number of commits you wish to jump back)
+* Then apply the changes you wish to make to your files
+* Re-add the files to your commit and resubmit.
+
+The advantages of doing this are that it keeps the git history clean and makes it easier if a bug was ever introduced in a large PR then we can narrow down its search rather than having to go through several commits.
+
 # Additional Resources
 
 This section describes some details about how code should be styled. Styling is important to help keep the code in a clean, understandable and maintainable state.
