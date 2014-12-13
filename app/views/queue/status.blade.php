@@ -200,7 +200,7 @@
     <div class="col-md-4">
       <!-- Danger box -->
 
-      @if (Sentry::getUser()->isSuperUser())
+      @if (\Auth::isSuperUser(\Auth::User()))
 
         <div class="box box-solid box-danger">
           <div class="box-header">

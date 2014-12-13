@@ -33,7 +33,6 @@ use Pheal\Pheal;
 use Seat\EveApi;
 use Seat\EveApi\BaseApi;
 use Seat\EveApi\Account;
-use Carthalyst\Sentry as Sentry;
 
 class SeatAddKey extends Command
 {
@@ -69,16 +68,11 @@ class SeatAddKey extends Command
      */
     public function fire()
     {
+        
+        $admin = \User::where('username', '=', 'admin');
 
-        // Keys added via the CLI will automatically be assigned
-        // to the admin user as the owner. For that to happen
-        // we need to find the 'admin' user in SeAT
-        try {
-
-            $admin = \Sentry::findUserByLogin('admin');
-
-        } catch (\Cartalyst\Sentry\Users\UserNotFoundException $e) {
-
+        if(!$admin) {
+            
             $this->error('Admin account doesn\'t exist. Run seat:reset to create it.');
             return;
         }

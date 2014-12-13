@@ -68,24 +68,11 @@ class RegisterController extends BaseController
         if ($validation->passes()) {
 
             // Let's register a user.
-            $user = Sentry::register(array(
-                'email'    => Input::get('email'),
-                'username'    => Input::get('username'),
-                'password' => Input::get('password'),
-            ));
-
-            // Let's get the activation code
-            $data = array(
-                'activation_code' => $user->getActivationCode(),
-                'user_id' => Crypt::encrypt($user->id)
-            );
-
-            // Send the mail with the activation code
-            Mail::send('emails.auth.register', $data, function($message) {
-
-                $message->to(Input::get('email'), 'SeAT User')
-                    ->subject('SeAT Account Confirmation');
-            });
+            $user = new \User;
+            $user->email = Input::get('email');
+            $user->username = Input::get('username');
+            $user->password = Hash::make(Input::get('password'));
+            $user->save();
 
             return Redirect::action('SessionController@getSignIn')
                 ->with('success', 'Successfully registered a new account. Please check your email for the activation link.');
@@ -110,11 +97,15 @@ class RegisterController extends BaseController
     public function getActivate($user_id, $activation_code)
     {
 
-         $user = Sentry::findUserById(Crypt::decrypt($user_id));
+         $user = \User::find(Crypt::decrypt($user_id));
 
-         if ($user->attemptActivation($activation_code)) {
+         if ($user->reg_code == $activation_code) {
 
-            Sentry::login($user);
+            $user->reg_code = '';
+            $user->active = 1;
+            $user->save();
+
+            \Auth::login(Crypt::decrypt($user_id));
 
             return Redirect::action('HomeController@showIndex')
                 ->with('success', 'Account successfully activated! Welcome :)');

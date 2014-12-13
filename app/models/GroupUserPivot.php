@@ -23,13 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace App\Services\Validators;
-
-class SeatUserValidator extends Validator
+class GroupUserPivot extends Eloquent
 {
 
-    public static $rules = array(
-        'email' => 'required|email',
-        'password'  => 'required|min:6',
-    );
+    protected $table = 'seat_group_user';
+
 }

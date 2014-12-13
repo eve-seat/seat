@@ -37,7 +37,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface
      *
      * @var string
      */
-    protected $table = 'users';
+    protected $table = 'seat_users';
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -94,6 +94,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface
     public function getRememberTokenName()
     {
         return 'remember_token';
+    }
+
+    public function groups()
+    {   
+        return $this->belongsToMany('Group', 'seat_group_user');
     }
 
 }

@@ -55,7 +55,7 @@ class UserController extends BaseController
     public function getAll()
     {
 
-        $users = Sentry::findAllUsers();
+        $users = \User::all();
 
         return View::make('user.all')
             ->with(array('users' => $users));
@@ -83,34 +83,22 @@ class UserController extends BaseController
         // Should the form validation pass, continue to attempt to add this user
         if ($validation->passes()) {
 
-            if ($user = Sentry::register(array('email' => Input::get('email'), 'username' => Input::get('username'), 'password' => Input::get('password'), 'first_name' => Input::get('first_name'), 'last_name' => Input::get('last_name')), true)) {
+            $user = new \User;
+            $user->email = Input::get('email');
+            $user->username = Input::get('username');
+            $user->password = Hash::make(Input::get('password'));
 
-                if (Input::get('is_admin') == 'yes') {
+            if (Input::get('is_admin') == 'yes') {
 
-                    try {
-
-                        $adminGroup = Sentry::findGroupByName('Administrators');
-
-                    } catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
-
-                        return Redirect::back()
-                            ->withInput()
-                            ->withErrors('Administrators group could not be found');
-                    }
-
-                    $user->addGroup($adminGroup);
-                }
-
-                return Redirect::action('UserController@getAll')
-                    ->with('success', 'User ' . Input::get('email') . ' has been added');
-
-            } else {
-
-                return Redirect::back()
-                    ->withInput()
-                    ->withErrors('Error adding user');
+                $adminGroup = \Auth::findGroupByName('Administrators');
+                $user->addGroup($adminGroup);
             }
 
+            $user->save();
+
+            return Redirect::action('UserController@getAll')
+                ->with('success', 'User ' . Input::get('email') . ' has been added');
+            
         } else {
 
             return Redirect::back()

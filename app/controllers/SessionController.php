@@ -23,6 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+use App\Services\Validators\SeatUserValidator;
+
 class SessionController extends BaseController
 {
 
@@ -43,9 +45,9 @@ class SessionController extends BaseController
 
     public function getSignIn()
     {
-        if (Sentry::check())
+        if (Auth::check())
             return Redirect::intended('/')
-                ->with('success', 'Welcome back' . Sentry::getUser()->first_name);
+                ->with('success', 'Welcome back ' . Auth::user()->username);
 
         return View::make('session.login');
     }
@@ -64,43 +66,19 @@ class SessionController extends BaseController
         $email = Input::get('email');
         $password = Input::get('password');
         $remember = Input::get('remember_me');
-
         $destination = Redirect::back()->withInput();
 
-        try {
+        $validation = new SeatUserValidator;
 
-            $field = filter_var(Input::get('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-            Cartalyst\Sentry\Users\Eloquent\User::setLoginAttributeName($field);
+        if ($validation->passes()) {
 
-            if(Sentry::authenticate(array($field => $email, 'password' => $password), $remember == 'yes'))
-                $destination = Redirect::intended('/');
+            if (Auth::attempt(array('email' => $email, 'password' => $password), ($remember ? true : false)))
+                return $destination;
+            else
+                return $destination->withErrors('Authentication failure');
+        } 
 
-        } catch (Cartalyst\Sentry\Users\LoginRequiredException $e) {
-
-            $destination = $destination->withErrors('Please enter a login');
-
-        } catch (Cartalyst\Sentry\Users\PasswordRequiredException $e) {
-
-            $destination = $destination->withErrors('Please enter a password');
-
-        } catch (Cartalyst\Sentry\Users\WrongPasswordException $e) {
-
-            $destination = $destination->withErrors('Authentication failure');
-
-        } catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
-
-            $destination = $destination->withErrors('User not found');
-
-        } catch (Cartalyst\Sentry\Users\UserNotActivatedException $e) {
-
-            $destination = $destination->withErrors('User not activated');
-
-        } catch (Cartalyst\Sentry\Throttling\UserSuspendedException $e) {
-
-            $destination = $destination->withErrors('User has been suspended due to too many failed login attempts. Please try again later.');
-        }
-
-        return $destination;
+        return $destination->withErrors($validation->errors);      
     }
 
     /*
@@ -114,7 +92,7 @@ class SessionController extends BaseController
 
     public function getSignOut()
     {
-        Sentry::logout();
+        Auth::logout();
 
         return Redirect::action('SessionController@getSignIn')
             ->with('success', 'Successfully signed out');

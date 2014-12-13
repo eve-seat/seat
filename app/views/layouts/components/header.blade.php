@@ -1,3 +1,4 @@
+{{\Auth::hasAccess(\Auth::User(), 'queue_manager')}}
 <!-- header logo: style can be found in header.less -->
 <header class="header">
   <a href="{{ URL::to('/') }}" class="logo">
@@ -16,7 +17,7 @@
     <div class="navbar-right">
       <ul class="nav navbar-nav">
         <!-- Tasks: style can be found in dropdown.less -->
-        @if(Sentry::getUser()->hasAccess('queue_manager'))
+        @if(\Auth::hasAccess(\Auth::User(), 'queue_manager'))
           <li class="dropdown tasks-menu">
             <a href="{{ action('QueueController@getStatus') }}" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Queued Jobs">
               <i class="fa fa-truck"></i>
@@ -47,7 +48,7 @@
         <li class="dropdown user user-menu">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <i class="glyphicon glyphicon-user"></i>
-            <span>{{ Sentry::getUser()->email }} <i class="caret"></i></span>
+            <span>{{ \Auth::User()->email }} <i class="caret"></i></span>
           </a>
           <ul class="dropdown-menu">
             <!-- User image -->
@@ -57,8 +58,8 @@
               <li class="user-header bg-black">
                 @endif
                 <p>
-                  {{ Sentry::getUser()->email }}
-                  <small>Joined: {{ Sentry::getUser()->created_at }}</small>
+                  {{ \Auth::User()->email }}
+                  <small>Joined: {{ \Auth::User()->created_at }}</small>
                 </p>
               </li>
 

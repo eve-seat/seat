@@ -39,7 +39,7 @@ class NotificationController extends BaseController
     {
 
         // Get the Queue information from the database
-        $db_queue_count = \SeatNotification::where('user_id', '=', Sentry::getUser()->id)
+        $db_queue_count = \SeatNotification::where('user_id', '=', \Auth::User()->id)
             ->where('read', '=', '0')
             ->count();
 
@@ -62,11 +62,11 @@ class NotificationController extends BaseController
     public function getStatus()
     {
 
-        $notifications = \SeatNotification::where('user_id', '=', Sentry::getUser()->id)
+        $notifications = \SeatNotification::where('user_id', '=', \Auth::User()->id)
             ->orderBy('id', 'DESC')
             ->get();
 
-        $db_queue_count = \SeatNotification::where('user_id', '=', Sentry::getUser()->id)
+        $db_queue_count = \SeatNotification::where('user_id', '=', \Auth::User()->id)
             ->where('read', '=', '0')
             ->count();
 
@@ -89,7 +89,7 @@ class NotificationController extends BaseController
 
         $notification = \SeatNotification::find($notificationID);
 
-        if($notification->user_id == Sentry::getUser()->id) {
+        if($notification->user_id == \Auth::User()->id) {
 
             $notification->read = 1;
             $notification->save();
@@ -118,7 +118,7 @@ class NotificationController extends BaseController
 
         $notification = \SeatNotification::find($notificationID);
 
-        if($notification->user_id == Sentry::getUser()->id) {
+        if($notification->user_id == Auth::User()->id) {
 
             $notification->read = 1;
             $notification->save();
@@ -146,7 +146,7 @@ class NotificationController extends BaseController
     {
         $notification = \SeatNotification::find($notificationID);
 
-        if($notification->user_id == Sentry::getUser()->id) {
+        if($notification->user_id == Auth::User()->id) {
 
             $notification->read = 0;
             $notification->save();

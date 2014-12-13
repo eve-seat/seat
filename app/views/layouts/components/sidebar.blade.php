@@ -36,33 +36,33 @@
           <i class="fa fa-angle-left pull-right"></i>
         </a>
         <ul class="treeview-menu">
-          @if(Sentry::getUser()->hasAccess('asset_manager'))
+          @if(\Auth::hasAccess(\Auth::User(), 'asset_manager'))
             <li><a href="{{ action('CorporationController@getListAssets') }}"><i class="fa fa-angle-double-right"></i> Assets</a></li>
           @endif
-          @if(Sentry::getUser()->hasAccess('contract_manager'))
+          @if(\Auth::hasAccess(\Auth::User(), 'contract_manager'))
             <li><a href="{{ action('CorporationController@getListContracts') }}"><i class="fa fa-angle-double-right"></i> Contracts</a></li>
           @endif
-          @if(Sentry::getUser()->hasAccess('asset_manager'))
+          @if(\Auth::hasAccess(\Auth::User(), 'asset_manager'))
             <li><a href="{{ action('CorporationController@getListIndustry') }}"><i class="fa fa-angle-double-right"></i> Industry</a></li>
           @endif
-          @if(Sentry::getUser()->hasAccess('recruiter'))
+          @if(\Auth::hasAccess(\Auth::User(), 'recruiter'))
             <li><a href="{{ action('CorporationController@getListKillMails') }}"><i class="fa fa-angle-double-right"></i> Kill Mails</a></li>
           @endif
-          @if (Sentry::getUser()->hasAccess('market_manager'))
+          @if (\Auth::hasAccess(\Auth::User(), 'market_manager'))
             <li><a href="{{ action('CorporationController@getListMarketOrders') }}"><i class="fa fa-angle-double-right"></i> Market Orders</a></li>
           @endif
-          @if (Sentry::getUser()->hasAccess('recruiter'))
+          @if (\Auth::hasAccess(\Auth::User(), 'recruiter'))
             <li><a href="{{ action('CorporationController@getListMemberSecurity') }}"><i class="fa fa-angle-double-right"></i> Member Security</a></li>
             <li><a href="{{ action('CorporationController@getListMemberTracking') }}"><i class="fa fa-angle-double-right"></i> Member Tracking</a></li>
           @endif
-          @if (Sentry::getUser()->hasAccess('recruiter'))
+          @if (\Auth::hasAccess(\Auth::User(), 'recruiter'))
             <li><a href="{{ action('CorporationController@getListMemberStandings') }}"><i class="fa fa-angle-double-right"></i> Standings</a></li>
           @endif
-          @if(Sentry::getUser()->hasAccess('pos_manager'))
+          @if(\Auth::hasAccess(\Auth::User(), 'pos_manager'))
             <li><a href="{{ action('CorporationController@getListStarbase') }}"><i class="fa fa-angle-double-right"></i> Starbases</a></li>
           @endif
 
-          @if (Sentry::getUser()->hasAccess('wallet_manager'))
+          @if (\Auth::hasAccess(\Auth::User(), 'wallet_manager'))
             <li><a href="{{ action('CorporationController@getListJournals') }}"><i class="fa fa-angle-double-right"></i> Wallet Journal</a></li>
             <li><a href="{{ action('CorporationController@getListLedgers') }}"><i class="fa fa-angle-double-right"></i> Wallet Ledger</a></li>
             <li><a href="{{ action('CorporationController@getListTransactions') }}"><i class="fa fa-angle-double-right"></i> Wallet Transactions</a></li>
@@ -93,7 +93,7 @@
       </li>
 
       {{-- superuser only features --}}
-      @if (Sentry::getUser()->isSuperUser())
+      @if (\Auth::isSuperUser(\Auth::User()))
         <li class="treeview @if (Request::is('configuration/*')) active @endif">
           <a href="#">
             <i class="fa fa-cogs"></i> <span>Configuration</span>

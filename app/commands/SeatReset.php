@@ -28,7 +28,6 @@ namespace Seat\Commands;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Carthalyst\Sentry as Sentry;
 
 class SeatReset extends Command {
 
@@ -82,47 +81,33 @@ class SeatReset extends Command {
 
         $this->info('The passwords match. Resetting to the new ' . strlen($password) . ' char one.');
 
-        // Attempt to find the admin user usnig Sentry helper functions.
         // If the user does not exist, we create it.
-        try {
 
-            $admin = \Sentry::findUserByLogin('admin');
+        $admin = \User::where('username', '=', 'admin')
+            ->first();
 
-        } catch (\Cartalyst\Sentry\Users\UserNotFoundException $e) {
+        if(!$admin)
+            $admin = new \User;
+           
+        $admin->username = 'admin';
+        $admin->password = \Hash::make($password);
+        $admin->email = 'admin@seat.local';
+        $admin->save();
 
-            \Sentry::register(array(
-                'email'     => 'admin',
-                'username'  => 'admin',
-                'password'  => $password,
-            ), true);   // Set the account to be active
+        $admin_group = \Auth::findGroupByName('Administrators');
 
-            $admin = \Sentry::findUserByLogin('admin');
-        }
+        if(!$admin_group) {
 
-        // Next, we check for the existance of the admin group and create it if it
-        // does not exist
-        try {
-
-            $adminGroup = \Sentry::findGroupByName('Administrators');
-
-        } catch (\Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
-
-            \Sentry::createGroup(array(
+            $admin_group = \Auth::createGroup(array(
                 'name'        => 'Administrators',
                 'permissions' => array(
                     'superuser' => 1,
                 ),
             ));
-
-            $adminGroup = \Sentry::findGroupByName('Administrators');
         }
 
-        // Set the password and group membership for the admin user.
-        $admin->username = 'admin';
-        $admin->password = $password;
-        $admin->save();
-        $admin->addGroup($adminGroup);
+        \Auth::addUserToGroup($admin, $admin_group);
 
-        $this->info('Password has been changed successfully.');
+        $this->info('Database has been updated successfully. - Login is admin@seat.local');
     }
 }

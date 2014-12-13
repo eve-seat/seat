@@ -28,7 +28,6 @@ namespace Seat\Commands;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Sentry;
 
 class SeatGroupSync extends Command
 {
@@ -133,32 +132,17 @@ class SeatGroupSync extends Command
         // Loop over $groups and check || create as needed
         foreach ($groups as $group_entry) {
 
-            // Try to find the group by name. If it does not exist,
-            // we leverage the GroupNotFoundException and create
-            // it.
-            try {
+            $group = \Auth::findGroupByName($group_entry['name']);
 
-                $group = Sentry::findGroupByName($group_entry['name']);
-                $this->line('[ok] Group ' . $group_entry['name'] . ' exists.');
-
-            } catch (\Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
+            if(!$group) {
 
                 $this->info('[info] Group ' . $group_entry['name'] . ' was not found. Creating it.');
 
-                try {
-
-                    // Create the group
-                    $group = Sentry::createGroup(array(
+                $group = \Auth::createGroup(array(
                         'name' => $group_entry['name'],
                         'permissions' => $group_entry['permissions']
                     ));
-                    $this->line('[ok] Group ' . $group_entry['name'] . ' created.');
-
-                } catch (\Exception $e) {
-
-                    $this->error('Group ' . $group_entry['name'] . ' was not created. Error: ' . $e->getMessage());
-
-                }
+                $this->line('[ok] Group ' . $group_entry['name'] . ' created.');
             }
         }
     }
