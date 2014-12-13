@@ -112,7 +112,7 @@ App::down(function()
 
 Auth::extend('cushion', function()
 {
-	$model = Config::get('auth.model');
+    $model = Config::get('auth.model');
     $provider = new \Illuminate\Auth\EloquentUserProvider(\App::make('hash'), $model);
 
     return new \App\Services\Auth\SeatGuard($provider, \App::make('session.store'));
