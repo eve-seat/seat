@@ -92,6 +92,7 @@ class SeatReset extends Command {
         $admin->username = 'admin';
         $admin->password = \Hash::make($password);
         $admin->email = 'admin@seat.local';
+        $admin->activated = 1;
         $admin->save();
 
         $admin_group = \Auth::findGroupByName('Administrators');
