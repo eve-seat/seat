@@ -29,7 +29,7 @@ class SeatUserValidator extends Validator
 {
 
     public static $rules = array(
-        'email' => 'required|email',
+        'email' => 'required',
         'password'  => 'required|min:6',
     );
 }

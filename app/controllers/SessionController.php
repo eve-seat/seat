@@ -72,13 +72,19 @@ class SessionController extends BaseController
 
         if ($validation->passes()) {
 
+            // First attempt authentication using a email address
             if (Auth::attempt(array('email' => $email, 'password' => $password), ($remember ? true : false)))
                 return $destination;
+
+            // Else, we attempt authentication using the username
+            elseif (Auth::attempt(array('username' => $email, 'password' => $password), ($remember ? true : false)))
+                return $destination;
+
             else
                 return $destination->withErrors('Authentication failure');
-        } 
+        }
 
-        return $destination->withErrors($validation->errors);      
+        return $destination->withErrors($validation->errors);
     }
 
     /*

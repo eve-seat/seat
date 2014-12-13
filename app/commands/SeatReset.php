@@ -88,7 +88,7 @@ class SeatReset extends Command {
 
         if(!$admin)
             $admin = new \User;
-           
+
         $admin->username = 'admin';
         $admin->password = \Hash::make($password);
         $admin->email = 'admin@seat.local';
@@ -108,6 +108,6 @@ class SeatReset extends Command {
 
         \Auth::addUserToGroup($admin, $admin_group);
 
-        $this->info('Database has been updated successfully. - Login is admin@seat.local');
+        $this->info('The password for the admin user has been reset. Login using username \'admin\' or \'admin@seat.local\'');
     }
 }
