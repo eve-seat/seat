@@ -22,6 +22,9 @@ class AddLoginHistory extends Migration {
             $table->string('user_agent');
 
             $table->timestamps();
+
+            // Add indexes
+            $table->index('user_id');
         });
 	}
 

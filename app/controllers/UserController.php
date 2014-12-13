@@ -199,7 +199,7 @@ class UserController extends BaseController
             $user->username = Input::get('username');
 
         if (Input::get('password') != '')
-            $user->password = Input::get('password');
+            $user->password = Hash::make(Input::get('password'));
 
         $groups = Input::except('_token', 'username', 'password', 'first_name', 'last_name', 'userID', 'email');
 
