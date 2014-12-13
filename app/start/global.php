@@ -112,7 +112,6 @@ App::down(function()
 
 Auth::extend('cushion', function()
 {
-    l;
 	$model = Config::get('auth.model');
     $provider = new \Illuminate\Auth\EloquentUserProvider(\App::make('hash'), $model);
 
