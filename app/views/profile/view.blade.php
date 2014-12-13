@@ -39,7 +39,7 @@
           {{ $key_count }} Owned API Keys
           <span class="pull-right">
 
-            @if (Sentry::getUser()->isSuperUser())
+            @if (Auth::isSuperUser(\Auth::User()))
               <span class="label label-danger">Administrator Account</span>
             @endif
 

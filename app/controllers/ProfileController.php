@@ -46,7 +46,7 @@ class ProfileController extends BaseController
     {
 
         $user = \Auth::User();
-        $groups = $user->getGroups();
+        $groups = $user->groups();
 
         $key_count = DB::table('seat_keys')
             ->where('user_id', $user->id)
@@ -70,7 +70,7 @@ class ProfileController extends BaseController
 
     public function postChangePassword()
     {
-    
+
         $user = \Auth::User();
 
         $validation = new Validators\SeatUserPasswordValidator;
