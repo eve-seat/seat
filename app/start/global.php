@@ -72,7 +72,12 @@ Log::useFiles(storage_path().'/logs/laravel.log');
 App::error(function(Exception $exception, $code)
 {
     Log::error($exception);
-    return Response::view('errors.500', array(), 500);
+
+    // Based on the state of the application, we will
+    // either render the pretty error 500, or the
+    // detailed stack trace information
+    if (!Config::get('app.debug'))
+        return Response::view('errors.500', array(), 500);
 });
 
 /*
