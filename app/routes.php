@@ -42,7 +42,6 @@ Route::group(array('prefix' => 'account'), function() {
 
 });
 
-
 Route::group(array('before' => 'auth|csrf|key.required'), function() {
 
     Route::get('/', 'HomeController@showIndex');

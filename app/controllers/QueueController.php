@@ -117,7 +117,7 @@ class QueueController extends BaseController
     public function getViewError($id)
     {
 
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()) )
             App::abort(404);
 
         $detail = \SeatQueueInformation::where('id', $id)->first();
@@ -138,7 +138,7 @@ class QueueController extends BaseController
     public function getDeleteError($id)
     {
 
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()) )
             App::abort(404);
 
         \SeatQueueInformation::where('status','Error')
@@ -160,7 +160,7 @@ class QueueController extends BaseController
     public function getDeleteAllErrors()
     {
 
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()) )
             App::abort(404);
 
         \SeatQueueInformation::where('status','Error')
@@ -181,7 +181,7 @@ class QueueController extends BaseController
     public function getDeleteQueuedJob($id)
     {
 
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()) )
             App::abort(404);
 
         // Get the Redis JobID from the databse for this jib

@@ -75,7 +75,7 @@ class DashboardController extends BaseController
                 ->where('characterName', 'like', '%' . Input::get('q') . '%');
 
             // Ensure we only get result for characters we have access to
-            if (!Sentry::getUser()->hasAccess('recruiter'))
+            if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
                 $characters = $characters->whereIn('seat_keys.keyID', Session::get('valid_keys'))
                     ->get();
             else
@@ -112,7 +112,7 @@ class DashboardController extends BaseController
                 ->join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'a.characterID');
 
             // If the user is not a superuser, filter the results down to keys they own
-            if (!Sentry::getUser()->isSuperUser())
+            if (!\Auth::isSuperUser(\Auth::User()) )
                 $character_assets = $character_assets->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
             // Complete the search
@@ -133,7 +133,7 @@ class DashboardController extends BaseController
                 ->where('character_contactlist.contactName', 'like', '%' . Input::get('q') . '%');
 
             // Ensure we only get result for characters we have access to
-            if (!Sentry::getUser()->hasAccess('recruiter'))
+            if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
                 $character_contactlist = $character_contactlist->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
                     ->get();
             else
@@ -153,7 +153,7 @@ class DashboardController extends BaseController
                 ->orWhere('character_mailbodies.body', 'like', '%' . Input::get('q') . '%');
 
             // Ensure we only get result for characters we have access to
-            if (!Sentry::getUser()->hasAccess('recruiter'))
+            if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
                 $character_mail = $character_mail->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
             $character_mail = $character_mail

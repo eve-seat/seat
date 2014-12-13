@@ -54,12 +54,11 @@ class BaseNotify
                 ->groupBy('corporationID')
                 ->lists('corporationID');
 
+            foreach($corporation_affiliation as $affiliation)
+                if($affiliation == $corpID)
+                    return true;
         }
-
-        foreach($corporation_affiliation as $affiliation)
-            if($affiliation == $corpID)
-                return true;
-
+        
         return false;
     }
 

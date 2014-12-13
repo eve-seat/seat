@@ -97,10 +97,10 @@
                   <td>{{ $user->email }}</td>
                   <td>{{ $user->username }}</td>
                   <td>{{ $user->last_login }} ({{ Carbon\Carbon::parse($user->last_login)->diffForHumans() }})</td>
-                  <td>{{ $user->isSuperUser() ? "<span class='text-red'>Yes</span>" : "No" }}</td>
+                  <td>{{ \Auth::isSuperUser($user) ? "<span class='text-red'>Yes</span>" : "No" }}</td>
                   <td>
                     <a href="{{ action('UserController@getDetail', array('userID' => $user->getKey())) }}" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> Edit</a>
-                    @if (count($users) > 1 && $user->getKey() != Sentry::getUser()->getKey())
+                    @if (count($users) > 1 && $user->getKey() != \Auth::User()->id)
                       <a a-delete-user="{{ action('UserController@getDeleteUser', array('userID' => $user->getKey(), 'delete_all_info'=> true)) }}" a-user-name="{{ $user->email }}" class="btn btn-danger btn-xs delete-user">
                         <i class="fa fa-times"></i> Delete
                       </a>

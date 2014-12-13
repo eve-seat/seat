@@ -47,10 +47,10 @@ App::before(function($request)
     // We will also check if the user has any director roles in any
     // of the affiliated corporations. Directors will be allowed to
     // assign permissions to other members of their corporation
-    if (Sentry::check()) {
+    if (\Auth::check()) {
 
         // Valid API Keys
-        $valid_keys = SeatKey::where('user_id', Sentry::getUser()->id)
+        $valid_keys = SeatKey::where('user_id', \Auth::User()->id)
             ->lists('keyID');
 
         Session::put('valid_keys', $valid_keys);
@@ -103,14 +103,14 @@ App::after(function($request, $response)
 
 Route::filter('auth', function()
 {
-    if (!Sentry::check())
+    if (!\Auth::check())
         return Redirect::action('SessionController@getSignIn');
 });
 
 
 Route::filter('auth.superuser', function()
 {
-    if (!Sentry::check() || !Sentry::getUser()->isSuperUser())
+    if (!\Auth::check() || !\Auth::isSuperUser(\Auth::user()))
         return Redirect::to('/');
 });
 
@@ -128,7 +128,7 @@ Route::filter('auth.superuser', function()
 
 Route::filter('guest', function()
 {
-    if (!Sentry::check()) return Redirect::to('/');
+    if (!\Auth::check()) return Redirect::to('/');
 });
 
 /*
@@ -191,7 +191,7 @@ Route::filter('key.required', function()
         if (Request::is($match)) {
 
             // Check that we havea some valid keys defined in Session::get('valid_keys')
-            if (!Sentry::getUser()->isSuperUser() && count(Session::get('valid_keys')) <= 0)
+            if (!\Auth::isSuperUser(\Auth::user()) && count(Session::get('valid_keys')) <= 0)
                 return Redirect::action('ApiKeyController@getNewKey')
                     ->with('warning', 'No API Keys are defined to show you any information. Please enter at least one.');
         }

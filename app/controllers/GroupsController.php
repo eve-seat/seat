@@ -55,12 +55,12 @@ class GroupsController extends BaseController
     public function getAll()
     {
 
-        $groups = Sentry::findAllGroups();
+        $groups = \Auth::findAllGroups();
         $counter = array();
 
         foreach($groups as $group) {
 
-            $users = Sentry::findAllUsersInGroup($group);
+            $users = \Auth::findAllUsersInGroup($group);
             $counter[$group->name] = count($users);
         }
 
@@ -81,21 +81,15 @@ class GroupsController extends BaseController
     public function getDetail($groupID)
     {
 
-        try {
-
-            $group = Sentry::findGroupById($groupID);
-            $users = Sentry::findAllUsersInGroup($group);
-            $available_permissions = SeatPermissions::all();
-
-        } catch (Cartalyst\Sentry\Groups\GroupExistsException $e) {
-
-            App::abort(404);
-        }
+        $group = \Auth::findGroupById($groupID);
+        $users = \Auth::findAllUsersInGroup($group);
+        $available_permissions = SeatPermissions::all();
+        $permissions = \Auth::getPermissions($group);
 
         return View::make('groups.detail')
             ->with('group', $group)
             ->with('users', $users)
-            ->with('has_permissions', $group->getPermissions())
+            ->with('has_permissions', $permissions)
             ->with('available_permissions', $available_permissions);
     }
 
@@ -113,17 +107,10 @@ class GroupsController extends BaseController
 
         $permissions = Input::except('_token');
         $available_permissions = SeatPermissions::all();
-        $set_permissions = array();
+        $group = \Auth::findGroupById($groupID);
 
-        foreach($available_permissions as $available_permission)
-            if(array_key_exists($available_permission->permission, $permissions))
-                $set_permissions = array_add($set_permissions, $available_permission->permission, 1);
-            else
-                $set_permissions = array_add($set_permissions, $available_permission->permission, 0);
-
-        $group = Sentry::findGroupById($groupID);
-
-        $group->permissions = $set_permissions;
+        $group->permissions = serialize($permissions);
+        $group->save();
 
         if ($group->save())
             return Redirect::action('GroupsController@getDetail', $groupID)
@@ -150,20 +137,17 @@ class GroupsController extends BaseController
 
         if ($validation->passes()) {
 
-            try {
+            // Create the group
+            $group = \Auth::createGroup(array(
+                'name' => Input::get('groupName')
+            ));
 
-                // Create the group
-                $group = Sentry::createGroup(array(
-                    'name' => Input::get('groupName')
-                ));
-
+            if($group) {
                 return Redirect::action('GroupsController@getAll')
                     ->with('success', 'Group has been added!');
-
-            } catch (Cartalyst\Sentry\Groups\GroupExistsException $e) {
-
+            } else {
                 return Redirect::action('GroupsController@getAll')
-                    ->withErrors('The robot seems to think that this group already exists...');
+                 ->withErrors('The robot seems to think that this group already exists...');
             }
 
         } else {
@@ -185,23 +169,16 @@ class GroupsController extends BaseController
     public function getDeleteGroup($groupID)
     {
 
-        try {
+        $group = \Auth::findGroupById($groupID);
 
-            $group = Sentry::findGroupById($groupID);
-
-            if($group->name == 'Administrators')
-                return Redirect::action('GroupsController@getAll')
-                    ->withErrors('You cannot delete the Administrators group, stupid!');
-
-            $group->delete();
-
+        if($group->name == 'Administrators')
             return Redirect::action('GroupsController@getAll')
-                ->with('success', 'Group has been deleted');
+                ->withErrors('You cannot delete the Administrators group, stupid!');
 
-        } catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
+        \Auth::deleteGroup($group);
 
-            App::abort(404);
-        }
+        return Redirect::action('GroupsController@getAll')
+            ->with('success', 'Group has been deleted');
     }
 
     /*
@@ -216,14 +193,15 @@ class GroupsController extends BaseController
     public function getRemoveUser($userID, $groupID)
     {
 
-        $group = Sentry::findGroupById($groupID);
-        $user = Sentry::findUserById($userID);
+        $group = \Auth::findGroupById($groupID);
+        $user = \User::find($userID);
 
         if($userID == 1 AND $group->name == 'Administrators')
             return Redirect::action('GroupsController@getDetail', array('groupID' => $groupID))
                     ->withErrors('You cant remove the admin from this group!');
 
-        $user->removeGroup($group);
+        \Auth::removeUserFromGroup($user, $group);
+
         return Redirect::action('GroupsController@getDetail', array('groupID' => $groupID))
             ->with('success', 'User has been removed!');
     }

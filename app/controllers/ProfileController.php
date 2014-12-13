@@ -45,7 +45,7 @@ class ProfileController extends BaseController
     public function getView()
     {
 
-        $user = Sentry::getUser();
+        $user = \Auth::User();
         $groups = $user->getGroups();
 
         $key_count = DB::table('seat_keys')
@@ -70,39 +70,33 @@ class ProfileController extends BaseController
 
     public function postChangePassword()
     {
-        try {
+    
+        $user = \Auth::User();
 
-            $user = Sentry::getUser();
+        $validation = new Validators\SeatUserPasswordValidator;
 
-            $validation = new Validators\SeatUserPasswordValidator;
+        if($validation->passes()) {
 
-            if($validation->passes()) {
+            if(Auth::validate(array('email' => $email, 'password' => Hash::make(Input::get('oldPassword'))))) {
 
-                if(Sentry::checkPassword(Input::get('oldPassword'))) {
+                $user->password = \Hash::make(Input::get('newPassword_confirmation'));
+                $user->save();
 
-                    $user->password = Input::get('newPassword_confirmation');
-                    $user->save();
-
-                    return Redirect::action('ProfileController@getView')
-                        ->with('success', 'Your password has successfully been changed.');
-
-                } else {
-
-                    return Redirect::action('ProfileController@getView')
-                        ->withInput()
-                        ->withErrors('Your current password did not match.');
-                }
+                return Redirect::action('ProfileController@getView')
+                    ->with('success', 'Your password has successfully been changed.');
 
             } else {
 
                 return Redirect::action('ProfileController@getView')
                     ->withInput()
-                    ->withErrors($validation->errors);
+                    ->withErrors('Your current password did not match.');
             }
-        }
 
-        catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
-            App::abort(404);
+        } else {
+
+            return Redirect::action('ProfileController@getView')
+                ->withInput()
+                ->withErrors($validation->errors);
         }
     }
 }

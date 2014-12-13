@@ -72,8 +72,8 @@ class ApiKeyController extends BaseController
             ->leftJoin('banned_calls', 'seat_keys.keyID', '=', 'banned_calls.ownerID');
 
         // If the current user is not a admin, only get the keys that they own
-        if (!Sentry::getUser()->isSuperUser())
-            $keys = $keys->where('seat_keys.user_id', Sentry::getUser()->getKey());
+        if (!\Auth::isSuperUser(\Auth::User()))
+            $keys = $keys->where('seat_keys.user_id', \Auth::User()->id);
 
         // And complete the query
         $keys = $keys->groupBy('seat_keys.keyID')
@@ -233,7 +233,7 @@ class ApiKeyController extends BaseController
             $key_data->isOk = 1;
             $key_data->lastError = null;
             $key_data->deleted_at = null;
-            $key_data->user_id = Sentry::getUser()->getKey();
+            $key_data->user_id = \Auth::User()->id;
             $key_data->save();
 
             // Queue a job to update this API **now**
@@ -286,7 +286,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -341,7 +341,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -401,7 +401,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -433,12 +433,12 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
         // Ensure the user is allowed to delete this key
-        if (!Sentry::getUser()->hasAccess('key_manager'))
+        if (!\Auth::hasAccess(\Auth::User(), 'key_manager'))
             App::abort(404);
 
         // Get the full key and vCode
@@ -639,7 +639,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this is SuperUser
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()))
             App::abort(404);
 
         // Trash all of the banned calls information
@@ -670,7 +670,7 @@ class ApiKeyController extends BaseController
 
         // Prepare the people information. Super admins get to see
         // everything, where users should only see their own stuff
-        if (Sentry::getUser()->isSuperUser()) {
+        if (\Auth::isSuperUser(\Auth::User())) {
 
             // SUUPER ADMIN Show all the things
             $people = array();
@@ -743,7 +743,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -792,7 +792,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()))
             if (!in_array(Input::get('affected-key'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -831,7 +831,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -905,7 +905,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user is a super admin
-        if (!Sentry::getUser()->isSuperUser())
+        if (!\Auth::isSuperUser(\Auth::User()))
             App::abort(404);
 
         // Find the API Key and user...
