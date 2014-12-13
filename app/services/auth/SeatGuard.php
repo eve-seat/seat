@@ -109,6 +109,23 @@ class SeatGuard extends \Illuminate\Auth\Guard
         return $groups;
     }
 
+    public function getUserGroups($user)
+    {
+
+        $groups = \GroupUserPivot::where('user_id', $user->id)->get();
+
+        $resolved_groups = array();
+        foreach ($groups as $group)
+            array_push($resolved_groups, \Group::find($group->group_id));
+
+        return $resolved_groups;
+    }
+
+    public function findUserById($userID)
+    {
+        return \User::findOrFail($userID);
+    }
+
     public function getPermissions($group)
     {
         $permission_array = array();
