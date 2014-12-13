@@ -83,7 +83,21 @@ class UserController extends BaseController
         // Should the form validation pass, continue to attempt to add this user
         if ($validation->passes()) {
 
-            $user = new \User;
+            // Because users are soft deleted, we need to check if if
+            // it doesnt actually exist first.
+            $user = \User::withTrashed()
+                ->where('email', Input::get('email'))
+                ->orWhere('username', Input::get('username'))
+                ->first();
+
+            // If we found the user, restore it and set the
+            // new values found in the post
+            if($user)
+                $user->restore();
+            else
+                $user = new \User;
+
+            // With the user object ready, work the update
             $user->email = Input::get('email');
             $user->username = Input::get('username');
             $user->password = Hash::make(Input::get('password'));
