@@ -45,9 +45,36 @@ class SessionController extends BaseController
 
     public function getSignIn()
     {
-        if (Auth::check())
+        if (Auth::check()) {
+
+            // Grab the last login history event id for this user. Need to
+            // remember that the event 'auth.login' inserted a new entry
+            // so the last one is technically last-1
+            $last_login = \SeatLoginHistory::where('user_id', Auth::User()->id)
+                ->max('id');
+
+            // With the max ID for this user known, lets get the last login
+            // entry from their log
+            $last_login = \SeatLoginHistory::where('user_id', Auth::User()->id)
+                ->where('id', '<', $last_login)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            // If this user has no last login, we will welcome them, else
+            // we will give some information about the last login
+            if ($last_login)
+                $welcome_message = 'Welcome back ' . Auth::user()->username . '. Your last login was from ' .
+                                    $last_login->login_source . ' which was ' .
+                                    Carbon\Carbon::parse($last_login->login_date)->diffFOrHumans() .
+                                    ' at ' . $last_login->login_date;
+            else
+                $welcome_message = 'This looks like your first login! Welcome :)';
+
+            // Return the view with the information
             return Redirect::intended('/')
-                ->with('success', 'Welcome back ' . Auth::user()->username);
+                ->with('success', $welcome_message);
+
+        }
 
         return View::make('session.login');
     }
