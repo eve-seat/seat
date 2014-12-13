@@ -111,7 +111,7 @@ class EveCorporationWalletUpdater extends ScheduledCommand
                 // and there is no use in doing all that work
                 // for cached data. This one calls the
                 // Wallet updater
-                \App\Services\Queue\QueueHelper::addToQueue(array('Partial', 'CorporationWallet'), $key->keyID, $key->vCode, 'CorporationWallet', 'Eve');
+                \App\Services\Queue\QueueHelper::addToQueue('\Seat\EveQueues\Partial\CorporationWallet', $key->keyID, $key->vCode, 'CorporationWallet', 'Eve');
         }
     }
 }

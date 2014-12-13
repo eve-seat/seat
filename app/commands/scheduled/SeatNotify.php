@@ -83,6 +83,6 @@ class SeatNotify extends ScheduledCommand
 
         // Call the addToQueue helper to schedule a new
         // job
-        \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Notify'), '0', NULL, 'Notify', '', '\Seat\NotificationQueues\\');
+        \App\Services\Queue\QueueHelper::addToQueue('\Seat\NotificationQueues\Full\Notify', '0', NULL, 'Notify', '');
     }
 }

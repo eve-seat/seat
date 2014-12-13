@@ -37,10 +37,10 @@ class QueueHelper
     |
     */
 
-    public static function addToQueue($queue, $ownerID, $vCode, $api, $scope, $command_namespace = '\Seat\EveQueues\\') {
+    public static function addToQueue($queue, $ownerID, $vCode, $api, $scope) {
 
         // Prepare the auth array
-        if($vCode != NULL)
+        if($vCode != null)
             $auth = array('keyID' => $ownerID, 'vCode' => $vCode);
         else
             $auth = array();
@@ -56,7 +56,7 @@ class QueueHelper
         // Check if the $jobID was found, else, queue a new job
         if(!$jobID) {
 
-            $jobID = \Queue::push($command_namespace . implode('\\', $queue),  $auth);
+            $jobID = \Queue::push($queue, $auth);
             \SeatQueueInformation::create(array('jobID' => $jobID, 'ownerID' => $ownerID, 'api' => $api, 'scope' => $scope, 'status' => 'Queued'));
         } else {
 

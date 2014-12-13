@@ -85,6 +85,6 @@ class EveEveUpdater extends ScheduledCommand
         \Log::info('Started command ' . $this->name, array('src' => __CLASS__));
 
         // Call the addToQueue helper to add a new update job.
-        \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Eve'), '0', NULL, 'Eve', 'Eve');
+        \App\Services\Queue\QueueHelper::addToQueue('\Seat\EveQueues\Full\Eve', '0', NULL, 'Eve', 'Eve');
     }
 }

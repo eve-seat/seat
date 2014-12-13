@@ -111,7 +111,7 @@ class EveCharacterUpdater extends ScheduledCommand
 
                 // Once the fresh account status lookup is done, call the
                 // addToQueue helper to queue a new job.
-                \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
+                \App\Services\Queue\QueueHelper::addToQueue('\Seat\EveQueues\Full\Character', $key->keyID, $key->vCode, 'Character', 'Eve');
             }
         }
     }

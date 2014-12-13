@@ -85,6 +85,6 @@ class EveMapUpdater extends ScheduledCommand
         \Log::info('Started command ' . $this->name, array('src' => __CLASS__));
 
         // Call the addToQueue helper to add a new update job.
-        \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Map'), '0', NULL, 'Map', 'Eve');
+        \App\Services\Queue\QueueHelper::addToQueue('\Seat\EveQueues\Full\Map', '0', NULL, 'Map', 'Eve');
     }
 }

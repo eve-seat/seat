@@ -111,7 +111,7 @@ class EveCorporationAssetsUpdater extends ScheduledCommand
                 // and there is no use in doing all that work
                 // for cached data. This one calls the
                 // Assets updater
-                \App\Services\Queue\QueueHelper::addToQueue(array('Partial', 'CorporationAssets'), $key->keyID, $key->vCode, 'CorporationAssets', 'Eve');
+                \App\Services\Queue\QueueHelper::addToQueue('\Seat\EveQueues\Partial\CorporationAssets', $key->keyID, $key->vCode, 'CorporationAssets', 'Eve');
         }
     }
 }

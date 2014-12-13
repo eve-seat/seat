@@ -114,7 +114,7 @@ class EveCorporationUpdater extends ScheduledCommand
                 // Corporation Updater which
                 // excludes Assets and
                 // Wallets
-                \App\Services\Queue\QueueHelper::addToQueue(array('Partial', 'Corporation'), $key->keyID, $key->vCode, 'Corporation', 'Eve');
+                \App\Services\Queue\QueueHelper::addToQueue('\Seat\EveQueues\Partial\Corporation', $key->keyID, $key->vCode, 'Corporation', 'Eve');
         }
     }
 }
