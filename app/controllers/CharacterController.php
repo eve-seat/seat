@@ -179,6 +179,7 @@ class CharacterController extends BaseController
 
         $employment_history = DB::table('eve_characterinfo_employmenthistory')
             ->where('characterID', $characterID)
+            -> orderBy('startDate','desc')
             ->get();
 
         $skillpoints = DB::table('character_charactersheet_skills')
