@@ -236,9 +236,12 @@ class SeatGuard extends \Illuminate\Auth\Guard
         $permissions = array();
 
         // Populate the permissions from the groups into the
-        // permissions array.
+        // permissions array. Keep in mind that this will
+        // merge and keep the unique key, meaning we
+        // dont have to go and try to get this
+        // unique later ;)
         foreach($groups as $group)
-            array_merge($permissions, unserialize($group->permissions));
+            $permissions = array_merge($permissions, unserialize($group->permissions));
 
         // Check if the permission exists in the newly created
         // array or if the superuser permission was found
