@@ -98,7 +98,7 @@ class UserController extends BaseController
 
             return Redirect::action('UserController@getAll')
                 ->with('success', 'User ' . Input::get('email') . ' has been added');
-            
+
         } else {
 
             return Redirect::back()
@@ -119,20 +119,13 @@ class UserController extends BaseController
     public function getDetail($userID)
     {
 
-        try {
+        $user = Auth::findUserById($userID);
+        $allGroups = Auth::findAllGroups();
+        $tmp = Auth::getUserGroups($user);
+        $hasGroups = array();
 
-            $user = Sentry::findUserById($userID);
-            $allGroups = Sentry::findAllGroups();
-            $tmp = $user->getGroups();
-            $hasGroups = array();
-
-            foreach($tmp as $group)
-                $hasGroups = array_add($hasGroups, $group->name, '1');
-
-        } catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
-
-            App::abort(404);
-        }
+        foreach($tmp as $group)
+            $hasGroups = array_add($hasGroups, $group->name, '1');
 
         return View::make('user.detail')
             ->with('user', $user)
@@ -152,16 +145,11 @@ class UserController extends BaseController
     public function getImpersonate($userID)
     {
 
-        try {
+        // Find the user
+        $user = Auth::findUserById($userID);
 
-            $user = Sentry::findUserById($userID);
-
-        } catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
-
-            App::abort(404);
-        }
-
-        Sentry::login($user);
+        // Attempt to authenticate using the user->id
+        Auth::loginUsingId($userID);
 
         return Redirect::action('HomeController@showIndex')
             ->with('warning', 'You are now impersonating ' . $user->email);
@@ -179,25 +167,17 @@ class UserController extends BaseController
     public function postUpdateUser()
     {
 
-        try {
+        // Find the user
+        $user = Auth::findUserById(Input::get('userID'));
 
-            $user = Sentry::findUserById(Input::get('userID'));
+        // Find the administrators group
+        $admin_group = Auth::findGroupByName('Administrators');
 
-        } catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
-
-            App::abort(404);
-        }
-
-        try {
-
-            $adminGroup = Sentry::findGroupByName('Administrators');
-
-        } catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
-
+        // ... and check that it exists
+        if(!$admin_group)
             return Redirect::back()
                 ->withInput()
                 ->withErrors('Administrators group could not be found');
-        }
 
         $user->email = Input::get('email');
 
@@ -207,25 +187,21 @@ class UserController extends BaseController
         if (Input::get('password') != '')
             $user->password = Input::get('password');
 
-        $user->first_name = Input::get('first_name');
-        $user->last_name = Input::get('last_name');
-
         $groups = Input::except('_token', 'username', 'password', 'first_name', 'last_name', 'userID', 'email');
 
-        // This section is probably super-inneficcient, but its late and i'm fucking tired/drunk
-        // Future me: fix this somehow
+        // Delete all the permissions the user has now
+        \GroupUserPivot::where('user_id', '=', $user->id)
+            ->delete();
 
-        $tmp = $user->getGroups();
-        foreach($tmp as $currentGroup)
-            $user->removeGroup($currentGroup);
-
+        // Restore the permissions.
+        //
+        // NB Todo. Check that we not revoking 'Administrors' access from
+        // the site admin
         foreach($groups as $group => $value) {
 
-            $thisGroup = Sentry::findGroupByName(str_replace("_", " ", $group));
-            $user->addGroup($thisGroup);
+            $thisGroup = Auth::findGroupByName(str_replace("_", " ", $group));
+            Auth::addUserToGroup($user, $thisGroup);
         }
-
-        // MESSAGE ENDS
 
         if ($user->save())
             return Redirect::action('UserController@getDetail', array($user->getKey()))
@@ -248,15 +224,8 @@ class UserController extends BaseController
     public function getDeleteUser($userID)
     {
 
-        try {
-
-            $user = Sentry::findUserById($userID);
-            $user->delete();
-
-        } catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
-
-            App::abort(404);
-        }
+        $user = Auth::findUserById($userID);
+        $user->delete();
 
         return Redirect::action('UserController@getAll')
             ->with('success', 'User has been deleted');
