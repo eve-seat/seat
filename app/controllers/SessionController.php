@@ -90,25 +90,48 @@ class SessionController extends BaseController
 
     public function postSignIn()
     {
+
         $email = Input::get('email');
         $password = Input::get('password');
         $remember = Input::get('remember_me');
-        $destination = Redirect::back()->withInput();
 
         $validation = new SeatUserValidator;
-
         if ($validation->passes()) {
 
-            // First attempt authentication using a email address
-            if (Auth::attempt(array('email' => $email, 'password' => $password), ($remember ? true : false)))
-                return $destination;
+            // Check if we got a username or email for auth
+            $identifier = filter_var(Input::get('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-            // Else, we attempt authentication using the username
-            elseif (Auth::attempt(array('username' => $email, 'password' => $password), ($remember ? true : false)))
-                return $destination;
+            // Attempt authentication using a email address
+            if (Auth::attempt(array($identifier => $email, 'password' => $password), ($remember ? true : false))) {
 
-            else
+                // If authentication passed, check out if the
+                // account is activated. If it is not, we
+                // just logout again.
+                if(Auth::User()->activated) {
+
+                    return Redirect::back()->withInput();
+
+                } else {
+
+                    // Inactive account means we will not keep this session
+                    // logged in.
+                    Auth::logout();
+
+                    // Return the session back with the error. We are ok with
+                    // revealing that the account is not active as the
+                    // credentials were correct.
+                    return Redirect::back()
+                        ->withInput()
+                        ->withErrors(
+                            'This account is not active. Please ensure that you clicked the activation link in the registration email.
+                        ');
+                }
+
+            } else {
+
                 return $destination->withErrors('Authentication failure');
+            }
+
         }
 
         return $destination->withErrors($validation->errors);

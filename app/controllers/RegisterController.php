@@ -67,13 +67,36 @@ class RegisterController extends BaseController
 
         if ($validation->passes()) {
 
+            // Check that we don't already have the user that is
+            // attempting registration
+            if (\User::where('email', Input::get('email'))->orWhere('username', Input::get('username'))->first())
+                return Redirect::back()
+                    ->withInput()
+                    ->withErrors('The chosen username or email address is already taken.');
+
             // Let's register a user.
             $user = new \User;
             $user->email = Input::get('email');
             $user->username = Input::get('username');
             $user->password = Hash::make(Input::get('password'));
+            $user->activation_code = str_random(24);
+            $user->activated = 0;
             $user->save();
 
+            // Prepare data to be sent along with the email. These
+            // are accessed by their keys in the email template
+            $data = array(
+                'activation_code' => $user->activation_code
+            );
+
+            // Send the email with the activation link
+            Mail::send('emails.auth.register', $data, function($message) {
+
+                $message->to(Input::get('email'), 'New SeAT User')
+                    ->subject('SeAT Account Confirmation');
+            });
+
+            // And were done. Redirect to the login again
             return Redirect::action('SessionController@getSignIn')
                 ->with('success', 'Successfully registered a new account. Please check your email for the activation link.');
 
@@ -94,21 +117,29 @@ class RegisterController extends BaseController
     |
     */
 
-    public function getActivate($user_id, $activation_code)
+    public function getActivate($activation_code)
     {
 
-         $user = \User::find(Crypt::decrypt($user_id));
+        // We start by looking up the activation code that we got.
+        $user = \User::where('activation_code', $activation_code)->first();
 
-         if ($user->reg_code == $activation_code) {
+        // If we got the user that matched the activation code,
+        // set the account to active and null the code
+        if ($user) {
 
-            $user->reg_code = '';
-            $user->active = 1;
+            $user->activation_code = null;
+            $user->activated = 1;
             $user->save();
 
-            \Auth::login(Crypt::decrypt($user_id));
+            Auth::loginUsingId($user->id);
 
             return Redirect::action('HomeController@showIndex')
-                ->with('success', 'Account successfully activated! Welcome :)');
-         }
+                ->with('success', 'Account successfully activated! Welcome ' . $user->username . ' :)');
+
+        } else {
+
+            return Redirect::action('SessionController@getSignIn')
+                ->withErrors('Something does not look right with the link you clicked.');
+        }
     }
 }

@@ -10,7 +10,7 @@
       <p>
         Your email address has been used to register for a new SeAT account.
         To complete the registration, please click this link <br>
-        {{ URL::action('RegisterController@getActivate', array($user_id, $activation_code)) }}
+        {{ URL::action('RegisterController@getActivate', array($activation_code)) }}
       </p>
       <p>
         If you did not sign up for this service, then you may safely ignore this email.
