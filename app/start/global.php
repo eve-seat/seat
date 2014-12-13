@@ -72,6 +72,7 @@ Log::useFiles(storage_path().'/logs/laravel.log');
 App::error(function(Exception $exception, $code)
 {
     Log::error($exception);
+    return Response::view('errors.500', array(), 500);
 });
 
 /*
@@ -111,6 +112,7 @@ App::down(function()
 
 Auth::extend('cushion', function()
 {
+    l;
 	$model = Config::get('auth.model');
     $provider = new \Illuminate\Auth\EloquentUserProvider(\App::make('hash'), $model);
 
