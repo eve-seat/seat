@@ -349,8 +349,15 @@ class SeatGuard extends \Illuminate\Auth\Guard
         // Populate a array with the User objects that are in
         // the group
         $users = array();
-        foreach($pivot_info as $pivot)
-            array_push($users, \User::find($pivot->user_id));
+        foreach($pivot_info as $pivot) {
+
+            // Find a user in the pivot with the id
+            $user = \User::find($pivot->user_id);
+
+            // If we found a user, add it to the array
+            if($user)
+                array_push($users, \User::find($pivot->user_id));
+        }
 
         return $users;
     }
