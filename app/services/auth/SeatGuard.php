@@ -4,7 +4,7 @@ namespace App\Services\Auth;
 
 class SeatGuard extends \Illuminate\Auth\Guard
 {
-    
+
     public function findGroupByName($group_name)
     {
         $group = \Group::where('name', '=', $group_name)->first();
@@ -50,18 +50,18 @@ class SeatGuard extends \Illuminate\Auth\Guard
 
         if(!$check) {
 
-            $user_group = new \SeatUserGroup();
+            $user_group = new \GroupUserPivot;
             $user_group->user_id = $user->id;
             $user_group->group_id = $group->id;
             $user_group->save();
-        }   
+        }
     }
 
     public function removeUserFromGroup($user, $group)
     {
         \GroupUserPivot::where('user_id', '=', $user->id)
             ->where('group_id', '=', $group->id)
-            ->delete(); 
+            ->delete();
     }
 
     public function isSuperUser($user)
@@ -85,7 +85,7 @@ class SeatGuard extends \Illuminate\Auth\Guard
     {
         if($this->isSuperUser($user))
             return true;
-        
+
         $groups = $user->groups;
 
         $permissions = array();
@@ -117,7 +117,7 @@ class SeatGuard extends \Illuminate\Auth\Guard
 
             if($value == 1)
                 $permission_array[$key] = $value;
-            
+
         }
         return $permission_array;
     }
