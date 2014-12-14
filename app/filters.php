@@ -114,6 +114,33 @@ Route::filter('auth.superuser', function()
         return Redirect::to('/');
 });
 
+// filter to check api app authentication
+Route::filter('auth.api', function($route, $request)
+{
+    // check for application that matches login, password and ip
+    $user = \SeatApiApplication::where('application_login', '=', $request->getUser())
+            ->where('application_password', '=', $request->getPassword())
+            ->where('application_ip', '=', Request::getClientIp())
+            ->exists();
+
+    // if we cant find an app with those details, respond to the request
+    if(!$user)
+        return Response::json(array(
+            'error' => true,
+            'message' => 'invalid application credentials or source'),
+            401
+        );
+
+    // also check to make sure that the request is over https
+    if(!\Request::secure())
+        return Response::json(array(
+            'error' => true,
+            'message' => 'api can only be accessed over https'),
+            401
+        );
+
+});
+
 
 /*
 |--------------------------------------------------------------------------
