@@ -121,7 +121,7 @@ class SeatUserMigrate extends Command {
                         ->get();
 
                     foreach ($permissions as $permission) {
-                        
+
                         //get the group for the pivot row
                         $group = \DB::table('groups')
                             ->where('id', '=', $permission->group_id)
@@ -132,15 +132,15 @@ class SeatUserMigrate extends Command {
 
                         //if so - add user or create and then add user
                         if($new_group) {
-                            
+
                             \Auth::addUserToGroup($new_user, $new_group);
 
                         } else {
 
-                            $created = \Auth::createGroup(array('name'=>$group->name, 'permissions'=>$group->permissions))
+                            $created = \Auth::createGroup(array('name'=>$group->name, 'permissions'=>$group->permissions));
                             \Auth::addUserToGroup($new_user, $created);
                         }
-                            
+
                     }
 
                     $this->info('Permissions Copied!');
