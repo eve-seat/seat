@@ -14,7 +14,7 @@ class CreateSettings extends Migration {
 	{
 		Schema::create('seat_settings', function(Blueprint $table)
 		{
-		  $table->string('setting')->unique;
+		  $table->string('setting')->unique();
 		  $table->string('value');
 
 		  $table->timestamps();
