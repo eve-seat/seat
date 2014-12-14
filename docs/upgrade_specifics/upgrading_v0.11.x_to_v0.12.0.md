@@ -14,7 +14,7 @@ To the average user this may not have any implication, but it does however allow
 
 Since the Authentication logic has changed, the location of where user accounts has also changed. Luckily, the password hashing scheme remains the same, so it simply a case of copying these over to the new table. Thankfully, a command was added to help with this.
 
-There is also a change to `app/config/app.php`, which means you need to checkout the default from the current tag with `git checkout -- app/config/app.php`, and re-apply the changes post-upgrade.
+
 
 #### Moving accounts
 
@@ -32,6 +32,52 @@ Are you sure you want to migrate all users? [yes|no]
 ```
 
 Selecting yes, will read the information from the old Sentry tables and populate the users, groups and permissions accordingly in the new `\Auth` scheme.
+
+#### App Config Change b removing Facades
+
+There is a change to `app/config/app.php`, which means you need to checkout the default from the current tag with `git checkout -- app/config/app.php`, and re-apply the changes post-upgrade.
+
+#### Setting Migration Bug
+
+The migration script that created the settings table had a bug where it was not applying a unique index to the setting name. So, for this to be fixed you can run the following SQL command in your MySQL prompt on the `seat` database (or whatever you called it):
+
+```sql
+TRUNCATE TABLE `seat_settings`;
+ALTER TABLE `seat_settings` ADD UNIQUE INDEX (`setting`);
+```
+
+A sample run doing this will be:
+
+```bash
+$ mysql -u root -p
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 303807
+Server version: 5.1.73 Source distribution
+
+Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use seat;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> TRUNCATE TABLE `seat_settings`;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> ALTER TABLE `seat_settings` ADD UNIQUE INDEX (`setting`);
+Query OK, 0 rows affected (0.01 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> \q
+Bye
+```
 
 Lastly, bring your app back online by running `php artisan up` and watch the log files for any potential errors.
 
