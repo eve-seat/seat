@@ -218,6 +218,13 @@ class SeatGuard extends \Illuminate\Auth\Guard
 
             $permissions = unserialize($group->permissions);
 
+            // Check that there were at least 1 permission
+            // returned here
+            if(count($permissions) <= 0)
+                return false;
+
+            // If we did get some permissions, check if one
+            //of them was the superuser permission
             if(array_key_exists('superuser', $permissions)) {
 
                 if($permissions['superuser'] == 1)
