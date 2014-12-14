@@ -113,7 +113,7 @@ class SeatUserMigrate extends Command {
 
                     $this->info('User Copied!');
 
-                    $this->comment('Copying permissions for user '.$user->username.'...');
+                    $this->comment('Copying permissions for user ' . $user->username . '...');
 
                     //read in all assignment from pivot
                     $permissions = \DB::table('users_groups')
@@ -137,7 +137,16 @@ class SeatUserMigrate extends Command {
 
                         } else {
 
-                            $created = \Auth::createGroup(array('name'=>$group->name, 'permissions'=>$group->permissions));
+                            // Sentry stored the permission as JSON, so we will
+                            // have to decode that which returns a object,
+                            // and cast the result to a array()
+                            $created = \Auth::createGroup(
+                                array(
+                                    'name' => $group->name,
+                                    'permissions' => (array)json_decode($group->permissions)
+                                )
+                            );
+
                             \Auth::addUserToGroup($new_user, $created);
                         }
 
