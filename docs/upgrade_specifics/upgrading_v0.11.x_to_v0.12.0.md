@@ -33,6 +33,26 @@ Are you sure you want to migrate all users? [yes|no]
 
 Selecting yes, will read the information from the old Sentry tables and populate the users, groups and permissions accordingly in the new `\Auth` scheme.
 
+Once this completes, run the groupsync to ensure all the other default groups are back too:
+
+```bash
+λ git dev → php artisan seat:groupsync
+[info] Group POS Managers was not found. Creating it.
+[ok] Group POS Managers created.
+[info] Group Wallet Managers was not found. Creating it.
+[ok] Group Wallet Managers created.
+[info] Group Recruiters was not found. Creating it.
+[ok] Group Recruiters created.
+[info] Group Asset Managers was not found. Creating it.
+[ok] Group Asset Managers created.
+[info] Group Contract Managers was not found. Creating it.
+[ok] Group Contract Managers created.
+[info] Group Market Managers was not found. Creating it.
+[ok] Group Market Managers created.
+[info] Group Key Manager was not found. Creating it.
+[ok] Group Key Manager created.
+```
+
 #### App Config Change b removing Facades
 
 There is a change to `app/config/app.php`, which means you need to checkout the default from the current tag with `git checkout -- app/config/app.php`, and re-apply the changes post-upgrade.
