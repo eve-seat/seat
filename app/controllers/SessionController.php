@@ -94,6 +94,7 @@ class SessionController extends BaseController
         $email = Input::get('email');
         $password = Input::get('password');
         $remember = Input::get('remember_me');
+        $destination = Redirect::intended('/');
 
         $validation = new SeatUserValidator;
         if ($validation->passes()) {
