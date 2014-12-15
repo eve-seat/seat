@@ -39,7 +39,7 @@
           {{ $key_count }} Owned API Keys
           <span class="pull-right">
 
-            @if (Auth::isSuperUser(\Auth::User()))
+            @if (Auth::isSuperUser())
               <span class="label label-danger">Administrator Account</span>
             @endif
 

@@ -185,8 +185,13 @@ class SeatGuard extends \Illuminate\Auth\Guard
     | Checks if a User is a SuperUser
     |
     */
-    public function isSuperUser($user)
+    public function isSuperUser($user = null)
     {
+
+        // If no user is specified, we assume the user context
+        // should be the currently logged in user.
+        if (is_null($user))
+            $user = \Auth::User();
 
         // Get the groups the user is currently a member of
         $groups = $user->groups;
@@ -227,8 +232,13 @@ class SeatGuard extends \Illuminate\Auth\Guard
     | SuperUsers automatically inherit all permissions.
     |
     */
-    public function hasAccess($user, $permission)
+    public function hasAccess($permission, $user = null)
     {
+
+        // If no user is specified, we assume the user context
+        // should be the currently logged in user.
+        if (is_null($user))
+            $user = \Auth::User();
 
         // Check if the user has superuser permissions. If so,
         // we can just return without any checks
@@ -289,8 +299,13 @@ class SeatGuard extends \Illuminate\Auth\Guard
     | Returns all the groups a user is a member of
     |
     */
-    public function getUserGroups($user)
+    public function getUserGroups($user = null)
     {
+
+        // If no user is specified, we assume the user context
+        // should be the currently logged in user.
+        if (is_null($user))
+            $user = \Auth::User();
 
         // Grab the users groups
         $groups = \GroupUserPivot::where('user_id', $user->id)->get();

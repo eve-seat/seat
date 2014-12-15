@@ -43,7 +43,7 @@ class PermissionsController extends BaseController
         // First, ensure that this user has the minimum access required. The
         // user should be at least a superuser of a director of one of the corporations
         // he has characters in
-        if (!\Auth::isSuperUser(\Auth::User()) )
+        if (!\Auth::isSuperUser() )
             App::abort(404);
 
         // Get the corporations
@@ -66,7 +66,7 @@ class PermissionsController extends BaseController
     {
 
         // Very first check is to ensure the user has the required access
-        if (!\Auth::isSuperUser(\Auth::User()) )
+        if (!\Auth::isSuperUser() )
             App::abort(404);
 
         // Lets get the SeAT accounts with keys having members in this corporation
@@ -125,7 +125,7 @@ class PermissionsController extends BaseController
     {
 
         // Very first check is to ensure the user has the required access
-        if (!\Auth::isSuperUser(\Auth::User()) )
+        if (!\Auth::isSuperUser() )
             App::abort(404);
 
         $group = Input::get('group');

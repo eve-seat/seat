@@ -200,7 +200,7 @@
     <div class="col-md-4">
       <!-- Danger box -->
 
-      @if (\Auth::isSuperUser(\Auth::User()))
+      @if (\Auth::isSuperUser())
 
         <div class="box box-solid box-danger">
           <div class="box-header">

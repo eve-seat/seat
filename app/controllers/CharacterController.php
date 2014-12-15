@@ -51,7 +51,7 @@ class CharacterController extends BaseController
         // Check that we only return characters that the current
         // user has access to. SuperUser() automatically
         // inherits all permissions
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             $characters = $characters->whereIn('seat_keys.keyID', Session::get('valid_keys'))
                 ->get();
         else
@@ -103,7 +103,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 return Redirect::action('CharacterController@getPublic', array('characterID' => $characterID))
                     ->withErrors('You do not have access to view this character. This is the public view of the character.');
@@ -159,7 +159,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -255,7 +255,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -319,7 +319,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -360,7 +360,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -400,7 +400,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -440,7 +440,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -482,7 +482,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -585,7 +585,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -623,7 +623,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -767,7 +767,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -841,7 +841,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -879,7 +879,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. . SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -927,7 +927,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -969,7 +969,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -1009,7 +1009,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -1113,7 +1113,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -1147,7 +1147,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -1180,7 +1180,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -1243,7 +1243,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             $filter = $filter->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
         // Check if we should get all of the levels or a specific one
@@ -1313,7 +1313,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             $assets = $assets->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
         // Complete the search
@@ -1341,7 +1341,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -1377,7 +1377,7 @@ class CharacterController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs. . SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::hasAccess('recruiter'))
             if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
                 App::abort(404);
 

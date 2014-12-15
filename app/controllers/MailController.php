@@ -45,7 +45,7 @@ class MailController extends BaseController
             ->join('character_mailbodies', 'character_mailmessages.messageID', '=', 'character_mailbodies.messageID')
             ->orderBy('character_mailmessages.sentDate', 'desc');
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
+        if (!\Auth::isSuperUser() )
             $mail = $mail->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
         $mail = $mail->paginate($pagination_amount);
@@ -75,7 +75,7 @@ class MailController extends BaseController
             ->groupby('character_mailmessages.messageID')
             ->orderBy('character_mailmessages.sentDate', 'desc');
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
+        if (!\Auth::isSuperUser() )
             $mail = $mail->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
         $mail = $mail->paginate($pagination_amount);
@@ -114,7 +114,7 @@ class MailController extends BaseController
             ->lists('characterID');
 
         // Ensure that the current user is allowed to view the mail
-        if (!\Auth::isSuperUser(\Auth::User()) ) {
+        if (!\Auth::isSuperUser() ) {
 
             // Get all the keys that have this mail recorded
             $keys_with_mail = DB::table('character_mailmessages')

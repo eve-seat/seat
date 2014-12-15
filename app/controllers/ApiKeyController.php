@@ -73,7 +73,7 @@ class ApiKeyController extends BaseController
             ->leftJoin('banned_calls', 'seat_keys.keyID', '=', 'banned_calls.ownerID');
 
         // If the current user is not a admin, only get the keys that they own
-        if (!\Auth::isSuperUser(\Auth::User()))
+        if (!\Auth::isSuperUser())
             $keys = $keys->where('seat_keys.user_id', \Auth::User()->id);
 
         // And complete the query
@@ -287,7 +287,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser(\Auth::User()))
+        if (!\Auth::isSuperUser())
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -342,7 +342,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser(\Auth::User()))
+        if (!\Auth::isSuperUser())
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -402,7 +402,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser(\Auth::User()))
+        if (!\Auth::isSuperUser())
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -434,12 +434,12 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser(\Auth::User()))
+        if (!\Auth::isSuperUser())
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
         // Ensure the user is allowed to delete this key
-        if (!\Auth::hasAccess(\Auth::User(), 'key_manager'))
+        if (!\Auth::hasAccess('key_manager'))
             App::abort(404);
 
         // Get the full key and vCode
@@ -640,7 +640,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this is SuperUser
-        if (!\Auth::isSuperUser(\Auth::User()))
+        if (!\Auth::isSuperUser())
             App::abort(404);
 
         // Trash all of the banned calls information
@@ -671,7 +671,7 @@ class ApiKeyController extends BaseController
 
         // Prepare the people information. Super admins get to see
         // everything, where users should only see their own stuff
-        if (\Auth::isSuperUser(\Auth::User())) {
+        if (\Auth::isSuperUser()) {
 
             // SUUPER ADMIN Show all the things
             $people = array();
@@ -744,7 +744,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser(\Auth::User()))
+        if (!\Auth::isSuperUser())
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -793,7 +793,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser(\Auth::User()))
+        if (!\Auth::isSuperUser())
             if (!in_array(Input::get('affected-key'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -832,7 +832,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser(\Auth::User()))
+        if (!\Auth::isSuperUser())
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -906,7 +906,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user is a super admin
-        if (!\Auth::isSuperUser(\Auth::User()))
+        if (!\Auth::isSuperUser())
             App::abort(404);
 
         // Find the API Key and user...

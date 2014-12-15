@@ -61,8 +61,8 @@ class CorporationController extends BaseController
     public function getJournal($corporationID)
     {
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'wallet_manager'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('wallet_manager'))
                 App::abort(404);
 
         $corporation_name = DB::table('account_apikeyinfo_characters')
@@ -116,8 +116,8 @@ class CorporationController extends BaseController
     public function getTransactions($corporationID)
     {
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'wallet_manager'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('wallet_manager'))
                 App::abort(404);
 
         $corporation_name = DB::table('account_apikeyinfo_characters')
@@ -169,8 +169,8 @@ class CorporationController extends BaseController
     public function getMemberTracking($corporationID)
     {
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('recruiter'))
                 App::abort(404);
 
         $members = DB::table(DB::raw('corporation_member_tracking as cmt'))
@@ -227,8 +227,8 @@ class CorporationController extends BaseController
     public function getAssets($corporationID)
     {
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'asset_manager'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('asset_manager'))
                 App::abort(404);
 
         $corporation_name = DB::table('account_apikeyinfo_characters')
@@ -388,8 +388,8 @@ class CorporationController extends BaseController
     public function getContracts($corporationID)
     {
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'contract_manager'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('contract_manager'))
                 App::abort(404);
 
         $corporation_name = DB::table('account_apikeyinfo_characters')
@@ -554,8 +554,8 @@ class CorporationController extends BaseController
     public function getStarbase($corporationID)
     {
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'pos_manager'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('pos_manager'))
                 App::abort(404);
 
         // The very first thing we should be doing is getting all of the starbases for the corporationID
@@ -740,8 +740,8 @@ class CorporationController extends BaseController
     public function getLedgerSummary($corporationID)
     {
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'wallet_manager'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('wallet_manager'))
                 App::abort(404);
 
         // Get the month/year data
@@ -844,8 +844,8 @@ class CorporationController extends BaseController
     public function getLedgerMonth($corporationID, $date)
     {
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'wallet_manager'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('wallet_manager'))
                 App::abort(404);
 
         // TODO: Add check to ensure corporation exists
@@ -938,8 +938,8 @@ class CorporationController extends BaseController
     public function getWalletDelta($corporationID)
     {
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'wallet_manager'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('wallet_manager'))
                 App::abort(404);
 
         $wallet_daily_delta = DB::table('corporation_walletjournal')
@@ -985,8 +985,8 @@ class CorporationController extends BaseController
     public function getMemberSecurity($corporationID)
     {
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'recruiter'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('recruiter'))
                 App::abort(404);
 
         $member_roles = DB::table('corporation_msec_roles as cmr')
@@ -1108,8 +1108,8 @@ class CorporationController extends BaseController
     public function getMarketOrders($corporationID)
     {
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'market_manager'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('market_manager'))
                 App::abort(404);
 
         $corporation_name = DB::table('account_apikeyinfo_characters')
@@ -1320,8 +1320,8 @@ class CorporationController extends BaseController
 
         // Next, check if the current user has access. Superusers may see all the things,
         // normal users may only see their own stuffs
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess(\Auth::User(), 'asset_manager'))
+        if (!\Auth::isSuperUser() )
+            if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('asset_manager'))
                 App::abort(404);
 
         // Get current working jobs

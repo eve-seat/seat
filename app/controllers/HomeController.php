@@ -52,7 +52,7 @@ class HomeController extends BaseController
         // If the user has 0 keys, we can 0 all of the values
         // If the user has keys, determine values only applicable to
         // this users keys
-        if (!\Auth::isSuperUser(\Auth::User())) {
+        if (!\Auth::isSuperUser()) {
 
             if (count(Session::get('valid_keys')) > 0) {
 

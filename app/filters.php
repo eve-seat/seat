@@ -110,7 +110,7 @@ Route::filter('auth', function()
 
 Route::filter('auth.superuser', function()
 {
-    if (!\Auth::check() || !\Auth::isSuperUser(\Auth::user()))
+    if (!\Auth::check() || !\Auth::isSuperUser())
         return Redirect::to('/');
 });
 
@@ -218,7 +218,7 @@ Route::filter('key.required', function()
         if (Request::is($match)) {
 
             // Check that we havea some valid keys defined in Session::get('valid_keys')
-            if (!\Auth::isSuperUser(\Auth::user()) && count(Session::get('valid_keys')) <= 0)
+            if (!\Auth::isSuperUser() && count(Session::get('valid_keys')) <= 0)
                 return Redirect::action('ApiKeyController@getNewKey')
                     ->with('warning', 'No API Keys are defined to show you any information. Please enter at least one.');
         }

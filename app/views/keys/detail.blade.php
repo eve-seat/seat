@@ -146,7 +146,7 @@
 
     <div class="col-md-4">
 
-      @if(Auth::isSuperUser(\Auth::User()))
+      @if(Auth::isSuperUser())
 
         <div class="box box-solid">
           <div class="box-header">

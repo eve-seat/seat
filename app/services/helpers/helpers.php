@@ -43,7 +43,7 @@ class Helpers
             ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
             ->where('account_apikeyinfo.type', 'Corporation');
 
-        if (!\Auth::isSuperUser(\Auth::User()) )
+        if (!\Auth::isSuperUser() )
             $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
         else
             $corporations = $corporations->get();

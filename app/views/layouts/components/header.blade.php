@@ -1,4 +1,4 @@
-{{\Auth::hasAccess(\Auth::User(), 'queue_manager')}}
+{{\Auth::hasAccess('queue_manager')}}
 <!-- header logo: style can be found in header.less -->
 <header class="header">
   <a href="{{ URL::to('/') }}" class="logo">
@@ -17,7 +17,7 @@
     <div class="navbar-right">
       <ul class="nav navbar-nav">
         <!-- Tasks: style can be found in dropdown.less -->
-        @if(\Auth::hasAccess(\Auth::User(), 'queue_manager'))
+        @if(\Auth::hasAccess('queue_manager'))
           <li class="dropdown tasks-menu">
             <a href="{{ action('QueueController@getStatus') }}" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Queued Jobs">
               <i class="fa fa-truck"></i>
