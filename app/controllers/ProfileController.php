@@ -46,7 +46,7 @@ class ProfileController extends BaseController
     {
 
         $user = \Auth::User();
-        $groups = $user->groups();
+        $groups = \Auth::getUserGroups();
 
         $key_count = DB::table('seat_keys')
             ->where('user_id', $user->id)
