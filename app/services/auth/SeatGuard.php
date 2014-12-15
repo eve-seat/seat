@@ -423,5 +423,4 @@ class SeatGuard extends \Illuminate\Auth\Guard
 
         return $permitted_users;
     }
-
 }

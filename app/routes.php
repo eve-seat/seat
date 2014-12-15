@@ -75,3 +75,9 @@ Route::group(array('before' => 'auth|csrf|key.required'), function() {
     Route::controller('help', 'HelpController');
 
 });
+
+// api route group
+Route::group(array('prefix' => 'api/v1', 'before' => 'auth.api'), function()
+{
+    Route::resource('authenticate', 'ApiAuthController');
+});
