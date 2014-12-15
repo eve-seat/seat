@@ -64,12 +64,14 @@
                         </td>
                         <td>
                           <div class="progress md progress-striped active">
-                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: {{ (\Carbon\Carbon::now()->timestamp - \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $job->startDate)->timestamp) / $job->timeInSeconds * 100 }}%">
+                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: {{ (\Carbon\Carbon::now()->timestamp - \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $job->startDate)->timestamp) / $job->timeInSeconds * 100 }}%; position:relative;">
+                              <span style="position:absolute; color:black;">
                               {{ number_format((Carbon\Carbon::now()->timestamp - \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $job->startDate)->timestamp) / $job->timeInSeconds * 100, 2) }} % Complete
+                              </span>
                             </div>
                           </div>
                         </td>
-                        <td><img src="//image.eveonline.com/Character/{{ $job->installerID }}_32.jpg"> {{ $job->installerName }}</td>
+                        <td><img src="//image.eveonline.com/Character/{{ $job->installerID }}_32.jpg" class='img-circle' /> {{ $job->installerName }}</td>
                         <td>{{ $job->runs }}</td>
                         <td><img src="//image.eveonline.com/Type/{{ $job->blueprintTypeID }}_32.png" /> {{ $job->blueprintTypeName }}</td>
                         <td><img src="//image.eveonline.com/Type/{{ $job->productTypeID }}_32.png" /> {{ $job->productTypeName }}</td>
