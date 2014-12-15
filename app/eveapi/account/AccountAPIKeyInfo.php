@@ -110,6 +110,12 @@ class APIKeyInfo extends BaseApi
                     BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
                     return;
 
+                // "Illegal page request! Please verify the access granted by the key you are using!."
+                case 221:
+                    // Not 100% sure how to handle this one. This call has no
+                    // access mask requirement...
+                    return;
+
                 // "Invalid Corporation Key. Key owner does not fullfill role
                 // requirements anymore."
                 case 220:
