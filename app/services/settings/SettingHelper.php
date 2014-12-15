@@ -44,7 +44,8 @@ class SettingHelper
         'color_scheme' => 'blue',
         'required_mask' => 176693568,
         'registration_enabled' => true,
-        'main_character_id' => 1
+        'main_character_id' => 1,
+        'main_character_name' => null
     );
 
     /*
@@ -59,7 +60,8 @@ class SettingHelper
 
     static $user_settings = array(
         'color_scheme',
-        'main_character'
+        'main_character_id',
+        'main_character_name'
     );
 
     /*
@@ -171,7 +173,7 @@ class SettingHelper
             // it already exists, and update its value
             $user_setting = \SeatUserSetting::where('user_id', \Auth::User()->id)
                         ->where('setting', $setting_name)
-                        ->get();
+                        ->first();
 
             // Check if this is a new value
             if(!$user_setting)
