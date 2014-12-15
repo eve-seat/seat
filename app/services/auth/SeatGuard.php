@@ -278,6 +278,67 @@ class SeatGuard extends \Illuminate\Auth\Guard
 
     /*
     |--------------------------------------------------------------------------
+    | hasAnyAccess()
+    |--------------------------------------------------------------------------
+    |
+    | Does a lookup to check if a user has access to any of the permissions
+    | received as an argument
+    |
+    */
+    public function hasAnyAccess($permission, $user = null)
+    {
+
+        // Since we will be working with more than 1 permission
+        // here we will be expecting an array of values
+        if (!is_array($permission) || count($permission) <= 0)
+            throw new \Exception('Permissions dont appear to be a valid, populated array');
+
+        // If no user is specified, we assume the user context
+        // should be the currently logged in user.
+        if (is_null($user))
+            $user = \Auth::User();
+
+        // Check if the user has superuser permissions. If so,
+        // we can just return without any checks
+        // if($this->isSuperUser($user))
+        //     return true;
+
+        // Grab the groups the user is a member of
+        $groups = $user->groups;
+
+        // Start a empty permissions array that will be checked
+        // for the required permission
+        $permissions = array();
+
+        // Populate the permissions from the groups into the
+        // permissions array. Keep in mind that this will
+        // merge and keep the unique key, meaning we
+        // dont have to go and try to get this
+        // unique later ;)
+        foreach($groups as $group)
+            $permissions = array_merge($permissions, unserialize($group->permissions));
+
+        // Next we will intersect the keys of the array we
+        // have of possible permissions with the
+        // permissions from the users group
+        // memberships
+        $potential_permissions = array_intersect_key(array_flip($permission), $permissions);
+
+        // Lastly, we loop over the potential permissions
+        // and check that there is one that is set to 1
+        foreach ($potential_permissions as $permission_name => $status)
+
+            // If the permission is enabled, return true
+            if ($status == 1)
+                return true;
+
+        // It does not seem like the user has any permission, so
+        // we will return false
+        return false;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | findAllGroups()
     |--------------------------------------------------------------------------
     |

@@ -30,45 +30,48 @@
           <li><a href="{{ action('ApiKeyController@getPeople') }}"><i class="fa fa-angle-double-right"></i> People</a></li>
         </ul>
       </li>
-      <li class="treeview @if (Request::is('corporation/*')) active @endif">
-        <a href="#">
-          <i class="fa  fa-group"></i> <span>Corporations</span>
-          <i class="fa fa-angle-left pull-right"></i>
-        </a>
-        <ul class="treeview-menu">
-          @if(\Auth::hasAccess('asset_manager'))
-            <li><a href="{{ action('CorporationController@getListAssets') }}"><i class="fa fa-angle-double-right"></i> Assets</a></li>
-          @endif
-          @if(\Auth::hasAccess('contract_manager'))
-            <li><a href="{{ action('CorporationController@getListContracts') }}"><i class="fa fa-angle-double-right"></i> Contracts</a></li>
-          @endif
-          @if(\Auth::hasAccess('asset_manager'))
-            <li><a href="{{ action('CorporationController@getListIndustry') }}"><i class="fa fa-angle-double-right"></i> Industry</a></li>
-          @endif
-          @if(\Auth::hasAccess('recruiter'))
-            <li><a href="{{ action('CorporationController@getListKillMails') }}"><i class="fa fa-angle-double-right"></i> Kill Mails</a></li>
-          @endif
-          @if (\Auth::hasAccess('market_manager'))
-            <li><a href="{{ action('CorporationController@getListMarketOrders') }}"><i class="fa fa-angle-double-right"></i> Market Orders</a></li>
-          @endif
-          @if (\Auth::hasAccess('recruiter'))
-            <li><a href="{{ action('CorporationController@getListMemberSecurity') }}"><i class="fa fa-angle-double-right"></i> Member Security</a></li>
-            <li><a href="{{ action('CorporationController@getListMemberTracking') }}"><i class="fa fa-angle-double-right"></i> Member Tracking</a></li>
-          @endif
-          @if (\Auth::hasAccess('recruiter'))
-            <li><a href="{{ action('CorporationController@getListMemberStandings') }}"><i class="fa fa-angle-double-right"></i> Standings</a></li>
-          @endif
-          @if(\Auth::hasAccess('pos_manager'))
-            <li><a href="{{ action('CorporationController@getListStarbase') }}"><i class="fa fa-angle-double-right"></i> Starbases</a></li>
-          @endif
+      {{-- Check that the user has any actual roles that relates to a corporation --}}
+      @if(\Auth::hasAnyAccess(array('asset_manager', 'contract_manger', 'market_manager', 'pos_manager', 'recruiter', 'wallet_manager')))
+        <li class="treeview @if (Request::is('corporation/*')) active @endif">
+          <a href="#">
+            <i class="fa  fa-group"></i> <span>Corporations</span>
+            <i class="fa fa-angle-left pull-right"></i>
+          </a>
+          <ul class="treeview-menu">
+            @if(\Auth::hasAccess('asset_manager'))
+              <li><a href="{{ action('CorporationController@getListAssets') }}"><i class="fa fa-angle-double-right"></i> Assets</a></li>
+            @endif
+            @if(\Auth::hasAccess('contract_manager'))
+              <li><a href="{{ action('CorporationController@getListContracts') }}"><i class="fa fa-angle-double-right"></i> Contracts</a></li>
+            @endif
+            @if(\Auth::hasAccess('asset_manager'))
+              <li><a href="{{ action('CorporationController@getListIndustry') }}"><i class="fa fa-angle-double-right"></i> Industry</a></li>
+            @endif
+            @if(\Auth::hasAccess('recruiter'))
+              <li><a href="{{ action('CorporationController@getListKillMails') }}"><i class="fa fa-angle-double-right"></i> Kill Mails</a></li>
+            @endif
+            @if (\Auth::hasAccess('market_manager'))
+              <li><a href="{{ action('CorporationController@getListMarketOrders') }}"><i class="fa fa-angle-double-right"></i> Market Orders</a></li>
+            @endif
+            @if (\Auth::hasAccess('recruiter'))
+              <li><a href="{{ action('CorporationController@getListMemberSecurity') }}"><i class="fa fa-angle-double-right"></i> Member Security</a></li>
+              <li><a href="{{ action('CorporationController@getListMemberTracking') }}"><i class="fa fa-angle-double-right"></i> Member Tracking</a></li>
+            @endif
+            @if (\Auth::hasAccess('recruiter'))
+              <li><a href="{{ action('CorporationController@getListMemberStandings') }}"><i class="fa fa-angle-double-right"></i> Standings</a></li>
+            @endif
+            @if(\Auth::hasAccess('pos_manager'))
+              <li><a href="{{ action('CorporationController@getListStarbase') }}"><i class="fa fa-angle-double-right"></i> Starbases</a></li>
+            @endif
 
-          @if (\Auth::hasAccess('wallet_manager'))
-            <li><a href="{{ action('CorporationController@getListJournals') }}"><i class="fa fa-angle-double-right"></i> Wallet Journal</a></li>
-            <li><a href="{{ action('CorporationController@getListLedgers') }}"><i class="fa fa-angle-double-right"></i> Wallet Ledger</a></li>
-            <li><a href="{{ action('CorporationController@getListTransactions') }}"><i class="fa fa-angle-double-right"></i> Wallet Transactions</a></li>
-          @endif
-        </ul>
-      </li>
+            @if (\Auth::hasAccess('wallet_manager'))
+              <li><a href="{{ action('CorporationController@getListJournals') }}"><i class="fa fa-angle-double-right"></i> Wallet Journal</a></li>
+              <li><a href="{{ action('CorporationController@getListLedgers') }}"><i class="fa fa-angle-double-right"></i> Wallet Ledger</a></li>
+              <li><a href="{{ action('CorporationController@getListTransactions') }}"><i class="fa fa-angle-double-right"></i> Wallet Transactions</a></li>
+            @endif
+          </ul>
+        </li>
+      @endif
       <li class="treeview @if (Request::is('character/*')) active @endif">
         <a href="#">
           <i class="fa fa-user"></i> <span>Characters</span>
