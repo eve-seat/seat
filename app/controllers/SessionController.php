@@ -94,7 +94,6 @@ class SessionController extends BaseController
         $email = Input::get('email');
         $password = Input::get('password');
         $remember = Input::get('remember_me');
-        $destination = Redirect::intended('/');
 
         $validation = new SeatUserValidator;
         if ($validation->passes()) {
@@ -130,12 +129,12 @@ class SessionController extends BaseController
 
             } else {
 
-                return $destination->withErrors('Authentication failure');
+                return Redirect::back()->withErrors('Authentication failure');
             }
 
         }
 
-        return $destination->withErrors($validation->errors);
+        return Redirect::back()->withErrors($validation->errors);
     }
 
     /*
