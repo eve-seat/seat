@@ -300,8 +300,8 @@ class SeatGuard extends \Illuminate\Auth\Guard
 
         // Check if the user has superuser permissions. If so,
         // we can just return without any checks
-        // if($this->isSuperUser($user))
-        //     return true;
+        if($this->isSuperUser($user))
+            return true;
 
         // Grab the groups the user is a member of
         $groups = $user->groups;
