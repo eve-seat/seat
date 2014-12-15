@@ -37,6 +37,29 @@ class Helpers
     | a certain skillID is.
     |
     */
+    public static function getCorporationList()
+    {
+        $corporations = DB::table('account_apikeyinfo')
+            ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+            ->where('account_apikeyinfo.type', 'Corporation');
+
+        if (!\Auth::isSuperUser(\Auth::User()) )
+            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+        else
+            $corporations = $corporations->get();
+
+        return $corporations;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | findSkillLevel()
+    |--------------------------------------------------------------------------
+    |
+    | Take a the characters skills array and search for the level at which
+    | a certain skillID is.
+    |
+    */
 
     public static function findSkillLevel($character_skills, $skillID) {
 

@@ -23,6 +23,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+use App\Services\Helpers\Helpers;
+
 class CorporationController extends BaseController
 {
 
@@ -38,14 +40,7 @@ class CorporationController extends BaseController
     public function getListJournals()
     {
 
-        $corporations = DB::table('account_apikeyinfo')
-            ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-            ->where('account_apikeyinfo.type', 'Corporation');
-
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
-        else
-            $corporations = $corporations->get();
+        $corporations = Helpers::getCorporationList();
 
         if(count($corporations) == 1)
             return Redirect::action('CorporationController@getJournal', array($corporations[0]->corporationID));
@@ -100,14 +95,7 @@ class CorporationController extends BaseController
     public function getListTransactions()
     {
 
-        $corporations = DB::table('account_apikeyinfo')
-            ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-            ->where('account_apikeyinfo.type', 'Corporation');
-
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
-        else
-            $corporations = $corporations->get();
+        $corporations = Helpers::getCorporationList();
 
         if(count($corporations) == 1)
             return Redirect::action('CorporationController@getTransactions', array($corporations[0]->corporationID));
@@ -160,14 +148,7 @@ class CorporationController extends BaseController
     public function getListMemberTracking()
     {
 
-        $corporations = DB::table('account_apikeyinfo')
-            ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-            ->where('account_apikeyinfo.type', 'Corporation');
-
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
-        else
-            $corporations = $corporations->get();
+        $corporations = Helpers::getCorporationList();
 
         if(count($corporations) == 1)
             return Redirect::action('CorporationController@getMemberTracking', array($corporations[0]->corporationID));
@@ -225,14 +206,7 @@ class CorporationController extends BaseController
     public function getListAssets()
     {
 
-        $corporations = DB::table('account_apikeyinfo')
-            ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-            ->where('account_apikeyinfo.type', 'Corporation');
-
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
-        else
-            $corporations = $corporations->get();
+        $corporations = Helpers::getCorporationList();
 
         if(count($corporations) == 1)
             return Redirect::action('CorporationController@getAssets', array($corporations[0]->corporationID));
@@ -393,14 +367,7 @@ class CorporationController extends BaseController
     public function getListContracts()
     {
 
-        $corporations = DB::table('account_apikeyinfo')
-            ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-            ->where('account_apikeyinfo.type', 'Corporation');
-
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
-        else
-            $corporations = $corporations->get();
+        $corporations = Helpers::getCorporationList();
 
         if(count($corporations) == 1)
             return Redirect::action('CorporationController@getContracts', array($corporations[0]->corporationID));
@@ -563,14 +530,7 @@ class CorporationController extends BaseController
     public function getListStarbase()
     {
 
-        $corporations = DB::table('account_apikeyinfo')
-            ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-            ->where('account_apikeyinfo.type', 'Corporation');
-
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
-        else
-            $corporations = $corporations->get();
+        $corporations = Helpers::getCorporationList();
 
         if(count($corporations) == 1)
             return Redirect::action('CorporationController@getStarbase', array($corporations[0]->corporationID));
@@ -759,14 +719,7 @@ class CorporationController extends BaseController
     public function getListLedgers()
     {
 
-        $corporations = DB::table('account_apikeyinfo')
-            ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-            ->where('account_apikeyinfo.type', 'Corporation');
-
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
-        else
-            $corporations = $corporations->get();
+        $corporations = Helpers::getCorporationList();
 
         if(count($corporations) == 1)
             return Redirect::action('CorporationController@getLedgerSummary', array($corporations[0]->corporationID));
@@ -1011,14 +964,7 @@ class CorporationController extends BaseController
     public function getListMemberSecurity()
     {
 
-        $corporations = DB::table('account_apikeyinfo')
-            ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-            ->where('account_apikeyinfo.type', 'Corporation');
-
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
-        else
-            $corporations = $corporations->get();
+        $corporations = Helpers::getCorporationList();
 
         if(count($corporations) == 1)
             return Redirect::action('CorporationController@getMemberSecurity', array($corporations[0]->corporationID));
@@ -1141,14 +1087,7 @@ class CorporationController extends BaseController
     public function getListMarketOrders()
     {
 
-        $corporations = DB::table('account_apikeyinfo')
-            ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-            ->where('account_apikeyinfo.type', 'Corporation');
-
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
-        else
-            $corporations = $corporations->get();
+        $corporations = Helpers::getCorporationList();
 
         if(count($corporations) == 1)
             return Redirect::action('CorporationController@getMarketOrders', array($corporations[0]->corporationID));
@@ -1358,14 +1297,7 @@ class CorporationController extends BaseController
     public function getListIndustry()
     {
 
-        $corporations = DB::table('account_apikeyinfo')
-            ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-            ->where('account_apikeyinfo.type', 'Corporation');
-
-        if (!\Auth::isSuperUser(\Auth::User()) )
-            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
-        else
-            $corporations = $corporations->get();
+        $corporations = Helpers::getCorporationList();
 
         if(count($corporations) == 1)
             return Redirect::action('CorporationController@getIndustry', array($corporations[0]->corporationID));
