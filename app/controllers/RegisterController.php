@@ -24,6 +24,7 @@ SOFTWARE.
 */
 
 use App\Services\Validators;
+use App\Services\Settings\SettingHelper as Settings;
 
 class RegisterController extends BaseController
 {
@@ -45,7 +46,7 @@ class RegisterController extends BaseController
     public function getNew()
     {
 
-        if (SeatSetting::find('registration_enabled')->value)
+        if (Settings::getSetting('registration_enabled'))
             return View::make('register.enabled');
         else
             return View::make('register.disabled');

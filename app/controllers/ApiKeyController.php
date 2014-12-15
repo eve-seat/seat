@@ -24,6 +24,7 @@ SOFTWARE.
 */
 
 use App\Services\Validators\APIKeyValidator;
+use App\Services\Settings\SettingHelper as Settings;
 use Pheal\Pheal;
 
 use Seat\EveApi;
@@ -169,7 +170,7 @@ class ApiKeyController extends BaseController
                         ->with('key_info', $key_info)
                         ->with('existance', SeatKey::where('keyID', Input::get('keyID'))->count());
                 }
-                elseif($key_info->key->accessMask < SeatSetting::find('required_mask')->value) {
+                elseif($key_info->key->accessMask < Settings::getSetting('required_mask')) {
 
                     return View::make('keys.ajax.errors')
                         ->withErrors(array('error' => 'Invalid API Mask!'));

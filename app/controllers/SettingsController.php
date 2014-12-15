@@ -24,6 +24,7 @@ SOFTWARE.
 */
 
 use App\Services\Validators\SettingValidator;
+use App\Services\Settings\SettingHelper as Settings;
 
 class SettingsController extends BaseController
 {
@@ -56,10 +57,10 @@ class SettingsController extends BaseController
     {
 
         return View::make('settings.settings')
-            ->with('app_name', SeatSetting::find('app_name')->value)
-            ->with('color_scheme', SeatSetting::find('color_scheme')->value)
-            ->with('required_mask', SeatSetting::find('required_mask')->value)
-            ->with('registration_enabled', SeatSetting::find('registration_enabled')->value);
+            ->with('app_name', Settings::getSetting('app_name', true))
+            ->with('color_scheme', Settings::getSetting('color_scheme', true))
+            ->with('required_mask', Settings::getSetting('required_mask', true))
+            ->with('registration_enabled', Settings::getSetting('registration_enabled', true));
     }
 
     /*
@@ -80,26 +81,16 @@ class SettingsController extends BaseController
 
             if ($validation->passes()) {
 
-                $app_name = SeatSetting::find('app_name');
-                $color_scheme = SeatSetting::find('color_scheme');
-                $required_mask = SeatSetting::find('required_mask');
-                $registration_enabled = SeatSetting::find('registration_enabled');
-
-                $app_name->value = Input::get('app_name');
-                $color_scheme->value = Input::get('color_scheme');
-                $required_mask->value = Input::get('required_mask');
-                $registration_enabled->value = Input::get('registration_enabled');
-
-                $app_name->save();
-                $color_scheme->save();
-                $required_mask->save();
-                $registration_enabled->save();
+                Settings::setSetting('app_name', Input::get('app_name'));
+                Settings::setSetting('color_scheme', Input::get('color_scheme'));
+                Settings::setSetting('required_mask', Input::get('required_mask'));
+                Settings::setSetting('registration_enabled', Input::get('registration_enabled'));
 
                 return View::make('settings.settings')
-                    ->with('app_name', SeatSetting::find('app_name')->value)
-                    ->with('color_scheme', SeatSetting::find('color_scheme')->value)
-                    ->with('required_mask', SeatSetting::find('required_mask')->value)
-                    ->with('registration_enabled', SeatSetting::find('registration_enabled')->value);
+                    ->with('app_name', Settings::getSetting('app_name', true))
+                    ->with('color_scheme', Settings::getSetting('color_scheme', true))
+                    ->with('required_mask', Settings::getSetting('required_mask', true))
+                    ->with('registration_enabled', Settings::getSetting('registration_enabled', true));
 
             } else {
 

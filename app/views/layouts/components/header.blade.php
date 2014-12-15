@@ -3,7 +3,7 @@
 <header class="header">
   <a href="{{ URL::to('/') }}" class="logo">
     <!-- Add the class icon to your logo image or logo icon to add the margining -->
-    <i class="fa fa-terminal"></i> {{ SeatSetting::find('app_name')->value }}
+    <i class="fa fa-terminal"></i> {{ \App\Services\Settings\SettingHelper::getSetting('app_name') }}
   </a>
   <!-- Header Navbar: style can be found in header.less -->
   <nav class="navbar navbar-static-top" role="navigation">
@@ -52,7 +52,7 @@
           </a>
           <ul class="dropdown-menu">
             <!-- User image -->
-            @if(SeatSetting::find('color_scheme')->value == "blue")
+            @if(\App\Services\Settings\SettingHelper::getSetting('color_scheme') == "blue")
               <li class="user-header bg-light-blue">
             @else
               <li class="user-header bg-black">
