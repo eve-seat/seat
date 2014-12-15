@@ -54,9 +54,79 @@ class APIKeyInfo extends BaseApi
 
         } catch (\Pheal\Exceptions\APIException $e) {
 
-                // Process a ban request as needed
-                BaseApi::banCall($api, $scope, $keyID, 0, $e->getCode() . ': ' . $e->getMessage());
-                return;
+            // Some API responses require some rather important actions
+            // SeATs perspective. For eg. Expired keys, IP bans, rate
+            // limits etc. As APIKeyInfo is probably one of the
+            // most called eveapi Updater, we will add the
+            // logic here to check for these types of
+            // responses.
+
+            // Source: https://api.eveonline.com/Eve/ErrorList.xml.aspx
+            switch ($e->getCode()) {
+
+                // "Your IP address has been temporarily blocked because it
+                // is causing too many errors. See the cacheUntil
+                // timestamp for when it will be opened again.
+                // IPs that continually cause a lot of errors
+                // in the API will be permanently banned,
+                // please take measures to minimize
+                // problematic API calls from your
+                // application."
+                case 904:
+                    // If we are rate limited, set the status of the eveapi
+                    // server to 'down' in the cache so that subsequent
+                    // calls don't fail because of this.
+                    \Cache::set('eve_api_down', true, 30);
+                    return;
+
+                // "EVE backend database temporarily disabled.""
+                case 902:
+                    // The EVE API Database is apparently down, so mark the
+                    // server as 'down' in the cache so that subsequent
+                    // calls don't fail because of this.
+                    \Cache::set('eve_api_down', true, 30);
+                    return;
+
+                // "Web site database temporarily disabled."
+                case 901:
+                    // The EVE API Database is apparently down, so mark the
+                    // server as 'down' in the cache so that subsequent
+                    // calls don't fail because of this.
+                    \Cache::set('eve_api_down', true, 30);
+                    return;
+
+                // "Authentication failure. Legacy API keys can no longer be
+                // used. Please create a new key on support.eveonline.com
+                // and make sure your application supports Customizable
+                // API Keys."
+                case 223:
+                    // The API we are working with is waaaaaay too old.
+                    BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
+                    return;
+
+                // "Key has expired. Contact key owner for access renewal."
+                case 222:
+                    // We have a invalid key. Expired or deleted.
+                    BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
+                    return;
+
+                // "Invalid Corporation Key. Key owner does not fullfill role
+                // requirements anymore."
+                case 220:
+                    // Owner of the corporation key doesnt have hes roles anymore?
+                    BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
+                    return;
+
+                // We got a problem we don't know what to do with, so
+                // throw the exception so that the can debug it.
+                default:
+                    throw $e;
+                    break;
+            }
+
+            // Process a ban request as needed
+            BaseApi::banCall($api, $scope, $keyID, 0, $e->getCode() . ': ' . $e->getMessage());
+            return;
 
         } catch (\Pheal\Exceptions\PhealException $e) {
 
@@ -82,9 +152,9 @@ class APIKeyInfo extends BaseApi
             // array as we move along to determine which characters we should delete that are possibly no
             // longer on this key
             $known_characters = array();
-            foreach (\EveAccountAPIKeyInfoCharacters::where('keyID', '=', $keyID)->get() as $character) {
+            foreach (\EveAccountAPIKeyInfoCharacters::where('keyID', '=', $keyID)->get() as $character)
                 $known_characters[] = $character->characterID;
-            }
+
             $known_characters = array_flip($known_characters);
 
             // Update the key characters
