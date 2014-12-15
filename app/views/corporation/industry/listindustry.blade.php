@@ -10,7 +10,7 @@
 
       @foreach ($corpSplitted as $corp)
 
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="small-box bg-blue">
 
             <div class="inner">
