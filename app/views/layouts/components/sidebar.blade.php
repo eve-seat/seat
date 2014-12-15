@@ -2,6 +2,27 @@
 <aside class="left-side sidebar-offcanvas">
   <!-- sidebar: style can be found in sidebar.less -->
   <section class="sidebar">
+    <!-- Sidebar user panel -->
+    <div class="user-panel">
+      <div class="pull-left image">
+        {{-- See SettingHelper why this has to be more than 1 --}}
+        @if(App\Services\Settings\SettingHelper::getSetting('main_character_id') > 1)
+          <img src="{{ App\Services\Helpers\Helpers::generateEveImage( App\Services\Settings\SettingHelper::getSetting('main_character_id'), 32) }}" class="img-circle" alt="User Image" />
+        @else
+          <img src="//image.eveonline.com/Character/1_32.jpg" class="img-circle" alt="User Image" />
+        @endif
+      </div>
+      <div class="pull-left info">
+        @if(App\Services\Settings\SettingHelper::getSetting('main_character_id') > 1)
+          <p>Hello, {{ App\Services\Settings\SettingHelper::getSetting('main_character_name') }}!</p>
+        @else
+          <p>
+            Hey! Looks like you havent set your main character yet. You can do so
+            <a href="{{ action('ProfileController@getView') }}">here</a> after adding some API keys.
+          </p>
+        @endif
+      </div>
+    </div>
     <!-- search form -->
     <form action="#" method="get" class="sidebar-form" id="sidebar-form">
       <div class="input-group">

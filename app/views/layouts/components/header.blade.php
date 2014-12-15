@@ -56,7 +56,13 @@
               <li class="user-header bg-light-blue">
             @else
               <li class="user-header bg-black">
-                @endif
+            @endif
+              {{-- See SettingHelper why this has to be more than 1 --}}
+              @if(App\Services\Settings\SettingHelper::getSetting('main_character_id') > 1)
+                <img src="{{ App\Services\Helpers\Helpers::generateEveImage( App\Services\Settings\SettingHelper::getSetting('main_character_id'), 32) }}" class="img-circle" alt="User Image" />
+              @else
+                <img src="//image.eveonline.com/Character/1_32.jpg" class="img-circle" alt="User Image" />
+              @endif
                 <p>
                   {{ \Auth::User()->email }}
                   <small>Joined: {{ \Auth::User()->created_at }}</small>

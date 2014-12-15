@@ -24,6 +24,7 @@ SOFTWARE.
 */
 
 use App\Services\Validators;
+use App\Services\Settings\SettingHelper as Settings;
 
 class ProfileController extends BaseController
 {
@@ -52,10 +53,23 @@ class ProfileController extends BaseController
             ->where('user_id', $user->id)
             ->count();
 
+        $characters = \DB::table('account_apikeyinfo_characters')
+            ->select('characterID', 'characterName')
+            ->join('seat_keys', 'account_apikeyinfo_characters.keyID', '=', 'seat_keys.keyID')
+            ->where('seat_keys.user_id', \Auth::User()->id)
+            ->get();
+
+        // Prep a small array for the Form builder to let
+        // the user choose a 'main' character
+        $available_characters = array();
+        foreach ($characters as $character_info)
+            $available_characters[$character_info->characterID] = $character_info->characterName;
+
         return View::make('profile.view')
             ->with('user', $user)
             ->with('groups', $groups)
-            ->with('key_count', $key_count);
+            ->with('key_count', $key_count)
+            ->with('available_characters', $available_characters);
     }
 
     /*
@@ -99,4 +113,65 @@ class ProfileController extends BaseController
                 ->withErrors($validation->errors);
         }
     }
+
+   /*
+    |--------------------------------------------------------------------------
+    | postSetSettings()
+    |--------------------------------------------------------------------------
+    |
+    | Sets some user configured settings
+    |
+    */
+
+    public function postSetSettings()
+    {
+
+        $validation = new Validators\UserSettingValidator;
+
+        if($validation->passes()) {
+
+            // We will have to lookup the characterID's name
+            // quickly before we set the setting, so lets
+            // do that.
+            $character_name = \DB::table('account_apikeyinfo_characters')
+                ->where('characterID', Input::get('main_character_id'))
+                ->pluck('characterName');
+
+            Settings::setSetting('color_scheme', Input::get('color_scheme'), \Auth::User()->id);
+            Settings::setSetting('main_character_id', Input::get('main_character_id'), \Auth::User()->id);
+            Settings::setSetting('main_character_name', $character_name, \Auth::User()->id);
+
+            return Redirect::back()
+                ->with('success', 'Settings Saved!');
+
+        } else {
+
+            return Redirect::back()
+                ->withInput()
+                ->withErrors($validation->errors);
+        }
+    }
+
+   /*
+    |--------------------------------------------------------------------------
+    | getAccessLog()
+    |--------------------------------------------------------------------------
+    |
+    | Gets the account access history
+    |
+    */
+
+    public function getAccessLog()
+    {
+
+        $access_log = \DB::table('seat_login_history')
+            ->where('user_id', \Auth::User()->id)
+            ->orderBy('login_date', 'desc')
+            ->take(50)
+            ->get();
+
+        return View::make('profile.ajax.accesslog')
+            ->with('access_log', $access_log);
+    }
+
 }
