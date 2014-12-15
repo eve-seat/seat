@@ -39,7 +39,7 @@ class Helpers
     */
     public static function getCorporationList()
     {
-        $corporations = DB::table('account_apikeyinfo')
+        $corporations = \DB::table('account_apikeyinfo')
             ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
             ->where('account_apikeyinfo.type', 'Corporation');
 
