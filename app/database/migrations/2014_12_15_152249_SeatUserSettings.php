@@ -15,6 +15,7 @@ class SeatUserSettings extends Migration {
         Schema::create('seat_user_settings', function(Blueprint $table)
         {
 
+            $table->increments('id');
             $table->integer('user_id');
             $table->string('setting');
             $table->string('value');

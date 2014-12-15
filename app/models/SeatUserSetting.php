@@ -28,6 +28,4 @@ class SeatUserSetting extends Eloquent
 
     protected $table = 'seat_user_settings';
 
-    public $primaryKey = array('user_id', 'setting');
-
 }
