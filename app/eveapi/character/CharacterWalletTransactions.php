@@ -64,6 +64,35 @@ class WalletTransactions extends BaseApi
         // Next, start our loop over the characters and upate the database
         foreach ($characters as $characterID) {
 
+            // When we query the API for transactions, the plan is to walk
+            // all the way back until there is no more data available.
+            // This plan is all fine and dandy, untill people whom
+            // have like 500k+ transactions in the last month
+            // start adding keys to your SeAT install and
+            // suddenly shit starts to come to a halt
+            // due to ~reasons~.
+
+            // In order for us to help alleviate some of the stress what we
+            // will be adding by this, we will ask for the maximum known
+            // transactionID for the characterID that we are working
+            // with. You may immediately think "but what about
+            // transaction renumbering in a new generation?".
+            // This is something that has to be figured out
+            // a different way, however, considering it is
+            // currently a 64bit INT, there may be some
+            // time for us left to solve this problem.
+            $known_max_transaction_id = \EveCharacterWalletTransactions::where('characterID', '=', $characterID)
+                ->max('transactionID');
+
+            // We are also going to set a flag that will signal the
+            // completion of a update. This should be set to true
+            // once $known_max_transaction_id == $transactionID.
+            // We dont break immediately though as the api
+            // results are not sorted. Id does however
+            // prevent us from crawling back say
+            // 400k *already* known entries.
+            $keep_walking = true;
+
             // Prepare the Pheal instance
             $pheal = new Pheal($keyID, $vCode);
 
@@ -111,6 +140,13 @@ class WalletTransactions extends BaseApi
 
                     // Ensure that $from_id is at its lowest
                     $from_id = min($transaction->transactionID, $from_id);
+
+                    // Check if the known_max_transaction_id matches this transactionID
+                    if ($known_max_transaction_id == $transaction->transactionID)
+
+                        // Looks like we have a response with our last known entry
+                        // in it. Lets flip the waling bit.
+                        $keep_walking = false;
 
                     // Generate a transaction hash. It would seem that transactionID's
                     // could possibly be cycled.
@@ -174,7 +210,12 @@ class WalletTransactions extends BaseApi
                     }
                 }
 
-                // Check how many entries we got back. If it us less than $row_count, we know we have
+                // Check if the walking but was flipped. See the above
+                // comments for an explanation of what is going on.
+                if (!$keep_walking)
+                    break;
+
+                // Check how many entries we got back. If it is less than $row_count, we know we have
                 // walked back the entire journal
                 if (count($wallet_transactions->transactions) < $row_count)
                     break; // Break the while loop
