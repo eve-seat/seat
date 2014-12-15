@@ -42,27 +42,6 @@ class SeatGuard extends \Illuminate\Auth\Guard
 
     /*
     |--------------------------------------------------------------------------
-    | useUser()
-    |--------------------------------------------------------------------------
-    |
-    | By default, SeatGuard assumes the current user as the context if the
-    | user we are working with. This mutator method allows us to shift
-    | that context
-    |
-    */
-    public function useUser($user)
-    {
-
-        $group = \Group::where('name', '=', $group_name)->first();
-
-        if($group)
-            return $group;
-        else
-            return false;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
     | findGroupByName()
     |--------------------------------------------------------------------------
     |
@@ -341,15 +320,13 @@ class SeatGuard extends \Illuminate\Auth\Guard
 
     /*
     |--------------------------------------------------------------------------
-    | getPermissions()
+    | getGroupPermissions()
     |--------------------------------------------------------------------------
     |
     | Returns the permissions a group has.
     |
-    | TODO: Rename this to getGroupPermissions
-    |
     */
-    public function getPermissions($group)
+    public function getGroupPermissions($group)
     {
         $permission_array = array();
 
@@ -423,4 +400,5 @@ class SeatGuard extends \Illuminate\Auth\Guard
 
         return $permitted_users;
     }
+
 }

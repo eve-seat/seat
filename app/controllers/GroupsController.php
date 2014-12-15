@@ -84,7 +84,7 @@ class GroupsController extends BaseController
         $group = \Auth::findGroupById($groupID);
         $users = \Auth::findAllUsersInGroup($group);
         $available_permissions = SeatPermissions::all();
-        $permissions = \Auth::getPermissions($group);
+        $permissions = \Auth::getGroupPermissions($group);
 
         return View::make('groups.detail')
             ->with('group', $group)
