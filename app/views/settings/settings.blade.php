@@ -16,22 +16,23 @@
           {{ Form::open(array('class' => 'form-horizontal', 'id' => 'settings-form')) }}
             <fieldset>
 
-              <!-- Prepended text-->
+              <!-- Application Name-->
               <div class="form-group">
-                <label class="col-md-4 control-label" for="prependedtext">Application Name</label>
-                <div class="col-md-6">
-                  <div class="input-group">
-                    {{ Form::text('app_name', $app_name, array('id' => 'app_name', 'class' => 'form-control'), 'required', 'autofocus') }}
-                  </div>
+                <label class="col-md-4 control-label" for="textinput">Application Name</label>
+                <div class="col-md-4">
+                  {{ Form::text('app_name', $app_name, array('id' => 'app_name', 'class' => 'form-control'), 'required', 'autofocus') }}
+                  <span class="help-block">The Name of your SeAT Instance.</span>
                 </div>
               </div>
+
 
               <!-- Prepended text-->
               <div class="form-group">
                 <label class="col-md-4 control-label" for="prependedtext">Regisration Enabled</label>
                 <div class="col-md-6">
                   <div class="input-group">
-                    {{ Form::select('registration_enabled', array('true' => 'Yes', 'false' => 'No'), $registration_enabled) }}
+                    {{ Form::select('registration_enabled', array('true' => 'Yes', 'false' => 'No'), $registration_enabled, array('class' => 'form-control')) }}
+                    <span class="help-block">Are external parties allowed to register to your SeAT instance.</span>
                   </div>
                 </div>
               </div>
@@ -42,6 +43,7 @@
                 <div class="col-md-6">
                   <div class="input-group">
                     {{ Form::text('required_mask', $required_mask, array('id' => 'required_mask', 'class' => 'form-control'), 'required') }}
+                    <span class="help-block">What is the minimum required API Key access mask.</span>
                   </div>
                 </div>
               </div>
@@ -51,7 +53,7 @@
                 <label class="col-md-4 control-label" for="prependedtext">Color Scheme</label>
                 <div class="col-md-6">
                   <div class="input-group">
-                    {{ Form::select('color_scheme', array('black' => 'black', 'blue' => 'blue'), $color_scheme) }}
+                    {{ Form::select('color_scheme', array('black' => 'black', 'blue' => 'blue'), $color_scheme, array('class' => 'form-control')) }}
                   </div>
                 </div>
               </div>
