@@ -116,6 +116,10 @@ class WalletTransactions extends BaseApi
                         $wallet_transactions = $pheal
                             ->charScope
                             ->WalletTransactions(array('characterID' => $characterID, 'rowCount' => $row_count));
+
+                        // flip the first_request as those that get processed from here need to be from the `fromID`
+                        $first_request = false;
+
                     } else {
 
                         $wallet_transactions = $pheal
