@@ -46,7 +46,7 @@
                 <div class="box-header">
                   <h3 class="box-title">Corporation Account Balances</h3>
                   <div class="box-tools pull-right">
-                    <button class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-primary btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>
                     <button class="btn btn-primary btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
                   </div>
                 </div>
@@ -81,7 +81,7 @@
                 <div class="box-header">
                   <h3 class="box-title">Global Wallet Ledger</h3>
                   <div class="box-tools pull-right">
-                    <button class="btn btn-success btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    <button class="btn btn-success btn-sm"><i class="fa fa-minus" id="collapse-box"></i></button>
                     <button class="btn btn-success btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
                   </div>
                 </div>
