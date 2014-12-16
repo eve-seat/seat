@@ -87,12 +87,32 @@ $(function() {
             $(".left-side, html, body").css("min-height", height + "px");
         }
     }
+    
+    function _fix_sidebar() {
+        //Make sure the body tag has the .fixed class
+        if (!$("body").hasClass("fixed")) {
+            return;
+        }
+
+        //Add slimscroll
+        $(".sidebar").slimscroll({
+            height: ($(window).height() - $(".header").height()) + "px",
+            color: "rgba(0,0,0,0.2)"
+        });
+    }
+
     //Fire upon load
     _fix();
+    
     //Fire when wrapper is resized
     $(".wrapper").resize(function() {
         _fix();
+        _fix_sidebar();
     });
+
+    //Fix the fixed layout sidebar scroll bug
+    _fix_sidebar();
+
 
 });
 
