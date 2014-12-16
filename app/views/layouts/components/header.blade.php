@@ -1,4 +1,3 @@
-{{\Auth::hasAccess('queue_manager')}}
 <!-- header logo: style can be found in header.less -->
 <header class="header">
   <a href="{{ URL::to('/') }}" class="logo">
