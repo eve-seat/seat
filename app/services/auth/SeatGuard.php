@@ -471,7 +471,7 @@ class SeatGuard extends \Illuminate\Auth\Guard
         foreach(\User::all() as $user)
 
             // Check the permission state
-            if ($this->hasAccess($user, $permission))
+            if ($this->hasAccess($permission, $user))
                 $permitted_users[] = $user;
 
         return $permitted_users;
