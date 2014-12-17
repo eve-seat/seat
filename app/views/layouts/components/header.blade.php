@@ -37,7 +37,7 @@
           </li>
         @endif
         <li class="dropdown tasks-menu">
-          <a href="{{ action('NotificationController@getStatus') }}" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="User Notifications">
+          <a href="{{ action('NotificationController@getStatus') }}" data-toggle="tooltip" title="" data-placement="bottom" data-original-title="Notifications">
             <i class="fa fa-bolt"></i>
             <span class="label label-info" id="notification_count">0</span>
           </a>

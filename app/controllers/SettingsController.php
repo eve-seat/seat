@@ -24,6 +24,7 @@ SOFTWARE.
 */
 
 use App\Services\Validators\SettingValidator;
+use App\Services\Validators\SeatApiAppValidator;
 use App\Services\Settings\SettingHelper as Settings;
 
 class SettingsController extends BaseController
@@ -99,4 +100,90 @@ class SettingsController extends BaseController
             }
         }
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | getApiApplications()
+    |--------------------------------------------------------------------------
+    |
+    | Get the current configured API Applications
+    |
+    */
+
+    public function getApiApplications()
+    {
+
+        return View::make('settings.apiapplications')
+            ->with('applications', SeatApiApplication::all());
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | postNewApiApplication()
+    |--------------------------------------------------------------------------
+    |
+    | Creates a new API Application
+    |
+    */
+
+    public function postNewApiApplication()
+    {
+
+        $validation = new SeatApiAppValidator;
+
+        if($validation->passes()) {
+
+            // Lets go a quick look to see if this application
+            // already exists in the database
+            if(SeatApiApplication::where('application_name', Input::get('app_name'))->exists())
+                return Redirect::back()
+                    ->withInput()
+                    ->withErrors('This application name is already in use. Please choose another.');
+
+            // Create a new API Application
+            $application = new SeatApiApplication;
+            $application->application_name = Input::get('app_name');
+            $application->application_ip = Input::get('app_src');
+            $application->application_login = Input::get('app_src');
+            $application->application_login = Input::get('app_name') . str_random(8);
+            $application->application_password = str_random(16);
+            $application->save();
+
+            return Redirect::back()
+                ->with('success', 'The application has been saved!');
+
+        } else {
+
+            return Redirect::back()
+                ->withInput()
+                ->withErrors($validation->errors);
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | getDeleteApiApplication()
+    |--------------------------------------------------------------------------
+    |
+    | Deletes a SeAT API Application
+    |
+    */
+
+    public function getDeleteApiApplication($application_id)
+    {
+
+        // Lets go a quick look to see if this application
+        // already exists in the database
+        $application = SeatApiApplication::find($application_id);
+        if(!$application)
+            App::abort(404);
+
+        // Create a new API Application
+        $application->delete();
+
+        return Redirect::back()
+            ->with('success', 'The application has been saved!');
+
+    }
+
 }

@@ -11,7 +11,7 @@
           <h3 class="box-title">SeAT Settings</h3>
         </div>
 
-        <div class="box-body table-responsive">
+        <div class="box-body">
 
           {{ Form::open(array('class' => 'form-horizontal', 'id' => 'settings-form')) }}
             <fieldset>
