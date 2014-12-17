@@ -59,20 +59,20 @@ class NotificationController extends BaseController
     |
     */
 
-    public function getStatus()
+    public function getAll()
     {
 
         $notifications = \SeatNotification::where('user_id', '=', \Auth::User()->id)
             ->orderBy('id', 'DESC')
-            ->get();
+            ->paginate(50);
 
-        $db_queue_count = \SeatNotification::where('user_id', '=', \Auth::User()->id)
+        $unread_count = \SeatNotification::where('user_id', '=', \Auth::User()->id)
             ->where('read', '=', '0')
             ->count();
 
         return View::make('notification.all')
             ->with('notifications', $notifications)
-            ->with('unread', $db_queue_count);
+            ->with('unread', $unread_count);
     }
 
     /*
@@ -89,6 +89,9 @@ class NotificationController extends BaseController
 
         $notification = \SeatNotification::find($notificationID);
 
+        if(!$notification)
+            App::abort(404);
+
         if($notification->user_id == \Auth::User()->id) {
 
             $notification->read = 1;
@@ -102,6 +105,26 @@ class NotificationController extends BaseController
             App::abort(403);
 
         }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | getMarkAllRead()
+    |--------------------------------------------------------------------------
+    |
+    | Mark all notifications as read
+    |
+    */
+
+    public function getMarkAllRead()
+    {
+
+        $notification = \SeatNotification::where('user_id', Auth::User()->id)
+            ->update(array('read' => 1));
+
+        return Redirect::action('NotificationController@getAll')
+            ->with('success', $notification . ' notification(s) have been marked as read');
+
     }
 
     /*
@@ -123,7 +146,7 @@ class NotificationController extends BaseController
             $notification->read = 1;
             $notification->save();
 
-            return Redirect::action('NotificationController@getStatus')
+            return Redirect::action('NotificationController@getAll')
                 ->with('success', 'Notification "' . $notification->title . '" marked as read');
 
         } else {
@@ -151,7 +174,7 @@ class NotificationController extends BaseController
             $notification->read = 0;
             $notification->save();
 
-            return Redirect::action('NotificationController@getStatus')
+            return Redirect::action('NotificationController@getAll')
                 ->with('success', 'Notification "' . $notification->title . '" marked as unread');
 
         } else {
