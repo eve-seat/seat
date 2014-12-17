@@ -127,11 +127,6 @@
             <li><a href="{{ action('SettingsController@getApiApplications') }}"><i class="fa fa-angle-double-right"></i> API Applications</a></li>
             <li><a href="{{ action('UserController@getAll') }}"><i class="fa fa-angle-double-right"></i> Users</a></li>
             <li><a href="{{ action('GroupsController@getAll') }}"><i class="fa fa-angle-double-right"></i> Groups</a></li>
-            <!--
-            Removed this for now due to implementation of group system, if all goes well, we should be
-            able to rip the janky permissions stuff out.
-
-            <li><a href="{{ action('PermissionsController@getShowAll') }}"><i class="fa fa-angle-double-right"></i> Permissions</a></li>-->
             <li><a href="{{ action('SettingsController@getSettings') }}"><i class="fa fa-angle-double-right"></i> SeAT Settings</a></li>
           </ul>
         </li>
