@@ -23,7 +23,7 @@
           </div>
         </div><!-- /.box-header -->
         <div class="box-body">
-          <table class="table table-hover table-condensed" id="datatable">
+          <table class="table table-hover table-condensed compact" id="datatable">
             <thead>
               <tr>
                 <th style="width: 10px">#</th>

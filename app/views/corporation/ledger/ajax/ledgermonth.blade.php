@@ -44,7 +44,7 @@
                 @else
                   <div class="tab-pane" id="ledger{{ $accountKey }}">
                 @endif
-                <table class="table table-condensed table-hover" id="datatable">
+                <table class="table table-condensed compact table-hover" id="datatable">
                   <thead>
                     <tr>
                       <th>Transaction Type</th>
@@ -117,7 +117,7 @@
                   <h3 class="box-title">Tax Contributions for Bounty Prizes</h3>
                 </div>
                 <div class="box-body no-padding">
-                  <table class="table table-condensed table-hover" id="datatable">
+                  <table class="table table-condensed compact table-hover" id="datatable">
                     <thead>
                       <tr>
                         <th>Contributor</th>
@@ -160,7 +160,7 @@
                 <h3 class="box-title">Tax Contributions for Mission Rewards</h3>
               </div>
               <div class="box-body no-padding">
-                <table class="table table-condensed table-hover" id="datatable">
+                <table class="table table-condensed compact table-hover" id="datatable">
                   <thead>
                     <tr>
                       <th>Contributor</th>
@@ -202,7 +202,7 @@
                 <h3 class="box-title">Tax Contributions for Planetary Interaction</h3>
               </div>
               <div class="box-body no-padding">
-                <table class="table table-condensed table-hover" id="datatable">
+                <table class="table table-condensed compact table-hover" id="datatable">
                   <thead>
                     <tr>
                       <th>Contributor</th>

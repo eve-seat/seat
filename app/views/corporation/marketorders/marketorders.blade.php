@@ -34,7 +34,7 @@
               <div class="tab-pane" id="{{ $key }}">
             @endif
 
-              <table class="table table-hover table-condensed" id="datatable">
+              <table class="table table-hover table-condensed compact" id="datatable">
                 <thead>
                   <tr>
                     <th style="width: 10px">#</th>

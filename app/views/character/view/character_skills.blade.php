@@ -3,17 +3,17 @@
     <div class="col-md-6">
         {{--
             Lets try and document this for a change.
-    
+
             We start by looping over the available groups, found in $skill_groups
             passed by the controller. Every pass of a new group will count the amount
             of skills the character has in that particulat group as $character_skills
             array has the groupID as a key.
-    
+
             If a group has more than 0 skills, we prepare a 'box' and loop over the actual
             skills for that group, displaying the level etc.
         --}}
         @foreach ($skill_groups as $skill_group)
-        
+
             @if ( isset($character_skills[$skill_group->groupID]) && count($character_skills[$skill_group->groupID]) > 0)
                 <div class="box box-solid">
                     <div class="box-header">
@@ -25,7 +25,7 @@
                         <ul class="list-unstyled">
                         {{--*/$group_sp = 0;/*--}}
                         @foreach ($character_skills[$skill_group->groupID] as $skill)
-                        
+
                             <li>
                                 <i class="fa fa-book"></i> {{ $skill['typeName'] }}
                                 <span class="pull-right">
@@ -80,7 +80,7 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="standard">
-                            <table class="table table-condensed table-hover" id="datatable">
+                            <table class="table table-condensed compact table-hover" id="datatable">
                                 <thead>
                                     <tr>
                                         <th>Skill</th>
@@ -255,7 +255,7 @@
                             </table>
                         </div><!-- /. tab-pane -->
                         <div class="tab-pane" id="tech2">
-                            <table class="table table-condensed table-hover" id="datatable">
+                            <table class="table table-condensed compact table-hover" id="datatable">
                                 <thead>
                                     <tr>
                                         <th>Skill</th>
@@ -275,9 +275,9 @@
                                           @else
                                             <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 12095) }}</span>
                                           @endif
-                                          
+
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 12095) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3331, 3330, 3328, 3329) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -303,7 +303,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28656) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3339, 3338, 3336, 3337) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -329,7 +329,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 23950) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(33095, 33096, 33097, 33098) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -355,7 +355,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 12093) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3331, 3330, 3328, 3329) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -381,7 +381,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28615) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3331, 3330, 3328, 3329) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -407,7 +407,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 12092) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3331, 3330, 3328, 3329) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -433,7 +433,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 12098) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(33091, 33092, 33093, 33094) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -459,7 +459,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29029) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(20524, 20526, 20527, 20528) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -485,7 +485,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 16591) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3335, 3334, 3332, 3333) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -511,7 +511,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3335, 3334, 3332, 3333) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -537,7 +537,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 12096) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3335, 3334, 3332, 3333) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -563,7 +563,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28667) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3339, 3338, 3336, 3337) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -589,7 +589,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 22761) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3335, 3334, 3332, 3333) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -615,7 +615,7 @@
                                           @endif
 
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 19719) > 0)
-                                            {{--*/$skill5 = false;/*--}}  
+                                            {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3343, 3342, 3340, 3341) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
                                                 {{--*/$skill5 = true;/*--}}
@@ -631,7 +631,7 @@
                             </table>
                         </div><!-- /. tab-pane -->
                         <div class="tab-pane" id="tech3">
-                            <table class="table table-condensed table-hover" id="datatable">
+                            <table class="table table-condensed compact table-hover" id="datatable">
                                 <thead>
                                     <tr>
                                         <th>Subsystems</th>

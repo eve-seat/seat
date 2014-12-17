@@ -11,7 +11,7 @@
     <div class="box-body">
       <div class="row">
         <div class="col-md-4">
-          <table class="table table-hover table-condensed" id="datatable">
+          <table class="table table-hover table-condensed compact" id="datatable">
             <thead>
               <tr>
                 <td>Agent Name</td>
@@ -37,7 +37,7 @@
         </div>
 
         <div class="col-md-4">
-          <table class="table table-hover table-condensed" id="datatable">
+          <table class="table table-hover table-condensed compact" id="datatable">
             <thead>
               <tr>
                 <td>NPC Corporation Name</td>
@@ -63,7 +63,7 @@
         </div>
 
         <div class="col-md-4">
-          <table class="table table-hover table-condensed" id="datatable">
+          <table class="table table-hover table-condensed compact" id="datatable">
             <thead>
               <tr>
                 <td>Faction Name</td>

@@ -16,7 +16,7 @@
     </div>
 
     <div class="box-body">
-      <table class="table table-condensed table-hover" id="datatable">
+      <table class="table table-condensed compact table-hover" id="datatable">
         <thead>
           <tr>
             <th>Character</th>
@@ -57,7 +57,7 @@
     </div>
 
     <div class="box-body">
-      <table class="table table-condensed table-hover" id="datatable">
+      <table class="table table-condensed compact table-hover" id="datatable">
         <thead>
           <tr>
             <th>Character</th>
@@ -100,7 +100,7 @@
     </div>
 
     <div class="box-body">
-      <table class="table table-condensed table-hover" id="datatable">
+      <table class="table table-condensed compact table-hover" id="datatable">
         <thead>
           <tr>
             <th>Character</th>
@@ -147,7 +147,7 @@
     </div>
 
     <div class="box-body">
-      <table class="table table-condensed table-hover" id="datatable">
+      <table class="table table-condensed compact table-hover" id="datatable">
         <thead>
           <tr>
             <th>Sender Name</th>

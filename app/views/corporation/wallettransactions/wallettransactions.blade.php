@@ -17,7 +17,7 @@
           </div>
         </div><!-- /.box-header -->
         <div class="box-body no-padding">
-          <table class="table table-condensed table-hover" id="datatable">
+          <table class="table table-condensed compact table-hover" id="datatable">
             <thead>
               <tr>
                 {{-- todo here: populate the corporation wallet division too --}}

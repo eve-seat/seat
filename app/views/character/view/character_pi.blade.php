@@ -20,7 +20,7 @@
             <div class="box-body no-padding">
               <div class="row">
                 <div class="col-md-12">
-                  <table class="table table-hover table-condensed" id="datatable">
+                  <table class="table table-hover table-condensed compact" id="datatable">
                     <tbody>
                       <tr>
                         <th colspan="100%" style="text-align:center; font-size:120%">
@@ -59,7 +59,7 @@
                 </div><!-- /.col-md-12 -->
 
                 <div class="col-md-6">
-                  <table class="table table-hover table-condensed" id="datatable">
+                  <table class="table table-hover table-condensed compact" id="datatable">
                     <tbody>
                       <tr>
                         <th colspan="100%" style="text-align:center; font-size:120%">
@@ -91,7 +91,7 @@
                 </div> <!-- /.col-md-6 -->
 
                 <div class="col-md-6">
-                  <table class="table table-hover table-condensed" id="datatable">
+                  <table class="table table-hover table-condensed compact" id="datatable">
                     <tbody>
                       <tr>
                         <th colspan="100%" style="text-align:center; font-size:120%">

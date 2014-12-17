@@ -1,6 +1,6 @@
 @if (count($filter) > 0)
 
-  <table class="table table-condensed table-hover" id="datatable">
+  <table class="table table-condensed compact table-hover" id="datatable">
     <thead>
       <tr>
         <th>Character</th>

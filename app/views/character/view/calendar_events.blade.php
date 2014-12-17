@@ -6,7 +6,7 @@
         <h3 class="box-title">Calendar Events ({{ count($calendar_events) }})</h3>
       </div><!-- /.box-header -->
       <div class="box-body no-padding">
-        <table class="table table-hover table-condensed" id="datatable">
+        <table class="table table-hover table-condensed compact" id="datatable">
           <thead>
             <tr>
               <th>Owner Name</th>
