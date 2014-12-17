@@ -6,7 +6,59 @@
 
   <div class="row">
 
-    <div class="col-md-4">
+
+
+    <div class="col-md-8">
+      <div class="box">
+
+        <div class="box-header">
+          <h3 class="box-title">Existing Users @if (count($users) > 0) ({{ count($users) }}) @endif</h3>
+        </div>
+
+        <div class="box-body">
+          <table class="table table-condensed compact table-hover" id="datatable">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Last Login</th>
+                <th>Administrator</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+
+              @foreach($users as $user)
+
+                <tr>
+                  <td>{{ $user->email }}</td>
+                  <td>{{ $user->username }}</td>
+                  <td>
+                    <span data-toggle="tooltip" title="" data-original-title="{{ $user->last_login }}">
+                      {{ Carbon\Carbon::parse($user->last_login)->diffForHumans() }}
+                    </span>
+                  </td>
+                  <td>{{ \Auth::isSuperUser($user) ? "<span class='text-red'>Yes</span>" : "No" }}</td>
+                  <td>
+                    <a href="{{ action('UserController@getDetail', array('userID' => $user->getKey())) }}" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> Edit</a>
+                    @if (count($users) > 1 && $user->getKey() != \Auth::User()->id)
+                      <a a-delete-user="{{ action('UserController@getDeleteUser', array('userID' => $user->getKey(), 'delete_all_info'=> true)) }}" a-user-name="{{ $user->email }}" class="btn btn-danger btn-xs delete-user">
+                        <i class="fa fa-times"></i> Delete
+                      </a>
+                      <a href="{{ action('UserController@getImpersonate', array('userID' => $user->getKey())) }}" class="pull-right btn btn-success btn-xs" data-container="body" data-toggle="popover" data-placement="left" data-content="Note: To return to the admin view, you will have to re-login after impersonation" data-trigger="hover">Impersonate</a>
+                    @endif
+                  </td>
+                </tr>
+
+              @endforeach
+
+            </tbody>
+          </table>
+        </div><!-- /.box-body -->
+      </div><!-- /.box -->
+    </div> <!-- col-md-8 -->
+
+      <div class="col-md-4">
       <div class="box">
         <div class="box-header">
           <h3 class="box-title">Add New User</h3>
@@ -71,51 +123,6 @@
       </div><!-- /.box -->
     </div>
 
-    <div class="col-md-8">
-      <div class="box">
-
-        <div class="box-header">
-          <h3 class="box-title">Existing Users @if (count($users) > 0) ({{ count($users) }}) @endif</h3>
-        </div>
-
-        <div class="box-body">
-          <table class="table table-condensed compact table-hover" id="datatable">
-            <thead>
-              <tr>
-                <th>Email</th>
-                <th>Username</th>
-                <th>Last Login</th>
-                <th>Administrator</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-
-              @foreach($users as $user)
-
-                <tr>
-                  <td>{{ $user->email }}</td>
-                  <td>{{ $user->username }}</td>
-                  <td>{{ $user->last_login }} ({{ Carbon\Carbon::parse($user->last_login)->diffForHumans() }})</td>
-                  <td>{{ \Auth::isSuperUser($user) ? "<span class='text-red'>Yes</span>" : "No" }}</td>
-                  <td>
-                    <a href="{{ action('UserController@getDetail', array('userID' => $user->getKey())) }}" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> Edit</a>
-                    @if (count($users) > 1 && $user->getKey() != \Auth::User()->id)
-                      <a a-delete-user="{{ action('UserController@getDeleteUser', array('userID' => $user->getKey(), 'delete_all_info'=> true)) }}" a-user-name="{{ $user->email }}" class="btn btn-danger btn-xs delete-user">
-                        <i class="fa fa-times"></i> Delete
-                      </a>
-                      <a href="{{ action('UserController@getImpersonate', array('userID' => $user->getKey())) }}" class="pull-right btn btn-success btn-xs" data-container="body" data-toggle="popover" data-placement="left" data-content="Note: To return to the admin view, you will have to re-login after impersonation" data-trigger="hover">Impersonate</a>
-                    @endif
-                  </td>
-                </tr>
-
-              @endforeach
-
-            </tbody>
-          </table>
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
-    </div>
   </div>
 
 @stop
