@@ -103,7 +103,7 @@
             className: "btn-default"
           },
           danger: {
-            label: "Delete Group",
+            label: "Remove User from Group",
             className: "btn-danger",
             callback: function() {
               window.location = remove_user;
