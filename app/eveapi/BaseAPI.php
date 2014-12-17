@@ -484,4 +484,55 @@ class BaseApi
 
         return array('id' => $calculatedSystemID, 'name' => $calculatedSystemName);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | findClosestPlanet()
+    |--------------------------------------------------------------------------
+    |
+    | Find the planetID and planetName closest to the given coordinates
+    | like findClosestMoon(), but for Planets
+    |
+    */
+
+    public static function findClosestPlanet($itemID, $x, $y, $z)
+    {
+
+        // Get the system location of the itemID
+        $systemID = \EveCorporationAssetList::where('itemID', '=', $itemID)->first();
+        $nearest_distance = INF; // Placeholder amount
+
+        // Prepare some empty responses
+        $calculatedSystemID = null;
+        $calculatedSystemName = null;
+
+        // Find the closest planetID to $x, $x & $z. groupID 7 are planets in the SDE
+        foreach (\EveMapDenormalize::where('groupID', '=', 7)->where('solarSystemID', '=', $systemID->locationID)->get() as $system) {
+
+            // So it looks there are 2 ways of determining the nearest celestial. The sqrt one is
+            // aparently a lot more accurate, versus the manhattan one that can be seen in the ECM
+            // source is slightly less accurate. TBH, I have no idea which one to use.
+
+            // See: http://math.stackexchange.com/a/42642
+            $distance = sqrt(pow(($x - $system->x), 2) + pow(($y - $system->y), 2) + pow(($z - $system->z), 2));
+
+            // Or we can use this alternative from ECM: https://github.com/evecm/ecm/blob/master/ecm/plugins/assets/tasks/assets.py#L418
+            // that uses http://en.wikipedia.org/wiki/Taxicab_geometry
+            // $distance = abs($x - $system->x) + abs($y - $system->y) + abs($z - $system->z);
+
+            // We are only interested in the planetID that is closest to our asset.
+            // so will update to this planet if it is closer than the previous one
+            if ($distance < $nearest_distance) {
+
+                // Update the current closes distance for the next pass
+                $nearest_distance = $distance;
+
+                // Set the variables that will eventually be returned
+                $calculatedSystemID = $system->itemID;
+                $calculatedSystemName = $system->itemName;
+            }
+        }
+
+        return array('id' => $calculatedSystemID, 'name' => $calculatedSystemName);
+    }
 }

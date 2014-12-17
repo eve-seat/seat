@@ -79,6 +79,10 @@ class Corporation
             $job_record->save();
             EveApi\Corporation\CorporationSheet::Update($keyID, $vCode);
 
+            $job_record->output = 'Started CustomsOffice Update';
+            $job_record->save();
+            EveApi\Corporation\CustomsOffices::Update($keyID, $vCode);
+            
             $job_record->output = 'Started IndustryJobs Update';
             $job_record->save();
             EveApi\Corporation\IndustryJobs::Update($keyID, $vCode);
