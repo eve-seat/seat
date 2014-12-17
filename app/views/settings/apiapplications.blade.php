@@ -36,9 +36,9 @@
 
                       <dl>
                         <dt>Application Name</dt>
-                        <dd>{{ $application->application_name }}</dd>
+                        <dd>{{{ $application->application_name }}}</dd>
                         <dt>API Authentication Username</dt>
-                        <dd>{{ $application->application_login }}</dd>
+                        <dd>{{{ $application->application_login }}}</dd>
                         <dt>API Authentication Password</dt>
                         <dd>{{ $application->application_password }}</dd>
                       </dl>
@@ -47,10 +47,10 @@
                     <div class="col-md-6">
 
                       <dl>
-                        <dt>Sample Usage Curl Command:</dt>
+                        <dt>Curl Usage Sample:</dt>
                         <dd>
                           <kbd>
-                            $ curl -X POST --user "{{ $application->application_login }}:{{ $application->application_password }}" {{ secure_url('/api/v1/authenticate') }} --data "username=admin&password=adminpass"
+                            $ curl -X POST --user "{{{ $application->application_login }}}:{{ $application->application_password }}" {{ secure_url('/api/v1/authenticate') }} --data "username=admin&password=adminpass"
                           </kbd>
                         </dd>
                       </dl>
@@ -115,7 +115,7 @@
               <div class="form-group">
                 <label class="col-md-4 control-label" for="singlebutton"></label>
                 <div class="col-md-4">
-                  <button id="singlebutton" name="singlebutton" class="btn btn-primary">Add Application</button>
+                  <button id="singlebutton" name="singlebutton" class="btn btn-primary"><i class="fa fa-plus"></i> Add New Application</button>
                 </div>
               </div>
 
