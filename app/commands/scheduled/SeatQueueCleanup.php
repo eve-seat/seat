@@ -84,7 +84,13 @@ class SeatQueueCleanup extends ScheduledCommand
         // Grab the 'Queued' or 'Working' jobs that we have record
         // of so that we can process a time related check on
         // them
-        foreach(\SeatQueueInformation::where('status', 'Queued')->orWhere('status', 'Working')->get() as $job)
+        foreach(\SeatQueueInformation::where('status', 'Queued')->orWhere('status', 'Working')->get() as $job) {
+
+            // We want to preserve the job status that we had for
+            // some debugging reasons, so lets set the new
+            // message added to it.
+            $new_output = '60 Minute Job Runtime Limit Exceeded. The last status was: ' .
+                $job->output;
 
             // If the Job has been in the queue for more than 1 hour,
             // move it over to a Error status.
@@ -93,8 +99,10 @@ class SeatQueueCleanup extends ScheduledCommand
                     ->update(
                         array(
                             'status' => 'Error',
-                            'output' => '60 Minute Job Runtime Limit Exceeded'
+                            'output' => $new_output
                             )
                         );
+        }
     }
+
 }
