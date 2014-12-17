@@ -25,7 +25,7 @@
     <!-- select2 bootstrap hax -->
     <link href="{{ URL::asset('assets/css/select2-bootstrap.css') }}" rel="stylesheet" type="text/css">
     <!-- datatables bootstrap  -->
-    <link href="//cdn.datatables.net/1.10.0/css/jquery.dataTables.css" rel="stylesheet" type="text/css">
+    <link href="//cdn.datatables.net/1.10.4/css/jquery.dataTables.css" rel="stylesheet" type="text/css">
     <!-- Theme style -->
     <link href="{{ URL::asset('assets/css/app.css') }}" rel="stylesheet" type="text/css">
 
@@ -87,7 +87,7 @@
     <!-- highcharts -->
     <script src="//code.highcharts.com/highcharts.js"></script>
     <!-- datatables -->
-    <script src="//cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
+    <script src="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
     <!-- select2 -->
     <script src="{{ URL::asset('assets/js/select2.min.js') }}" type="text/javascript"></script>
     <!--slimscroll -->
