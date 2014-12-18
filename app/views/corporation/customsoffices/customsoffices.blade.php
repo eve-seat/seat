@@ -1,6 +1,6 @@
 @extends('layouts.masterLayout')
 
-@section('html_title', 'Customs Office's)
+@section('html_title', 'Customs Offices')
 
 @section('page_content')
 
@@ -8,7 +8,7 @@
     <div class="col-md-12">
       <div class="box">
         <div class="box-header">
-          <h3 class="box-title">Customs Office's of {{ $corporation->corporationName }}</h3>
+          <h3 class="box-title">Customs Offices of {{ $corporation->corporationName }}</h3>
         </div>
         <div class="box-body no-padding">
             <table class="table table-condensed table-hover" id="datatable">
