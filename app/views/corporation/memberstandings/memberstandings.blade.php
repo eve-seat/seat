@@ -27,7 +27,7 @@
                     <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $standing->fromID, 32) }}" class='img-circle' style='width: 18px;height: 18px;'>
                     {{ $standing->fromName }}
                   </td>
-                  <td>{{ $standing->standing }}</td>
+                  <td>{{ App\Services\Helpers\Helpers::format_number($standing->standing,2) }}</td>
                 </tr>
 
               @endforeach
@@ -53,7 +53,7 @@
                     <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $standing->fromID, 32) }}" class='img-circle' style='width: 18px;height: 18px;'>
                     {{ $standing->fromName }}
                   </td>
-                  <td>{{ $standing->standing }}</td>
+                  <td>{{ App\Services\Helpers\Helpers::format_number($standing->standing,2) }}</td>
                 </tr>
 
               @endforeach
@@ -79,7 +79,7 @@
                     <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $standing->fromID, 32) }}" class='img-circle' style='width: 18px;height: 18px;'>
                     {{ $standing->fromName }}
                   </td>
-                  <td>{{ $standing->standing }}</td>
+                  <td>{{ App\Services\Helpers\Helpers::format_number($standing->standing,2) }}</td>
                 </tr>
 
               @endforeach
