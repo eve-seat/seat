@@ -24,7 +24,7 @@
           <td>{{ $result->corporationName }}</td>
           <td>{{ $result->typeName }}</td>
           <td>{{ $result->location }}</td>
-          <td>{{ $result->quantity }}</td>
+          <td>{{ App\Services\Helpers\Helpers::format_number($result->quantity) }}</td>
         </tr>
 
       @endforeach

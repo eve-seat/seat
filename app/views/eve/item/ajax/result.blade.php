@@ -20,8 +20,8 @@
           <td>{{ $result->typeID }}</td>
           <td>{{ $result->typeName }}</td>
           <td>{{ $result->description }}</td>
-          <td>{{ number_format($result->capacity, 0, '.', ' ') }}</td>
-          <td>{{ number_format($result->volume, 0, '.', ' ') }}</td>
+          <td>{{ App\Services\Helpers\Helpers::format_number($result->capacity, 0) }}</td>
+          <td>{{ App\Services\Helpers\Helpers::format_number($result->volume, 0) }}</td>
         </tr>
 
       @endforeach

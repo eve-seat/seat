@@ -49,7 +49,7 @@
                     <td>
                       {{-- skillpoints --}}
                       @if (!empty($character_info[$character->characterID]->skillPoints))
-                        {{ number_format($character_info[$character->characterID]->skillPoints, 0, '.', ' ') }}
+                        {{ App\Services\Helpers\Helpers::format_number($character_info[$character->characterID]->skillPoints) }}
                       @else
                         Unknown
                       @endif

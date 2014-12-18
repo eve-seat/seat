@@ -65,7 +65,7 @@
 
             @if (\Cache::has('eve_api_error_count'))
 
-              {{ number_format((\Cache::get('eve_api_error_count') / \Config::get('seat.error_limit')) * 100, 2, '.', ' ') }}%
+              {{ App\Services\Helpers\Helpers::format_number((\Cache::get('eve_api_error_count') / \Config::get('seat.error_limit')) * 100, 2) }}%
               <small>{{ \Cache::get('eve_api_error_count') }} / {{ \Config::get('seat.error_limit') }}</small>
 
             @else

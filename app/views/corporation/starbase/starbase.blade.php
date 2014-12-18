@@ -65,7 +65,7 @@
                           {{ $details->typeName }}
                         </td>
                         <td>{{ $details->itemName }}</td>
-                        <td>{{ number_format($details->security,'1') }}</td>
+                        <td>{{ App\Services\Helpers\Helpers::format_number($details->security,'1') }}</td>
                         <td><b>{{ $posname }}</b></td>
                         <td>{{ $details->fuelBlocks }}</td>
                         <td>

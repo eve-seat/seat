@@ -115,18 +115,18 @@
                               @endif
                               <li>
                                 <i class="fa fa-money"></i>
-                                Buyer will get <b><span class="text-green">{{ number_format($contract['reward'], 2, '.', ' ') }}</span></b> ISK
+                                Buyer will get <b><span class="text-green">{{ App\Services\Helpers\Helpers::format_number($contract['reward'], 2) }}</span></b> ISK
                               </li>
                               <li>
                                 <i class="fa fa-money"></i>
-                                Buyer will pay <b><span class="text-red">{{ number_format($contract['price'], 2, '.', ' ') }}</span></b> ISK
+                                Buyer will pay <b><span class="text-red">{{ App\Services\Helpers\Helpers::format_number($contract['price'], 2) }}</span></b> ISK
                               </li>
 
                               {{-- If the contract is an auction we display the buyout price --}}
                               @if($contract['type'] == 'Auction')
                                 <li>
                                   <i class="fa fa-money"></i>
-                                  <b>{{ number_format($contract['buyout'], 2, '.', ' ') }}</b> ISK buyout
+                                  <b>{{ App\Services\Helpers\Helpers::format_number($contract['buyout'], 2) }}</b> ISK buyout
                                 </li>
                               @endif
 
@@ -147,7 +147,7 @@
                                           {{-- Check if it's a item request or not --}}
                                           @if($content['included'] == 1)
                                           <img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
-                                          <span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
+                                          <span>{{ App\Services\Helpers\Helpers::format_number($content['quantity'], 0) }} x {{ $content['typeName'] }}</span>
                                           @endif
                                         </li>
 
@@ -168,7 +168,7 @@
                                           {{-- Check if it's a item request or not --}}
                                           @if($content['included'] == 0)
                                           <img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
-                                          <span>{{  number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}</span>
+                                          <span>{{ App\Services\Helpers\Helpers::format_number($content['quantity'], 0) }} x {{ $content['typeName'] }}</span>
                                           @endif
                                         </li>
 
@@ -260,7 +260,7 @@
                                   <b>{{ str_limit($contract['endlocation'], 50, $end = '...') }}</b>
                                 </span>
                                 <span>
-                                 ({{ number_format($contract['volume'], 2, '.', ' ') }} m<sup>3</sup>)
+                                 ({{ App\Services\Helpers\Helpers::format_number($contract['volume'], 2) }} m<sup>3</sup>)
                                 </span>
                               </li>
                               @if(isset($contract['title']) && strlen($contract['title']) > 0)
@@ -301,11 +301,11 @@
                               @endif
                               <li>
                                 <i class="fa fa-money"></i>
-                                <b>{{ number_format($contract['reward'], 2, '.', ' ') }}</b> ISK in reward
+                                <b>{{ App\Services\Helpers\Helpers::format_number($contract['reward'], 2) }}</b> ISK in reward
                               </li>
                               <li>
                                 <i class="fa fa-money"></i>
-                                <b>{{ number_format($contract['collateral'], 2, '.', ' ') }}</b> ISK in collateral
+                                <b>{{ App\Services\Helpers\Helpers::format_number($contract['collateral'], 2) }}</b> ISK in collateral
                               </li>
                             </ul>
                           </div><!-- ./col-md-12 -->

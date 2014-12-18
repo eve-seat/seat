@@ -48,8 +48,8 @@
                   {{ $e->ownerName2 }}
                 </td>
                 <td>{{ $e->argName1 }}</td>
-                <td>{{ number_format($e->amount, 2, '.', ' ') }}</td>
-                <td>{{ number_format($e->balance, 2, '.', ' ') }}</td>
+                <td>{{ App\Services\Helpers\Helpers::format_number($e->amount, 2) }}</td>
+                <td>{{ App\Services\Helpers\Helpers::format_number($e->balance, 2) }}</td>
               </tr>
 
             @endforeach
