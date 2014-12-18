@@ -303,38 +303,18 @@ class SeatGuard extends \Illuminate\Auth\Guard
         if($this->isSuperUser($user))
             return true;
 
-        // Grab the groups the user is a member of
-        $groups = $user->groups;
+        // Loop over the permissions and check if any access
+        // is available
+        foreach ($permission as $lookup)
+            if($this->hasAccess($lookup, $user))
 
-        // Start a empty permissions array that will be checked
-        // for the required permission
-        $permissions = array();
-
-        // Populate the permissions from the groups into the
-        // permissions array. Keep in mind that this will
-        // merge and keep the unique key, meaning we
-        // dont have to go and try to get this
-        // unique later ;)
-        foreach($groups as $group)
-            $permissions = array_merge($permissions, unserialize($group->permissions));
-
-        // Next we will intersect the keys of the array we
-        // have of possible permissions with the
-        // permissions from the users group
-        // memberships
-        $potential_permissions = array_intersect_key(array_flip($permission), $permissions);
-
-        // Lastly, we loop over the potential permissions
-        // and check that there is one that is set to 1
-        foreach ($potential_permissions as $permission_name => $status)
-
-            // If the permission is enabled, return true
-            if ($status == 1)
+                // And we have a permissions match, return true
                 return true;
 
         // It does not seem like the user has any permission, so
         // we will return false
         return false;
+
     }
 
     /*
