@@ -37,6 +37,21 @@
             </div>
           </div>
 
+          <!-- Prepended text-->
+          <div class="form-group">
+            <label class="col-md-4 control-label" for="prependedtext">Number Format</label>
+            <div class="col-md-6">
+              <div class="form-inline input-group">
+                100 
+                {{ Form::select('thousand_seperator', array('.' => '.', ',' => ',', ' ' => '(space)'), $thousand_seperator, array('class' => 'form-inline form-control')) }} 
+                000
+                {{ Form::select('decimal_seperator', array('.' => '.', ',' => ','), $decimal_seperator, array('class' => 'form-control')) }} 
+                00
+              </div>
+              <span class="help-block">Set the thousand and decimal character, e.g: 100,000.00</span>
+            </div>
+          </div>
+
           <!-- Button -->
           <div class="form-group">
             <label class="col-md-4 control-label" for="singlebutton"></label>

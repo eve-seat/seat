@@ -368,10 +368,10 @@ class Helpers
 
     public static function format_number($number, $decimals = 0) {
 
-        $thousand_seperator = \SeatSetting::find('thousand_seperator');
-        $decimal_seperator = \SeatSetting::find('decimal_seperator');
+        $thousand_seperator = \App\Services\Settings\SettingHelper::getSetting('thousand_seperator');
+        $decimal_seperator = \App\Services\Settings\SettingHelper::getSetting('decimal_seperator');
 
-        return number_format($number, $decimals, $decimal_seperator->value, $thousand_seperator->value);
+        return number_format($number, $decimals, $decimal_seperator, $thousand_seperator);
     }
 
 }

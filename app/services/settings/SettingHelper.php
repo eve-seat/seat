@@ -62,6 +62,8 @@ class SettingHelper
 
     static $user_settings = array(
         'color_scheme',
+        'thousand_seperator',
+        'decimal_seperator',
         'main_character_id',
         'main_character_name'
     );

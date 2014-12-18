@@ -40,7 +40,7 @@
                     @if (isset($last_skills_end[$character->characterID]) && strlen($last_skills_end[$character->characterID]->endTime) > 0)
                       {{ Carbon\Carbon::parse($last_skills_end[$character->characterID]->endTime)->diffForHumans() }}
                     @else
-                      Unkown
+                      Unknown
                     @endif
                   </td>
 

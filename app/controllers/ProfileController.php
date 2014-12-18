@@ -69,7 +69,9 @@ class ProfileController extends BaseController
             ->with('user', $user)
             ->with('groups', $groups)
             ->with('key_count', $key_count)
-            ->with('available_characters', $available_characters);
+            ->with('available_characters', $available_characters)
+            ->with('thousand_seperator', Settings::getSetting('thousand_seperator'))
+            ->with('decimal_seperator', Settings::getSetting('decimal_seperator'));
     }
 
     /*
@@ -138,6 +140,8 @@ class ProfileController extends BaseController
                 ->pluck('characterName');
 
             Settings::setSetting('color_scheme', Input::get('color_scheme'), \Auth::User()->id);
+            Settings::setSetting('thousand_seperator', Input::get('thousand_seperator'), \Auth::User()->id);
+            Settings::setSetting('decimal_seperator', Input::get('decimal_seperator'), \Auth::User()->id);
             Settings::setSetting('main_character_id', Input::get('main_character_id'), \Auth::User()->id);
             Settings::setSetting('main_character_name', $character_name, \Auth::User()->id);
 
