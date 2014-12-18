@@ -1415,7 +1415,7 @@ class CorporationController extends BaseController
         $corporations = Helpers::getCorporationList();
 
         if(count($corporations) == 1)
-            return Redirect::action('CorporationController@getIndustry', array($corporations[0]->corporationID));
+            return Redirect::action('CorporationController@getCustomsOffices', array($corporations[0]->corporationID));
 
         return View::make('corporation.customsoffices.listcustomsoffices')
             ->with('corporations', $corporations);
