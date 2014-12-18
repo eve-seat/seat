@@ -60,7 +60,7 @@
                     </div><!-- /.box-body -->
                 <div class="box-footer">
                   {{-- $group_sp comes from the comment hack above ;D --}}
-                  <b>{{ number_format($group_sp) }}</b> Total Skillpoints
+                  <b>{{ App\Services\Helpers\Helpers::format_number($group_sp) }}</b> Total Skillpoints
                 </div>
                 </div><!-- /.box -->
             @endif

@@ -42,6 +42,8 @@ class SettingHelper
     static $seat_defaults = array(
         'app_name' => 'SeAT',
         'color_scheme' => 'blue',
+        'thousand_seperator' => ' ',
+        'decimal_seperator' => '.',
         'required_mask' => 176693568,
         'registration_enabled' => true,
         'main_character_id' => 1,
@@ -60,6 +62,8 @@ class SettingHelper
 
     static $user_settings = array(
         'color_scheme',
+        'thousand_seperator',
+        'decimal_seperator',
         'main_character_id',
         'main_character_name'
     );

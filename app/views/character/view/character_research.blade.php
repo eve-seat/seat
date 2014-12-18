@@ -25,7 +25,7 @@
                   <td>{{ $agent->typeName }}</td>
                   <td>{{ $agent->researchStartDate }}</td>
                   <td>{{ $agent->pointsPerDay }}</td>
-                  <td>{{ number_format($agent->remainderPoints,2,'.',' ') }}</td>
+                  <td>{{ App\Services\Helpers\Helpers::format_number($agent->remainderPoints, 2) }}</td>
                 </tr>
 
               @endforeach

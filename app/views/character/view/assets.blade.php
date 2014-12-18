@@ -39,7 +39,7 @@
                           <tr class="item-container">
                             <td>{{ App\Services\Helpers\Helpers::formatBigNumber($asset['quantity']) }}</td>
                             <td colspan="2">
-                              <span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['quantity'], 0, '.', ' ') }} x {{ $asset['typeName'] }}">
+                              <span data-toggle="tooltip" title="" data-original-title="{{ App\Services\Helpers\Helpers::format_number($asset['quantity'], 0) }} x {{ $asset['typeName'] }}">
                                 <img src='//image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
                                 {{ str_limit($asset['typeName'], 35, $end = '...') }} {{ isset($asset['contents']) ? "(". count($asset['contents']) . ")" : "" }}
                               </span>
@@ -50,7 +50,7 @@
                               </span>
                             </td>
                             <td>
-                              <span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['volume'], 0, '.', ' ') }} m3">
+                              <span data-toggle="tooltip" title="" data-original-title="{{ App\Services\Helpers\Helpers::format_number($asset['volume'], 0) }} m3">
                                 {{ App\Services\Helpers\Helpers::formatBigNumber($asset['volume']) }}
                               </span>
                               @if(isset($asset['contents']))
@@ -77,7 +77,7 @@
                                 <td>{{ App\Services\Helpers\Helpers::formatBigNumber($content['quantity']) }}</td>
                                 <td style="width: 18px;"></td>
                                 <td>
-                                  <span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['quantity'], 0, '.', ' ') }} x {{ $content['typeName'] }}">
+                                  <span data-toggle="tooltip" title="" data-original-title="{{ App\Services\Helpers\Helpers::format_number($content['quantity'], 0) }} x {{ $content['typeName'] }}">
                                     <img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
                                     {{ str_limit($content['typeName'], 30, $end = '...') }}
                                   </span>
@@ -88,7 +88,7 @@
                                   </span>
                                 </td>
                                 <td>
-                                  <span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['volume'] * $content['quantity'], 0, '.', ' ') }} m3">
+                                  <span data-toggle="tooltip" title="" data-original-title="{{ App\Services\Helpers\Helpers::format_number($content['volume'] * $content['quantity'], 0) }} m3">
                                     {{ App\Services\Helpers\Helpers::formatBigNumber($content['volume'] * $content['quantity']) }}
                                   </span>
                                 </td>

@@ -60,9 +60,9 @@
                         <td>
                           <b>
                             @if ($entry->total < 0)
-                              <span class="text-red">{{ number_format($entry->total, 2, '.', ' ') }} ISK</span>
+                              <span class="text-red">{{ App\Services\Helpers\Helpers::format_number($entry->total, 2) }} ISK</span>
                             @else
-                              {{ number_format($entry->total, 2, '.', ' ') }} ISK
+                              {{ App\Services\Helpers\Helpers::format_number($entry->total, 2) }} ISK
                             @endif
                           </b>
                         </td>
@@ -75,9 +75,9 @@
                       <td>
                         <b>
                           @if ($ledger['total'] < 0)
-                            <span class="text-red">{{ number_format($ledger['total'], 2, '.', ' ') }} ISK</span>
+                            <span class="text-red">{{ App\Services\Helpers\Helpers::format_number($ledger['total'], 2) }} ISK</span>
                           @else
-                            {{ number_format($ledger['total'], 2, '.', ' ') }} ISK
+                            {{ App\Services\Helpers\Helpers::format_number($ledger['total'], 2) }} ISK
                           @endif
                         </b>
                       </td>
@@ -135,7 +135,7 @@
                               {{ $entry->ownerName2 }}
                             </a>
                           </td>
-                          <td> <b> {{ number_format($entry->total, 2, '.', ' ') }} ISK </b> </td>
+                          <td> <b> {{ App\Services\Helpers\Helpers::format_number($entry->total, 2) }} ISK </b> </td>
                         </tr>
 
                       @endforeach
@@ -177,7 +177,7 @@
                             {{ $entry->ownerName2 }}
                           </a>
                         </td>
-                        <td> <b> {{ number_format($entry->total, 2, '.', ' ') }} ISK </b> </td>
+                        <td> <b> {{ App\Services\Helpers\Helpers::format_number($entry->total, 2) }} ISK </b> </td>
                       </tr>
 
                     @endforeach
@@ -220,7 +220,7 @@
                             {{ $entry->ownerName1 }}
                           </a>
                         </td>
-                        <td> <b> {{ number_format($entry->total, 2, '.', ' ') }} ISK </b> </td>
+                        <td> <b> {{ App\Services\Helpers\Helpers::format_number($entry->total, 2) }} ISK </b> </td>
                       </tr>
 
                     @endforeach

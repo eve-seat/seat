@@ -146,7 +146,7 @@ class Helpers
             $places = 2;
             return $number;
 
-        return number_format($number, $places);
+        return Helpers::format_number($number, $places);
     }
 
     /*
@@ -356,4 +356,22 @@ class Helpers
 
         return $count;
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | format_number()
+    |--------------------------------------------------------------------------
+    |
+    | Returns the number in a format which has been set by the site admin
+    |
+    */
+
+    public static function format_number($number, $decimals = 0) {
+
+        $thousand_seperator = \App\Services\Settings\SettingHelper::getSetting('thousand_seperator');
+        $decimal_seperator = \App\Services\Settings\SettingHelper::getSetting('decimal_seperator');
+
+        return number_format($number, $decimals, $decimal_seperator, $thousand_seperator);
+    }
+
 }

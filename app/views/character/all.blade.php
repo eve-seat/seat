@@ -40,7 +40,7 @@
                     @if (isset($last_skills_end[$character->characterID]) && strlen($last_skills_end[$character->characterID]->endTime) > 0)
                       {{ Carbon\Carbon::parse($last_skills_end[$character->characterID]->endTime)->diffForHumans() }}
                     @else
-                      Unkown
+                      Unknown
                     @endif
                   </td>
 
@@ -49,7 +49,7 @@
                     <td>
                       {{-- skillpoints --}}
                       @if (!empty($character_info[$character->characterID]->skillPoints))
-                        {{ number_format($character_info[$character->characterID]->skillPoints, 0, '.', ' ') }}
+                        {{ App\Services\Helpers\Helpers::format_number($character_info[$character->characterID]->skillPoints) }}
                       @else
                         Unknown
                       @endif

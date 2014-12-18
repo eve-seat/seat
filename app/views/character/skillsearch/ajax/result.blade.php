@@ -23,7 +23,7 @@
           </td>
           <td>{{ $result->corporationName }}</td>
           <td>{{ $result->typeName }}</td>
-          <td>{{ $result->skillpoints }}</td>
+          <td>{{ App\Services\Helpers\Helpers::format_number($result->skillpoints) }}</td>
           <td>
 
             {{ $result->level }} |

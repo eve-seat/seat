@@ -59,7 +59,7 @@
                       <td>
                         <div class="progress md progress-striped active">
                           <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: {{ (\Carbon\Carbon::now()->timestamp - \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $job->startDate)->timestamp) / $job->timeInSeconds * 100 }}%">
-                            {{ number_format((Carbon\Carbon::now()->timestamp - \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $job->startDate)->timestamp) / $job->timeInSeconds * 100, 2) }} % Complete
+                            {{ App\Services\Helpers\Helpers::format_number((Carbon\Carbon::now()->timestamp - \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $job->startDate)->timestamp) / $job->timeInSeconds * 100, 2) }} % Complete
                           </div>
                         </div>
                       </td>

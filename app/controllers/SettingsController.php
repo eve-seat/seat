@@ -60,6 +60,8 @@ class SettingsController extends BaseController
         return View::make('settings.settings')
             ->with('app_name', Settings::getSetting('app_name', true))
             ->with('color_scheme', Settings::getSetting('color_scheme', true))
+            ->with('thousand_seperator', Settings::getSetting('thousand_seperator', true))
+            ->with('decimal_seperator', Settings::getSetting('decimal_seperator', true))
             ->with('required_mask', Settings::getSetting('required_mask', true))
             ->with('registration_enabled', Settings::getSetting('registration_enabled', true));
     }
@@ -84,12 +86,16 @@ class SettingsController extends BaseController
 
                 Settings::setSetting('app_name', Input::get('app_name'));
                 Settings::setSetting('color_scheme', Input::get('color_scheme'));
+                Settings::setSetting('thousand_seperator', Input::get('thousand_seperator'));
+                Settings::setSetting('decimal_seperator', Input::get('decimal_seperator'));
                 Settings::setSetting('required_mask', Input::get('required_mask'));
                 Settings::setSetting('registration_enabled', Input::get('registration_enabled'));
 
                 return View::make('settings.settings')
                     ->with('app_name', Settings::getSetting('app_name', true))
                     ->with('color_scheme', Settings::getSetting('color_scheme', true))
+                    ->with('thousand_seperator', Settings::getSetting('thousand_seperator', true))
+                    ->with('decimal_seperator', Settings::getSetting('decimal_seperator', true))
                     ->with('required_mask', Settings::getSetting('required_mask', true))
                     ->with('registration_enabled', Settings::getSetting('registration_enabled', true));
 
