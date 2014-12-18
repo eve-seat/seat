@@ -44,7 +44,7 @@ class Helpers
             ->where('account_apikeyinfo.type', 'Corporation');
 
         if (!\Auth::isSuperUser() )
-            $corporations = $corporations->whereIn('corporationID', Session::get('corporation_affiliations'))->get();
+            $corporations = $corporations->whereIn('corporationID', \Session::get('corporation_affiliations'))->get();
         else
             $corporations = $corporations->get();
 
