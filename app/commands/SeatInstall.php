@@ -328,6 +328,11 @@ class SeatInstall extends Command
         $this->call('seat:groupsync');
         $this->line('');
 
+        // Regenerate the Application Encryption key
+        $this->inf('[+] Regenerating the Encryption Key');
+        $this->call('key:generate');
+        $this->line('');
+
         // Finally, write the installer lock file!
         $lock_file_write = \File::put(base_path() . '/.installed.lck', 'Installed ' . date('Y-m-d H:i:s'));
 
