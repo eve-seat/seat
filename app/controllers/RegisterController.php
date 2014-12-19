@@ -46,7 +46,7 @@ class RegisterController extends BaseController
     public function getNew()
     {
 
-        if (Settings::getSetting('registration_enabled'))
+        if (Settings::getSetting('registration_enabled') == 'true')
             return View::make('register.enabled');
         else
             return View::make('register.disabled');
