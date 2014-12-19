@@ -329,7 +329,7 @@ class SeatInstall extends Command
         $this->line('');
 
         // Regenerate the Application Encryption key
-        $this->inf('[+] Regenerating the Encryption Key');
+        $this->info('[+] Regenerating the Encryption Key');
         $this->call('key:generate');
         $this->line('');
 
