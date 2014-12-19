@@ -119,29 +119,55 @@ class SettingHelper
                 // for user to have set.
                 if (in_array($setting_name, SettingHelper::$user_settings)) {
 
-                    // Looks like we have a user setting, lets do a
-                    // db lookup for it.
-                    $setting_value = \SeatUserSetting::where('user_id', \Auth::User()->id)
-                            ->where('setting', $setting_name)
-                            ->pluck('value');
+                    // If the database is not ready for us to attempt
+                    // setting retrieval, then the following call
+                    // will throw an exception. This can happen
+                    // with new installs when the application
+                    // bootstraps and wants things like the
+                    // app_name etc. So, to combat this,
+                    // we catch it and allow the flow
+                    // to follow down to the
+                    // defaults
+                    try {
 
-                    if($setting_value)
+                        // Looks like we have a user setting, lets do a
+                        // db lookup for it.
+                        $setting_value = \SeatUserSetting::where('user_id', \Auth::User()->id)
+                                ->where('setting', $setting_name)
+                                ->pluck('value');
 
-                        // Found the user setting, return that!
-                        return $setting_value;
+                        if($setting_value)
+
+                            // Found the user setting, return that!
+                            return $setting_value;
+
+                    } catch (Exception $e) {}
                 }
             }
         }
 
-        // So we dont have a user setting for whatever reason,
-        // so lets check the SeAT global settings.
-        $setting_value = \SeatSetting::where('setting', $setting_name)
-                        ->pluck('value');
+        // If the database is not ready for us to attempt
+        // setting retrieval, then the following call
+        // will throw an exception. This can happen
+        // with new installs when the application
+        // bootstraps and wants things like the
+        // app_name etc. So, to combat this,
+        // we catch it and allow the flow
+        // to follow down to the
+        // defaults
+        try {
 
-        // If we have a database entry for the setting, return
-        // that as the value
-        if($setting_value)
-            return $setting_value;
+            // So we dont have a user setting for whatever reason,
+            // so lets check the SeAT global settings.
+            $setting_value = \SeatSetting::where('setting', $setting_name)
+                            ->pluck('value');
+
+            // If we have a database entry for the setting, return
+            // that as the value
+            if($setting_value)
+                return $setting_value;
+
+        } catch (Exception $e) {}
 
         // Finally, and as a last resort, check if we have a
         // default value for this setting defined. If not
