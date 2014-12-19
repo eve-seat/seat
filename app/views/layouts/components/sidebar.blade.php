@@ -65,6 +65,9 @@
             @if(\Auth::hasAccess('contract_manager'))
               <li><a href="{{ action('CorporationController@getListContracts') }}"><i class="fa fa-angle-double-right"></i> Contracts</a></li>
             @endif
+            @if(\Auth::hasAccess('pos_manager'))
+              <li><a href="{{ action('CorporationController@getListCustomsOffices') }}"><i class="fa fa-angle-double-right"></i> Customs Offices</a></li>
+            @endif
             @if(\Auth::hasAccess('asset_manager'))
               <li><a href="{{ action('CorporationController@getListIndustry') }}"><i class="fa fa-angle-double-right"></i> Industry</a></li>
             @endif

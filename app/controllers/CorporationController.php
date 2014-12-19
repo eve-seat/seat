@@ -1399,4 +1399,55 @@ class CorporationController extends BaseController
             ->with('current_jobs', $current_jobs)
             ->with('finished_jobs', $finished_jobs);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | getListCustomsOffices()
+    |--------------------------------------------------------------------------
+    |
+    | Get a list of the corporations that we can display killmails for
+    |
+    */
+
+    public function getListCustomsOffices()
+    {
+
+        $corporations = Helpers::getCorporationList();
+
+        if(count($corporations) == 1)
+            return Redirect::action('CorporationController@getCustomsOffices', array($corporations[0]->corporationID));
+
+        return View::make('corporation.customsoffices.listcustomsoffices')
+            ->with('corporations', $corporations);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | getCustomsOffices()
+    |--------------------------------------------------------------------------
+    |
+    | Display the corporation Kill Mails
+    |
+    */
+
+    public function getCustomsOffices($corporationID)
+    {
+
+        // Get the name of the corporation in question
+        $corporation_name = DB::table('account_apikeyinfo_characters')
+            ->where('corporationID', $corporationID)
+            ->first();
+
+        $customsoffices = DB::table('corporation_customsoffices')
+            ->select(DB::raw('corporation_customsoffices.*, corporation_customsoffices_locations.mapName'))
+            ->leftJoin('corporation_customsoffices_locations', 'corporation_customsoffices_locations.itemID', '=', 'corporation_customsoffices.itemID')
+            ->where('corporation_customsoffices.corporationID', $corporationID)
+            ->orderBy(DB::raw('corporation_customsoffices.solarSystemName, corporation_customsoffices_locations.mapName'))
+            ->get();
+
+        return View::make('corporation.customsoffices.customsoffices')
+            ->with('customsoffices', $customsoffices)
+            ->with('corporation', $corporation_name);
+    }
+
 }
