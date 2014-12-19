@@ -6,15 +6,15 @@
     <div class="user-panel">
       <div class="pull-left image">
         {{-- See SettingHelper why this has to be more than 1 --}}
-        @if(App\Services\Settings\SettingHelper::getSetting('main_character_id') > 1)
-          <img src="{{ App\Services\Helpers\Helpers::generateEveImage( App\Services\Settings\SettingHelper::getSetting('main_character_id'), 32) }}" class="img-circle" alt="User Image" />
+        @if($settings['main_character_id'] > 1)
+          <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $settings['main_character_id'], 32) }}" class="img-circle" alt="User Image" />
         @else
           <img src="//image.eveonline.com/Character/1_32.jpg" class="img-circle" alt="User Image" />
         @endif
       </div>
       <div class="pull-left info">
-        @if(App\Services\Settings\SettingHelper::getSetting('main_character_id') > 1)
-          <p>Hello, {{ App\Services\Settings\SettingHelper::getSetting('main_character_name') }}!</p>
+        @if($settings['main_character_id'] > 1)
+          <p>Hello, {{ $settings['main_character_name'] }}!</p>
         @else
           <p>
             Hey! Looks like you havent set your main character yet. You can do so

@@ -25,7 +25,7 @@
           <div class="form-group">
             <label class="col-md-4 control-label" for="selectbasic">Current Main Character</label>
             <div class="col-md-4">
-              {{ Form::select('main_character_id', $available_characters, \App\Services\Settings\SettingHelper::getSetting('main_character_id'), array('class' => 'form-control')) }}
+              {{ Form::select('main_character_id', $available_characters, $settings['main_character_id'], array('class' => 'form-control')) }}
             </div>
           </div>
 
@@ -33,7 +33,7 @@
           <div class="form-group">
             <label class="col-md-4 control-label" for="selectbasic">SeAT Theme</label>
             <div class="col-md-4">
-              {{ Form::select('color_scheme', array('blue' => 'Blue', 'black' => 'Black'), \App\Services\Settings\SettingHelper::getSetting('color_scheme'), array('class' => 'form-control')) }}
+              {{ Form::select('color_scheme', array('blue' => 'Blue', 'black' => 'Black'), $settings['color_scheme'], array('class' => 'form-control')) }}
             </div>
           </div>
 
@@ -42,10 +42,10 @@
             <label class="col-md-4 control-label" for="prependedtext">Number Format</label>
             <div class="col-md-6">
               <div class="form-inline input-group">
-                100 
-                {{ Form::select('thousand_seperator', array('.' => '.', ',' => ',', ' ' => '(space)'), $thousand_seperator, array('class' => 'form-inline form-control')) }} 
+                100
+                {{ Form::select('thousand_seperator', array('.' => '.', ',' => ',', ' ' => '(space)'), $thousand_seperator, array('class' => 'form-inline form-control')) }}
                 000
-                {{ Form::select('decimal_seperator', array('.' => '.', ',' => ','), $decimal_seperator, array('class' => 'form-control')) }} 
+                {{ Form::select('decimal_seperator', array('.' => '.', ',' => ','), $decimal_seperator, array('class' => 'form-control')) }}
                 00
               </div>
               <span class="help-block">Set the thousand and decimal character, e.g: 100,000.00</span>

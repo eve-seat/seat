@@ -125,6 +125,19 @@ Auth::extend('cushion', function()
 
 /*
 |--------------------------------------------------------------------------
+| Settings in Views
+|--------------------------------------------------------------------------
+|
+| Settings should only be calculated once for views. Unless explicitly
+| called, the settings array() may be used to get the required
+| Setting
+|
+*/
+
+View::share('settings', App\Services\Settings\SettingHelper::getAllSettings());
+
+/*
+|--------------------------------------------------------------------------
 | Require The Filters File
 |--------------------------------------------------------------------------
 |

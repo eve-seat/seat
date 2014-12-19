@@ -7,7 +7,7 @@
       @if (trim($__env->yieldContent('html_title')))
           @yield('html_title') |
       @endif
-      {{ \App\Services\Settings\SettingHelper::getSetting('app_name') }}
+      {{ $settings['app_name'] }}
     </title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
@@ -36,7 +36,7 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body class="skin-{{ \App\Services\Settings\SettingHelper::getSetting('color_scheme') }} fixed">
+  <body class="skin-{{ $settings['color_scheme'] }} fixed">
 
     @include('layouts.components.header')
 

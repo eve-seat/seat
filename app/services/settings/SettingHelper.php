@@ -214,4 +214,27 @@ class SettingHelper
 
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | getAllSettings()
+    |--------------------------------------------------------------------------
+    |
+    | Attempts to retrieve the value of all SeAT settings.
+    |
+    */
+
+    public static function getAllSettings() {
+
+        $calculated_settings = array();
+        // Loop over all of the settings we know of
+        // and populate the return array with the
+        // calculated values
+        foreach (SettingHelper::$seat_defaults as $setting_name => $setting_value)
+            $calculated_settings[$setting_name] = SettingHelper::getSetting($setting_name);
+
+        // Once we have everything set, return
+        return $calculated_settings;
+
+    }
+
 }

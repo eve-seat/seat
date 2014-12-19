@@ -6,7 +6,7 @@
       @if (trim($__env->yieldContent('html_title')))
         @yield('html_title') |
       @endif
-      {{ \App\Services\Settings\SettingHelper::getSetting('app_name') }}
+      {{ $settings['app_name'] }}
     </title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- bootstrap 3.0.2 -->

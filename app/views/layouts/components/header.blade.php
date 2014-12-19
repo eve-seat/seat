@@ -2,7 +2,7 @@
 <header class="header">
   <a href="{{ URL::to('/') }}" class="logo">
     <!-- Add the class icon to your logo image or logo icon to add the margining -->
-    <i class="fa fa-terminal"></i> {{ \App\Services\Settings\SettingHelper::getSetting('app_name') }}
+    <i class="fa fa-terminal"></i> {{ $settings['app_name'] }}
   </a>
   <!-- Header Navbar: style can be found in header.less -->
   <nav class="navbar navbar-static-top" role="navigation">
@@ -51,14 +51,14 @@
           </a>
           <ul class="dropdown-menu">
             <!-- User image -->
-            @if(\App\Services\Settings\SettingHelper::getSetting('color_scheme') == "blue")
+            @if($settings['color_scheme'] == "blue")
               <li class="user-header bg-light-blue">
             @else
               <li class="user-header bg-black">
             @endif
               {{-- See SettingHelper why this has to be more than 1 --}}
-              @if(App\Services\Settings\SettingHelper::getSetting('main_character_id') > 1)
-                <img src="{{ App\Services\Helpers\Helpers::generateEveImage( App\Services\Settings\SettingHelper::getSetting('main_character_id'), 32) }}" class="img-circle" alt="User Image" />
+              @if($settings['main_character_id'] > 1)
+                <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $settings['main_character_id'], 32) }}" class="img-circle" alt="User Image" />
               @else
                 <img src="//image.eveonline.com/Character/1_32.jpg" class="img-circle" alt="User Image" />
               @endif

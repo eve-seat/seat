@@ -66,8 +66,8 @@
             <!-- API Links -->
             <li>Create a new <a href="https://support.eveonline.com/api/key/CreatePredefined/268435455" target="_blank"><i class="fa fa-external-link"></i> full access</a> key (recommended).</li>
             <li>
-              The minimum access mask is {{ \App\Services\Settings\SettingHelper::getSetting('required_mask') }}, click
-              <a href="https://support.eveonline.com/api/key/CreatePredefined/{{ \App\Services\Settings\SettingHelper::getSetting('required_mask') }}" target="_blank">
+              The minimum access mask is {{ $settings['required_mask'] }}, click
+              <a href="https://support.eveonline.com/api/key/CreatePredefined/{{ $settings['required_mask'] }}" target="_blank">
                 <i class="fa fa-external-link"></i>here
               </a> to make a key with this mask.
             </li>
