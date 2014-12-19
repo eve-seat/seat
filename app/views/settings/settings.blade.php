@@ -13,8 +13,10 @@
 
         <div class="box-body">
 
-          {{ Form::open(array('class' => 'form-horizontal', 'id' => 'settings-form')) }}
+          {{ Form::open(array('action' => 'SettingsController@postUpdateSetting', 'class' => 'form-horizontal')) }}
             <fieldset>
+
+              <legend>Global Settings</legend>
 
               <!-- Application Name-->
               <div class="form-group">
@@ -24,7 +26,6 @@
                   <span class="help-block">The Name of your SeAT Instance.</span>
                 </div>
               </div>
-
 
               <!-- Prepended text-->
               <div class="form-group">
@@ -63,13 +64,118 @@
                 <label class="col-md-4 control-label" for="prependedtext">Number Format</label>
                 <div class="col-md-6">
                   <div class="form-inline input-group">
-                    100 
-                    {{ Form::select('thousand_seperator', array('.' => '.', ',' => ',', ' ' => '(space)'), $thousand_seperator, array('class' => 'form-inline form-control')) }} 
+                    100
+                    {{ Form::select('thousand_seperator', array('.' => '.', ',' => ',', ' ' => '(space)'), $thousand_seperator, array('class' => 'form-inline form-control')) }}
                     000
-                    {{ Form::select('decimal_seperator', array('.' => '.', ',' => ','), $decimal_seperator, array('class' => 'form-control')) }} 
+                    {{ Form::select('decimal_seperator', array('.' => '.', ',' => ','), $decimal_seperator, array('class' => 'form-control')) }}
                     00
                   </div>
                   <span class="help-block">Set the thousand and decimal character, e.g: 100,000.00</span>
+                </div>
+              </div>
+
+              <legend>Seat Queue Settings</legend>
+
+              <p>
+                <b>Note:</b> These parameters affect the SeAT Job Queuing system. Disabling a section here will cease all update work for the affected section.
+              </p>
+
+              <!-- Prepended text-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Character Updater</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::select('seatscheduled_character', array('true' => 'Yes', 'false' => 'No'), $seatscheduled_character, array('class' => 'form-control')) }}
+                    <span class="help-block">Updates all character related information.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prepended text-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Corporation Updater</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::select('seatscheduled_corporation', array('true' => 'Yes', 'false' => 'No'), $seatscheduled_corporation, array('class' => 'form-control')) }}
+                    <span class="help-block">Updates all Corporation related information, except for Assets and Wallets.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prepended text-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Corporation Assets Updater</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::select('seatscheduled_corporation_assets', array('true' => 'Yes', 'false' => 'No'), $seatscheduled_corporation_assets, array('class' => 'form-control')) }}
+                    <span class="help-block">Updates all Corporation Assets related information.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prepended text-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Corporation Wallets Updater</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::select('seatscheduled_corporation_wallets', array('true' => 'Yes', 'false' => 'No'), $seatscheduled_corporation_wallets, array('class' => 'form-control')) }}
+                    <span class="help-block">Updates all Corporation Wallets related information.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prepended text-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Eve Updater</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::select('seatscheduled_eve', array('true' => 'Yes', 'false' => 'No'), $seatscheduled_eve, array('class' => 'form-control')) }}
+                    <span class="help-block">Updates all Eve related information.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prepended text-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Map Updater</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::select('seatscheduled_map', array('true' => 'Yes', 'false' => 'No'), $seatscheduled_map, array('class' => 'form-control')) }}
+                    <span class="help-block">Updates all Map related information.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prepended text-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Server Updater</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::select('seatscheduled_server', array('true' => 'Yes', 'false' => 'No'), $seatscheduled_server, array('class' => 'form-control')) }}
+                    <span class="help-block">Updates all Server related information.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prepended text-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Notification Updater</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::select('seatscheduled_notifications', array('true' => 'Yes', 'false' => 'No'), $seatscheduled_notifications, array('class' => 'form-control')) }}
+                    <span class="help-block">Processes all Notifications related information.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prepended text-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Queue Cleaner</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::select('seatscheduled_queue_cleanup', array('true' => 'Yes', 'false' => 'No'), $seatscheduled_queue_cleanup, array('class' => 'form-control')) }}
+                    <span class="help-block">Cleans the Job Queue of long running jobs.</span>
+                  </div>
                 </div>
               </div>
 
@@ -101,74 +207,5 @@
       </div><!-- ./box -->
     </div><!-- ./col-md-4 -->
   </div><!-- ./row -->
-
-@stop
-
-@section('javascript')
-
-  <script type="text/javascript">
-
-    // variable to hold request
-    var request;
-
-    // bind to the submit event of our form
-    $("#settings-form").submit(function(event){
-
-      // abort any pending request
-      if (request) {
-        request.abort();
-      }
-
-      // setup some local variables
-      var $form = $(this);
-
-      // let's select and cache all the fields
-      var $inputs = $form.find("input, select, button, textarea");
-
-      // serialize the data in the form
-      var serializedData = $form.serialize();
-
-      // let's disable the inputs for the duration of the ajax request
-      // Note: we disable elements AFTER the form data has been serialized.
-      // Disabled form elements will not be serialized.
-      $inputs.prop("disabled", true);
-
-      // Show the results box and a loader
-      $("div#result").html("<i class='fa fa-cog fa-spin'></i> Loading...");
-      $("div#result-box").fadeIn("slow");
-
-      // fire off the request to /form.php
-      request = $.ajax({
-          url: "{{ action('SettingsController@postUpdateSetting') }}",
-          type: "post",
-          data: serializedData
-      });
-
-      // callback handler that will be called on success
-      request.done(function (response, textStatus, jqXHR){
-          //$("div#result").html(response);
-          location.reload();
-      });
-
-      // callback handler that will be called on failure
-      request.fail(function (jqXHR, textStatus, errorThrown){
-          // log the error to the console
-          console.error(
-              "The following error occured: " + textStatus, errorThrown
-          );
-      });
-
-      // callback handler that will be called regardless
-      // if the request failed or succeeded
-      request.always(function () {
-          // reenable the inputs
-          $inputs.prop("disabled", false);
-      });
-
-      // prevent default posting of form
-      event.preventDefault();
-
-    });
-  </script>
 
 @stop

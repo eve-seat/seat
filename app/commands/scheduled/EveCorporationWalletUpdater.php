@@ -34,6 +34,7 @@ use Symfony\Component\Console\Input\InputArgument;
 
 use Seat\EveApi;
 use Seat\EveApi\Account;
+use App\Services\Settings\SettingHelper as Settings;
 
 class EveCorporationWalletUpdater extends ScheduledCommand
 {
@@ -71,6 +72,16 @@ class EveCorporationWalletUpdater extends ScheduledCommand
     public function schedule(Schedulable $scheduler)
     {
         return $scheduler->setSchedule('*/30', '*', '*', '*', '*');
+    }
+
+    /**
+     * Is this command enbaled.
+     *
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return Settings::getSetting('seatscheduled_corporation_wallets') == 'true' ? true : false ;
     }
 
     /**

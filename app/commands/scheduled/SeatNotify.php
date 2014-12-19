@@ -32,6 +32,8 @@ use Indatus\Dispatcher\Drivers\Cron\Scheduler;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
+use App\Services\Settings\SettingHelper as Settings;
+
 class SeatNotify extends ScheduledCommand
 {
 
@@ -68,6 +70,16 @@ class SeatNotify extends ScheduledCommand
     public function schedule(Schedulable $scheduler)
     {
         return $scheduler->hourly();
+    }
+
+    /**
+     * Is this command enbaled.
+     *
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return Settings::getSetting('seatscheduled_notifications') == 'true' ? true : false ;
     }
 
     /**

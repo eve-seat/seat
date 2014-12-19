@@ -63,7 +63,17 @@ class SettingsController extends BaseController
             ->with('thousand_seperator', Settings::getSetting('thousand_seperator', true))
             ->with('decimal_seperator', Settings::getSetting('decimal_seperator', true))
             ->with('required_mask', Settings::getSetting('required_mask', true))
-            ->with('registration_enabled', Settings::getSetting('registration_enabled', true));
+            ->with('registration_enabled', Settings::getSetting('registration_enabled', true))
+            ->with('seatscheduled_character', Settings::getSetting('seatscheduled_character', true))
+            ->with('seatscheduled_corporation', Settings::getSetting('seatscheduled_corporation', true))
+            ->with('seatscheduled_corporation_assets', Settings::getSetting('seatscheduled_corporation_assets', true))
+            ->with('seatscheduled_corporation_wallets', Settings::getSetting('seatscheduled_corporation_wallets', true))
+            ->with('seatscheduled_eve', Settings::getSetting('seatscheduled_eve', true))
+            ->with('seatscheduled_map', Settings::getSetting('seatscheduled_map', true))
+            ->with('seatscheduled_server', Settings::getSetting('seatscheduled_server', true))
+            ->with('seatscheduled_notifications', Settings::getSetting('seatscheduled_notifications', true))
+            ->with('seatscheduled_queue_cleanup', Settings::getSetting('seatscheduled_queue_cleanup', true));
+
     }
 
     /*
@@ -78,32 +88,38 @@ class SettingsController extends BaseController
     public function postUpdateSetting()
     {
 
-        if (Request::ajax()) {
+        $validation = new SettingValidator;
 
-            $validation = new SettingValidator;
+        if ($validation->passes()) {
 
-            if ($validation->passes()) {
+            // Global Settings
+            Settings::setSetting('app_name', Input::get('app_name'));
+            Settings::setSetting('color_scheme', Input::get('color_scheme'));
+            Settings::setSetting('thousand_seperator', Input::get('thousand_seperator'));
+            Settings::setSetting('decimal_seperator', Input::get('decimal_seperator'));
+            Settings::setSetting('required_mask', Input::get('required_mask'));
+            Settings::setSetting('registration_enabled', Input::get('registration_enabled'));
 
-                Settings::setSetting('app_name', Input::get('app_name'));
-                Settings::setSetting('color_scheme', Input::get('color_scheme'));
-                Settings::setSetting('thousand_seperator', Input::get('thousand_seperator'));
-                Settings::setSetting('decimal_seperator', Input::get('decimal_seperator'));
-                Settings::setSetting('required_mask', Input::get('required_mask'));
-                Settings::setSetting('registration_enabled', Input::get('registration_enabled'));
+            // SeAT Queues
+            Settings::setSetting('seatscheduled_character', Input::get('seatscheduled_character'));
+            Settings::setSetting('seatscheduled_corporation', Input::get('seatscheduled_corporation'));
+            Settings::setSetting('seatscheduled_corporation_assets', Input::get('seatscheduled_corporation_assets'));
+            Settings::setSetting('seatscheduled_corporation_wallets', Input::get('seatscheduled_corporation_wallets'));
+            Settings::setSetting('seatscheduled_eve', Input::get('seatscheduled_eve'));
+            Settings::setSetting('seatscheduled_map', Input::get('seatscheduled_map'));
+            Settings::setSetting('seatscheduled_server', Input::get('seatscheduled_server'));
+            Settings::setSetting('seatscheduled_notifications', Input::get('seatscheduled_notifications'));
+            Settings::setSetting('seatscheduled_queue_cleanup', Input::get('seatscheduled_queue_cleanup'));
 
-                return View::make('settings.settings')
-                    ->with('app_name', Settings::getSetting('app_name', true))
-                    ->with('color_scheme', Settings::getSetting('color_scheme', true))
-                    ->with('thousand_seperator', Settings::getSetting('thousand_seperator', true))
-                    ->with('decimal_seperator', Settings::getSetting('decimal_seperator', true))
-                    ->with('required_mask', Settings::getSetting('required_mask', true))
-                    ->with('registration_enabled', Settings::getSetting('registration_enabled', true));
+            // Were done. Redirect to the setting page, flashing a message
+            return Redirect::action('SettingsController@getSettings')
+                ->with('success', 'Settings Successfully Saved!');
 
-            } else {
+        } else {
 
-                return View::make('settings.ajax.errors')
-                    ->withErrors($validation->errors);
-            }
+            return Redirect::back()
+                ->withInput()
+                ->withErrors($validation->errors);
         }
     }
 

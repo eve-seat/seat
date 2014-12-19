@@ -40,14 +40,30 @@ class SettingHelper
     */
 
     static $seat_defaults = array(
+
+        // Application Globals
         'app_name' => 'SeAT',
+        'required_mask' => 176693568,
+        'registration_enabled' => true,
+
+        // User personalization
         'color_scheme' => 'blue',
         'thousand_seperator' => ' ',
         'decimal_seperator' => '.',
-        'required_mask' => 176693568,
-        'registration_enabled' => true,
         'main_character_id' => 1,
-        'main_character_name' => null
+        'main_character_name' => null,
+
+        // SeAT Backend
+        'seatscheduled_character' => true,
+        'seatscheduled_corporation' => true,
+        'seatscheduled_corporation_assets' => true,
+        'seatscheduled_corporation_wallets' => true,
+        'seatscheduled_eve' => true,
+        'seatscheduled_map' => true,
+        'seatscheduled_server' => true,
+        'seatscheduled_notifications' => true,
+        'seatscheduled_queue_cleanup' => true
+
     );
 
     /*
