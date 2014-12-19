@@ -58,12 +58,12 @@
                   <td>{{ $e->argName1 }}</td>
                   <td>
                     @if ($e->amount < 0)
-                    <span class="text-red">{{ App\Services\Helpers\Helpers::format_number($e->amount, 2) }}</span>
+                    <span class="text-red">{{ number_format($e->amount, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</span>
                     @else
-                    {{ App\Services\Helpers\Helpers::format_number($e->amount, 2) }}
+                    {{ number_format($e->amount, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}
                     @endif
                   </td>
-                  <td>{{ App\Services\Helpers\Helpers::format_number($e->balance, 2) }}</td>
+                  <td>{{ number_format($e->balance, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</td>
                 </tr>
 
               @endforeach

@@ -24,7 +24,7 @@
           <td>{{ $result->corporationName }}</td>
           <td>{{ $result->typeName }}</td>
           <td>{{ $result->location }}</td>
-          <td>{{ App\Services\Helpers\Helpers::format_number($result->quantity) }}</td>
+          <td>{{ number_format($result->quantity, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</td>
         </tr>
 
       @endforeach

@@ -38,10 +38,10 @@
                 <td>
                   @if ($order->escrow > 0)
                     <span data-toggle="tooltip" title="" data-original-title="Escrow: {{ $order->escrow }}">
-                      <i class="fa fa-money pull-right"></i> {{ App\Services\Helpers\Helpers::format_number($order->price, 2) }}
+                      <i class="fa fa-money pull-right"></i> {{ number_format($order->price, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}
                     </span>
                   @else
-                    {{ App\Services\Helpers\Helpers::format_number($order->price, 2) }}
+                    {{ number_format($order->price, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}
                   @endif
                 </td>
                 <td>{{ $order->issued }}</td>

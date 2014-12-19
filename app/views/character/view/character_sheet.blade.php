@@ -25,10 +25,10 @@
           <dd>{{ $character->DoB }} ({{ Carbon\Carbon::parse($character->DoB)->diffForHumans() }})</dd>
 
           <dt>Skillpoints</dt>
-          <dd>{{ App\Services\Helpers\Helpers::format_number($skillpoints, 0) }}</dd>
+          <dd>{{ number_format($skillpoints, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</dd>
 
           <dt>Wallet Balance</dt>
-          <dd>{{ App\Services\Helpers\Helpers::format_number($character->balance, 2) }} ISK</dd>
+          <dd>{{ number_format($character->balance, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }} ISK</dd>
 
           {{-- ship type --}}
           @if (!empty($character_info->shipTypeName))

@@ -31,11 +31,11 @@
                       </td>
                       <td>
                         @if ($contact->standing == 0)
-                          {{ \App\Services\Helpers\Helpers::format_number($contact->standing,2) }}
+                          {{ number_format($contact->standing, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}
                         @elseif ($contact->standing > 0)
-                          <span class="text-green">{{ \App\Services\Helpers\Helpers::format_number($contact->standing,2) }}</span>
+                          <span class="text-green">{{ number_format($contact->standing, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</span>
                         @else
-                          <span class="text-red">{{ \App\Services\Helpers\Helpers::format_number($contact->standing,2) }}</span>
+                          <span class="text-red">{{ number_format($contact->standing, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</span>
                         @endif
                       </td>
                     </tr>

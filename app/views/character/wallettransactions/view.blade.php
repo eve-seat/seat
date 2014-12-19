@@ -51,8 +51,8 @@
                     {{ $e->typeName }}
                   </td>
                   <td>{{ $e->quantity }}</td>
-                  <td>{{ App\Services\Helpers\Helpers::format_number($e->price, 2) }} ISK</td>
-                  <td>{{ App\Services\Helpers\Helpers::format_number($e->price * $e->quantity, 2) }} ISK</td>
+                  <td>{{ number_format($e->price, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }} ISK</td>
+                  <td>{{ number_format($e->price * $e->quantity, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }} ISK</td>
                   <td>{{ $e->clientName }}</td>
                   <td>{{ $e->transactionType }}</td>
                   <td>{{ $e->stationName }}</td>
