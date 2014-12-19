@@ -264,6 +264,9 @@ function performSearch(q) {
         $("section#main-content")
             .html("<i class='fa fa-cog fa-spin'></i> Searching...");
 
+        // Set the page title
+        $("h1#section-title").html("Site Search:");
+
         // fire off the request to /form.php
         request = $.ajax({
             url: search_location,

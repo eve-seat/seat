@@ -48,7 +48,7 @@
       <aside class="right-side">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-          <h1>
+          <h1 id="section-title">
             @if (trim($__env->yieldContent('html_title')))
               @yield('html_title')
             @endif
