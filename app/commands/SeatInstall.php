@@ -138,6 +138,7 @@ class SeatInstall extends Command
         // until we can connect
         $this->info('[+] Database setup...');
         $this->info('[+] Please enter the details for the MySQL database to use (enter to use default):');
+        $error_count = 0;
         while (true) {
 
             // Ask for the MySQL credentials.
@@ -155,6 +156,7 @@ class SeatInstall extends Command
             // Test the database connection
             try {
 
+                \DB::reconnect();
                 \DB::connection()->getDatabaseName();
                 $this->info('[+] Successfully connected to the MySQL database.');
                 $this->line('');
@@ -165,7 +167,17 @@ class SeatInstall extends Command
 
             } catch (\Exception $e) {
 
-                $this->error('[!] Unable to connect to the database with mysql://' . $configuration['mysql_username'] . '@' . $configuration['mysql_hostname']);
+                $error_count++;
+
+                // Check if we have had more than 3 errors now.
+                if($error_count >= 3) {
+
+                    $this->error('[!] 3 attempts to connect to the database failed.');
+                    $this->error('[!] Please ensure that you have a MySQL server with a database ready for SeAT to use before installation.');
+                    return;
+                }
+
+                $this->error('[!] Unable to connect to the database with mysql://' . $configuration['mysql_username'] . '@' . $configuration['mysql_hostname'] . '/' . $configuration['mysql_database']);
                 $this->error('[!] Please re-enter the configuration to try again.');
                 $this->error('[!] MySQL said: ' .$e->getMessage());
                 $this->line('');
@@ -178,6 +190,7 @@ class SeatInstall extends Command
         // similar path of a infinite loop until it works
         $this->info('[+] Redis cache setup...');
         $this->info('[+] Please enter the details for the Redis cache to use (enter to use default):');
+        $error_count = 0;
         while (true) {
 
             // Ask for the Redis details.
@@ -201,6 +214,16 @@ class SeatInstall extends Command
                 break;
 
             } catch (\Exception $e) {
+
+                $error_count++;
+
+                // Check if we have had more than 3 errors now.
+                if($error_count >= 3) {
+
+                    $this->error('[!] 3 attempts to connect to redis failed.');
+                    $this->error('[!] Please ensure that you have a Redis server ready for SeAT to use before installation.');
+                    return;
+                }
 
                 $this->error('[!] Unable to connect to the redis cache at tcp://' . $configuration['redis_host'] . ':' . $configuration['redis_port']);
                 $this->error('[!] Please re-enter the configuration to try again.');
