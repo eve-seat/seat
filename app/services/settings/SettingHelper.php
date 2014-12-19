@@ -141,7 +141,7 @@ class SettingHelper
                             // Found the user setting, return that!
                             return $setting_value;
 
-                    } catch (Exception $e) {}
+                    } catch (\Exception $e) {}
                 }
             }
         }
@@ -167,7 +167,7 @@ class SettingHelper
             if($setting_value)
                 return $setting_value;
 
-        } catch (Exception $e) {}
+        } catch (\Exception $e) {}
 
         // Finally, and as a last resort, check if we have a
         // default value for this setting defined. If not
