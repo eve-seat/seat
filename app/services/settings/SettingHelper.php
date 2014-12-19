@@ -130,7 +130,7 @@ class SettingHelper
         // Finally, and as a last resort, check if we have a
         // default value for this setting defined. If not
         // we will throw a exception about it
-        if(!in_array($setting_name, SettingHelper::$seat_defaults))
+        if(!array_key_exists($setting_name, SettingHelper::$seat_defaults))
             throw new \Exception('Unable to find setting ' . $setting_name);
 
         // Return the SeAT default then
@@ -159,7 +159,7 @@ class SettingHelper
         // SettingsHelper::$seat_default array(). If
         // this is not the case, throw an
         // exception.
-        if (!in_array($setting_name, SettingHelper::$seat_defaults))
+        if (!array_key_exists($setting_name, SettingHelper::$seat_defaults))
             throw new \Exception('Attempting to set a foreign setting ' . $setting_name);
 
         // If $user_id is not null, then we can assume the
