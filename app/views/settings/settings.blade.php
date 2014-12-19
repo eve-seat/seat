@@ -28,7 +28,7 @@
 
               <!-- Prepended text-->
               <div class="form-group">
-                <label class="col-md-4 control-label" for="prependedtext">Regisration Enabled</label>
+                <label class="col-md-4 control-label" for="prependedtext">Registration Enabled</label>
                 <div class="col-md-6">
                   <div class="input-group">
                     {{ Form::select('registration_enabled', array('true' => 'Yes', 'false' => 'No'), $registration_enabled, array('class' => 'form-control')) }}
