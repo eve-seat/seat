@@ -23,8 +23,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-class ApiAuthController extends BaseController
+class AuthController extends BaseApiController
 {
+
     /*
     |--------------------------------------------------------------------------
     | store()
@@ -32,7 +33,7 @@ class ApiAuthController extends BaseController
     |
     | POST
     | Checks if credentials passed via api call are valid
-    | Call: /api/v1/authenticate?username=%&password=%
+    | Call: /api/v1/authenticate | Data: username=%&password=%
     |
     */
 
@@ -59,8 +60,8 @@ class ApiAuthController extends BaseController
 
             foreach (\Auth::getUserGroups($user) as $index => $group) {
 
-                $group['permissions'] = unserialize($group['permissions']); 
-                array_push($user_groups, $group->toArray());   
+                $group['permissions'] = unserialize($group['permissions']);
+                array_push($user_groups, $group->toArray());
             }
 
             // return user and group info
@@ -122,7 +123,7 @@ class ApiAuthController extends BaseController
 
     /*
     |--------------------------------------------------------------------------
-    | index()
+    | destroy()
     |--------------------------------------------------------------------------
     |
     | DELETE

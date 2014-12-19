@@ -125,17 +125,21 @@ Route::filter('auth.api', function($route, $request)
 
     // if we cant find an app with those details, respond to the request
     if(!$user)
-        return Response::json(array(
-            'error' => true,
-            'message' => 'invalid application credentials or source'),
+        return Response::json(
+            array(
+                'error' => true,
+                'message' => 'Invalid application credentials or request source.'
+            ),
             401
         );
 
     // also check to make sure that the request is over https
     if(!\Request::secure())
-        return Response::json(array(
-            'error' => true,
-            'message' => 'api can only be accessed over https'),
+        return Response::json(
+            array(
+                'error' => true,
+                'message' => 'API Access is only permitted via HTTPs.'
+            ),
             401
         );
 
