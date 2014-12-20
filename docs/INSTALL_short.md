@@ -1,7 +1,7 @@
 ## SeAT - Simple (or Stupid) EVE Online API Tool ##
 
 ### Introduction ###
-SeAT attempts to be a EVE Online™ Corporation Management Tool written in PHP using the [Laravel][1] Framework. If the fact that its written in PHP makes you mad or want to complain by telling us how bad PHP is (cause you read in online where & someone told you its bad), then I'm pretty happy that we have come this far. If not, well, read on :)
+SeAT is a EVE Online™ Corporation / API Key Management Tool written in PHP using the [Laravel][1] Framework. This guide attempts to detail the process in order to successfully get a new installation setup, configured and ready to use. Lets dive right in.
 
 ### Requirements ###
 Installing SeAT *should* be relatively simple. At a high level, the main requirements for SeAT is:
@@ -12,7 +12,7 @@ Installing SeAT *should* be relatively simple. At a high level, the main require
  - [supervisord][5]
  - [MySQL][6]
 
-SeAT was developed for Linux and has been tested to work fine on CentOS. Chances are you could get it going pretty easily on many other Linux distros, so feel free to contribute docs with install guides. As far as windows support goes... well....
+SeAT was developed for Linux and has been tested to work fine on CentOS/Ubuntu. Chances are you could get it going pretty easily on many other Linux flavors, so feel free to contribute docs with install guides. As far as windows support goes... well....
 
 ### Installation ###
 The quick and dirty to install SeAT:
@@ -21,13 +21,11 @@ The quick and dirty to install SeAT:
 - Install a web server such as Apache together with PHP & MySQL support
 - Install Redis
 - Clone the SeAT repository into a webroot such as `/var/www/seat`
-- Get [composer](https://getcomposer.org/) and run `composer install` from the project root to install its dependencies.
+- Get [composer](https://getcomposer.org/) and run `php composer.phar install` from the project root to install its dependencies.
 - Copy `app/config/env-sample.php` to `.env.php` (same folder as `composer.json`) and edit accordingly.  
-- Run the database migration and seeding scripts with `php artisan migrate` & `php artisan db:seed`
+- Run the SeAT installer with `php artisan seat:install`  
 - Install `supervisord` and edit the config to start workers to process queued jobs. A sample worker config is included in `docs/`. See note below
-- Setup the SeAT cronjob: `* * * * * php <path to artisan> scheduled:run 1>> /dev/null 2>&1`
-- Regenerate the application security key with `php artisan key:generate`
-- Create the `admin` user with `php artisan seat:reset`
+- Setup the SeAT cronjob: `* * * * * php /var/www/seat/artisan scheduled:run 1>> /dev/null 2>&1`
 - Optionally setup logrotate for the `app/storage/logs/*.log` files.
 
 Note:  

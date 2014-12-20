@@ -1,6 +1,30 @@
 <?php
+/*
+The MIT License (MIT)
 
-class DashboardController extends BaseController {
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+class DashboardController extends BaseController
+{
 
     public function __construct()
     {
@@ -17,10 +41,10 @@ class DashboardController extends BaseController {
     |
     */
 
-	public function getDashboard()
-	{
-		return View::make('home');
-	}
+    public function getDashboard()
+    {
+        return View::make('home');
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +75,7 @@ class DashboardController extends BaseController {
                 ->where('characterName', 'like', '%' . Input::get('q') . '%');
 
             // Ensure we only get result for characters we have access to
-            if (!Sentry::getUser()->hasAccess('recruiter'))
+            if (!\Auth::hasAccess('recruiter'))
                 $characters = $characters->whereIn('seat_keys.keyID', Session::get('valid_keys'))
                     ->get();
             else
@@ -88,12 +112,11 @@ class DashboardController extends BaseController {
                 ->join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'a.characterID');
 
             // If the user is not a superuser, filter the results down to keys they own
-            if (!Sentry::getUser()->isSuperUser())
+            if (!\Auth::isSuperUser() )
                 $character_assets = $character_assets->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
             // Complete the search
             $character_assets = $character_assets->where('invTypes.typeName', 'like', '%' . Input::get('q') . '%')
-                ->groupBy('a.characterID')
                 ->orderBy('location')
                 ->get();
 
@@ -109,7 +132,7 @@ class DashboardController extends BaseController {
                 ->where('character_contactlist.contactName', 'like', '%' . Input::get('q') . '%');
 
             // Ensure we only get result for characters we have access to
-            if (!Sentry::getUser()->hasAccess('recruiter'))
+            if (!\Auth::hasAccess('recruiter'))
                 $character_contactlist = $character_contactlist->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
                     ->get();
             else
@@ -129,15 +152,95 @@ class DashboardController extends BaseController {
                 ->orWhere('character_mailbodies.body', 'like', '%' . Input::get('q') . '%');
 
             // Ensure we only get result for characters we have access to
-            if (!Sentry::getUser()->hasAccess('recruiter'))
+            if (!\Auth::hasAccess('recruiter'))
                 $character_mail = $character_mail->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
             $character_mail = $character_mail
                 ->groupBy('character_mailmessages.messageID')
                 ->orderBy('character_mailmessages.sentDate', 'desc')
-                ->take(50)
                 ->get();
 
+            /*
+            |--------------------------------------------------------------------------
+            | Search Character Standings
+            |--------------------------------------------------------------------------
+            */
+
+            $character_standings = DB::table('character_standings_factions')
+                ->join('account_apikeyinfo_characters', 'character_standings_factions.characterID', '=', 'account_apikeyinfo_characters.characterID')
+                ->where('character_standings_factions.fromName', 'like', '%' . Input::get('q') . '%');
+
+            // Ensure we only get result for characters we have access to
+            if (!\Auth::hasAccess('recruiter'))
+                $character_standings = $character_standings->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
+
+            $character_standings = $character_standings
+                ->orderBy('character_standings_factions.standing', 'desc')
+                ->get();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Corporation Names
+            |--------------------------------------------------------------------------
+            */
+
+            $corporation_names = array_flip(DB::table('account_apikeyinfo_characters')
+                ->lists('corporationID', 'corporationName'));
+
+            /*
+            |--------------------------------------------------------------------------
+            | Search Corporation Assets
+            |--------------------------------------------------------------------------
+            */
+
+            $corporation_assets = DB::table(DB::raw('corporation_assetlist as a'))
+                ->select(DB::raw(
+                    "*, CASE
+                    when a.locationID BETWEEN 66000000 AND 66014933 then
+                        (SELECT s.stationName FROM staStations AS s
+                          WHERE s.stationID=a.locationID-6000001)
+                    when a.locationID BETWEEN 66014934 AND 67999999 then
+                        (SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+                          WHERE c.stationID=a.locationID-6000000)
+                    when a.locationID BETWEEN 60014861 AND 60014928 then
+                        (SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+                          WHERE c.stationID=a.locationID)
+                    when a.locationID BETWEEN 60000000 AND 61000000 then
+                        (SELECT s.stationName FROM staStations AS s
+                          WHERE s.stationID=a.locationID)
+                    when a.locationID>=61000000 then
+                        (SELECT c.stationName FROM `eve_conquerablestationlist` AS c
+                          WHERE c.stationID=a.locationID)
+                    else (SELECT m.itemName FROM mapDenormalize AS m
+                        WHERE m.itemID=a.locationID) end
+                        AS location,a.locationId AS locID"))
+                ->join('invTypes', 'a.typeID', '=', 'invTypes.typeID');
+
+            // If the user is not a superuser, filter the results down to keys they own
+            if (!\Auth::isSuperUser() )
+                $corporation_assets = $corporation_assets->whereIn('corporation_assetlist.corporationID', Session::get('corporation_affiliations'));
+
+            // Complete the search
+            $corporation_assets = $corporation_assets->where('invTypes.typeName', 'like', '%' . Input::get('q') . '%')
+                ->orderBy('location')
+                ->get();
+
+            /*
+            |--------------------------------------------------------------------------
+            | Search Corporation Standings
+            |--------------------------------------------------------------------------
+            */
+
+            $corporation_standings = DB::table('corporation_standings_factions')
+                ->where('corporation_standings_factions.fromName', 'like', '%' . Input::get('q') . '%');
+
+            // Ensure we only get result for characters we have access to
+            if (!\Auth::hasAccess('recruiter'))
+                $corporation_standings = $corporation_standings->whereIn('corporation_standings_factions.corporationID', Session::get('corporation_affiliations'));
+
+            $corporation_standings = $corporation_standings
+                ->orderBy('corporation_standings_factions.standing', 'desc')
+                ->get();
 
             // Return the AJAX response
             return View::make('search')
@@ -146,6 +249,10 @@ class DashboardController extends BaseController {
                 ->with('character_assets', $character_assets)
                 ->with('character_contactlist', $character_contactlist)
                 ->with('character_mail', $character_mail)
+                ->with('character_standings', $character_standings)
+                ->with('corporation_names', $corporation_names)
+                ->with('corporation_assets', $corporation_assets)
+                ->with('corporation_standings', $corporation_standings)
                 ;
 
         } else {

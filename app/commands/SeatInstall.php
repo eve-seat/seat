@@ -1,4 +1,27 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 namespace Seat\Commands;
 
@@ -6,7 +29,8 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class SeatInstall extends Command {
+class SeatInstall extends Command
+{
 
     /**
      * The console command name.
@@ -114,6 +138,7 @@ class SeatInstall extends Command {
         // until we can connect
         $this->info('[+] Database setup...');
         $this->info('[+] Please enter the details for the MySQL database to use (enter to use default):');
+        $error_count = 0;
         while (true) {
 
             // Ask for the MySQL credentials.
@@ -131,6 +156,7 @@ class SeatInstall extends Command {
             // Test the database connection
             try {
 
+                \DB::reconnect();
                 \DB::connection()->getDatabaseName();
                 $this->info('[+] Successfully connected to the MySQL database.');
                 $this->line('');
@@ -141,7 +167,17 @@ class SeatInstall extends Command {
 
             } catch (\Exception $e) {
 
-                $this->error('[!] Unable to connect to the database with mysql://' . $configuration['mysql_username'] . '@' . $configuration['mysql_hostname']);
+                $error_count++;
+
+                // Check if we have had more than 3 errors now.
+                if($error_count >= 3) {
+
+                    $this->error('[!] 3 attempts to connect to the database failed.');
+                    $this->error('[!] Please ensure that you have a MySQL server with a database ready for SeAT to use before installation.');
+                    return;
+                }
+
+                $this->error('[!] Unable to connect to the database with mysql://' . $configuration['mysql_username'] . '@' . $configuration['mysql_hostname'] . '/' . $configuration['mysql_database']);
                 $this->error('[!] Please re-enter the configuration to try again.');
                 $this->error('[!] MySQL said: ' .$e->getMessage());
                 $this->line('');
@@ -154,6 +190,7 @@ class SeatInstall extends Command {
         // similar path of a infinite loop until it works
         $this->info('[+] Redis cache setup...');
         $this->info('[+] Please enter the details for the Redis cache to use (enter to use default):');
+        $error_count = 0;
         while (true) {
 
             // Ask for the Redis details.
@@ -177,6 +214,16 @@ class SeatInstall extends Command {
                 break;
 
             } catch (\Exception $e) {
+
+                $error_count++;
+
+                // Check if we have had more than 3 errors now.
+                if($error_count >= 3) {
+
+                    $this->error('[!] 3 attempts to connect to redis failed.');
+                    $this->error('[!] Please ensure that you have a Redis server ready for SeAT to use before installation.');
+                    return;
+                }
 
                 $this->error('[!] Unable to connect to the redis cache at tcp://' . $configuration['redis_host'] . ':' . $configuration['redis_port']);
                 $this->error('[!] Please re-enter the configuration to try again.');
@@ -279,6 +326,11 @@ class SeatInstall extends Command {
         // Sync the access groups
         $this->info('[+] Syncing the access groups...');
         $this->call('seat:groupsync');
+        $this->line('');
+
+        // Regenerate the Application Encryption key
+        $this->info('[+] Regenerating the Encryption Key');
+        $this->call('key:generate');
         $this->line('');
 
         // Finally, write the installer lock file!

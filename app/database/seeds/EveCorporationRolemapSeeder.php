@@ -1,14 +1,39 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 /* see http://oldforums.eveonline.com/?a=topic&threadID=1250101 */
 
-class EveCorporationRolemapSeeder extends Seeder {
+class EveCorporationRolemapSeeder extends Seeder
+{
 
     public function run()
     {
 		DB::table('eve_corporation_rolemap')->delete();
 
         DB::table('eve_corporation_rolemap')->insert(array(
+
             array('roleID' => 1,                  'roleName' => 'Director'),
             array('roleID' => 128,                'roleName' => 'Personnel Manager'),
             array('roleID' => 256,                'roleName' => 'Accountant'),
@@ -58,5 +83,4 @@ class EveCorporationRolemapSeeder extends Seeder {
             array('roleID' => 281474976710656,    'roleName' => 'Can take from Container 7'),
         ));
     }
-
 }

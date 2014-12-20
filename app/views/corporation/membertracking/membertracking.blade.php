@@ -4,81 +4,77 @@
 
 @section('page_content')
 
- <div class="box">
-	<div class="box-header">
-	    <h3 class="box-title">All Members @if (count($members) > 0) ({{ count($members) }}) @endif</h3>
-	    <div class="box-tools">
-	        <div class="input-group">
-	            <input type="text" name="table_search" class="form-control input-sm pull-right" style="width: 150px;" placeholder="Search">
-	            <div class="input-group-btn">
-	                <button class="btn btn-sm btn-default"><i class="fa fa-search"></i></button>
-	            </div>
-	        </div>
-	    </div>
-	</div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <b>All Corporation Member(s) @if (count($members) > 0) ({{ count($members) }}) @endif</b>
+          </h3>
+        </div>
+        <div class="panel-body">
 
-    <div class="box-body">
+          <table class="table table-condensed compact table-hover" id="datatable">
+            <thead>
+              <th>Name</th>
+              <th>Joined</th>
+              <th>Last Logon</th>
+              <th>Last Logoff</th>
+              <th>Location</th>
+              <th>Ship</th>
+              <th></th>
+            </thead>
+            <tbody>
 
-		@foreach(array_chunk($members, 4) as $character_row)
-			<div class="row">
-				@foreach($character_row as $character)
-					@if($character->isOk == 1)<a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}" style="color:inherit">@endif
-						<div class="col-md-1">
-								<img src="//image.eveonline.com/Character/{{ $character->characterID }}_64.jpg" class="img-circle pull-right">
-						</div>
-						<div class="col-md-2">
-							<ul class="list-unstyled">
-								<li>
-									<b>Name: </b>{{ $character->name }}
-									@if (strlen($character->title) > 0) {{-- display the title if its set --}}
-										<small><span class="text-muted">{{ $character->title }}</span></small>
-									@endif
-								</li>
-								<li><b>Joined: </b>{{ Carbon\Carbon::parse($character->startDateTime)->diffForHumans() }}</li>
-								<li><b>Last Logon: </b>{{ Carbon\Carbon::parse($character->logonDateTime)->diffForHumans() }}</li>
-								<li><b>Last Logoff: </b>{{ Carbon\Carbon::parse($character->logoffDateTime)->diffForHumans() }}</li>
-								@if(Carbon\Carbon::parse($character->logonDateTime)->lt(Carbon\Carbon::now()->subMonth()))
-									<span class="text-red">Over a month since last login</span>
-								@endif
+              @foreach ($members as $character)
 
-								{{-- key information, if available --}}
-								@if (!empty($member_info) && array_key_exists($character->characterID, $member_info))
+                <tr>
+                  <td>
+                    <a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID)) }}">
+                      <img src='//image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+                    {{ $character->name }}
+                    </a>
+                  </td>
+                  <td>
+                    {{ Carbon\Carbon::parse($character->startDateTime)->diffForHumans() }}
+                  </td>
+                  <td>
+                    {{ Carbon\Carbon::parse($character->logonDateTime)->diffForHumans() }}
+                    @if(Carbon\Carbon::parse($character->logonDateTime)->lt(Carbon\Carbon::now()->subMonth()))
+                      <span class="text-red pull-right"><i class="fa fa-exclamation"></i></span>
+                    @endif
+                  </td>
+                  <td>
+                    {{ Carbon\Carbon::parse($character->logoffDateTime)->diffForHumans() }}
+                  </td>
+                  <td>
+                    {{ $character->location }}
+                  </td>
+                  <td>
+                    {{ $character->shipType }}
+                  </td>
 
-									{{-- skillpoints --}}
-									@if (!empty($member_info[$character->characterID]->skillPoints))
-										<li><b>Skillpoints:</b> {{ number_format($member_info[$character->characterID]->skillPoints, 0, '.', ' ') }}</li>
-									@endif
-									{{-- ship type --}}
-									@if (!empty($member_info[$character->characterID]->shipTypeName))
-										<li><b>Ship:</b> {{ $member_info[$character->characterID]->shipTypeName }}</li>
-									@endif
-									{{-- last location --}}
-									@if (!empty($member_info[$character->characterID]->lastKnownLocation))
-										<li><b>Last Location:</b> {{ $member_info[$character->characterID]->lastKnownLocation }}</li>
-									@endif
-								@else
-									{{-- use the information from the Corporation API --}}
-									<li><b>Location: </b>{{ $character->location }}</li>
-									<li><b>Ship: </b>{{ $character->shipType }}</li>
-								@endif
-								<li>
-									@if ($character->isOk == 1)
-										<span class="text-green"><i class="fa fa-check"></i> Key Ok</span>
-									@else
-										<span class="text-red"><i class="fa fa-times"></i> Key not Ok</span>
-									@endif
-									@if (strlen($character->keyID) > 0)
-										<a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" data-toggle="tooltip" title="" data-original-title="Key Details"><i class="fa fa-cog"></i></a>
-									@endif
-								</li>
-							</ul>
-						</div>
-					@if($character->isOk == 1)</a>@endif
-				@endforeach
-			</div>
-			<hr>
-		@endforeach
+                  {{-- key information --}}
+                  <td>
+                    @if ($character->isOk == 1)
+                      <span class="text-green"><i class="fa fa-check"></i> Key Ok</span>
+                      @if (strlen($character->keyID) > 0)
+                        <a href="{{ action('ApiKeyController@getDetail', array('keyID' => $character->keyID)) }}" data-toggle="tooltip" title="" data-original-title="Key Details"><i class="fa fa-cog"></i></a>
+                      @endif
+                    @else
+                      <span class="text-red"><i class="fa fa-exclamation"></i> Key not Ok</span>
+                    @endif
+                  </td>
 
-    </div><!-- /.box-body -->
-</div><!-- /.box -->
+                </tr>
+
+              @endforeach
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div> <!-- col-md-12 -->
+  </div> <!-- row -->
+
 @stop

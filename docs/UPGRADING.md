@@ -30,10 +30,9 @@ The database reports 0 working jobs
 ```bash
 $ git fetch
 $ git pull
-$ git checkout -b 0.9 tags/v0.9    # sample version. you should be using the latest one here.
 ```
 
-If you get a error such as `error: You have local changes to 'app/config/app.php'; cannot switch branches.`, it normally means that your configuration files are conflicting with those on the new branch. We can get past this by first doing a `git stash`, saving our changes. Then `git checkout -b 0.9 tags/v0.9`. Then `git stash pop`, to re-apply your changes.
+If you get a error such as `error: You have local changes to 'app/config/app.php'; cannot switch branches.`, it normally means that your configuration files are conflicting with those on the new branch. We can get past this by first doing a `git stash`, saving our changes. Then `git pull`. Then `git stash pop`, to re-apply your changes. **NB Note:** Make sure you read the release notes about each version as some may have changes to the files that you have changed.
 
 * Ensure that you have the latest vendor packages. Assuming you have the composer.phar saved in the project root it may look something like this:
 

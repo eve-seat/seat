@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class MakeSentryWorkWithReminders extends Migration {
+class CreatePermissionsTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,9 +12,9 @@ class MakeSentryWorkWithReminders extends Migration {
 	 */
 	public function up()
 	{
-		Schema::table('users', function(Blueprint $table)
+		Schema::create('seat_permissions', function(Blueprint $table)
 		{
-			$table->timestamp('deleted_at')->nullable();
+			$table->string('permission')->unique();
 		});
 	}
 
@@ -25,10 +25,7 @@ class MakeSentryWorkWithReminders extends Migration {
 	 */
 	public function down()
 	{
-		Schema::table('users', function(Blueprint $table)
-		{
-			$table->dropColumn('deleted_at');
-		});
+		Schema::drop('seat_permissions');
 	}
 
 }

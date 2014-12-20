@@ -1,98 +1,146 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 use App\Services\Validators;
+use App\Services\Settings\SettingHelper as Settings;
 
-class RegisterController extends BaseController {
+class RegisterController extends BaseController
+{
 
     public function __construct()
     {
         $this->beforeFilter('csrf', array('on' => 'post'));
     }
 
-	/*
-	|--------------------------------------------------------------------------
-	| getNew()
-	|--------------------------------------------------------------------------
-	|
-	| Return a view for a new registration
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | getNew()
+    |--------------------------------------------------------------------------
+    |
+    | Return a view for a new registration
+    |
+    */
 
-	public function getNew()
-	{
-		if (SeatSetting::find('registration_enabled')->value)
-	   		return View::make('register.enabled');
-		else
-	   		return View::make('register.disabled');
-	}
+    public function getNew()
+    {
 
-	/*
-	|--------------------------------------------------------------------------
-	| postNew()
-	|--------------------------------------------------------------------------
-	|
-	| Process a new account registration
-	|
-	*/
+        if (Settings::getSetting('registration_enabled') == 'true')
+            return View::make('register.enabled');
+        else
+            return View::make('register.disabled');
+    }
 
-	public function postNew()
-	{
+    /*
+    |--------------------------------------------------------------------------
+    | postNew()
+    |--------------------------------------------------------------------------
+    |
+    | Process a new account registration
+    |
+    */
 
-		$validation = new Validators\SeatUserRegisterValidator;
+    public function postNew()
+    {
 
-		if ($validation->passes()) {
+        $validation = new Validators\SeatUserRegisterValidator;
 
-		    // Let's register a user.
-		    $user = Sentry::register(array(
-		        'email'    => Input::get('email'),
-		        'username'    => Input::get('username'),
-		        'password' => Input::get('password'),
-		    ));
+        if ($validation->passes()) {
 
-		    // Let's get the activation code
-		    $data = array(
-		    	'activation_code' => $user->getActivationCode(),
-		    	'user_id' => Crypt::encrypt($user->id)
-		    );
+            // Check that we don't already have the user that is
+            // attempting registration
+            if (\User::where('email', Input::get('email'))->orWhere('username', Input::get('username'))->first())
+                return Redirect::back()
+                    ->withInput()
+                    ->withErrors('The chosen username or email address is already taken.');
 
-		   	// Send the mail with the activation code 
-			Mail::send('emails.auth.register', $data, function($message) {
+            // Let's register a user.
+            $user = new \User;
+            $user->email = Input::get('email');
+            $user->username = Input::get('username');
+            $user->password = Hash::make(Input::get('password'));
+            $user->activation_code = str_random(24);
+            $user->activated = 0;
+            $user->save();
 
-				$message->to(Input::get('email'), 'SeAT User')
-					->subject('SeAT Account Confirmation');
-			});
+            // Prepare data to be sent along with the email. These
+            // are accessed by their keys in the email template
+            $data = array(
+                'activation_code' => $user->activation_code
+            );
 
-			return Redirect::action('SessionController@getSignIn')
-				->with('success', 'Successfully registered a new account. Please check your email for the activation link.');
+            // Send the email with the activation link
+            Mail::send('emails.auth.register', $data, function($message) {
 
-		} else {
+                $message->to(Input::get('email'), 'New SeAT User')
+                    ->subject('SeAT Account Confirmation');
+            });
 
-			return Redirect::back()
-				->withInput()
-				->withErrors($validation->errors);
-		}
-	}
+            // And were done. Redirect to the login again
+            return Redirect::action('SessionController@getSignIn')
+                ->with('success', 'Successfully registered a new account. Please check your email for the activation link.');
 
-	/*
-	|--------------------------------------------------------------------------
-	| getActivate()
-	|--------------------------------------------------------------------------
-	|
-	| Attempt to activate a new account
-	|
-	*/
+        } else {
 
-	public function getActivate($user_id, $activation_code)
-	{
+            return Redirect::back()
+                ->withInput()
+                ->withErrors($validation->errors);
+        }
+    }
 
-		 $user = Sentry::findUserById(Crypt::decrypt($user_id));
+    /*
+    |--------------------------------------------------------------------------
+    | getActivate()
+    |--------------------------------------------------------------------------
+    |
+    | Attempt to activate a new account
+    |
+    */
 
-		 if ($user->attemptActivation($activation_code)) {
+    public function getActivate($activation_code)
+    {
 
-		 	Sentry::login($user);
+        // We start by looking up the activation code that we got.
+        $user = \User::where('activation_code', $activation_code)->first();
 
-	 		return Redirect::action('HomeController@showIndex')
-	 			->with('success', 'Account successfully activated! Welcome :)');
-		 }
-	}
+        // If we got the user that matched the activation code,
+        // set the account to active and null the code
+        if ($user) {
+
+            $user->activation_code = null;
+            $user->activated = 1;
+            $user->save();
+
+            Auth::loginUsingId($user->id);
+
+            return Redirect::action('HomeController@showIndex')
+                ->with('success', 'Account successfully activated! Welcome ' . $user->username . ' :)');
+
+        } else {
+
+            return Redirect::action('SessionController@getSignIn')
+                ->withErrors('Something does not look right with the link you clicked.');
+        }
+    }
 }

@@ -39,16 +39,20 @@ $(function() {
     /*
      * Add collapse and remove events to boxes
      */
-    $("[data-widget='collapse']").click(function() {
+    $(document).on("click", "#collapse-box", function() {
         //Find the box parent
         var box = $(this).parents(".box").first();
         //Find the body and the footer
         var bf = box.find(".box-body, .box-footer");
         if (!box.hasClass("collapsed-box")) {
             box.addClass("collapsed-box");
+            //Convert minus into plus
+            $(this).removeClass("fa-minus").addClass("fa-plus");
             bf.slideUp();
         } else {
             box.removeClass("collapsed-box");
+            //Convert plus into minus
+            $(this).removeClass("fa-plus").addClass("fa-minus");
             bf.slideDown();
         }
     });
@@ -83,12 +87,32 @@ $(function() {
             $(".left-side, html, body").css("min-height", height + "px");
         }
     }
+
+    function _fix_sidebar() {
+        //Make sure the body tag has the .fixed class
+        if (!$("body").hasClass("fixed")) {
+            return;
+        }
+
+        //Add slimscroll
+        $(".sidebar").slimscroll({
+            height: ($(window).height() - $(".header").height()) + "px",
+            color: "rgba(0,0,0,0.2)"
+        });
+    }
+
     //Fire upon load
     _fix();
+
     //Fire when wrapper is resized
     $(".wrapper").resize(function() {
         _fix();
+        _fix_sidebar();
     });
+
+    //Fix the fixed layout sidebar scroll bug
+    _fix_sidebar();
+
 
 });
 
@@ -228,10 +252,9 @@ $(document).on("click", "a.confirmlink", function(event){
 // Bind the search ajax to the search form and prepare the search
 // logic.
 // search_location comes from masterLayout.blade.php as a variable
-function performSearch() {
+function performSearch(q) {
     var request;
-    var q = $("input#search-field").val();
-    if (q.length >= 2) {
+    if (q.length >= 3) {
 
         // abort any pending request
         if (request) {
@@ -240,6 +263,9 @@ function performSearch() {
         // Show the results box and a loader
         $("section#main-content")
             .html("<i class='fa fa-cog fa-spin'></i> Searching...");
+
+        // Set the page title
+        $("h1#section-title").html("Site Search:");
 
         // fire off the request to /form.php
         request = $.ajax({
@@ -280,9 +306,20 @@ $("form#sidebar-form").submit(function(e) {
 });
 
 // Listen for events on the input
+var timer;
 $("input#search-field").keyup(function(e) {
 
-    // Ignore some speacial keytypes
-    if (e.keyCode == 16 || e.keyCode == 18 || e.keyCode == 9 || e.keyCode == 17 ) return;
-    performSearch();
+    // Ignore keycodes that are not characters
+    var c= String.fromCharCode(e.keyCode);
+    var isWordCharacter = c.match(/\w/);
+    if(!isWordCharacter) return;
+
+    clearTimeout(timer);
+    var ms = 500; // milliseconds
+
+    timer = setTimeout(function() {
+        var q = $("input#search-field").val();
+        performSearch(q);
+    }, ms);
+
 });

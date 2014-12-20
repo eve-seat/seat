@@ -1,234 +1,247 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 use App\Services\Validators;
 
-class UserController extends BaseController {
+class UserController extends BaseController
+{
 
-	/*
-	|--------------------------------------------------------------------------
-	| __construct()
-	|--------------------------------------------------------------------------
-	|
-	| Sets up the class to ensure that CSRF tokens are validated on the POST
-	| verb
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | __construct()
+    |--------------------------------------------------------------------------
+    |
+    | Sets up the class to ensure that CSRF tokens are validated on the POST
+    | verb
+    |
+    */
 
-	public function __construct()
-	{
-		$this->beforeFilter('csrf', array('on' => 'post'));
-	}
+    public function __construct()
+    {
+        $this->beforeFilter('csrf', array('on' => 'post'));
+    }
 
-	/*
-	|--------------------------------------------------------------------------
-	| getAll()
-	|--------------------------------------------------------------------------
-	|
-	| Get all of the users in the database
-	|
-	*/
+    /*
+    |--------------------------------------------------------------------------
+    | getAll()
+    |--------------------------------------------------------------------------
+    |
+    | Get all of the users in the database
+    |
+    */
 
-	public function getAll()
-	{
-		$users = Sentry::findAllUsers();
+    public function getAll()
+    {
 
-		return View::make('user.all')
-			->with(array('users' => $users));
-	}
+        $users = \User::all();
 
-	/*
-	|--------------------------------------------------------------------------
-	| postNewUser()
-	|--------------------------------------------------------------------------
-	|
-	| Registers a new user in the database
-	|
-	*/
+        return View::make('user.all')
+            ->with(array('users' => $users));
+    }
 
-	public function postNewUser()
-	{
+    /*
+    |--------------------------------------------------------------------------
+    | postNewUser()
+    |--------------------------------------------------------------------------
+    |
+    | Registers a new user in the database
+    |
+    */
 
-		// Grab the inputs and validate them
-		$new_user = Input::only(
-			'email', 'username', 'password', 'first_name', 'last_name', 'is_admin'
-		);
+    public function postNewUser()
+    {
 
-		$validation = new Validators\SeatUserValidator($new_user);
+        // Grab the inputs and validate them
+        $new_user = Input::only(
+            'email', 'username', 'password', 'first_name', 'last_name', 'is_admin'
+        );
 
-		// Should the form validation pass, continue to attempt to add this user
-		if ($validation->passes()) {
+        $validation = new Validators\SeatUserValidator($new_user);
 
-			if ($user = Sentry::register(array('email' => Input::get('email'), 'username' => Input::get('username'), 'password' => Input::get('password'), 'first_name' => Input::get('first_name'), 'last_name' => Input::get('last_name')), true)) {
+        // Should the form validation pass, continue to attempt to add this user
+        if ($validation->passes()) {
 
-				if (Input::get('is_admin') == 'yes') {
+            // Because users are soft deleted, we need to check if if
+            // it doesnt actually exist first.
+            $user = \User::withTrashed()
+                ->where('email', Input::get('email'))
+                ->orWhere('username', Input::get('username'))
+                ->first();
 
-					try {
+            // If we found the user, restore it and set the
+            // new values found in the post
+            if($user)
+                $user->restore();
+            else
+                $user = new \User;
 
-						$adminGroup = Sentry::findGroupByName('Administrators');
+            // With the user object ready, work the update
+            $user->email = Input::get('email');
+            $user->username = Input::get('username');
+            $user->password = Hash::make(Input::get('password'));
 
-					} catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
+            if (Input::get('is_admin') == 'yes') {
 
-						return Redirect::back()
-							->withInput()
-							->withErrors('Administrators group could not be found');
-					}
+                $adminGroup = \Auth::findGroupByName('Administrators');
+                $user->addGroup($adminGroup);
+            }
 
-					$user->addGroup($adminGroup);
-				}
+            $user->save();
 
-				return Redirect::action('UserController@getAll')
-					->with('success', 'User ' . Input::get('email') . ' has been added');
+            return Redirect::action('UserController@getAll')
+                ->with('success', 'User ' . Input::get('email') . ' has been added');
 
-			} else {
+        } else {
 
-				return Redirect::back()
-					->withInput()
-					->withErrors('Error adding user');
-			}
+            return Redirect::back()
+                    ->withInput()
+                ->withErrors($validation->errors);
+        }
+    }
 
-		} else {
+    /*
+    |--------------------------------------------------------------------------
+    | getDetail()
+    |--------------------------------------------------------------------------
+    |
+    | Show all of the user details
+    |
+    */
 
-			return Redirect::back()
-					->withInput()
-				->withErrors($validation->errors);
-		}
+    public function getDetail($userID)
+    {
 
+        $user = Auth::findUserById($userID);
+        $allGroups = Auth::findAllGroups();
+        $tmp = Auth::getUserGroups($user);
+        $hasGroups = array();
 
-	}
+        foreach($tmp as $group)
+            $hasGroups = array_add($hasGroups, $group->name, '1');
 
-	/*
-	|--------------------------------------------------------------------------
-	| getDetail()
-	|--------------------------------------------------------------------------
-	|
-	| Show all of the user details
-	|
-	*/
+        return View::make('user.detail')
+            ->with('user', $user)
+            ->with('availableGroups', $allGroups)
+            ->with('hasGroups', $hasGroups);
+    }
 
-	public function getDetail($userID)
-	{
+    /*
+    |--------------------------------------------------------------------------
+    | getImpersonate()
+    |--------------------------------------------------------------------------
+    |
+    | Impersonate a user
+    |
+    */
 
-		try {
+    public function getImpersonate($userID)
+    {
 
-			$user = Sentry::findUserById($userID);
+        // Find the user
+        $user = Auth::findUserById($userID);
 
-		} catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
+        // Attempt to authenticate using the user->id
+        Auth::loginUsingId($userID);
 
-			App::abort(404);
-		}
+        return Redirect::action('HomeController@showIndex')
+            ->with('warning', 'You are now impersonating ' . $user->email);
+    }
 
-		return View::make('user.detail')
-			->with('user', $user);
-	}
+    /*
+    |--------------------------------------------------------------------------
+    | postUpdateUser()
+    |--------------------------------------------------------------------------
+    |
+    | Changes a user's details
+    |
+    */
 
-	/*
-	|--------------------------------------------------------------------------
-	| getImpersonate()
-	|--------------------------------------------------------------------------
-	|
-	| Impersonate a user
-	|
-	*/
+    public function postUpdateUser()
+    {
 
-	public function getImpersonate($userID)
-	{
+        // Find the user
+        $user = Auth::findUserById(Input::get('userID'));
 
-		try {
+        // Find the administrators group
+        $admin_group = Auth::findGroupByName('Administrators');
 
-			$user = Sentry::findUserById($userID);
+        // ... and check that it exists
+        if(!$admin_group)
+            return Redirect::back()
+                ->withInput()
+                ->withErrors('Administrators group could not be found');
 
-		} catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
+        $user->email = Input::get('email');
 
-			App::abort(404);
-		}
+        if (Input::get('username') != '')
+            $user->username = Input::get('username');
 
-	 	Sentry::login($user);
+        if (Input::get('password') != '')
+            $user->password = Hash::make(Input::get('password'));
 
- 		return Redirect::action('HomeController@showIndex')
- 			->with('warning', 'You are now impersonating ' . $user->email);
-	}
+        $groups = Input::except('_token', 'username', 'password', 'first_name', 'last_name', 'userID', 'email');
 
-	/*
-	|--------------------------------------------------------------------------
-	| postUpdateUser()
-	|--------------------------------------------------------------------------
-	|
-	| Changes a user's details
-	|
-	*/
+        // Delete all the permissions the user has now
+        \GroupUserPivot::where('user_id', '=', $user->id)
+            ->delete();
 
-	public function postUpdateUser()
-	{
+        // Restore the permissions.
+        //
+        // NB Todo. Check that we not revoking 'Administrors' access from
+        // the site admin
+        foreach($groups as $group => $value) {
 
-		try {
+            $thisGroup = Auth::findGroupByName(str_replace("_", " ", $group));
+            Auth::addUserToGroup($user, $thisGroup);
+        }
 
-			$user = Sentry::findUserById(Input::get('userID'));
+        if ($user->save())
+            return Redirect::action('UserController@getDetail', array($user->getKey()))
+                ->with('success', 'User has been updated');
+        else
+            return Redirect::back()
+                ->withInput()
+                ->withErrors('Error updating user');
+    }
 
-		} catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
+    /*
+    |--------------------------------------------------------------------------
+    | getDeleteUser()
+    |--------------------------------------------------------------------------
+    |
+    | Deletes a user from the database
+    |
+    */
 
-			App::abort(404);
-		}
+    public function getDeleteUser($userID)
+    {
 
-		try {
+        $user = Auth::findUserById($userID);
+        $user->delete();
 
-			$adminGroup = Sentry::findGroupByName('Administrators');
-
-		} catch (Cartalyst\Sentry\Groups\GroupNotFoundException $e) {
-
-			return Redirect::back()
-				->withInput()
-				->withErrors('Administrators group could not be found');
-		}
-
-		$user->email = Input::get('email');
-
-		if (Input::get('username') != '')
-			$user->username = Input::get('username');
-
-		if (Input::get('password') != '')
-			$user->password = Input::get('password');
-
-		$user->first_name = Input::get('first_name');
-		$user->last_name = Input::get('last_name');
-
-		if (Input::get('is_admin') == 'yes')
-			$user->addGroup($adminGroup);
-		else
-			$user->removeGroup($adminGroup);
-
-		if ($user->save())
-			return Redirect::action('UserController@getDetail', array($user->getKey()))
-				->with('success', 'User has been updated');
-		else
-			return Redirect::back()
-				->withInput()
-				->withErrors('Error updating user');
-	}
-
-	/*
-	|--------------------------------------------------------------------------
-	| getDeleteUser()
-	|--------------------------------------------------------------------------
-	|
-	| Deletes a user from the database
-	|
-	*/
-
-	public function getDeleteUser($userID)
-	{
-
-		try {
-
-			$user = Sentry::findUserById($userID);
-			$user->delete();
-		}
-
-		catch (Cartalyst\Sentry\Users\UserNotFoundException $e) {
-
-			App::abort(404);
-		}
-
-		return Redirect::action('UserController@getAll')
-			->with('success', 'User has been deleted');
-	}
+        return Redirect::action('UserController@getAll')
+            ->with('success', 'User has been deleted');
+    }
 }

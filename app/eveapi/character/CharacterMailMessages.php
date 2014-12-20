@@ -1,149 +1,173 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 namespace Seat\EveApi\Character;
 
 use Seat\EveApi\BaseApi;
 use Pheal\Pheal;
 
-class MailMessages extends BaseApi {
+class MailMessages extends BaseApi
+{
 
-	public static function Update($keyID, $vCode)
-	{
+    public static function Update($keyID, $vCode)
+    {
 
-		// Start and validate they key pair
-		BaseApi::bootstrap();
-		BaseApi::validateKeyPair($keyID, $vCode);
+        // Start and validate they key pair
+        BaseApi::bootstrap();
+        BaseApi::validateKeyPair($keyID, $vCode);
 
-		// Set key scopes and check if the call is banned
-		$scope = 'Char';
-		$api = 'MailMessages';
+        // Set key scopes and check if the call is banned
+        $scope = 'Char';
+        $api = 'MailMessages';
 
-		if (BaseApi::isBannedCall($api, $scope, $keyID))
-			return;
+        if (BaseApi::isBannedCall($api, $scope, $keyID))
+            return;
 
-		// Get the characters for this key
-		$characters = BaseApi::findKeyCharacters($keyID);
+        // Get the characters for this key
+        $characters = BaseApi::findKeyCharacters($keyID);
 
-		// Check if this key has any characters associated with it
-		if (!$characters)
-			return;
+        // Check if this key has any characters associated with it
+        if (!$characters)
+            return;
 
-		// Lock the call so that we are the only instance of this running now()
-		// If it is already locked, just return without doing anything
-		if (!BaseApi::isLockedCall($api, $scope, $keyID))
-			$lockhash = BaseApi::lockCall($api, $scope, $keyID);
-		else
-			return;
+        // Lock the call so that we are the only instance of this running now()
+        // If it is already locked, just return without doing anything
+        if (!BaseApi::isLockedCall($api, $scope, $keyID))
+            $lockhash = BaseApi::lockCall($api, $scope, $keyID);
+        else
+            return;
 
-		// Next, start our loop over the characters and upate the database
-		foreach ($characters as $characterID) {
+        // Next, start our loop over the characters and upate the database
+        foreach ($characters as $characterID) {
 
-			// Prepare the Pheal instance
-			$pheal = new Pheal($keyID, $vCode);
+            // Prepare the Pheal instance
+            $pheal = new Pheal($keyID, $vCode);
 
-			// Do the actual API call. pheal-ng actually handles some internal
-			// caching too.
-			try {
-				
-				$mail_messages = $pheal
-					->charScope
-					->MailMessages(array('characterID' => $characterID));
+            // Do the actual API call. pheal-ng actually handles some internal
+            // caching too.
+            try {
 
-			} catch (\Pheal\Exceptions\APIException $e) {
+                $mail_messages = $pheal
+                    ->charScope
+                    ->MailMessages(array('characterID' => $characterID));
 
-				// If we cant get account status information, prevent us from calling
-				// this API again
-				BaseApi::banCall($api, $scope, $keyID, 0, $e->getCode() . ': ' . $e->getMessage());
-			    return;
+            } catch (\Pheal\Exceptions\APIException $e) {
 
-			} catch (\Pheal\Exceptions\PhealException $e) {
+                // If we cant get account status information, prevent us from calling
+                // this API again
+                BaseApi::banCall($api, $scope, $keyID, 0, $e->getCode() . ': ' . $e->getMessage());
+                return;
 
-				throw $e;
-			}
+            } catch (\Pheal\Exceptions\PhealException $e) {
 
-			// Check if the data in the database is still considered up to date.
-			// checkDbCache will return true if this is the case
-			if (!BaseApi::checkDbCache($scope, $api, $mail_messages->cached_until, $characterID)) {
+                throw $e;
+            }
 
-				// Loop over the list we got from the api and update the db,
-				// remebering the messageID's for downloading the bodies too
-				$bodies = array();
-				foreach ($mail_messages->messages as $message) {
+            // Check if the data in the database is still considered up to date.
+            // checkDbCache will return true if this is the case
+            if (!BaseApi::checkDbCache($scope, $api, $mail_messages->cached_until, $characterID)) {
 
-					$mail_body_data = \EveCharacterMailMessages::where('characterID', '=', $characterID)
-						->where('messageID', '=', $message->messageID)
-						->first();
+                // Loop over the list we got from the api and update the db,
+                // remebering the messageID's for downloading the bodies too
+                $bodies = array();
+                foreach ($mail_messages->messages as $message) {
 
-					if (!$mail_body_data) {
+                    $mail_body_data = \EveCharacterMailMessages::where('characterID', '=', $characterID)
+                        ->where('messageID', '=', $message->messageID)
+                        ->first();
 
-						$mail_body = new \EveCharacterMailMessages;
-						$bodies[] = $message->messageID; // Record the messagID to download later
-					} else {
+                    if (!$mail_body_data) {
 
-						// Check if we have the body for this existing message, else
-						// we will add it to the list to download
-						if (!\EveCharacterMailBodies::where('messageID', '=', $message->messageID))
-							$bodies[] = $message->messageID;
+                        $mail_body = new \EveCharacterMailMessages;
+                        $bodies[] = $message->messageID; // Record the messagID to download later
+                    } else {
 
-						continue;
-					}
+                        // Check if we have the body for this existing message, else
+                        // we will add it to the list to download
+                        if (!\EveCharacterMailBodies::where('messageID', '=', $message->messageID))
+                            $bodies[] = $message->messageID;
 
-					$mail_body->characterID = $characterID;
-					$mail_body->messageID = $message->messageID;
-					$mail_body->senderID = $message->senderID;
-					$mail_body->senderName = $message->senderName;
-					$mail_body->sentDate = $message->sentDate;
-					$mail_body->title = $message->title;
-					$mail_body->toCorpOrAllianceID = (strlen($message->toCorpOrAllianceID) > 0 ? $message->toCorpOrAllianceID : null);
-					$mail_body->toCharacterIDs = (strlen($message->toCharacterIDs) > 0 ? $message->toCharacterIDs : null);
-					$mail_body->toListID = (strlen($message->toListID) > 0 ? $message->toListID : null);
-					$mail_body->save();
-				}
+                        continue;
+                    }
 
-				// Split the bodies we need to download into chunks of 10 each. Pheal-NG will
-				// log the whole request as a file name for chaching...
-				// which is tooooooo looooooooooooong
-				$bodies = array_chunk($bodies, 10);
+                    $mail_body->characterID = $characterID;
+                    $mail_body->messageID = $message->messageID;
+                    $mail_body->senderID = $message->senderID;
+                    $mail_body->senderName = $message->senderName;
+                    $mail_body->sentDate = $message->sentDate;
+                    $mail_body->title = $message->title;
+                    $mail_body->toCorpOrAllianceID = (strlen($message->toCorpOrAllianceID) > 0 ? $message->toCorpOrAllianceID : null);
+                    $mail_body->toCharacterIDs = (strlen($message->toCharacterIDs) > 0 ? $message->toCharacterIDs : null);
+                    $mail_body->toListID = (strlen($message->toListID) > 0 ? $message->toListID : null);
+                    $mail_body->save();
+                }
 
-				// Iterate over the chunks.
-				foreach ($bodies as $chunk) {
+                // Split the bodies we need to download into chunks of 10 each. Pheal-NG will
+                // log the whole request as a file name for chaching...
+                // which is tooooooo looooooooooooong
+                $bodies = array_chunk($bodies, 10);
 
-					try {
-						
-						$mail_bodies = $pheal
-							->charScope
-							->MailBodies(array('characterID' => $characterID, 'ids' => implode(',', $chunk)));
+                // Iterate over the chunks.
+                foreach ($bodies as $chunk) {
 
-					} catch (\Pheal\Exceptions\PhealException $e) {
+                    try {
 
-						throw $e;
-					}
+                        $mail_bodies = $pheal
+                            ->charScope
+                            ->MailBodies(array('characterID' => $characterID, 'ids' => implode(',', $chunk)));
 
-					// Loop over the received bodies
-					foreach ($mail_bodies->messages as $body) {
+                    } catch (\Pheal\Exceptions\PhealException $e) {
 
-						// Actually, this check is pretty redundant, so maybe remove it
-						$body_data = \EveCharacterMailBodies::where('messageID', '=', $body->messageID)->first();
+                        throw $e;
+                    }
 
-						if (!$body_data)
-							$new_body = new \EveCharacterMailBodies;
-						else
-							continue;
-					
-						$new_body->messageID = $body->messageID;
-						$new_body->body = $body->__toString();
-						$new_body->save();	
-					}
-				}
+                    // Loop over the received bodies
+                    foreach ($mail_bodies->messages as $body) {
 
-				// Update the cached_until time in the database for this api call
-				BaseApi::setDbCache($scope, $api, $mail_messages->cached_until, $characterID);
-			}
-		}
+                        // Actually, this check is pretty redundant, so maybe remove it
+                        $body_data = \EveCharacterMailBodies::where('messageID', '=', $body->messageID)->first();
 
-		// Unlock the call
-		BaseApi::unlockCall($lockhash);
+                        if (!$body_data)
+                            $new_body = new \EveCharacterMailBodies;
+                        else
+                            continue;
 
-		return $mail_messages;
-	}
+                        $new_body->messageID = $body->messageID;
+                        $new_body->body = $body->__toString();
+                        $new_body->save();
+                    }
+                }
+
+                // Update the cached_until time in the database for this api call
+                BaseApi::setDbCache($scope, $api, $mail_messages->cached_until, $characterID);
+            }
+        }
+
+        // Unlock the call
+        BaseApi::unlockCall($lockhash);
+
+        return $mail_messages;
+    }
 }

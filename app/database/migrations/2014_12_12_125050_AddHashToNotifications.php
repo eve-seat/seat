@@ -3,7 +3,8 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddUsernameForLogins extends Migration {
+class AddHashToNotifications extends Migration
+{
 
 	/**
 	 * Run the migrations.
@@ -12,10 +13,9 @@ class AddUsernameForLogins extends Migration {
 	 */
 	public function up()
 	{
-		Schema::table('users', function(Blueprint $table)
+		Schema::table('seat_notifications', function($table)
 		{
-			$table->string('username');
-
+		    $table->string('hash')->after('read');
 		});
 	}
 
@@ -26,10 +26,9 @@ class AddUsernameForLogins extends Migration {
 	 */
 	public function down()
 	{
-		Schema::table('users', function(Blueprint $table)
+		Schema::table('seat_notifications', function($table)
 		{
-			$table->dropColumn('username');
-
+		    $table->dropColumn('hash');
 		});
 	}
 

@@ -1,82 +1,105 @@
 <?php
+/*
+The MIT License (MIT)
 
-class RemindersController extends BaseController {
+Copyright (c) 2014 eve-seat
 
-	/**
-	 * Display the password reminder view.
-	 *
-	 * @return Response
-	 */
-	public function getRemind()
-	{
-		return View::make('password.remind');
-	}
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-	/**
-	 * Handle a POST request to remind a user of their password.
-	 *
-	 * @return Response
-	 */
-	public function postRemind()
-	{
-		switch ($response = Password::remind(Input::only('email'),
-			function($message) {
-				$message->subject('SeAT Password Reset'); }))
-		{
-			case Password::INVALID_USER:
-				return Redirect::back()
-					->withErrors(Lang::get($response));
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-			case Password::REMINDER_SENT:
-				return Redirect::action('SessionController@getSignIn')
-					->with('success', Lang::get($response));
-		}
-	}
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
-	/**
-	 * Display the password reset view for the given token.
-	 *
-	 * @param  string  $token
-	 * @return Response
-	 */
-	public function getReset($token = null)
-	{
-		if (is_null($token)) App::abort(404);
+class RemindersController extends BaseController
+{
 
-		return View::make('password.reset')->with('token', $token);
-	}
+    /**
+     * Display the password reminder view.
+     *
+     * @return Response
+     */
+    public function getRemind()
+    {
+        return View::make('password.remind');
+    }
 
-	/**
-	 * Handle a POST request to reset a user's password.
-	 *
-	 * @return Response
-	 */
-	public function postReset()
-	{
-		$credentials = Input::only(
-			'email', 'password', 'password_confirmation', 'token'
-		);
+    /**
+     * Handle a POST request to remind a user of their password.
+     *
+     * @return Response
+     */
+    public function postRemind()
+    {
+        switch ($response = Password::remind(Input::only('email'),
+            function($message) {
+                $message->subject('SeAT Password Reset'); }))
+        {
+            case Password::INVALID_USER:
+                return Redirect::back()
+                    ->withErrors(Lang::get($response));
 
-		$response = Password::reset($credentials, function($user, $password)
-		{
-			// We actually don't care about the Auth user that is returned, use its email to find the Sentry user
-			$sentryUser = Sentry::findUserByLogin($user->email);
-			$sentryUser->password = $password;
-			$sentryUser->save();
-		});
+            case Password::REMINDER_SENT:
+                return Redirect::action('SessionController@getSignIn')
+                    ->with('success', Lang::get($response));
+        }
+    }
 
-		switch ($response)
-		{
-			case Password::INVALID_PASSWORD:
-			case Password::INVALID_TOKEN:
-			case Password::INVALID_USER:
-				return Redirect::back()
-					->withErrors(Lang::get($response));
+    /**
+     * Display the password reset view for the given token.
+     *
+     * @param  string  $token
+     * @return Response
+     */
+    public function getReset($token = null)
+    {
+        if (is_null($token)) App::abort(404);
 
-			case Password::PASSWORD_RESET:
-				return Redirect::action('SessionController@getSignIn')
-					->with('success', 'Your password has been successfully reset');
-		}
-	}
+        return View::make('password.reset')->with('token', $token);
+    }
 
+    /**
+     * Handle a POST request to reset a user's password.
+     *
+     * @return Response
+     */
+    public function postReset()
+    {
+
+        $credentials = Input::only(
+            'email', 'password', 'password_confirmation', 'token'
+        );
+
+        $response = Password::reset($credentials, function($user, $password) {
+
+            $user = \Auth::where('email', '=', $user->email);
+            $user->password = $password;
+            $user->save();
+        });
+
+        switch ($response)
+        {
+            case Password::INVALID_PASSWORD:
+            case Password::INVALID_TOKEN:
+            case Password::INVALID_USER:
+                return Redirect::back()
+                    ->withErrors(Lang::get($response));
+
+            case Password::PASSWORD_RESET:
+                return Redirect::action('SessionController@getSignIn')
+                    ->with('success', 'Your password has been successfully reset');
+        }
+    }
 }

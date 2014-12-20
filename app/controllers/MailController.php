@@ -1,116 +1,140 @@
 <?php
+/*
+The MIT License (MIT)
 
-class MailController extends BaseController {
+Copyright (c) 2014 eve-seat
 
-	/*
-	|--------------------------------------------------------------------------
-	| getSubjects()
-	|--------------------------------------------------------------------------
-	|
-	| Display all of the mails in the system by message subject
-	|
-	*/
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-	public function getSubjects()
-	{
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-		$pagination_amount = 100;
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
-		$mail = DB::table('character_mailmessages')
-			->join('account_apikeyinfo_characters', 'character_mailmessages.characterID', '=', 'account_apikeyinfo_characters.characterID')
-			->join('character_mailbodies', 'character_mailmessages.messageID', '=', 'character_mailbodies.messageID')
-			->orderBy('character_mailmessages.sentDate', 'desc');
+class MailController extends BaseController
+{
 
-		if (!Sentry::getUser()->isSuperUser())
-			$mail = $mail->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
+    /*
+    |--------------------------------------------------------------------------
+    | getSubjects()
+    |--------------------------------------------------------------------------
+    |
+    | Display all of the mails in the system by message subject
+    |
+    */
 
-		$mail = $mail->paginate($pagination_amount);
+    public function getSubjects()
+    {
 
-		return View::make('mail.subjects')
-			->with('mail', $mail);
-	}
+        $pagination_amount = 100;
 
-	/*
-	|--------------------------------------------------------------------------
-	| getTimeline()
-	|--------------------------------------------------------------------------
-	|
-	| Display all of the mails in the system with the full body, sorted by
-	| sent date.
-	|
-	*/
+        $mail = DB::table('character_mailmessages')
+            ->join('account_apikeyinfo_characters', 'character_mailmessages.characterID', '=', 'account_apikeyinfo_characters.characterID')
+            ->join('character_mailbodies', 'character_mailmessages.messageID', '=', 'character_mailbodies.messageID')
+            ->orderBy('character_mailmessages.sentDate', 'desc');
 
-	public function getTimeline()
-	{
+        if (!\Auth::isSuperUser() )
+            $mail = $mail->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
-		$pagination_amount = 30;
+        $mail = $mail->paginate($pagination_amount);
 
-		$mail = DB::table('character_mailmessages')
-			->join('account_apikeyinfo_characters', 'character_mailmessages.characterID', '=', 'account_apikeyinfo_characters.characterID')
-			->join('character_mailbodies', 'character_mailmessages.messageID', '=', 'character_mailbodies.messageID')
-			->groupby('character_mailmessages.messageID')
-			->orderBy('character_mailmessages.sentDate', 'desc');
+        return View::make('mail.subjects')
+            ->with('mail', $mail);
+    }
 
-		if (!Sentry::getUser()->isSuperUser())
-			$mail = $mail->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
+    /*
+    |--------------------------------------------------------------------------
+    | getTimeline()
+    |--------------------------------------------------------------------------
+    |
+    | Display all of the mails in the system with the full body, sorted by
+    | sent date.
+    |
+    */
 
-		$mail = $mail->paginate($pagination_amount);
+    public function getTimeline()
+    {
 
-		$mailing_list_names = array();
-		foreach(DB::table('character_mailinglists')->get() as $list)
-			$mailing_list_names[$list->listID] = $list->displayName;
+        $pagination_amount = 30;
 
-		return View::make('mail.timeline')
-			->with('mail', $mail)
-			->with('mailing_list_names', $mailing_list_names);
-	}
+        $mail = DB::table('character_mailmessages')
+            ->join('account_apikeyinfo_characters', 'character_mailmessages.characterID', '=', 'account_apikeyinfo_characters.characterID')
+            ->join('character_mailbodies', 'character_mailmessages.messageID', '=', 'character_mailbodies.messageID')
+            ->groupby('character_mailmessages.messageID')
+            ->orderBy('character_mailmessages.sentDate', 'desc');
 
-	/*
-	|--------------------------------------------------------------------------
-	| getRead()
-	|--------------------------------------------------------------------------
-	|
-	| Display a single mail message
-	|
-	*/
+        if (!\Auth::isSuperUser() )
+            $mail = $mail->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
-	public function getRead($messageID = 0)
-	{
-		$message = DB::table('character_mailmessages')
-			->join('character_mailbodies', 'character_mailmessages.messageID', '=', 'character_mailbodies.messageID')
-			->where('character_mailmessages.messageID', $messageID)
-			->first();
+        $mail = $mail->paginate($pagination_amount);
 
-		if(count($message) <= 0)
-			return Redirect::action('MailController@getSubjects')
-				->withErrors('Invalid Message ID');
+        $mailing_list_names = array();
+        foreach(DB::table('character_mailinglists')->get() as $list)
+            $mailing_list_names[$list->listID] = $list->displayName;
 
-		$recipients = DB::table('character_mailmessages')
-			->where('messageID', $messageID)
-			->lists('characterID');
+        return View::make('mail.timeline')
+            ->with('mail', $mail)
+            ->with('mailing_list_names', $mailing_list_names);
+    }
 
-		// Ensure that the current user is allowed to view the mail
-		if (!Sentry::getUser()->isSuperUser()) {
+    /*
+    |--------------------------------------------------------------------------
+    | getRead()
+    |--------------------------------------------------------------------------
+    |
+    | Display a single mail message
+    |
+    */
 
-			// Get all the keys that have this mail recorded
-			$keys_with_mail = DB::table('character_mailmessages')
-				->join('account_apikeyinfo_characters', 'character_mailmessages.characterID', '=', 'account_apikeyinfo_characters.characterID')
-				->where('messageID', $messageID)
-				->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
-				->first();
+    public function getRead($messageID = 0)
+    {
+        $message = DB::table('character_mailmessages')
+            ->join('character_mailbodies', 'character_mailmessages.messageID', '=', 'character_mailbodies.messageID')
+            ->where('character_mailmessages.messageID', $messageID)
+            ->first();
 
-			// If we are unable to find a key with the mail that this user has access to, 404
-			if (!$keys_with_mail)
-				App::abort(404);
-		}
+        if(count($message) <= 0)
+            return Redirect::action('MailController@getSubjects')
+                ->withErrors('Invalid Message ID');
 
-		$mailing_list_names = array();
-		foreach(DB::table('character_mailinglists')->get() as $list)
-			$mailing_list_names[$list->listID] = $list->displayName;
+        $recipients = DB::table('character_mailmessages')
+            ->where('messageID', $messageID)
+            ->lists('characterID');
 
-		return View::make('mail.read')
-			->with('message', $message)
-			->with('mailing_list_names', $mailing_list_names)
-			->with('recipients', $recipients);
-	}
+        // Ensure that the current user is allowed to view the mail
+        if (!\Auth::isSuperUser() ) {
+
+            // Get all the keys that have this mail recorded
+            $keys_with_mail = DB::table('character_mailmessages')
+                ->join('account_apikeyinfo_characters', 'character_mailmessages.characterID', '=', 'account_apikeyinfo_characters.characterID')
+                ->where('messageID', $messageID)
+                ->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
+                ->first();
+
+            // If we are unable to find a key with the mail that this user has access to, 404
+            if (!$keys_with_mail)
+                App::abort(404);
+        }
+
+        $mailing_list_names = array();
+        foreach(DB::table('character_mailinglists')->get() as $list)
+            $mailing_list_names[$list->listID] = $list->displayName;
+
+        return View::make('mail.read')
+            ->with('message', $message)
+            ->with('mailing_list_names', $mailing_list_names)
+            ->with('recipients', $recipients);
+    }
 }

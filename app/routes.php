@@ -1,4 +1,27 @@
 <?php
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 eve-seat
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +42,6 @@ Route::group(array('prefix' => 'account'), function() {
 
 });
 
-
 Route::group(array('before' => 'auth|csrf|key.required'), function() {
 
     Route::get('/', 'HomeController@showIndex');
@@ -35,20 +57,27 @@ Route::group(array('before' => 'auth|csrf|key.required'), function() {
     Route::controller('corporation', 'CorporationController');
     Route::controller('eve', 'EveController');
     Route::controller('queue', 'QueueController');
+    Route::controller('notification', 'NotificationController');
 
-    Route::controller('permissions', 'PermissionsController');
+    // Super users are the only ones that should be accessing
+    // the following controllers
+    Route::group(array('prefix' => 'configuration', 'before' => 'auth.superuser'), function() {
 
-    Route::controller('settings', 'SettingsController');
+        Route::controller('user', 'UserController');
+        Route::controller('settings', 'SettingsController');
+        Route::controller('groups', 'GroupsController');
+    });
 
     Route::controller('helpers', 'HelperController');
-    Route::controller('user', 'UserController');
     Route::controller('debug', 'DebugController');
-
     Route::controller('profile', 'ProfileController');
     Route::controller('help', 'HelpController');
 
 });
 
-Route::when('user/*', 'auth.superuser');
-
-Route::when('settings/*', 'auth.superuser');
+// api route group
+Route::group(array('prefix' => 'api/v1', 'before' => 'auth.api'), function()
+{
+    Route::resource('authenticate', 'AuthController');
+    Route::resource('key', 'KeyController');
+});
