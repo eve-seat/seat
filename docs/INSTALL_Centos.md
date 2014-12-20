@@ -1,7 +1,7 @@
 ## SeAT - Simple (or Stupid) EVE Online API Tool ##
 
 ### Introduction ###
-SeAT is a EVE Online™ Corporation/ API Key Management Tool written in PHP using the [Laravel][1] Framework. This guide attempts to detail the process in order to successfully get a new installation setup, configured and ready to use. Lets dive right in.
+SeAT is a EVE Online™ Corporation / API Key Management Tool written in PHP using the [Laravel][1] Framework. This guide attempts to detail the process in order to successfully get a new installation setup, configured and ready to use. Lets dive right in.
 
 ### Requirements ###
 Installing SeAT *should* be relatively simple. At a high level, the main requirements for SeAT is:
@@ -15,7 +15,7 @@ Installing SeAT *should* be relatively simple. At a high level, the main require
 SeAT was developed for Linux and has been tested to work fine on CentOS/Ubuntu. Chances are you could get it going pretty easily on many other Linux flavors, so feel free to contribute docs with install guides. As far as windows support goes... well....
 
 ### Video Tutorial ###
-A visual walkthrough of installing SeAT on CentOS is hosted on asciicinema and can be viewed [here](). The walkthrough follows the exact same steps as detailed in the below guide, so feel free to follow along.
+A visual walkthrough of installing SeAT on CentOS is hosted on asciicinema and can be viewed [here](https://asciinema.org/a/14881). The walkthrough follows the exact same steps as detailed in the below guide, so feel free to follow along. It also shows that you can install SeAT in 16 minutes :D
 
 ### Installation Preparation ###
 The following guide assumes you are using CentOS and are currently logged in as the `root` user. A separate guide for Debian / Ubuntu can be found in `docs/`.  
