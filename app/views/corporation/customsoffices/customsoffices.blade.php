@@ -23,7 +23,7 @@
                 <th>+5</th>
                 <th>Neutral</th>
                 <th>-5</th>
-                <th>+10</th>
+                <th>-10</th>
               </tr>
             </thead>
             <tbody>
