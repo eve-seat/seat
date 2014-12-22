@@ -11,7 +11,7 @@
 
       <div class="body bg-gray">
         <div class="form-group">
-          {{ Form::text('email', null, array('class' => 'form-control', 'placeholder' => 'Email Address'), 'required', 'autofocus') }}
+          {{ Form::text('email', null, array('class' => 'form-control', 'placeholder' => 'Username or Email Address'), 'required', 'autofocus') }}
         </div>
         <div class="form-group">
           {{ Form::password('password', array('class' => 'form-control', 'placeholder' => 'Password'), 'required') }}

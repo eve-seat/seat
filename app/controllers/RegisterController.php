@@ -68,13 +68,6 @@ class RegisterController extends BaseController
 
         if ($validation->passes()) {
 
-            // Check that we don't already have the user that is
-            // attempting registration
-            if (\User::where('email', Input::get('email'))->orWhere('username', Input::get('username'))->first())
-                return Redirect::back()
-                    ->withInput()
-                    ->withErrors('The chosen username or email address is already taken.');
-
             // Let's register a user.
             $user = new \User;
             $user->email = Input::get('email');
