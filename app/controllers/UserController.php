@@ -240,7 +240,13 @@ class UserController extends BaseController
     {
 
         $user = Auth::findUserById($userID);
-        $user->delete();
+
+        // Lets return the keys that this user owned back
+        // to the admin user
+        \SeatKey::where('user_id', $user->id)
+            ->update(array('user_id' => 1));
+
+        $user->forceDelete();
 
         return Redirect::action('UserController@getAll')
             ->with('success', 'User has been deleted');
