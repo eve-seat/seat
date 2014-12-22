@@ -100,6 +100,16 @@
               </div>
 
               <div class="form-group">
+                <label class="col-md-4 control-label" for="password">Password Again</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-magic"></i></span>
+                    {{ Form::password('password_confirmation', array('id' => 'password', 'class' => ' form-control', 'placeholder' => 'Password Again'), 'required') }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
                 <label class="col-md-4 control-label" for="is_admin">Superuser?</label>
                 <div class="col-md-6">
                   <div class="input-group">

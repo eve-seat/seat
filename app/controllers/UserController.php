@@ -78,7 +78,7 @@ class UserController extends BaseController
             'email', 'username', 'password', 'first_name', 'last_name', 'is_admin'
         );
 
-        $validation = new Validators\SeatUserValidator($new_user);
+        $validation = new Validators\SeatUserRegisterValidator;
 
         // Should the form validation pass, continue to attempt to add this user
         if ($validation->passes()) {
@@ -101,6 +101,7 @@ class UserController extends BaseController
             $user->email = Input::get('email');
             $user->username = Input::get('username');
             $user->password = Hash::make(Input::get('password'));
+            $user->activated = 1;
 
             if (Input::get('is_admin') == 'yes') {
 
