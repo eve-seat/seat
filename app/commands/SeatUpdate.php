@@ -56,6 +56,11 @@ class SeatUpdate extends Command
         parent::__construct();
     }
 
+    /**
+     * Check Github for release information
+     *
+     * @return array
+     */
     public function checkVersion()
     {
 
@@ -137,7 +142,7 @@ class SeatUpdate extends Command
         // to where composer is installed, attempt to
         // find it. We will first check $PATH, then
         // the ./ and finally error out
-        $composer_command = $this->argument('composer_path');
+        $composer_command = $this->option('composer');
         if (!is_null($composer_command)) {
 
             if(!\File::exists($composer_command)) {
@@ -145,24 +150,26 @@ class SeatUpdate extends Command
                 $this->error('[!] Error: Composer was not found at `' . $composer_command . '`. Please specify a valid path to `composer.phar`.');
                 return;
             }
-        }
 
-        // So we did not get the path to composer.phar, lets
-        // try and find it.
-        $composer_command = exec('which composer');
-        if(strlen($composer_command) <= 0 || !\File::exists($composer_command)) {
+        } else {
 
-            $composer_command = exec('which composer.phar');
+            // So we did not get the path to composer.phar, lets
+            // try and find it.
+            $composer_command = exec('which composer');
             if(strlen($composer_command) <= 0 || !\File::exists($composer_command)) {
 
-                $composer_command = base_path() . 'composer';
+                $composer_command = exec('which composer.phar');
                 if(strlen($composer_command) <= 0 || !\File::exists($composer_command)) {
 
-                    $composer_command = base_path() . 'composer.phar';
+                    $composer_command = base_path() . 'composer';
                     if(strlen($composer_command) <= 0 || !\File::exists($composer_command)) {
 
-                        $this->error('[!] Error: Unable to find `composer.phar`. Please specify a valid path to `composer.phar` as a command argument.');
-                        return;
+                        $composer_command = base_path() . 'composer.phar';
+                        if(strlen($composer_command) <= 0 || !\File::exists($composer_command)) {
+
+                            $this->error('[!] Error: Unable to find `composer.phar`. Please specify a valid path to `composer.phar` as a command argument.');
+                            return;
+                        }
                     }
                 }
             }
@@ -236,18 +243,22 @@ class SeatUpdate extends Command
             return;
         }
 
-        // // git checkout -f master
-        // $this->line('[+] Running: `' . $git_command . ' checkout -f master`');
-        // exec($git_command . ' checkout -f master', $output, $exit_code);
+        // git checkout -f master if we did not get the --dev option
+        if(!$this->option('dev')) {
 
-        // // If the command failed, we should have a $exit_code of
-        // // not 0. If thats the case, read $output and print
-        // // that as debugging information
-        // if ($exit_code !== 0) {
+            dd('will checkout master');
+            $this->line('[+] Running: `' . $git_command . ' checkout -f master`');
+            exec($git_command . ' checkout -f master', $output, $exit_code);
 
-        //     $this->error('[!] Error: git checkout -f master failed with exit code ' . $exit_code . ' and command outut: ' . implode('\n', $output));
-        //     return;
-        // }
+            // If the command failed, we should have a $exit_code of
+            // not 0. If thats the case, read $output and print
+            // that as debugging information
+            if ($exit_code !== 0) {
+
+                $this->error('[!] Error: git checkout -f master failed with exit code ' . $exit_code . ' and command outut: ' . implode('\n', $output));
+                return;
+            }
+        }
 
         // composer self-update
         $this->line('[+] Running: `' . $composer_command . ' self-update`');
@@ -293,14 +304,17 @@ class SeatUpdate extends Command
         $this->call('migrate');
 
         // SDE Updates
-        $this->line('[+] Running EVE SDE Updates');
-        $this->call('seat:update-sde', array('--confirm' => null));
+        if(!$this->option('no-sde')) {
+
+            $this->line('[+] Running EVE SDE Updates');
+            $this->call('seat:update-sde', array('--confirm' => null));
+        }
 
         // With everything done, bring the application back up
         $this->call('up');
 
         $this->line('');
-        $this->info('[+] Upgrade done! It is reccomended that you have a look at the `laravel.log` file for any potential errors.');
+        $this->info('[+] Upgrade done! It is recommended that you have a look at the `laravel.log` file for any potential errors.');
         $this->info('[+] You can view the log file with `php artisan tail`, or responding with [y] to the next question.');
 
         // Ask the user if they want to upgrade.
@@ -312,14 +326,16 @@ class SeatUpdate extends Command
     }
 
     /**
-     * Get the console command arguments.
+     * Get the console command options.
      *
      * @return array
      */
-    protected function getArguments()
+    protected function getOptions()
     {
         return array(
-            array('composer_path', InputArgument::OPTIONAL, 'The path to composer.phar'),
+            array('composer', null, InputOption::VALUE_OPTIONAL, 'Specify the path to composer.phar.', null),
+            array('no-sde', null, InputOption::VALUE_NONE, 'Skip updating the EVE SDE.', null),
+            array('dev', null, InputOption::VALUE_NONE, 'Skip moving to the master branch.', null),
         );
     }
 
