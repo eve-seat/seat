@@ -27,6 +27,7 @@
 	},
 	"scripts": {
 		"post-install-cmd": [
+			"php -r \"copy('app/config/env-sample.php', '.env.php');\"",
 			"php artisan clear-compiled",
 			"php artisan optimize"
 		],
