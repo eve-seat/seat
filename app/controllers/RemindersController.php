@@ -84,8 +84,8 @@ class RemindersController extends BaseController
 
         $response = Password::reset($credentials, function($user, $password) {
 
-            $user = \Auth::where('email', '=', $user->email);
-            $user->password = $password;
+            $user = \User::where('email', '=', $user->email)->first();
+            $user->password = \Hash::make($password);
             $user->save();
         });
 

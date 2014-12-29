@@ -81,6 +81,7 @@ App::before(function($request)
             // define a empty array in the session for corporation_affiliations
             Session::put('corporation_affiliations', array());
             Session::put('is_director', array());
+            Session::put('valid_keys', array());
         }
     }
 });

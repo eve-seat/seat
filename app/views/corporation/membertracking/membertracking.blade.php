@@ -35,16 +35,16 @@
                     {{ $character->name }}
                     </a>
                   </td>
-                  <td>
+                  <td data-sort="{{ $character->startDateTime }}">
                     {{ Carbon\Carbon::parse($character->startDateTime)->diffForHumans() }}
                   </td>
-                  <td>
+                  <td data-sort="{{ $character->logonDateTime }}">
                     {{ Carbon\Carbon::parse($character->logonDateTime)->diffForHumans() }}
                     @if(Carbon\Carbon::parse($character->logonDateTime)->lt(Carbon\Carbon::now()->subMonth()))
                       <span class="text-red pull-right"><i class="fa fa-exclamation"></i></span>
                     @endif
                   </td>
-                  <td>
+                  <td data-sort="{{ $character->logoffDateTime }}">
                     {{ Carbon\Carbon::parse($character->logoffDateTime)->diffForHumans() }}
                   </td>
                   <td>
