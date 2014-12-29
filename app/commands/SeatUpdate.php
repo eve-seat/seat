@@ -246,7 +246,6 @@ class SeatUpdate extends Command
         // git checkout -f master if we did not get the --dev option
         if(!$this->option('dev')) {
 
-            dd('will checkout master');
             $this->line('[+] Running: `' . $git_command . ' checkout -f master`');
             exec($git_command . ' checkout -f master', $output, $exit_code);
 
