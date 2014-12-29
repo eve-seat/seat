@@ -166,7 +166,7 @@ class SettingsController extends BaseController
             $application = new SeatApiApplication;
             $application->application_name = Input::get('app_name');
             $application->application_ip = Input::get('app_src');
-            $application->application_login = preg_replace('/\s+/', '', Input::get('app_name')) . str_random(8);
+            $application->application_login = str_random(8);
             $application->application_password = str_random(16);
             $application->save();
 
