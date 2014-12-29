@@ -384,13 +384,22 @@ class SeatGuard extends \Illuminate\Auth\Guard
     */
     public function getGroupPermissions($group)
     {
+
+        // Prepare a empty array as the default return
         $permission_array = array();
 
-        foreach(unserialize($group->permissions) as $key => $value) {
+        // Check that the group has permissions and work
+        // through them as required
+        if (strlen($group->permissions) > 0) {
 
-            if($value == 1)
-                $permission_array[$key] = $value;
+            // Loop over the permissions, populating the
+            // return array
+            foreach(unserialize($group->permissions) as $key => $value) {
 
+                if($value == 1)
+                    $permission_array[$key] = $value;
+
+            }
         }
 
         return $permission_array;
