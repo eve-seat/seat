@@ -65,7 +65,7 @@ class DashboardController extends BaseController
             |--------------------------------------------------------------------------
             */
 
-            if(!Auth::isSuperUser() || count(Session::get('valid_keys')) <= 0)
+            if(!Auth::isSuperUser() && count(Session::get('valid_keys')) <= 0)
                 return View::make('layouts.components.flash')
                     ->withErrors('No API Keys are defined to show you any information. Please enter at least one.');
 
@@ -227,8 +227,8 @@ class DashboardController extends BaseController
                 ->join('invTypes', 'a.typeID', '=', 'invTypes.typeID');
 
             // If the user is not a superuser, filter the results down to keys they own
-            if (!\Auth::isSuperUser() )
-                $corporation_assets = $corporation_assets->whereIn('corporation_assetlist.corporationID', Session::get('corporation_affiliations'));
+            if (!\Auth::hasAccess('asset_manager'))
+                $corporation_assets = $corporation_assets->whereIn('a.corporationID', Session::get('corporation_affiliations'));
 
             // Complete the search
             $corporation_assets = $corporation_assets->where('invTypes.typeName', 'like', '%' . Input::get('q') . '%')
