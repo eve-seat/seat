@@ -65,7 +65,7 @@ class DashboardController extends BaseController
             |--------------------------------------------------------------------------
             */
 
-            if(!Auth::isSuperUser() || empty(Session::get('valid_keys')))
+            if(!Auth::isSuperUser() || count(Session::get('valid_keys')) <= 0)
                 return View::make('layouts.components.flash')
                     ->withErrors('No API Keys are defined to show you any information. Please enter at least one.');
 
