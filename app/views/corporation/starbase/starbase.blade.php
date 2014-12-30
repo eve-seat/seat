@@ -41,32 +41,15 @@
                   <tbody>
 
                     @foreach ($starbase as $details)
+
                       <tr>
-
-                        {{--
-                          Find the starbases name in the $item_locations array.
-                          We acheive this by looping over the item_locaions we received, and check
-                          if we have a matching item id.
-
-                          If the moonID is 0, we just keep the null value. This could happen if the location was not
-                          determined. It appears that this may happen if the state of the tower is not online.
-                        --}}
-                        {{--*/$posname = null/*--}}
-                        @if ($details->moonID != 0 && isset($item_locations[$details->moonID]))
-                          @foreach ($item_locations[$details->moonID] as $name_finder)
-                            @if ($name_finder['itemID'] == $details->itemID)
-                              {{--*/$posname = $name_finder['itemName']/*--}}
-                            @endif
-                          @endforeach
-                        @endif
-
                         <td>
                           <img src='//image.eveonline.com/Type/{{ $details->typeID }}_32.png' style='width: 18px;height: 18px;'>
                           {{ $details->typeName }}
                         </td>
                         <td>{{ $details->itemName }}</td>
                         <td>{{ number_format($details->security, 1, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</td>
-                        <td><b>{{ $posname }}</b></td>
+                        <td><b>{{ $starbase_names[$details->itemID] }}</b></td>
                         <td>{{ $details->fuelBlocks }}</td>
                         <td>
                           @if ($details->state == 4)
@@ -99,17 +82,6 @@
 
       @foreach ($starbase as $details)
 
-        {{-- find the starbases name in the $item_locations array --}}
-        {{--*/$posname = null/*--}}
-        @if ($details->moonID != 0 && isset($item_locations[$details->moonID]))
-          @foreach ($item_locations[$details->moonID] as $name_finder)
-            @if ($name_finder['itemID'] == $details->itemID)
-              {{--*/$posname = $name_finder['itemName']/*--}}
-            @endif
-          @endforeach
-        @endif
-
-        {{-- process the rest of the html --}}
         <div class="col-md-4">
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
@@ -126,103 +98,8 @@
                   <span class="label label-warning pull-right">{{ $tower_states[$details->state] }}</span>
                 @endif
 
-                {{--
-                  so here we need to determine the time left for the tower fuel.
-                  This is just my old code copied and pasted, so chances are there is some logic flaw somewhere.
-
-                  An important thing to note here. I am escaping the template comments in order to do these calculations.
-                  It will probably be better to move this hax to the controller sometime.
-
-                  Note about the fuel usage calculations.
-                  ---
-
-                  There are 3 tower sizes. Small, Medium and Large. ie:
-
-                  - Amarr Control Tower
-                  - Amarr Control Tower Medium
-                  - Amarr Control Tower Small
-
-                  Fuel usage is calculated by based on wether the tower is anchored in sov or non sov space. [1] ie.
-
-                  == No SOV Usage
-                  - 40 Blocks a hour => Amarr Control Tower
-                  - 20 Blocks a hour => Amarr Control Tower Medium
-                  - 10 Blocks a hour => Amarr Control Tower Small
-
-                  == SOV Usage
-                  - 30 Blocks a hour => Amarr Control Tower
-                  - 15 Blocks a hour => Amarr Control Tower Medium
-                  - 7 Blocks a hour => Amarr Control Tower Small
-
-                  Time2hardcode this shit
-
-                  [1] https://wiki.eveonline.com/en/wiki/Starbase#Fuel_Usage
-
-                  Start escape
-                  ------------
-                  */
-
-                  // Set some base usage values ...
-
-                  $usage = 0;
-                  $stront_usage =0;
-
-                  // ... fuel for non sov towers ...
-
-                  $large_usage = 40;
-                  $medium_usage = 20;
-                  $small_usage = 10;
-
-                  // ... and sov towers
-
-                  $sov_large_usage = 30;
-                  $sov_medium_usage = 15;
-                  $sov_small_usage = 8;
-
-                  // Stront usage
-
-                  $stront_large = 400;
-                  $stront_medium = 200;
-                  $stront_small = 100;
-
-                  // basically, here we check if the names Small/Medium exists in the tower name. Then,
-                  // if the tower is in the sov_tower array, set the value for usage
-
-                  if (strpos($details->typeName, 'Small') !== false) {
-
-                    $stront_usage = $stront_small;
-
-                    if (array_key_exists($details->itemID, $sov_towers))
-                      $usage = $sov_small_usage;
-                    else
-                      $usage = $small_usage;
-
-                  } elseif (strpos($details->typeName, 'Medium') !== false) {
-
-                    $stront_usage = $stront_medium;
-
-                    if (array_key_exists($details->itemID, $sov_towers))
-                      $usage = $sov_medium_usage;
-                    else
-                      $usage = $medium_usage;
-
-                  } else {
-
-                    $stront_usage = $stront_large;
-
-                    if (array_key_exists($details->itemID, $sov_towers))
-                      $usage = $sov_large_usage;
-                    else
-                      $usage = $large_usage;
-                  }
-
-                  /*
-                  End the escape
-                  --------------
-                --}}
-
                 <ul class="list-unstyled">
-                  <li>Name: <b>{{ $posname }}</b></li>
+                  <li>Name: <b>{{ $starbase_names[$details->itemID] }}</b></li>
                   <li>Type: <b>{{ $details->typeName }}</b></li>
                   <li>Corp Access: <b> @if($details->allowCorporationMembers==1)Yes @else No @endif</b></li>
                   <li>Alliance Access: <b> @if($details->allowAllianceMembers==1)Yes @else No @endif</b></li>
@@ -252,24 +129,24 @@
                     <b>Fuel Left: </b>
                     {{ $details->fuelBlocks }} blocks
                     (
-                      @ {{ $usage }} blocks/h, it will go offline
+                      @ {{ $starbase_fuel_usage[$details->itemID]['fuel_usage'] }} blocks/h, it will go offline
 
                       {{-- determine if the time left is less than 3 days --}}
-                      @if ( Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->lte(Carbon\Carbon::now()->addDays(3)))
-                        <b><span class="text-red">{{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->diffForHumans() }}</span></b>
+                      @if ( Carbon\Carbon::now()->addHours($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'])->lte(Carbon\Carbon::now()->addDays(3)))
+                        <b><span class="text-red">{{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'])->diffForHumans() }}</span></b>
                       @else
-                        <b>{{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->diffForHumans() }}</b>
+                        <b>{{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'])->diffForHumans() }}</b>
                       @endif
                     )
-                    <i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated offline at {{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->toDateTimeString() }}"></i>
+                    <i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated offline at {{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'])->toDateTimeString() }}"></i>
                   </li>
                   <li>
                     <b>Stront Left:</b>
                     {{ $details->strontium }} units
                     (
-                      @ {{ $stront_usage }} units/h, it should stay reinforced for <b>{{ round($details->strontium / $stront_usage) }}</b> hours
+                      @ {{ $starbase_fuel_usage[$details->itemID]['stront_usage'] }} units/h, it should stay reinforced for <b>{{ round($details->strontium / $starbase_fuel_usage[$details->itemID]['stront_usage']) }}</b> hours
                     )
-                    <i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated reinforced until {{ Carbon\Carbon::now()->addHours($details->strontium / $stront_usage)->toDateTimeString() }}"></i>
+                    <i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated reinforced until {{ Carbon\Carbon::now()->addHours($details->strontium / $starbase_fuel_usage[$details->itemID]['stront_usage'])->toDateTimeString() }}"></i>
                   </li>
                 </ul>
 
@@ -296,10 +173,10 @@
                       </td>
                       <td>
                         <div class="progress">
-                          <div class="progress-bar @if( ($details->starbaseCharter > 24 && $details->security >= 0.5) || ($details->fuelBlocks / $usage > 24 )) progress-bar-primary @else progress-bar-danger @endif" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
+                          <div class="progress-bar @if( ($details->starbaseCharter > 24 && $details->security >= 0.5) || ($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'] > 24 )) progress-bar-primary @else progress-bar-danger @endif" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
                         </div>
                       </td>
-                      <td><span class="badge @if( ($details->starbaseCharter > 24 && $details->security >= 0.5) || ($details->fuelBlocks / $usage > 24 )) bg-blue @else bg-red @endif pull-right">{{ round((($details->starbaseCharter + ($details->fuelBlocks * 5)) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
+                      <td><span class="badge @if( ($details->starbaseCharter > 24 && $details->security >= 0.5) || ($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'] > 24 )) bg-blue @else bg-red @endif pull-right">{{ round((($details->starbaseCharter + ($details->fuelBlocks * 5)) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
                     </tr>
                     <tr>
                       <td>

@@ -554,11 +554,18 @@ class CorporationController extends BaseController
     public function getStarbase($corporationID)
     {
 
-        if (!\Auth::isSuperUser() )
+        if (!\Auth::isSuperUser())
             if (!in_array($corporationID, Session::get('valid_keys')) && !\Auth::hasAccess('pos_manager'))
                 App::abort(404);
 
-        // The very first thing we should be doing is getting all of the starbases for the corporationID
+        // The basic strategy here is that we will first try and get
+        // as much information as possible about the starbases.
+        // After that we will take the list of starbases and
+        // attempt to determine the fuel usage as well as
+        // the tower name as per the assets list
+
+        // So, the very first thing we should be doing is getting all
+        // of the starbases for the corporationID
         $starbases = DB::table('corporation_starbaselist')
             ->select(
                 'corporation_starbaselist.itemID',
@@ -592,8 +599,8 @@ class CorporationController extends BaseController
             ->orderBy('invNames.itemName', 'asc')
             ->get();
 
-        // With the list of starbases with us, lets get some meta information about the bay sizes for towers
-        // for some calculations later in the view
+        // With the list of starbases with us, lets get some meta
+        // information about the bay sizes for towers
         $bay_sizes = DB::table('invTypes')
             ->select('invTypes.typeID', 'invTypes.typeName', 'invTypes.capacity', 'dgmTypeAttributes.valueFloat')
             ->join('dgmTypeAttributes', 'invTypes.typeID', '=', 'dgmTypeAttributes.typeID')
@@ -601,38 +608,58 @@ class CorporationController extends BaseController
             ->where('invTypes.groupID', 365)
             ->get();
 
-        // We need an array with the typeID as the key to easily determine the bay size. Shuffle it
+        // We need to reshuffle the bay_sizes a little
+        // so that we can easily lookup the bay size
+        // by its typeID
         $shuffled_bays = array();
         foreach ($bay_sizes as $bay)
             $shuffled_bays[$bay->typeID] = array('fuelBay' => $bay->capacity, 'strontBay' => $bay->valueFloat);
 
-        // When calculating *actual* silo capacity, we need to keep in mind that certain towers have bonusses
-        // to silo cargo capacity, like amarr & gallente towers do now. Get the applicable bonusses
+        // Re-assign the shuffled_bays to the original
+        // variable
+        $bay_sizes = $shuffled_bays;
+
+        // When calculating *actual* silo capacity, we need
+        // to keep in mind that certain towers have
+        // bonusses to silo cargo capacity, like
+        // amarr & gallente towers do now. Get
+        // the applicable bonusses
         $tower_bay_bonuses = DB::table('dgmTypeAttributes')
             ->select('typeID', 'valueFloat')
-            ->where('attributeID', 757)     // From dgmAttributeTypes, 757 = controlTowerSiloCapacityBonus
+            // From dgmAttributeTypes, 757 = controlTowerSiloCapacityBonus
+            ->where('attributeID', 757)
             ->get();
 
-        // Reshuffle the tower_bay_bonuses into a workable array for the view
-        $tower_cargo_bonusses = array();
+        // Reshuffle the tower_bay_bonuses into a workable
+        // array that we can lookup using a typeID
+        $temp_tower_bay_bonuses = array();
         foreach ($tower_bay_bonuses as $bonus)
-            $tower_cargo_bonusses[$bonus->typeID] = $bonus->valueFloat;
+            $temp_tower_bay_bonuses[$bonus->typeID] = $bonus->valueFloat;
 
-        // Not all modules are bonnussed in size. As far as I can tell, it only seems to be coupling arrays and
-        // silos that benefit from the silo bay size bonus. Set an array with these type ids
+        // Re-assign the shuffled array back to the
+        // original tower_bay_bonusses
+        $tower_bay_bonusses = $temp_tower_bay_bonuses;
+
+        // Not all modules are bonnussed in size. As far as I can
+        // tell, it only seems to be coupling arrays and silos
+        // that benefit from the silo bay size bonus. Set an
+        // array with these type ids
         $cargo_size_bonusable_modules = array(14343, 17982);    // Silo, Coupling Array
 
-        // Figure out the allianceID of the corporation in question so that we can determine whether their
-        // towers are in sov systems
+        // Figure out the allianceID of the corporation in question
+        // so that we can determine whether their towers are in
+        // sov systems
         $alliance_id = DB::table('corporation_corporationsheet')
             ->where('corporationID', $corporationID)
             ->pluck('allianceID');
 
-        // Check if the alliance_id was actually determined. If so, do the sov_towers loop, else
-        // we just set the array empty
+        // Check if the alliance_id was actually determined. If so,
+        // do the sov_towers loop, else we just set the array
+        // empty
         if ($alliance_id) {
 
-            // Lets see which of this corporations' towers appear to be anchored in sov holding systems.
+            // Lets see which of this corporations' towers appear
+            // to be anchored in sov holding systems.
             $sov_towers = array_flip(DB::table('corporation_starbaselist')
                 ->select('itemID')
                 ->whereIn('locationID', function($location) use ($alliance_id) {
@@ -641,24 +668,28 @@ class CorporationController extends BaseController
                         ->from('map_sovereignty')
                         ->where('factionID', 0)
                         ->where('allianceID', $alliance_id);
+
                 })->where('corporationID', $corporationID)
-                ->lists('itemID'));
+                    ->lists('itemID'));
+
         } else {
 
             // We will just have an empty array then
             $sov_towers = array();
         }
 
-        // Lets get all of the item locations for this corporation and sort it out into a workable
-        // array that can just be referenced and looped in the view. We will use the mapID as the
-        // key in the resulting array to be able to associate the item to a tower.
+        // Lets get all of the item locations for this corporation
+        // and sort it out into a workable array that can just be
+        // referenced using mapID as the key in the resulting
+        // array.
         $item_locations = DB::table('corporation_assetlist_locations')
             ->leftJoin('corporation_assetlist', 'corporation_assetlist_locations.itemID', '=', 'corporation_assetlist.itemID')
             ->leftJoin('invTypes', 'corporation_assetlist.typeID', '=', 'invTypes.typeID')
             ->where('corporation_assetlist_locations.corporationID', $corporationID)
             ->get();
 
-        // Shuffle the results
+        // Shuffle the results a little so that we can use the
+        // mapID as key
         $shuffled_locations = array();
         foreach ($item_locations as $location)
             $shuffled_locations[$location->mapID][] = array(
@@ -670,14 +701,19 @@ class CorporationController extends BaseController
                 'capacity' => $location->capacity
             );
 
-        // We will do a similar shuffle for the assetlist contents. First get them, and shuffle.
-        // The key for this array will be the itemID as there may be multiple 'things' in a 'thing'
+        // Re-assign the resultant array back to $item_locations
+        $item_locations = $shuffled_locations;
+
+        // We will do a similar shuffle for the assetlist contents.
+        // First get them, and shuffle. The key for this array
+        // will be the itemID as there may be multiple
+        // 'things' in a 'thing'
         $item_contents = DB::table('corporation_assetlist_contents')
             ->join('invTypes', 'corporation_assetlist_contents.typeID', '=', 'invTypes.typeID')
             ->where('corporationID', $corporationID)
             ->get();
 
-        // Shuffle the results
+        // Shuffle the results so that the itemID is the key
         $shuffled_contents = array();
         foreach ($item_contents as $contents)
             $shuffled_contents[$contents->itemID][] = array(
@@ -687,7 +723,11 @@ class CorporationController extends BaseController
                 'volume' => $contents->volume
             );
 
-        // Define the tower states. See http://3rdpartyeve.net/eveapi/APIv2_Corp_StarbaseList_XML
+        // Re-assign the resultant array back to item_contents
+        $item_contents = $shuffled_contents;
+
+        // Define the tower states.
+        // See http://3rdpartyeve.net/eveapi/APIv2_Corp_StarbaseList_XML
         $tower_states = array(
             '0' => 'Unanchored',
             '1' => 'Anchored / Offline',
@@ -696,15 +736,124 @@ class CorporationController extends BaseController
             '4' => 'Online'
         );
 
+        // We now finally have all of the meta information that we need
+        // to determine:
+        //  -   Fuel Usage
+        //  -   Stront Usage
+        //  -   Tower Name
+
+        // Note about the fuel usage calculations.
+        // ---
+
+        // There are 3 tower sizes. Small, Medium and Large. Ie:
+
+        // - Amarr Control Tower
+        // - Amarr Control Tower Medium
+        // - Amarr Control Tower Small
+
+        // Fuel usage is calculated based on the fact that a tower
+        // is anchored either in sov or non sov space. [1] ie.
+
+        // == Non SOV Usage
+        // - 40 Blocks a hour => Amarr Control Tower
+        // - 20 Blocks a hour => Amarr Control Tower Medium
+        // - 10 Blocks a hour => Amarr Control Tower Small
+
+        // == SOV Usage
+        // - 30 Blocks a hour => Amarr Control Tower
+        // - 15 Blocks a hour => Amarr Control Tower Medium
+        // - 7 Blocks a hour => Amarr Control Tower Small
+
+        // Time2hardcode this shit
+
+        // [1] https://wiki.eveonline.com/en/wiki/Starbase#Fuel_Usage
+
+        // Lets define the base values...
+        // ... fuel for non sov towers ...
+        $large_usage = 40;
+        $medium_usage = 20;
+        $small_usage = 10;
+
+        // ... and sov towers
+        $sov_large_usage = 30;
+        $sov_medium_usage = 15;
+        $sov_small_usage = 8;
+
+        // Stront usage
+        $stront_large = 400;
+        $stront_medium = 200;
+        $stront_small = 100;
+
+        // Aaaand we're ready to get started on the fuel usage and
+        // tower name resolutions. Lets prepare a blank array
+        // and then loop over the starbases.
+        $starbase_fuel_usage = array();
+        $starbase_names = array();
+
+        foreach ($starbases as $starbase) {
+
+            // Set the base fuel and stront usage in case the next
+            // step fails to determine it
+            $starbase_fuel_usage[$starbase->itemID]['fuel_usage'] = 0;
+            $starbase_fuel_usage[$starbase->itemID]['stront_usage'] = 0;
+            $starbase_names[$starbase->itemID] = 'Unknown';
+
+            // Basically, here we check if the names Small/Medium
+            // exists in the tower type. Then, if the tower
+            // is in the sov_tower array, set the value
+            // for usage.
+            if (strpos($starbase->typeName, 'Small') !== false) {
+
+                $starbase_fuel_usage[$starbase->itemID]['stront_usage'] = $stront_small;
+                $starbase_fuel_usage[$starbase->itemID]['fuel_usage'] = array_key_exists($starbase->itemID, $sov_towers) ? $sov_small_usage : $small_usage;
+
+            } elseif (strpos($starbase->typeName, 'Medium') !== false) {
+
+                $starbase_fuel_usage[$starbase->itemID]['stront_usage'] = $stront_medium;
+                $starbase_fuel_usage[$starbase->itemID]['fuel_usage'] = array_key_exists($starbase->itemID, $sov_towers) ? $sov_medium_usage : $medium_usage;
+
+            } else {
+
+                $starbase_fuel_usage[$starbase->itemID]['stront_usage'] = $stront_large;
+                $starbase_fuel_usage[$starbase->itemID]['fuel_usage'] = array_key_exists($starbase->itemID, $sov_towers) ? $sov_large_usage : $large_usage;
+            }
+
+            // Next, we lookup the assetlist locations and attempt
+            // to find the name of the tower in there. We will
+            // have to loop over all of the items at the
+            // specific moonID until a itemID matches
+            // our towers' itemID.
+
+            // We need to do a quick check to ensure that we have
+            // record of items at this moonID too, so based on
+            // that result we will move onto looking for the
+            // correct name
+            if (array_key_exists($starbase->moonID, $item_locations)) {
+
+                // We have record of assets at this location. Lets
+                // loop them and match itemID's
+                foreach ($item_locations[$starbase->moonID] as $name_lookup) {
+
+                    // Match the itemID of the starbase to that of the
+                    // asset in the locations array at the moonID
+                    if($name_lookup['itemID'] == $starbase->itemID)
+                        $starbase_names[$starbase->itemID] = $name_lookup['itemName'];
+
+                }
+            }
+        }
+
         return View::make('corporation.starbase.starbase')
             ->with('starbases', $starbases)
             ->with('bay_sizes', $shuffled_bays)
-            ->with('tower_cargo_bonusses', $tower_cargo_bonusses)
+            ->with('tower_cargo_bonusses', $tower_bay_bonuses)
             ->with('cargo_size_bonusable_modules', $cargo_size_bonusable_modules)
             ->with('sov_towers', $sov_towers)
             ->with('item_locations', $shuffled_locations)
             ->with('item_contents', $shuffled_contents)
-            ->with('tower_states', $tower_states);
+            ->with('tower_states', $tower_states)
+            ->with('starbase_fuel_usage', $starbase_fuel_usage)
+            ->with('starbase_names', $starbase_names);
     }
 
     /*
