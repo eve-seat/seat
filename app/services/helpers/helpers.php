@@ -357,4 +357,31 @@ class Helpers
         return $count;
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | getPrettySecRoles()
+    |--------------------------------------------------------------------------
+    | 
+    | Converts RoleIDs to Pretty Strings
+    | $jsonRules: json serialized array from DB
+    |
+    */
+
+    public static function getPrettySecRoles($jsonTitleRoles) {
+        
+        $jsonTitleRoles = (array) json_decode($jsonTitleRoles);
+        if(!empty($jsonTitleRoles)){
+            $roles = \DB::table('eve_corporation_rolemap')
+                ->select('roleName')
+                ->whereIn('roleID', $jsonTitleRoles)
+                ->orderBy('roleName','asc')
+                ->get();
+            
+            return implode(",", array_values(array_pluck((array)$roles,'roleName')));
+
+        }
+        else
+            return;
+    }
+
 }

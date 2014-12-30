@@ -131,6 +131,10 @@ class Corporation
             $job_record->save();
             EveApi\Corporation\StarbaseDetail::Update($keyID, $vCode);
 
+            $job_record->output = 'Started Titles Update';
+            $job_record->save();
+            EveApi\Corporation\Titles::Update($keyID, $vCode);
+
             $job_record->output = 'Started WalletJournal Update';
             $job_record->save();
             EveApi\Corporation\WalletJournal::Update($keyID, $vCode);

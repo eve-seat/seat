@@ -4,11 +4,17 @@
 
 @section('page_content')
 
-  <div class="box">
-    <div class="box-header">
-      <h3 class="box-title">Roles</h3>
-    </div>
-    <div class ="box-body">
+<div class="nav-tabs-custom">
+  <ul class="nav nav-tabs">
+    <li class="active">
+      <a href="#roles" data-toggle="tab">Roles</a>
+    </li>
+    <li>
+      <a href="#titles" data-toggle="tab">Titles</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="roles">
       <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
           <li class="active"><a href="#tab_roles_general" data-toggle="tab">Roles General</a></li>
@@ -339,7 +345,79 @@
           </div><!-- /.tab-pane -->
         </div><!-- /.tab-content -->
       </div>
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
+    </div>
+    <div class="tab-pane" id="titles">
+      <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+          @foreach($member_titles_map as $title)
+            @if ( reset($member_titles_map) === $title)
+              <li class="active"><a href="#tab_title_{{ $title->titleID }}" data-toggle="tab">{{ $title->titleName }}</a></li>
+            @else
+              <li><a href="#tab_title_{{ $title->titleID }}" data-toggle="tab">{{ $title->titleName }}</a></li>
+            @endif
+          @endforeach
+        </ul>
+        <div class="tab-content">
+        @foreach($member_titles_map as $title)
+          @if ( reset($member_titles_map) === $title)
+            <div class="tab-pane active" id="tab_title_{{ $title->titleID }}">
+          @else
+            <div class="tab-pane" id="tab_title_{{ $title->titleID }}">
+          @endif
+            <div class="box box-solid box-primary">
+              <div class="box-header">
+                <h3 class="box-title">{{ $title->titleName }}</h3>
+              </div>
+              <div class="box-body no-padding">
+                <table  class="table table-condensed table-hover">
+                  <thead>
+                    <tr>
+                      <th width="20%"></th>
+                      <th>Assigned Permissions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Roles</td>
+                      <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList(App\Services\Helpers\Helpers::getPrettySecRoles($title->roles)) }} </td>
+                    </tr>
+                    <tr>
+                      <td>Roles (HQ)</td>
+                      <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList(App\Services\Helpers\Helpers::getPrettySecRoles($title->rolesAtHQ)) }} </td>
+                    </tr>
+                    <tr>
+                      <td>Roles (Base)</td>
+                      <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList(App\Services\Helpers\Helpers::getPrettySecRoles($title->rolesAtBase)) }} </td>
+                    </tr>
+                    <tr>
+                      <td>Roles (other)</td>
+                      <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList(App\Services\Helpers\Helpers::getPrettySecRoles($title->rolesAtOther)) }} </td>
+                    </tr>
+                    <tr>
+                      <td>Grantable Roles</td>
+                      <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList(App\Services\Helpers\Helpers::getPrettySecRoles($title->grantableRoles)) }} </td>
+                    </tr>
+                    <tr>
+                      <td>Grantable Roles (HQ)</td>
+                      <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList(App\Services\Helpers\Helpers::getPrettySecRoles($title->grantableRolesAtHQ)) }} </td>
+                    </tr>
+                    <tr>
+                      <td>Grantable Roles (Base)</td>
+                      <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList(App\Services\Helpers\Helpers::getPrettySecRoles($title->grantableRolesAtBase)) }} </td>
+                    </tr>
+                    <tr>
+                      <td>Grantable Roles (Other)</td>
+                      <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList(App\Services\Helpers\Helpers::getPrettySecRoles($title->grantableRolesAtOther)) }} </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div> <!-- ./box-body -->
+            </div><!-- ./box -->
+          </div>
+        @endforeach
+      </div>
+    </div>
+  </div><!-- /.tab-content -->
+</div>
 
 @stop
