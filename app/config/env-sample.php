@@ -8,6 +8,8 @@ return array (
     'redis_host' => '127.0.0.1',
     'redis_port' => 6379,
     'mail_driver' => 'mail',
+    'smtp_port' => 25,
+    'smtp_encryption' => NULL,
     'mail_from' => 'seatadmin@localhost',
     'mail_from_name' => 'SeAT Administrator',
     'smtp_hostname' => '127.0.0.1',
