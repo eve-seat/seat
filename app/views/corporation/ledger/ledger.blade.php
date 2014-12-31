@@ -206,7 +206,7 @@
                                     {{ $entry->ownerName2 }}
                                   </a>
                                 </td>
-                                <td> <b> {{ number_format($entry->total, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }} ISK </b> </td>
+                                <td data-sort="{{ $entry->total }}"> <b> {{ number_format($entry->total, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }} ISK </b> </td>
                               </tr>
 
                             @endforeach
@@ -248,7 +248,7 @@
                                   {{ $entry->ownerName2 }}
                                 </a>
                               </td>
-                              <td> <b> {{ number_format($entry->total, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }} ISK </b> </td>
+                              <td data-sort="{{ $entry->total }}"> <b> {{ number_format($entry->total, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }} ISK </b> </td>
                             </tr>
 
                           @endforeach
@@ -291,7 +291,7 @@
                                   {{ $entry->ownerName1 }}
                                 </a>
                               </td>
-                              <td> <b> {{ number_format($entry->total, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }} ISK </b> </td>
+                              <td data-sort="{{ $entry->total }}"> <b> {{ number_format($entry->total, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }} ISK </b> </td>
                             </tr>
 
                           @endforeach

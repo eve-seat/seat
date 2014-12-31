@@ -35,7 +35,7 @@
                     Sell
                   @endif
                 </td>
-                <td>
+                <td data-sort="{{ $order->price }}">
                   @if ($order->escrow > 0)
                     <span data-toggle="tooltip" title="" data-original-title="Escrow: {{ $order->escrow }}">
                       <i class="fa fa-money pull-right"></i> {{ number_format($order->price, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}

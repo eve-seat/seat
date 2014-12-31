@@ -56,7 +56,7 @@
                     {{ $e->ownerName2 }}
                   </td>
                   <td>{{ $e->argName1 }}</td>
-                  <td>
+                  <td data-sort="{{ $e->amount }}">
                     @if ($e->amount < 0)
                     <span class="text-red">{{ number_format($e->amount, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</span>
                     @else
