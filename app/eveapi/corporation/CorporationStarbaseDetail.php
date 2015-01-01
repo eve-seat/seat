@@ -108,7 +108,7 @@ class StarbaseDetail extends BaseApi
 
                 // Lets add some information to the original exception and raise it
                 $new_error = $e->getMessage() . ' - Current starbaseID: ' . $starbase->itemID;
-                throw new Exception($new_error, $e->getCode());
+                throw new \Exception($new_error, $e->getCode());
             }
 
             // Update the details
