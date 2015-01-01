@@ -55,8 +55,12 @@
                     {{ $e->ownerName2 }}
                   </td>
                   <td>{{ $e->argName1 }}</td>
-                  <td>{{ number_format($e->amount, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</td>
-                  <td>{{ number_format($e->balance, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</td>
+                  <td data-sort="{{ $e->amount }}">
+                    {{ number_format($e->amount, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}
+                  </td>
+                  <td data-sort="{{ $e->balance }}">
+                    {{ number_format($e->balance, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}
+                  </td>
                 </tr>
 
               @endforeach
