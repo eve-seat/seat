@@ -161,10 +161,10 @@ class SeatUpdate extends Command
                 $composer_command = exec('which composer.phar');
                 if(strlen($composer_command) <= 0 || !\File::exists($composer_command)) {
 
-                    $composer_command = base_path() . 'composer';
+                    $composer_command = base_path() . '/composer';
                     if(strlen($composer_command) <= 0 || !\File::exists($composer_command)) {
 
-                        $composer_command = base_path() . 'composer.phar';
+                        $composer_command = base_path() . '/composer.phar';
                         if(strlen($composer_command) <= 0 || !\File::exists($composer_command)) {
 
                             $this->error('[!] Error: Unable to find `composer.phar`. Please specify a valid path to `composer.phar` as a command argument.');
