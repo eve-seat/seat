@@ -246,12 +246,14 @@
                                     <span class="text-muted">( called {{ $module_content['module_name'] }})</span>
                                    @endif
                                   at {{ $module_content['mapName'] }}
-                                  is currently <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
-                                  with {{ count($module_content['contents']) }} item(s).
+                                  @if($module_content['capacity'] > 0)
+                                    is currently <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
+                                    with {{ count($module_content['contents']) }} item(s).
+                                  @endif
                                 </li>
                               </ul>
 
-                              @if(count($module_content['contents']) > 0)
+                              @if(count($module_content['contents']) > 0 && $module_content['capacity'] > 0)
 
                                 {{-- items inside of the module --}}
                                 <table class="table table-condensed table-hover">
