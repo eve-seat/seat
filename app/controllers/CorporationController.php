@@ -1351,6 +1351,11 @@ class CorporationController extends BaseController
             ->orderBy('cml.changeTime', 'desc')
             ->get();
 
+        $member_titles_map = DB::table('corporation_titlemap')
+            ->where('corporationID', $corporationID)
+            ->orderBy('titleName', 'asc')
+            ->get();
+
         return View::make('corporation.membersecurity.membersecurity')
             ->with('member_roles',                  $member_roles)
             ->with('member_roles_hq',               $member_roles_hq)
@@ -1361,6 +1366,7 @@ class CorporationController extends BaseController
             ->with('member_roles_grantable_base',   $member_roles_grantable_base)
             ->with('member_roles_grantable_other',  $member_roles_grantable_other)
             ->with('member_roles_log',              $member_roles_log)
+            ->with('member_titles_map',             $member_titles_map) // JSON!
         ;
     }
 
