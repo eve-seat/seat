@@ -623,7 +623,7 @@ class CorporationController extends BaseController
         // to keep in mind that certain towers have
         // bonusses to silo cargo capacity, like
         // amarr & gallente towers do now. Get
-        // the applicable bonusses
+        // the applicable bonusses.
         $tower_bay_bonuses = DB::table('dgmTypeAttributes')
             ->select('typeID', 'valueFloat')
             // From dgmAttributeTypes, 757 = controlTowerSiloCapacityBonus
@@ -631,14 +631,14 @@ class CorporationController extends BaseController
             ->get();
 
         // Reshuffle the tower_bay_bonuses into a workable
-        // array that we can lookup using a typeID
+        // array that we can lookup using a towerTypeID
         $temp_tower_bay_bonuses = array();
         foreach ($tower_bay_bonuses as $bonus)
             $temp_tower_bay_bonuses[$bonus->typeID] = $bonus->valueFloat;
 
         // Re-assign the shuffled array back to the
         // original tower_bay_bonusses
-        $tower_bay_bonusses = $temp_tower_bay_bonuses;
+        $tower_bay_bonuses = $temp_tower_bay_bonuses;
 
         // Not all modules are bonnussed in size. As far as I can
         // tell, it only seems to be coupling arrays and silos
@@ -741,6 +741,8 @@ class CorporationController extends BaseController
         //  -   Fuel Usage
         //  -   Stront Usage
         //  -   Tower Name
+        //  -   Tower Module Information
+        //  -   Tower Module Contents and Size's
 
         // Note about the fuel usage calculations.
         // ---
@@ -785,10 +787,72 @@ class CorporationController extends BaseController
         $stront_small = 100;
 
         // Aaaand we're ready to get started on the fuel usage and
-        // tower name resolutions. Lets prepare a blank array
+        // tower name resolutions. Lets prepare blank arrays
         // and then loop over the starbases.
         $starbase_fuel_usage = array();
         $starbase_names = array();
+        $starbase_modules = array();
+
+        // Sample output arrays are:
+
+        // $starbase_fuel_usage:
+        //
+        // array
+        //   'tower_itemID' =>
+        //     array
+        //       'fuel_usage' => int 8
+        //       'stront_usage' => int 100
+        //   'tower_itemID' =>
+        //     array
+        //       'fuel_usage' => int 8
+        //       'stront_usage' => int 100
+
+        // $starbase_names:
+        //
+        // array
+        //   'tower_itemID' => string 'Name 1' (length=28)
+        //   'tower_itemID' => string 'Name 1' (length=3)
+
+        // $starbase_modules:
+        //
+        // 'tower_itemID' =>
+        //     array
+        //       'Silo' =>
+        //         array
+        //           'module_itemID' =>
+        //             array
+        //               'typeID' => string '14343' (length=5)
+        //               'mapName' => string 'Moon Location' (length=19)
+        //               'capacity' => int 40000
+        //               'used_volume' => int 11000
+        //               'contents' =>
+        //                 array
+        //                   0 =>
+        //                     array
+        //                       'typeID' => string '16656' (length=5)
+        //                       'quantity' => string '11000' (length=5)
+        //                       'name' => string 'Fernite Alloy' (length=13)
+        //                       'volume' => string '1' (length=1)
+        //               'cargo_size_bonus' => boolean true
+        //               'module_name' => string 'Some Name' (length=9)
+        //       'Coupling Array' =>
+        //         array
+        //           'module_itemID' =>
+        //             array
+        //               'typeID' => string '17982' (length=5)
+        //               'mapName' => string 'Moon Location' (length=19)
+        //               'capacity' => int 3000
+        //               'used_volume' => int 200
+        //               'contents' =>
+        //                 array
+        //                   0 =>
+        //                     array
+        //                       'typeID' => string '16656' (length=5)
+        //                       'quantity' => string '200' (length=3)
+        //                       'name' => string 'Fernite Alloy' (length=13)
+        //                       'volume' => string '1' (length=1)
+        //               'cargo_size_bonus' => boolean true
+        //               'module_name' => null
 
         foreach ($starbases as $starbase) {
 
@@ -840,6 +904,81 @@ class CorporationController extends BaseController
                         $starbase_names[$starbase->itemID] = $name_lookup['itemName'];
 
                 }
+
+                // We will loop again, but this time with the purpose
+                // of calculating items related information such
+                // as sizes etc.
+                foreach ($item_locations[$starbase->moonID] as $asset_item) {
+
+                    // If the asset_item's itemID matched that of the
+                    // tower's, then we will skip the calculations
+                    // as we already have everything fuel related.
+                    if ($starbase->itemID == $asset_item['itemID'])
+                        continue;
+
+                    // Prepare the asset in $starbase_modules array with
+                    // the base known values first.
+                    $starbase_modules[$starbase->itemID][$asset_item['typeName']][$asset_item['itemID']] = array(
+                        'typeID' => $asset_item['typeID'],
+                        'mapName' => $asset_item['mapName'],
+
+                        // Bay capacity is affected by a tower type bonus, an
+                        // therefore we will calculate it accordingly. If
+                        // the tower type is one that is bonussed, and
+                        // the module type is a silo/coupiling array,
+                        // the capacity == capacity + (bonus %)
+                        'capacity' => (array_key_exists($starbase->typeID, $tower_bay_bonuses) && in_array($asset_item['typeID'], $cargo_size_bonusable_modules)) ? $asset_item['capacity'] *= (1 + $tower_bay_bonuses[$starbase->typeID] / 100) : $asset_item['capacity'],
+                        'used_volume' => 0,
+
+                        // Check that the tower type has bay size bonusses
+                        // and that the module type is one to receive
+                        // such bonusses
+                        'cargo_size_bonus' => (array_key_exists($starbase->typeID, $tower_bay_bonuses) && in_array($asset_item['typeID'], $cargo_size_bonusable_modules)) ? true : false,
+
+                        // Check if the module has a user specified name. If
+                        // the itemName differs from the typeName, then we
+                        // know the user has given the module a custom
+                        // name
+                        'module_name' => ($asset_item['typeName'] != $asset_item['itemName']) ? $asset_item['itemName'] : null,
+
+                        // Contents will be populated in the next loop
+                        // assuming that there is something
+                        'contents' => array(),
+                    );
+
+                    // Some modules have a cargo bay with ~stuff~ inside of
+                    // it. If this is the case (and we actually have
+                    // stuff inside) calculate the total volume
+                    // along with the items themselves.
+                    if(isset($item_contents[$asset_item['itemID']])) {
+
+                        // So it looks like we have contents for this item.
+                        // Lets loop them, populating  $starbase_modules
+                        // and keeping count of the total volume too.
+                        foreach ($item_contents[$asset_item['itemID']] as $content) {
+
+                            // Update the current known used_volume with the new
+                            // values. Volume is calculated by multiplying the
+                            // quantity by the size per unit and adding it
+                            // to used_volume.
+
+                            // I also know the below can be done in like 1 line, but
+                            // I figured for readablility, the full calculation is
+                            // shown.
+                            $current_volume = $starbase_modules[$starbase->itemID][$asset_item['typeName']][$asset_item['itemID']]['used_volume'];
+                            $new_volume = $current_volume + ($content['quantity'] * $content['volume']);
+                            $starbase_modules[$starbase->itemID][$asset_item['typeName']][$asset_item['itemID']]['used_volume'] = $new_volume;
+
+                            // Now, add the details to the contents key
+                            $starbase_modules[$starbase->itemID][$asset_item['typeName']][$asset_item['itemID']]['contents'][] = array(
+                                'typeID' => $content['typeID'],
+                                'quantity' => $content['quantity'],
+                                'name' => $content['name'],
+                                'volume' => $content['volume']
+                            );
+                        }
+                    }
+                }
             }
         }
 
@@ -853,7 +992,8 @@ class CorporationController extends BaseController
             ->with('item_contents', $shuffled_contents)
             ->with('tower_states', $tower_states)
             ->with('starbase_fuel_usage', $starbase_fuel_usage)
-            ->with('starbase_names', $starbase_names);
+            ->with('starbase_names', $starbase_names)
+            ->with('starbase_modules', $starbase_modules);
     }
 
     /*
