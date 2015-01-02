@@ -56,7 +56,8 @@ class BaseApi
     {
 
         // Configure Pheal
-        PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage( storage_path(). '/cache/phealcache/' );
+        // PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage( storage_path(). '/cache/phealcache/' );
+        PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage('/tmp/phealcache/' );
         PhealConfig::getInstance()->access = new \Pheal\Access\StaticCheck();
         PhealConfig::getInstance()->log = new \Pheal\Log\FileStorage( storage_path() . '/logs/' );
         PhealConfig::getInstance()->http_user_agent = 'SeAT ' . \Config::get('seat.version') . 'API Fetcher';

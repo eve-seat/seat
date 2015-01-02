@@ -695,6 +695,7 @@ class CorporationController extends BaseController
             $shuffled_locations[$location->mapID][] = array(
                 'itemID' => $location->itemID,
                 'typeID' => $location->typeID,
+                'groupID' => $location->groupID,
                 'typeName' => $location->typeName,
                 'itemName' => $location->itemName,
                 'mapName' => $location->mapName,
@@ -815,44 +816,67 @@ class CorporationController extends BaseController
 
         // $starbase_modules:
         //
-        // 'tower_itemID' =>
+        // array
+        //   'tower_itemID' =>
         //     array
-        //       'Silo' =>
+        //       'storage' =>
         //         array
-        //           'module_itemID' =>
+        //           'Ship Maintenance Array' =>
         //             array
-        //               'typeID' => string '14343' (length=5)
-        //               'mapName' => string 'Moon Location' (length=19)
-        //               'capacity' => int 40000
-        //               'used_volume' => int 11000
-        //               'contents' =>
+        //               'module_itemID' =>
         //                 array
-        //                   0 =>
+        //                   'typeID' => string '12237' (length=5)
+        //                   'groupID' => string '363' (length=3)
+        //                   'mapName' => string 'Moon Location' (length=18)
+        //                   'capacity' => string '20000000' (length=8)
+        //                   'used_volume' => int 0
+        //                   'cargo_size_bonus' => boolean false
+        //                   'module_name' => null
+        //                   'contents' =>
         //                     array
-        //                       'typeID' => string '16656' (length=5)
-        //                       'quantity' => string '11000' (length=5)
-        //                       'name' => string 'Fernite Alloy' (length=13)
-        //                       'volume' => string '1' (length=1)
-        //               'cargo_size_bonus' => boolean true
-        //               'module_name' => string 'Some Name' (length=9)
-        //       'Coupling Array' =>
+        //                       empty
+        //       'industry' =>
         //         array
-        //           'module_itemID' =>
+        //           'Design Laboratory' =>
         //             array
-        //               'typeID' => string '17982' (length=5)
-        //               'mapName' => string 'Moon Location' (length=19)
-        //               'capacity' => int 3000
-        //               'used_volume' => int 200
-        //               'contents' =>
+        //               'module_itemID' =>
         //                 array
-        //                   0 =>
+        //                   'typeID' => string '28351' (length=5)
+        //                   'groupID' => string '413' (length=3)
+        //                   'mapName' => string 'Moon Location' (length=18)
+        //                   'capacity' => string '25000' (length=5)
+        //                   'used_volume' => float 89.66
+        //                   'cargo_size_bonus' => boolean false
+        //                   'module_name' => string 'Lab A1' (length=6)
+        //                   'contents' =>
         //                     array
-        //                       'typeID' => string '16656' (length=5)
-        //                       'quantity' => string '200' (length=3)
-        //                       'name' => string 'Fernite Alloy' (length=13)
-        //                       'volume' => string '1' (length=1)
-        //               'cargo_size_bonus' => boolean true
-        //               'module_name' => null
+        //                       0 =>
+        //                         array
+        //                           'typeID' => string '2290' (length=4)
+        //                           'quantity' => string '1' (length=1)
+        //                           'name' => string 'Explosive Deflection Field I Blueprint' (length=38)
+        //                           'volume' => string '0.01' (length=4)
+        //                       1 =>
+
+        // In the view, modules are to be grouped in
+        // tabs. To help with the lookup of groups,
+        // we will check for the existence of the
+        // groupID in the following array while
+        // looping over the tower assets
+        $module_groups = array(
+
+            // Industry
+            413     => 'industry',  // Laboratories
+            1282    => 'industry',  // Compression Array
+            416     => 'industry',  // Moon Harvesting Array
+            404     => 'industry',  // Silo / Coupling Array
+            438     => 'industry',  // Multiple Reactor Arrays
+
+            // Storage
+            1212    => 'storage',   // Personal Hangar Array
+            363     => 'storage',   // Ship Maintenance Array
+            471     => 'storage',   // Corporate Hangar Array
+        );
 
         foreach ($starbases as $starbase) {
 
@@ -907,7 +931,17 @@ class CorporationController extends BaseController
 
                 // We will loop again, but this time with the purpose
                 // of calculating items related information such
-                // as sizes etc.
+                // as sizes etc. All of the starbases in the
+                // starbase modules will have their modules
+                // grouped under industry, storage or
+                // other.
+                $starbase_modules[$starbase->itemID] = array(
+                    'industry' => array(),
+                    'storage' => array(),
+                    'other' => array()
+                );
+
+                // Lets loop over the assets, group them as needed.
                 foreach ($item_locations[$starbase->moonID] as $asset_item) {
 
                     // If the asset_item's itemID matched that of the
@@ -917,9 +951,16 @@ class CorporationController extends BaseController
                         continue;
 
                     // Prepare the asset in $starbase_modules array with
-                    // the base known values first.
-                    $starbase_modules[$starbase->itemID][$asset_item['typeName']][$asset_item['itemID']] = array(
+                    // the base known values first. We are very
+                    // interested in the group that the
+                    // module belongs to, se we will
+                    // get that sorted quickly.
+                    $module_category = array_key_exists($asset_item['groupID'], $module_groups) ? $module_groups[$asset_item['groupID']] : 'other';
+
+                    // Work on the array details
+                    $starbase_modules[$starbase->itemID][$module_category][$asset_item['typeName']][$asset_item['itemID']] = array(
                         'typeID' => $asset_item['typeID'],
+                        'groupID' => $asset_item['groupID'],
                         'mapName' => $asset_item['mapName'],
 
                         // Bay capacity is affected by a tower type bonus, an
@@ -965,12 +1006,12 @@ class CorporationController extends BaseController
                             // I also know the below can be done in like 1 line, but
                             // I figured for readablility, the full calculation is
                             // shown.
-                            $current_volume = $starbase_modules[$starbase->itemID][$asset_item['typeName']][$asset_item['itemID']]['used_volume'];
+                            $current_volume = $starbase_modules[$starbase->itemID][$module_category][$asset_item['typeName']][$asset_item['itemID']]['used_volume'];
                             $new_volume = $current_volume + ($content['quantity'] * $content['volume']);
-                            $starbase_modules[$starbase->itemID][$asset_item['typeName']][$asset_item['itemID']]['used_volume'] = $new_volume;
+                            $starbase_modules[$starbase->itemID][$module_category][$asset_item['typeName']][$asset_item['itemID']]['used_volume'] = $new_volume;
 
                             // Now, add the details to the contents key
-                            $starbase_modules[$starbase->itemID][$asset_item['typeName']][$asset_item['itemID']]['contents'][] = array(
+                            $starbase_modules[$starbase->itemID][$module_category][$asset_item['typeName']][$asset_item['itemID']]['contents'][] = array(
                                 'typeID' => $content['typeID'],
                                 'quantity' => $content['quantity'],
                                 'name' => $content['name'],
