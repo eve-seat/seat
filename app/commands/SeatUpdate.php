@@ -190,11 +190,16 @@ class SeatUpdate extends Command
         // Check the version information
         $version_information = $this->checkVersion();
 
-        // If we are on the latest, simply exit
-        if ($version_information['versions_behind'] == 0) {
+        // If we didnt get the flag to skip the version
+        // check, check it.
+        if(!$this->option('no-version')) {
 
-            $this->comment('[+] You are running SeAT v' . \Config::get('seat.version') . ' which is the latest.');
-            return;
+            // If we are on the latest, simply exit
+            if ($version_information['versions_behind'] == 0) {
+
+                $this->comment('[+] You are running SeAT v' . \Config::get('seat.version') . ' which is the latest.');
+                return;
+            }
         }
 
         // Ask the user if they want to upgrade.
@@ -219,27 +224,27 @@ class SeatUpdate extends Command
 
         // git fetch -f
         $this->line('[+] Running: `' . $git_command . ' fetch -f`');
-        exec($git_command . ' fetch -f', $output, $exit_code);
+        system($git_command . ' fetch -f', $exit_code);
 
         // If the command failed, we should have a $exit_code of
         // not 0. If thats the case, read $output and print
         // that as debugging information
         if ($exit_code !== 0) {
 
-            $this->error('[!] Error: git fetch failed with exit code ' . $exit_code . ' and command outut: ' . implode('\n', $output));
+            $this->error('[!] Error: git fetch failed with exit code ' . $exit_code);
             return;
         }
 
         // git pull -f
         $this->line('[+] Running: `' . $git_command . ' pull -f`');
-        exec($git_command . ' pull -f', $output, $exit_code);
+        system($git_command . ' pull -f', $exit_code);
 
         // If the command failed, we should have a $exit_code of
         // not 0. If thats the case, read $output and print
         // that as debugging information
         if ($exit_code !== 0) {
 
-            $this->error('[!] Error: git pull failed with exit code ' . $exit_code . ' and command outut: ' . implode('\n', $output));
+            $this->error('[!] Error: git pull failed with exit code ' . $exit_code);
             return;
         }
 
@@ -247,54 +252,54 @@ class SeatUpdate extends Command
         if(!$this->option('dev')) {
 
             $this->line('[+] Running: `' . $git_command . ' checkout -f master`');
-            exec($git_command . ' checkout -f master', $output, $exit_code);
+            system($git_command . ' checkout -f master', $exit_code);
 
             // If the command failed, we should have a $exit_code of
             // not 0. If thats the case, read $output and print
             // that as debugging information
             if ($exit_code !== 0) {
 
-                $this->error('[!] Error: git checkout -f master failed with exit code ' . $exit_code . ' and command outut: ' . implode('\n', $output));
+                $this->error('[!] Error: git checkout -f master failed with exit code ' . $exit_code);
                 return;
             }
         }
 
         // composer self-update
         $this->line('[+] Running: `' . $composer_command . ' self-update`');
-        exec($composer_command . ' self-update', $output, $exit_code);
+        system($composer_command . ' self-update', $exit_code);
 
         // If the command failed, we should have a $exit_code of
         // not 0. If thats the case, read $output and print
         // that as debugging information
         if ($exit_code !== 0) {
 
-            $this->error('[!] Error: composer self-update failed with exit code ' . $exit_code . ' and command outut: ' . implode('\n', $output));
+            $this->error('[!] Error: composer self-update failed with exit code ' . $exit_code);
             return;
         }
 
         // composer update
         $this->line('[+] Running: `' . $composer_command . ' update`');
-        exec($composer_command . ' update', $output, $exit_code);
+        system($composer_command . ' update', $exit_code);
 
         // If the command failed, we should have a $exit_code of
         // not 0. If thats the case, read $output and print
         // that as debugging information
         if ($exit_code !== 0) {
 
-            $this->error('[!] Error: composer update failed with exit code ' . $exit_code . ' and command outut: ' . implode('\n', $output));
+            $this->error('[!] Error: composer update failed with exit code ' . $exit_code);
             return;
         }
 
         // composer dump-autoload
         $this->line('[+] Running: `' . $composer_command . ' dump-autoload`');
-        exec($composer_command . ' dump-autoload', $output, $exit_code);
+        system($composer_command . ' dump-autoload', $exit_code);
 
         // If the command failed, we should have a $exit_code of
         // not 0. If thats the case, read $output and print
         // that as debugging information
         if ($exit_code !== 0) {
 
-            $this->error('[!] Error: composer dump-autoload failed with exit code ' . $exit_code . ' and command outut: ' . implode('\n', $output));
+            $this->error('[!] Error: composer dump-autoload failed with exit code ' . $exit_code);
             return;
         }
 
@@ -335,6 +340,7 @@ class SeatUpdate extends Command
             array('composer', null, InputOption::VALUE_OPTIONAL, 'Specify the path to composer.phar.', null),
             array('no-sde', null, InputOption::VALUE_NONE, 'Skip updating the EVE SDE.', null),
             array('dev', null, InputOption::VALUE_NONE, 'Skip moving to the master branch.', null),
+            array('no-version', null, InputOption::VALUE_NONE, 'Skip the version check.', null),
         );
     }
 
