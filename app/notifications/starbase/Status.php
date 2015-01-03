@@ -56,14 +56,45 @@ class Status extends BaseNotify
             return;
 
         // Next, grab the starbases that we know of
-        $stabases = \EveCorporationStarbaseDetail::all();
+        $starbases = \DB::table('corporation_starbaselist')
+            ->select(
+                'corporation_starbaselist.corporationID',
+                'corporation_starbaselist.itemID',
+                'corporation_starbaselist.moonID',
+                'corporation_starbaselist.state',
+                'corporation_starbaselist.stateTimeStamp',
+                'corporation_starbaselist.onlineTimeStamp',
+                'corporation_starbaselist.onlineTimeStamp',
+                'corporation_starbasedetail.useStandingsFrom',
+                'corporation_starbasedetail.onAggression',
+                'corporation_starbasedetail.onCorporationWar',
+                'corporation_starbasedetail.allowCorporationMembers',
+                'corporation_starbasedetail.allowAllianceMembers',
+                'corporation_starbasedetail.fuelBlocks',
+                'corporation_starbasedetail.strontium',
+                'corporation_starbasedetail.starbaseCharter',
+                'invTypes.typeID',
+                'invTypes.typeName',
+                'mapDenormalize.itemName',
+                'mapDenormalize.security',
+                'invNames.itemName',
+                'map_sovereignty.solarSystemName',
+                'corporation_starbasedetail.updated_at'
+            )
+            ->join('corporation_starbasedetail', 'corporation_starbaselist.itemID', '=', 'corporation_starbasedetail.itemID')
+            ->join('mapDenormalize', 'corporation_starbaselist.locationID', '=', 'mapDenormalize.itemID')
+            ->join('invNames', 'corporation_starbaselist.moonID', '=', 'invNames.itemID')
+            ->join('invTypes', 'corporation_starbaselist.typeID', '=', 'invTypes.typeID')
+            ->leftJoin('map_sovereignty', 'corporation_starbaselist.locationID', '=', 'map_sovereignty.solarSystemID')
+            ->orderBy('invNames.itemName', 'asc')
+            ->get();
 
         $state_needed = array();
 
         // Looping over the starbases, check what the status of it.
         // Currently we only send a notification if it went
         // offline or has been re-inforced
-        foreach($stabases as $starbase) {
+        foreach($starbases as $starbase) {
 
             // Check the status of the starbase and
             // switch between them, updating the
@@ -102,15 +133,16 @@ class Status extends BaseNotify
                         // Ok! Time to finally get to pushing the
                         // notification out! :D
 
-                        // We will make sure that we don't spam the user
-                        // with notifications, so lets hash the event
-                        // and ensure that its not present in the
-                        // database yet
+                        // Get the corporation name for the notification
+                        $corporation_name = \DB::table('account_apikeyinfo_characters')
+                            ->where('corporationID', $starbase->corporationID)
+                            ->pluck('corporationName');
 
                         // Prepare the total notification
                         $notification_type = 'Starbase';
                         $notification_title = 'Dangerous Status';
-                        $notification_text = 'One of your starbases is: ' . $starbase_status;
+                        $notification_text = 'The ' . $starbase->typeName . ' at ' . $starbase->itemName .
+                            ' owned by ' . $corporation_name . ' is now ' . $starbase_status;
 
                         // Send the notification
                         BaseNotify::sendNotification($pos_user->id, $notification_type, $notification_title, $notification_text);
