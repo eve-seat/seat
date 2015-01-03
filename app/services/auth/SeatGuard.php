@@ -200,12 +200,19 @@ class SeatGuard extends \Illuminate\Auth\Guard
         // have the 'superuser' permission
         foreach($groups as $group) {
 
-            $permissions = unserialize($group->permissions);
+            // Reset the permissions to a empty array
+            $permissions = array();
 
-            // Check that there were at least 1 permission
-            // returned here
+            // Check that the group has _any_ permission before
+            // we try unserialize a empty string
+            if (strlen($group->permissions) > 0)
+                $permissions = unserialize($group->permissions);
+
+            // Check that there is at least one permission
+            // returned for the group, otherwise we will
+            // just continue to the next group
             if(count($permissions) <= 0)
-                return false;
+                continue;
 
             // If we did get some permissions, check if one
             //of them was the superuser permission
@@ -257,8 +264,14 @@ class SeatGuard extends \Illuminate\Auth\Guard
         // merge and keep the unique key, meaning we
         // dont have to go and try to get this
         // unique later ;)
-        foreach($groups as $group)
-            $permissions = array_merge($permissions, unserialize($group->permissions));
+        foreach($groups as $group) {
+
+            // Check that the group even has _any_ permissions
+            // before we attempt to unserilize a empty
+            // string
+            if (strlen($group->permissions) > 0)
+                $permissions = array_merge($permissions, unserialize($group->permissions));
+        }
 
         // Check if the permission exists in the newly created
         // array or if the superuser permission was found
