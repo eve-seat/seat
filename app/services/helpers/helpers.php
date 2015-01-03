@@ -239,29 +239,6 @@ class Helpers
 
     /*
     |--------------------------------------------------------------------------
-    | makePrettyMemberRoleList()
-    |--------------------------------------------------------------------------
-    |
-    | Returns a pretty Corporation Member Role List
-    | TODO: More Documentation.
-    |
-    */
-
-    public static function makePrettyMemberRoleList($string_to_format) {
-
-        if($string_to_format == '' or is_null ($string_to_format)) {
-
-            return '';
-
-        } else  {
-
-            return str_replace(',',', ',$string_to_format);
-        }
-
-    }
-
-    /*
-    |--------------------------------------------------------------------------
     | sumVolume()
     |--------------------------------------------------------------------------
     |
@@ -359,29 +336,109 @@ class Helpers
 
     /*
     |--------------------------------------------------------------------------
-    | getPrettySecRoles()
+    | getMembersForTitle()
     |--------------------------------------------------------------------------
-    | 
-    | Converts RoleIDs to Pretty Strings
-    | $jsonRules: json serialized array from DB
+    |
+    | Returns the members for a certain title
+    | pass in corp and title
     |
     */
 
-    public static function getPrettySecRoles($jsonTitleRoles) {
-        
-        $jsonTitleRoles = (array) json_decode($jsonTitleRoles);
-        if(!empty($jsonTitleRoles)){
-            $roles = \DB::table('eve_corporation_rolemap')
-                ->select('roleName')
-                ->whereIn('roleID', $jsonTitleRoles)
-                ->orderBy('roleName','asc')
-                ->get();
-            
-            return implode(",", array_values(array_pluck((array)$roles,'roleName')));
+    public static function getMembersForTitle($corporationID, $titleID)
+    {
 
-        }
-        else
-            return;
+        $members = \DB::table('corporation_msec_titles')
+            ->select('name','characterID')
+            ->where('corporationID', $corporationID)
+            ->where('titleID', $titleID)
+            ->orderBy('name','asc')
+            ->remember(0.1)
+            ->get('name');
+
+        return $members;
     }
 
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | getSecRolesArray()
+    |--------------------------------------------------------------------------
+    | 
+    | Converts a String or JSON Array of RoleIDs
+    | to an Fancy Role Array with Corporation Division's
+    |
+    | @param mixed_roles: either comma delimited string or JSON serialized array
+    | @return: all roles converted to nice looking strings
+    |   returns an empty Array if $mixed_roles is empty
+    |
+    | Caches the DB Responses to reduce DB hits
+    |
+    */
+
+    public static function getSecRolesArray($mixed_roles, $corporationID)
+    {
+        
+        if($mixed_roles == '' or $mixed_roles == '[]' or is_null($mixed_roles)) {
+            return array("None");
+        } else {
+
+            /*
+            // First try JSON because explode does work also for that
+            // if json_decode founds no JSON it returns NULL value
+            */
+            $roleIDs = (array)json_decode($mixed_roles);
+            if($roleIDs==NULL)
+                $roleIDs = explode(",",$mixed_roles);
+
+            // Query DB with the RoleIDs
+            $role_list= \DB::table('eve_corporation_rolemap')
+                ->select('roleID','roleName')
+                ->whereIn('roleID', $roleIDs)
+                ->orderBy('roleName','asc')
+                ->remember(0.1)
+                ->get();
+
+            $fancy_roles = Array();
+
+            $divisions_hangar = \DB::table('corporation_corporationsheet_divisions')
+                ->select('accountKey','description')
+                ->orderBy('accountKey')
+                ->where('corporationID',$corporationID)
+                ->remember(0.1)
+                ->get();
+            
+            $divisions_wallet = \DB::table('corporation_corporationsheet_walletdivisions')
+                ->select('accountKey','description')
+                ->orderBy('accountKey')
+                ->where('corporationID',$corporationID)
+                ->remember(0.1)
+                ->get();
+            
+            foreach ($role_list as $role) {
+                $regex = "/(Hangar|Wallet Division|Container from Hangar)\s(\d)/";
+
+                // Regex found no Hangar or Wallet Division -> push roleName into Result
+                if(preg_match($regex, $role->roleName, $result)==0) {
+                    array_push($fancy_roles, $role->roleName);
+                } else {
+                    switch ($result[1]) {
+                        case 'Hangar':
+                            array_push($fancy_roles, str_replace($result[2], $divisions_hangar[$result[2]-1]->description, $role->roleName));
+                            break;
+                        case 'Wallet Division':
+                            array_push($fancy_roles, str_replace($result[2], $divisions_wallet[$result[2]-1]->description, $role->roleName));
+                            break;
+                        case 'Container from Hangar':
+                            array_push($fancy_roles, str_replace($result[2], $divisions_hangar[$result[2]-1]->description, $role->roleName));
+                            break;
+                        default:
+                            array_push($fancy_roles, $role->roleName);
+                            break;
+                    }
+                }
+            }
+            return  $fancy_roles;
+        }
+    }
 }
