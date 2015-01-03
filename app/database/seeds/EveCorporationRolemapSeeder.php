@@ -74,13 +74,13 @@ class EveCorporationRolemapSeeder extends Seeder
             array('roleID' => 16777216,           'roleName' => 'Can query Hangar 5'),
             array('roleID' => 33554432,           'roleName' => 'Can query Hangar 6'),
             array('roleID' => 67108864,           'roleName' => 'Can query Hangar 7'),
-            array('roleID' => 4398046511104,      'roleName' => 'Can take from Container 1'),
-            array('roleID' => 8796093022208,      'roleName' => 'Can take from Container 2'),
-            array('roleID' => 17592186044416,     'roleName' => 'Can take from Container 3'),
-            array('roleID' => 35184372088832,     'roleName' => 'Can take from Container 4'),
-            array('roleID' => 70368744177664,     'roleName' => 'Can take from Container 5'),
-            array('roleID' => 140737488355328,    'roleName' => 'Can take from Container 6'),
-            array('roleID' => 281474976710656,    'roleName' => 'Can take from Container 7'),
+            array('roleID' => 4398046511104,      'roleName' => 'Can take Container from Hangar 1'),
+            array('roleID' => 8796093022208,      'roleName' => 'Can take Container from Hangar 2'),
+            array('roleID' => 17592186044416,     'roleName' => 'Can take Container from Hangar 3'),
+            array('roleID' => 35184372088832,     'roleName' => 'Can take Container from Hangar 4'),
+            array('roleID' => 70368744177664,     'roleName' => 'Can take Container from Hangar 5'),
+            array('roleID' => 140737488355328,    'roleName' => 'Can take Container from Hangar 6'),
+            array('roleID' => 281474976710656,    'roleName' => 'Can take Container from Hangar 7'),
         ));
     }
 }

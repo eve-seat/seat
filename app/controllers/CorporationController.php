@@ -1325,67 +1325,59 @@ class CorporationController extends BaseController
                 App::abort(404);
 
         $member_roles = DB::table('corporation_msec_roles as cmr')
-            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
-            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
-            ->where('cmr.corporationID', $corporationID)
-            ->groupBy('cmr.characterID')
-            ->orderBy('cmr.name', 'asc')
+            ->select(DB::raw('characterID, name, GROUP_CONCAT(roleID SEPARATOR \',\') AS roleID'))
+            ->where('corporationID', $corporationID)
+            ->groupBy('characterID')
+            ->orderBy('name', 'asc')
             ->get();
 
         $member_roles_base = DB::table('corporation_msec_roles_at_base as cmr')
-            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
-            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
-            ->where('cmr.corporationID', $corporationID)
-            ->groupBy('cmr.characterID')
-            ->orderBy('cmr.name', 'asc')
+            ->select(DB::raw('characterID, name, GROUP_CONCAT(roleID SEPARATOR \',\') AS roleID'))
+            ->where('corporationID', $corporationID)
+            ->groupBy('characterID')
+            ->orderBy('name', 'asc')
             ->get();
 
         $member_roles_hq = DB::table('corporation_msec_roles_at_hq as cmr')
-            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
-            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
-            ->where('cmr.corporationID', $corporationID)
-            ->groupBy('cmr.characterID')
-            ->orderBy('cmr.name', 'asc')
+            ->select(DB::raw('characterID, name, GROUP_CONCAT(roleID SEPARATOR \',\') AS roleID'))
+            ->where('corporationID', $corporationID)
+            ->groupBy('characterID')
+            ->orderBy('name', 'asc')
             ->get();
 
         $member_roles_other = DB::table('corporation_msec_roles_at_other as cmr')
-            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
-            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
-            ->where('cmr.corporationID', $corporationID)
-            ->groupBy('cmr.characterID')
-            ->orderBy('cmr.name', 'asc')
+            ->select(DB::raw('characterID, name, GROUP_CONCAT(roleID SEPARATOR \',\') AS roleID'))
+            ->where('corporationID', $corporationID)
+            ->groupBy('characterID')
+            ->orderBy('name', 'asc')
             ->get();
 
         $member_roles_grantable = DB::table('corporation_msec_grantable_roles as cmr')
-            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
-            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
-            ->where('cmr.corporationID', $corporationID)
-            ->groupBy('cmr.characterID')
-            ->orderBy('cmr.name', 'asc')
+            ->select(DB::raw('characterID, name, GROUP_CONCAT(roleID SEPARATOR \',\') AS roleID'))
+            ->where('corporationID', $corporationID)
+            ->groupBy('characterID')
+            ->orderBy('name', 'asc')
             ->get();
 
         $member_roles_grantable_base = DB::table('corporation_msec_grantable_roles_at_base as cmr')
-            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
-            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
-            ->where('cmr.corporationID', $corporationID)
-            ->groupBy('cmr.characterID')
-            ->orderBy('cmr.name', 'asc')
+            ->select(DB::raw('characterID, name, GROUP_CONCAT(roleID SEPARATOR \',\') AS roleID'))
+            ->where('corporationID', $corporationID)
+            ->groupBy('characterID')
+            ->orderBy('name', 'asc')
             ->get();
 
         $member_roles_grantable_hq = DB::table('corporation_msec_grantable_roles_at_hq as cmr')
-            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
-            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
-            ->where('cmr.corporationID', $corporationID)
-            ->groupBy('cmr.characterID')
-            ->orderBy('cmr.name', 'asc')
+            ->select(DB::raw('characterID, name, GROUP_CONCAT(roleID SEPARATOR \',\') AS roleID'))
+            ->where('corporationID', $corporationID)
+            ->groupBy('characterID')
+            ->orderBy('name', 'asc')
             ->get();
 
         $member_roles_grantable_other = DB::table('corporation_msec_grantable_roles_at_other as cmr')
-            ->select(DB::raw('cmr.characterID, cmr.name, GROUP_CONCAT(rolemap.roleName SEPARATOR \',\') AS roleName'))
-            ->join(DB::raw('eve_corporation_rolemap as rolemap'),'cmr.roleID','=','rolemap.roleID')
-            ->where('cmr.corporationID', $corporationID)
-            ->groupBy('cmr.characterID')
-            ->orderBy('cmr.name', 'asc')
+            ->select(DB::raw('characterID, name, GROUP_CONCAT(roleID SEPARATOR \',\') AS roleID'))
+            ->where('corporationID', $corporationID)
+            ->groupBy('characterID')
+            ->orderBy('name', 'asc')
             ->get();
 
 
@@ -1413,6 +1405,7 @@ class CorporationController extends BaseController
             ->with('member_roles_grantable_other',  $member_roles_grantable_other)
             ->with('member_roles_log',              $member_roles_log)
             ->with('member_titles_map',             $member_titles_map) // JSON!
+            ->with('corporationID',                 $corporationID)
         ;
     }
 
