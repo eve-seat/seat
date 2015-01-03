@@ -5,7 +5,7 @@
 @section('page_content')
 
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-8">
       <div class="box">
 
         <div class="box-header">
@@ -22,14 +22,18 @@
             <dt>Notification Created</dt>
             <dd>{{ Carbon\Carbon::parse($notification->created_at)->diffForHumans() }} at {{ $notification->created_at }}</dd>
             <dt>Notification Text</dt>
-            <dd>{{ $notification->text }}</dd>
+            <dd>
+              <div class="panel">
+                <pre>{{ $notification->text }}</pre>
+              </div>
+            </dd>
           </dl>
 
         </div>
       </div><!-- /.box-body -->
     </div><!-- /.box -->
 
-    <div class="col-md-6">
+    <div class="col-md-4">
       <div class="box">
 
         <div class="box-header">

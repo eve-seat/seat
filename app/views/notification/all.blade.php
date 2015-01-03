@@ -25,8 +25,8 @@
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Notification Title</th>
                 <th>Notification Type</th>
+                <th>Notification Title</th>
                 <th>Notification Status</th>
                 <th></th>
                 <th></th>
@@ -66,35 +66,5 @@
       </div><!-- /.box -->
     </div>
   </div>
-
-@stop
-
-@section('javascript')
-  <script type="text/javascript">
-    $(document).on("click", ".delete-user", function(e) {
-
-      // Save the links
-      var delete_user = $(this).attr("a-delete-user");
-
-      // Provide the user a option to keep the existing data, or delete everything we know about the key
-      bootbox.dialog({
-        message: "Please confirm whether you want to delete the user?",
-        title: "Delete user " + $(this).attr("a-user-name"),
-        buttons: {
-          success: {
-            label: "No Thanks",
-            className: "btn-default"
-          },
-          danger: {
-            label: "Delete User",
-            className: "btn-danger",
-            callback: function() {
-              window.location = delete_user;
-            }
-          }
-        }
-      });
-    });
-  </script>
 
 @stop
