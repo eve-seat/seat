@@ -30,6 +30,7 @@ class UserSettingValidator extends Validator
 
     public static $rules = array(
         'color_scheme'  => 'required|in:blue,black',
-        'main_character_id' => 'required|numeric'
+        'main_character_id' => 'required|numeric',
+        'email_notifications' => 'required|in:true,false',
     );
 }

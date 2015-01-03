@@ -144,6 +144,7 @@ class ProfileController extends BaseController
             Settings::setSetting('decimal_seperator', Input::get('decimal_seperator'), \Auth::User()->id);
             Settings::setSetting('main_character_id', Input::get('main_character_id'), \Auth::User()->id);
             Settings::setSetting('main_character_name', $character_name, \Auth::User()->id);
+            Settings::setSetting('email_notifications', Input::get('email_notifications'), \Auth::User()->id);
 
             return Redirect::back()
                 ->with('success', 'Settings Saved!');
