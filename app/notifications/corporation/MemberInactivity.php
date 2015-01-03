@@ -81,16 +81,18 @@ class MemberInactivity extends BaseNotify
                 // Is this step really needed?
                 if(BaseNotify::canAccessCorp($recruiter->id, $member->corporationID)) {
 
-                    // We will make sure that we don't spam the user
-                    // with notifications, so lets hash the event
-                    // and ensure that its not present in the
-                    // database yet
+                    // Get the corporation name for the notification
+                    $corporation_name = \DB::table('account_apikeyinfo_characters')
+                        ->where('corporationID', $member->corporationID)
+                        ->pluck('corporationName');
 
                     // Prepare the total notification
                     $notification_type = 'Corporation';
                     $notification_title = 'Member Inactivity';
-                    $notification_text = $member->name . ' has been inactive for over a month and last logged' .
-                            ' in ' . \Carbon\Carbon::parse($member->logonDateTime)->diffFOrHumans();
+                    $notification_text = $member->name . ' in ' . $corporation_name . ' has been inactive ' .
+                        'for over a month. The last logon time was ' .
+                        \Carbon\Carbon::parse($member->logonDateTime)->diffFOrHumans() . ' with the last ' .
+                        'known location being ' . $member->location . '.';
 
                     // Send the notification
                     BaseNotify::sendNotification($recruiter->id, $notification_type, $notification_title, $notification_text);
