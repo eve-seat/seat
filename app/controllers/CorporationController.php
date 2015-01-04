@@ -1020,12 +1020,12 @@ class CorporationController extends BaseController
                         }
                     }
                 }
-            }
 
-            // Sort the starbase modules arrays
-            ksort($starbase_modules[$starbase->itemID]['industry']);
-            ksort($starbase_modules[$starbase->itemID]['storage']);
-            ksort($starbase_modules[$starbase->itemID]['other']);
+                // Sort the starbase modules arrays
+                ksort($starbase_modules[$starbase->itemID]['industry']);
+                ksort($starbase_modules[$starbase->itemID]['storage']);
+                ksort($starbase_modules[$starbase->itemID]['other']);
+            }
         }
 
         return View::make('corporation.starbase.starbase')
