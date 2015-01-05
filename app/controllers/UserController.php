@@ -103,13 +103,15 @@ class UserController extends BaseController
             $user->password = Hash::make(Input::get('password'));
             $user->activated = 1;
 
+            $user->save();
+
+            // After user is saved and has a user_id
+            // we can add it to the admin group if necessary
             if (Input::get('is_admin') == 'yes') {
 
                 $adminGroup = \Auth::findGroupByName('Administrators');
-                $user->addGroup($adminGroup);
+                Auth::addUserToGroup($user, $adminGroup);
             }
-
-            $user->save();
 
             return Redirect::action('UserController@getAll')
                 ->with('success', 'User ' . Input::get('email') . ' has been added');
