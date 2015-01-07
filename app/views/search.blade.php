@@ -159,7 +159,6 @@
                   <thead>
                     <tr>
                       <th>Sender Name</th>
-                      <th>Sender Corporation</th>
                       <th>Title</th>
                       <th>Sent</th>
                       <th>Body</th>
@@ -176,7 +175,6 @@
                             {{ App\Services\Helpers\Helpers::highlightKeyword($message->senderName, $keyword) }}
                           </a>
                         </td>
-                        <td>{{ $message->corporationName }}</td>
                         <td>{{ App\Services\Helpers\Helpers::highlightKeyword($message->title, $keyword) }}</td>
                         <td>{{ $message->sentDate }}</td>
                         <td>
