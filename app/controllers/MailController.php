@@ -43,6 +43,7 @@ class MailController extends BaseController
         $mail = DB::table('character_mailmessages')
             ->join('account_apikeyinfo_characters', 'character_mailmessages.characterID', '=', 'account_apikeyinfo_characters.characterID')
             ->join('character_mailbodies', 'character_mailmessages.messageID', '=', 'character_mailbodies.messageID')
+            ->groupBy('character_mailmessages.messageID')
             ->orderBy('character_mailmessages.sentDate', 'desc');
 
         if (!\Auth::isSuperUser() )
