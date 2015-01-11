@@ -5,7 +5,7 @@
 @section('page_content')
 
   {{-- open a empty form to get a crsf token --}}
-  {{ Form::open(array()) }} {{ Form::close() }}
+  {{ Form::token() }}
 
   {{-- starbase summaries in a table. yeah, couldnt avoid this table --}}
   <div class="row">
@@ -19,74 +19,64 @@
           </div>
         </div>
         <div class="box-body no-padding">
-          <div class="row">
 
-            {{-- split the summaries into 2 tables next to each other --}}
-            @foreach (array_chunk($starbases, (count($starbases) / 2) > 1 ? count($starbases) / 2 : 2) as $starbase)
+          <table class="table table-condensed table-hover">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Onlined</th>
+                <th>Sec</th>
+                <th>Offline Estimate</th>
+                <th><img src='//image.eveonline.com/Type/4051_32.png' style='width: 18px;height: 18px;'> Fuel Level</th>
+                <th>State</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
 
-              <div class="col-md-6">
+              @foreach ($starbases as $details)
 
-                <table class="table table-condensed table-hover">
-                  <thead>
-                    <tr>
-                      <th>Type</th>
-                      <th>Location</th>
-                      <th>Sec</th>
-                      <th>Name</th>
-                      <th>Fuel Blocks</th>
-                      <th>State</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
+                <tr>
+                  <td>
+                    <img src='//image.eveonline.com/Type/{{ $details->typeID }}_32.png' class='img-circle' style='width: 18px;height: 18px;'>
+                    {{ $details->typeName }}
+                  </td>
+                  <td><b>{{ $starbase_names[$details->itemID] }}</b></td>
+                  <td>{{ $details->itemName }}</td>
+                  <td>
+                    {{ $details->onlineTimeStamp }}</b> ({{ Carbon\Carbon::parse($details->onlineTimeStamp)->diffForHumans() }})
+                  </td>
+                  <td>{{ number_format($details->security, 1, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</td>
+                  <td>
+                    {{-- determine if the time left is less than 3 days --}}
+                    @if ( Carbon\Carbon::now()->addHours($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'])->lte(Carbon\Carbon::now()->addDays(3)))
+                      <span class="text-red">{{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'])->diffForHumans() }}</span>
+                    @else
+                      {{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'])->diffForHumans() }}
+                    @endif
+                  </td>
+                  <td>
+                    <div class="progress">
+                      <div class="progress-bar @if( ($details->starbaseCharter > 24 && $details->security >= 0.5) || ($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'] > 24 )) progress-bar-primary @else progress-bar-danger @endif" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
+                    </div>
+                  </td>
+                  <td>
+                    @if ($details->state == 4)
+                      <span class="label label-success">{{ $tower_states[$details->state] }}</span>
+                    @else
+                      <span class="label label-warning">{{ $tower_states[$details->state] }}</span>
+                    @endif
+                  </td>
+                  <td><a href="#{{ $details->itemID }}"><i class="fa fa-anchor" data-toggle="tooltip" title="" data-original-title="Details"></i></a></td>
+                </tr>
 
-                    @foreach ($starbase as $details)
-                      <tr>
+              @endforeach
 
-                        {{--
-                          Find the starbases name in the $item_locations array.
-                          We acheive this by looping over the item_locaions we received, and check
-                          if we have a matching item id.
+            </tbody>
+          </table>
 
-                          If the moonID is 0, we just keep the null value. This could happen if the location was not
-                          determined. It appears that this may happen if the state of the tower is not online.
-                        --}}
-                        {{--*/$posname = null/*--}}
-                        @if ($details->moonID != 0 && isset($item_locations[$details->moonID]))
-                          @foreach ($item_locations[$details->moonID] as $name_finder)
-                            @if ($name_finder['itemID'] == $details->itemID)
-                              {{--*/$posname = $name_finder['itemName']/*--}}
-                            @endif
-                          @endforeach
-                        @endif
-
-                        <td>
-                          <img src='//image.eveonline.com/Type/{{ $details->typeID }}_32.png' style='width: 18px;height: 18px;'>
-                          {{ $details->typeName }}
-                        </td>
-                        <td>{{ $details->itemName }}</td>
-                        <td>{{ number_format($details->security, 1, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</td>
-                        <td><b>{{ $posname }}</b></td>
-                        <td>{{ $details->fuelBlocks }}</td>
-                        <td>
-                          @if ($details->state == 4)
-                            <span class="label label-success pull-right">{{ $tower_states[$details->state] }}</span>
-                          @else
-                            <span class="label label-warning pull-right">{{ $tower_states[$details->state] }}</span>
-                          @endif
-                        </td>
-                        <td><a href="#{{ $details->itemID }}"><i class="fa fa-anchor" data-toggle="tooltip" title="" data-original-title="Details"></i></a></td>
-                      </tr>
-
-                    @endforeach
-
-                  </tbody>
-                </table>
-              </div>
-
-            @endforeach
-
-          </div> <!-- ./row -->
         </div><!-- /.box-body -->
       </div>
 
@@ -99,130 +89,26 @@
 
       @foreach ($starbase as $details)
 
-        {{-- find the starbases name in the $item_locations array --}}
-        {{--*/$posname = null/*--}}
-        @if ($details->moonID != 0 && isset($item_locations[$details->moonID]))
-          @foreach ($item_locations[$details->moonID] as $name_finder)
-            @if ($name_finder['itemID'] == $details->itemID)
-              {{--*/$posname = $name_finder['itemName']/*--}}
-            @endif
-          @endforeach
-        @endif
-
-        {{-- process the rest of the html --}}
         <div class="col-md-4">
           <div class="nav-tabs-custom">
+          <div class="tab-content">
+            <h4><b>{{ $details->itemName }}</b></h4>
+          </div>
             <ul class="nav nav-tabs">
               <li class="active"><a href="#tab_1{{ $details->itemID }}" data-toggle="tab" id="{{ $details->itemID }}">Tower Info</a></li>
               <li><a href="#tab_2{{ $details->itemID }}" data-toggle="tab">Tower Configuration</a></li>
-              <li><a href="#tab_3{{ $details->itemID }}" data-toggle="tab">Module Details @if (isset($item_locations[$details->moonID])) ({{ count($item_locations[$details->moonID]) }}) @endif</a></li>
+              <li><a href="#tab_3{{ $details->itemID }}" data-toggle="tab">Module Details</a></li>
             </ul>
             <div class="tab-content">
               <div class="tab-pane active" id="tab_1{{ $details->itemID }}">
-                <h4><b>{{ $details->itemName }}</b></h4>
                 @if ($details->state == 4)
                   <span class="label label-success pull-right">{{ $tower_states[$details->state] }}</span>
                 @else
                   <span class="label label-warning pull-right">{{ $tower_states[$details->state] }}</span>
                 @endif
 
-                {{--
-                  so here we need to determine the time left for the tower fuel.
-                  This is just my old code copied and pasted, so chances are there is some logic flaw somewhere.
-
-                  An important thing to note here. I am escaping the template comments in order to do these calculations.
-                  It will probably be better to move this hax to the controller sometime.
-
-                  Note about the fuel usage calculations.
-                  ---
-
-                  There are 3 tower sizes. Small, Medium and Large. ie:
-
-                  - Amarr Control Tower
-                  - Amarr Control Tower Medium
-                  - Amarr Control Tower Small
-
-                  Fuel usage is calculated by based on wether the tower is anchored in sov or non sov space. [1] ie.
-
-                  == No SOV Usage
-                  - 40 Blocks a hour => Amarr Control Tower
-                  - 20 Blocks a hour => Amarr Control Tower Medium
-                  - 10 Blocks a hour => Amarr Control Tower Small
-
-                  == SOV Usage
-                  - 30 Blocks a hour => Amarr Control Tower
-                  - 15 Blocks a hour => Amarr Control Tower Medium
-                  - 7 Blocks a hour => Amarr Control Tower Small
-
-                  Time2hardcode this shit
-
-                  [1] https://wiki.eveonline.com/en/wiki/Starbase#Fuel_Usage
-
-                  Start escape
-                  ------------
-                  */
-
-                  // Set some base usage values ...
-
-                  $usage = 0;
-                  $stront_usage =0;
-
-                  // ... fuel for non sov towers ...
-
-                  $large_usage = 40;
-                  $medium_usage = 20;
-                  $small_usage = 10;
-
-                  // ... and sov towers
-
-                  $sov_large_usage = 30;
-                  $sov_medium_usage = 15;
-                  $sov_small_usage = 8;
-
-                  // Stront usage
-
-                  $stront_large = 400;
-                  $stront_medium = 200;
-                  $stront_small = 100;
-
-                  // basically, here we check if the names Small/Medium exists in the tower name. Then,
-                  // if the tower is in the sov_tower array, set the value for usage
-
-                  if (strpos($details->typeName, 'Small') !== false) {
-
-                    $stront_usage = $stront_small;
-
-                    if (array_key_exists($details->itemID, $sov_towers))
-                      $usage = $sov_small_usage;
-                    else
-                      $usage = $small_usage;
-
-                  } elseif (strpos($details->typeName, 'Medium') !== false) {
-
-                    $stront_usage = $stront_medium;
-
-                    if (array_key_exists($details->itemID, $sov_towers))
-                      $usage = $sov_medium_usage;
-                    else
-                      $usage = $medium_usage;
-
-                  } else {
-
-                    $stront_usage = $stront_large;
-
-                    if (array_key_exists($details->itemID, $sov_towers))
-                      $usage = $sov_large_usage;
-                    else
-                      $usage = $large_usage;
-                  }
-
-                  /*
-                  End the escape
-                  --------------
-                --}}
-
                 <ul class="list-unstyled">
-                  <li>Name: <b>{{ $posname }}</b></li>
+                  <li>Name: <b>{{ $starbase_names[$details->itemID] }}</b></li>
                   <li>Type: <b>{{ $details->typeName }}</b></li>
                   <li>Corp Access: <b> @if($details->allowCorporationMembers==1)Yes @else No @endif</b></li>
                   <li>Alliance Access: <b> @if($details->allowAllianceMembers==1)Yes @else No @endif</b></li>
@@ -252,24 +138,24 @@
                     <b>Fuel Left: </b>
                     {{ $details->fuelBlocks }} blocks
                     (
-                      @ {{ $usage }} blocks/h, it will go offline
+                      @ {{ $starbase_fuel_usage[$details->itemID]['fuel_usage'] }} blocks/h, it will go offline
 
                       {{-- determine if the time left is less than 3 days --}}
-                      @if ( Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->lte(Carbon\Carbon::now()->addDays(3)))
-                        <b><span class="text-red">{{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->diffForHumans() }}</span></b>
+                      @if ( Carbon\Carbon::now()->addHours($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'])->lte(Carbon\Carbon::now()->addDays(3)))
+                        <b><span class="text-red">{{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'])->diffForHumans() }}</span></b>
                       @else
-                        <b>{{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->diffForHumans() }}</b>
+                        <b>{{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'])->diffForHumans() }}</b>
                       @endif
                     )
-                    <i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated offline at {{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $usage)->toDateTimeString() }}"></i>
+                    <i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated offline at {{ Carbon\Carbon::now()->addHours($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'])->toDateTimeString() }}"></i>
                   </li>
                   <li>
                     <b>Stront Left:</b>
                     {{ $details->strontium }} units
                     (
-                      @ {{ $stront_usage }} units/h, it should stay reinforced for <b>{{ round($details->strontium / $stront_usage) }}</b> hours
+                      @ {{ $starbase_fuel_usage[$details->itemID]['stront_usage'] }} units/h, it should stay reinforced for <b>{{ round($details->strontium / $starbase_fuel_usage[$details->itemID]['stront_usage']) }}</b> hours
                     )
-                    <i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated reinforced until {{ Carbon\Carbon::now()->addHours($details->strontium / $stront_usage)->toDateTimeString() }}"></i>
+                    <i class="fa fa-clock-o pull-right" data-toggle="tooltip" title="" data-placement="left" data-original-title="Estimated reinforced until {{ Carbon\Carbon::now()->addHours($details->strontium / $starbase_fuel_usage[$details->itemID]['stront_usage'])->toDateTimeString() }}"></i>
                   </li>
                 </ul>
 
@@ -286,7 +172,7 @@
                           <span class="text-red">Full Fuel Usage</span>
                         @endif
                       </th>
-                      <th>Fuel Reserve Details</th>
+                      <th>Fuel Reserve Levels</th>
                       <th></th>
                     </tr>
                     <tr>
@@ -296,10 +182,10 @@
                       </td>
                       <td>
                         <div class="progress">
-                          <div class="progress-bar @if( ($details->starbaseCharter > 24 && $details->security >= 0.5) || ($details->fuelBlocks / $usage > 24 )) progress-bar-primary @else progress-bar-danger @endif" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
+                          <div class="progress-bar @if( ($details->starbaseCharter > 24 && $details->security >= 0.5) || ($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'] > 24 )) progress-bar-primary @else progress-bar-danger @endif" style="width: {{ (($details->fuelBlocks * 5) / $bay_sizes[$details->typeID]['fuelBay']) * 100 }}%"></div>
                         </div>
                       </td>
-                      <td><span class="badge @if( ($details->starbaseCharter > 24 && $details->security >= 0.5) || ($details->fuelBlocks / $usage > 24 )) bg-blue @else bg-red @endif pull-right">{{ round((($details->starbaseCharter + ($details->fuelBlocks * 5)) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
+                      <td><span class="badge @if( ($details->starbaseCharter > 24 && $details->security >= 0.5) || ($details->fuelBlocks / $starbase_fuel_usage[$details->itemID]['fuel_usage'] > 24 )) bg-blue @else bg-red @endif pull-right">{{ round((($details->starbaseCharter + ($details->fuelBlocks * 5)) / $bay_sizes[$details->typeID]['fuelBay']) * 100,0) }}%</span></td>
                     </tr>
                     <tr>
                       <td>
@@ -329,109 +215,330 @@
                 </ul>
               </div><!-- /.tab-pane -->
 
-              {{-- tower module information --}}
               <div class="tab-pane" id="tab_3{{ $details->itemID }}">
-                <h4>Modules Detail: <small class="pull-right text-muted">% Full</small></h4>
-                <table class="table table-condensed table-hover">
-                  <tbody>
-                    {{--
-                      In the case of us not knowing what the moonID is for whatever reason,
-                      make a note about it
-                    --}}
-                    @if ($details->moonID == 0)
-                        <tr>
-                          <td colspan="3">Unknown MoonID, unable to find assets</td>
-                        </tr>
-                    @else
 
-                      @foreach ($item_locations[$details->moonID] as $item)
+                {{-- check that we have known starbase_modules for this tower --}}
+                @if (!array_key_exists($details->itemID, $starbase_modules) || count($starbase_modules[$details->itemID]) <= 0)
+                  No modules could be shown for this tower.
+                @else
 
-                        {{--
-                          a quick check is done here to ensure that the tower type id and the module type id is
-                          not the same. there is no need to show the towers details here too as it is already
-                          covered in the Tower Info block, together with the fuel usage information.
+                  <div class="nav-tabs-custom">
+                      <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab_1_modules_industry{{ $details->itemID }}" data-toggle="tab">Industry ({{ count($starbase_modules[$details->itemID]['industry']) }})</a></li>
+                        <li><a href="#tab_2_modules_storage{{ $details->itemID }}" data-toggle="tab">Storage ({{ count($starbase_modules[$details->itemID]['storage']) }})</a></li>
+                        <li><a href="#tab_3_modules_other{{ $details->itemID }}" data-toggle="tab">Other ({{ count($starbase_modules[$details->itemID]['other']) }})</a></li>
+                      </ul>
+                      <div class="tab-content">
 
-                          If we are not at a tower, continue
-                        --}}
-                        @if ($item['typeID'] <> $details->typeID)
-                          <tr>
-                            <td>
-                              <b>{{ $item['typeName'] }}</b>
+                        {{-- tab to display modules in the industry group --}}
+                        <div class="tab-pane active" id="tab_1_modules_industry{{ $details->itemID }}">
 
-                              {{-- if the module has been given a name, show it --}}
-                              @if ($item['typeName'] <> $item['itemName'])
-                              <small class="text-muted">{{ $item['itemName'] }}</small>
-                              @endif
-                            </td>
-                            <td>
-                              {{--
-                                Here we will count the total m3 for everything in this module.
-                                We will start off by making the total_size 0, and then adding the
-                                volume of the item inside the module to it.
-                              --}}
-                              {{-- */ $total_size = 0 /* --}}
-                              @if (isset($item_contents[$item['itemID']]))
+                          @if(count($starbase_modules[$details->itemID]['industry']) <= 0)
+                            No modules in this category.
+                          @else
 
-                                @if (count($item_contents[$item['itemID']]) > 1)
-                                  <ul class="list-unstyled">
-                                    <li class="nav-header text-muted pull-right">{{ count($item_contents[$item['itemID']]) }} Items</li>
+                            @foreach( $starbase_modules[$details->itemID]['industry'] as $module_group_name => $modules)
 
-                                    @foreach ($item_contents[$item['itemID']] as $contents)
+                              <div class="panel-group" id="accordion_modules_{{ $details->itemID }}_{{ studly_case($module_group_name) }}" role="tablist" aria-multiselectable="true">
 
-                                      <li>
-                                        <img src='//image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
-                                        <b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
-                                        {{-- add the volume --}}
-                                        {{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}
-                                      </li>
+                                <div class="panel panel-default">
+                                  <div class="panel-heading" role="tab" id="headingOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}">
+                                    <h4 class="panel-title">
+                                      <a data-toggle="collapse" data-parent="#accordion_modules_{{ $details->itemID }}_{{ studly_case($module_group_name) }}" href="#collapseOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}" aria-expanded="true" aria-controls="collapseOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}">
+                                        {{ str_plural($module_group_name) }} <span class="pull-right"><small>{{ count($modules) }} module(s) in group</small></span>
+                                      </a>
+                                    </h4>
+                                  </div>
+                                  <div id="collapseOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}">
+                                    <div class="panel-body">
 
-                                    @endforeach
+                                      {{-- Now we will loop over the modules in this group --}}
+                                      @foreach($modules as $module_id => $module_content)
 
-                                  </ul>
-                                @else
+                                        <ul class="list-unstyled">
+                                          <li>
+                                            <img src='//image.eveonline.com/Type/{{ $module_content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+                                            <b>{{ $module_group_name }}</b>
+                                             @if(!is_null($module_content['module_name']))
+                                              <span class="text-muted">(called {{ $module_content['module_name'] }})</span>
+                                             @endif
+                                            @if($module_content['capacity'] > 0)
+                                              is currently <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
+                                              with {{ count($module_content['contents']) }} item(s).
+                                            @endif
+                                          </li>
+                                        </ul>
 
-                                  @foreach ($item_contents[$item['itemID']] as $contents)
+                                        @if(count($module_content['contents']) > 0 && $module_content['capacity'] > 0)
 
-                                    <img src='//image.eveonline.com/Type/{{ $contents['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
-                                    <b>{{ $contents['quantity']}} x</b> {{ $contents['name'] }}
-                                          {{-- add the volume --}}
-                                          {{-- */ $total_size = $total_size + ($contents['quantity'] * $contents['volume']) /* --}}
-                                  @endforeach
+                                          {{-- items inside of the module --}}
+                                          <table class="table table-condensed table-hover">
+                                            <tbody>
+                                              <tr>
+                                                <th>#</th>
+                                                <th>Type</th>
+                                                <th>% of Use</th>
+                                              </tr>
 
-                                @endif
-                              @endif
+                                              {{-- the final loop is to show the items inside of the module --}}
+                                              @foreach($module_content['contents'] as $content_item)
 
-                              </td>
-                              <td>
-                                {{-- check if there is a capacity larger that 0. Some modules, like hardners have 0 capacity --}}
-                                @if ($item['capacity'] > 0)
+                                                <tr>
+                                                  <td>{{ $content_item['quantity'] }}</td>
+                                                  <td>
+                                                    <img src='//image.eveonline.com/Type/{{ $content_item['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+                                                    {{ $content_item['name'] }}
+                                                  </td>
+                                                  <td>{{ round(( ($content_item['quantity'] * $content_item['volume']) / $module_content['used_volume']) * 100, 0) }}%</td>
+                                                </tr>
 
-                                  {{--
-                                    Some Silos have bonusses to silo capacity, so lets take that into account here.
-                                    If a silo/coupling array is bonusable, add the bonus to the total capacity
-                                  --}}
-                                  @if (array_key_exists($details->typeID, $tower_cargo_bonusses) && (in_array($item['typeID'], $cargo_size_bonusable_modules)))
-                                    <span class="pull-right">
-                                      {{ round(($total_size / ( $item['capacity'] *= (1 + $tower_cargo_bonusses[$details->typeID] / 100))) * 100) }}%
-                                    </span>
-                                  @else   {{-- We have a non bonused module --}}
-                                    <span class="pull-right">
-                                      {{ $percentage = round( ($total_size / $item['capacity']) * 100) }}%
-                                    </span>
-                                  @endif
-                                @endif
-                              </td>
-                            </tr>
+                                              @endforeach
 
-                        @endif
+                                            </tbody>
+                                          </table>
 
-                      @endforeach
+                                          <ul class="list-unstyled">
+                                            <li>
+                                              Storage capacity is <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
+                                              with {{ $module_content['used_volume'] }}m3 / {{ $module_content['capacity'] }}m3 in use by {{ count($module_content['contents']) }} item(s).<br>
+                                              @if($module_content['cargo_size_bonus']) <span class="text-green">This module is receiving a cargo size bonus from the tower type.</span> @endif
+                                            </li>
+                                            <li>
+                                              <div class="progress">
+                                                <div class="progress-bar progress-bar-default" style="width: {{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%"></div>
+                                              </div>
+                                            </li>
+                                          </ul>
 
-                    @endif
+                                        @endif  {{-- contents count --}}
 
-                  </tbody>
-                </table>
-              </div><!-- /.tab-pane -->
+                                        @if(!next($modules) === false)
+                                            <hr> <!-- divide modules -->
+                                        @endif
+
+                                      @endforeach {{-- group modules --}}
+
+                                    </div>
+                                  </div>
+                                </div>
+                                <br>
+
+                              </div> <!-- ./panel-group -->
+
+                            @endforeach {{-- starbase idustry modules --}}
+
+                          @endif
+
+                        </div><!-- /.tab-pane -->
+
+                        {{-- tab to display modules in the storage group --}}
+                        <div class="tab-pane" id="tab_2_modules_storage{{ $details->itemID }}">
+
+                          @if(count($starbase_modules[$details->itemID]['storage']) <= 0)
+                            No modules in this category.
+                          @else
+
+                            @foreach( $starbase_modules[$details->itemID]['storage'] as $module_group_name => $modules)
+
+                              <div class="panel-group" id="accordion_modules_{{ $details->itemID }}_{{ studly_case($module_group_name) }}" role="tablist" aria-multiselectable="true">
+
+                                <div class="panel panel-default">
+                                  <div class="panel-heading" role="tab" id="headingOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}">
+                                    <h4 class="panel-title">
+                                      <a data-toggle="collapse" data-parent="#accordion_modules_{{ $details->itemID }}_{{ studly_case($module_group_name) }}" href="#collapseOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}" aria-expanded="true" aria-controls="collapseOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}">
+                                        {{ str_plural($module_group_name) }} <span class="pull-right"><small>{{ count($modules) }} module(s) in group</small></span>
+                                      </a>
+                                    </h4>
+                                  </div>
+                                  <div id="collapseOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}">
+                                    <div class="panel-body">
+
+                                      {{-- Now we will loop over the modules in this group --}}
+                                      @foreach($modules as $module_id => $module_content)
+
+                                        <ul class="list-unstyled">
+                                          <li>
+                                            <img src='//image.eveonline.com/Type/{{ $module_content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+                                            <b>{{ $module_group_name }}</b>
+                                             @if(!is_null($module_content['module_name']))
+                                              <span class="text-muted">(called {{ $module_content['module_name'] }})</span>
+                                             @endif
+                                            @if($module_content['capacity'] > 0)
+                                              is currently <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
+                                              with {{ count($module_content['contents']) }} item(s).
+                                            @endif
+                                          </li>
+                                        </ul>
+
+                                        @if(count($module_content['contents']) > 0 && $module_content['capacity'] > 0)
+
+                                          {{-- items inside of the module --}}
+                                          <table class="table table-condensed table-hover">
+                                            <tbody>
+                                              <tr>
+                                                <th>#</th>
+                                                <th>Type</th>
+                                                <th>% of Use</th>
+                                              </tr>
+
+                                              {{-- the final loop is to show the items inside of the module --}}
+                                              @foreach($module_content['contents'] as $content_item)
+
+                                                <tr>
+                                                  <td>{{ $content_item['quantity'] }}</td>
+                                                  <td>
+                                                    <img src='//image.eveonline.com/Type/{{ $content_item['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+                                                    {{ $content_item['name'] }}
+                                                  </td>
+                                                  <td>{{ round(( ($content_item['quantity'] * $content_item['volume']) / $module_content['used_volume']) * 100, 0) }}%</td>
+                                                </tr>
+
+                                              @endforeach
+
+                                            </tbody>
+                                          </table>
+
+                                          <ul class="list-unstyled">
+                                            <li>
+                                              Storage capacity is <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
+                                              with {{ $module_content['used_volume'] }}m3 / {{ $module_content['capacity'] }}m3 in use by {{ count($module_content['contents']) }} item(s).<br>
+                                              @if($module_content['cargo_size_bonus']) <span class="text-green">This module is receiving a cargo size bonus from the tower type.</span> @endif
+                                            </li>
+                                            <li>
+                                              <div class="progress">
+                                                <div class="progress-bar progress-bar-default" style="width: {{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%"></div>
+                                              </div>
+                                            </li>
+                                          </ul>
+
+                                        @endif  {{-- contents count --}}
+
+                                        @if(!next($modules) === false)
+                                            <hr> <!-- divide modules -->
+                                        @endif
+
+                                      @endforeach {{-- group modules --}}
+
+                                    </div>
+                                  </div>
+                                </div>  <!-- ./panel -->
+                                <br>
+
+                              </div> <!-- ./panel-group -->
+
+                            @endforeach {{-- starbase storage modules --}}
+
+                          @endif
+
+                        </div><!-- /.tab-pane -->
+
+                        {{-- tab to display uncatagorized modules --}}
+                        <div class="tab-pane" id="tab_3_modules_other{{ $details->itemID }}">
+
+                          @if(count($starbase_modules[$details->itemID]['other']) <= 0)
+                            No modules in this category.
+                          @else
+
+                            @foreach( $starbase_modules[$details->itemID]['other'] as $module_group_name => $modules)
+
+                              <div class="panel-group" id="accordion_modules_{{ $details->itemID }}_{{ studly_case($module_group_name) }}" role="tablist" aria-multiselectable="true">
+
+                                <div class="panel panel-default">
+                                  <div class="panel-heading" role="tab" id="headingOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}">
+                                    <h4 class="panel-title">
+                                      <a data-toggle="collapse" data-parent="#accordion_modules_{{ $details->itemID }}_{{ studly_case($module_group_name) }}" href="#collapseOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}" aria-expanded="true" aria-controls="collapseOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}">
+                                        {{ str_plural($module_group_name) }} <span class="pull-right"><small>{{ count($modules) }} module(s) in group</small></span>
+                                      </a>
+                                    </h4>
+                                  </div>
+                                  <div id="collapseOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne{{ $details->itemID }}_{{ studly_case($module_group_name) }}">
+                                    <div class="panel-body">
+
+                                      {{-- Now we will loop over the modules in this group --}}
+                                      @foreach($modules as $module_id => $module_content)
+
+                                        <ul class="list-unstyled">
+                                          <li>
+                                            <img src='//image.eveonline.com/Type/{{ $module_content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+                                            <b>{{ $module_group_name }}</b>
+                                             @if(!is_null($module_content['module_name']))
+                                              <span class="text-muted">(called {{ $module_content['module_name'] }})</span>
+                                             @endif
+                                            @if($module_content['capacity'] > 0)
+                                              is currently <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
+                                              with {{ count($module_content['contents']) }} item(s).
+                                            @endif
+                                          </li>
+                                        </ul>
+
+                                        @if(count($module_content['contents']) > 0 && $module_content['capacity'] > 0)
+
+                                          {{-- items inside of the module --}}
+                                          <table class="table table-condensed table-hover">
+                                            <tbody>
+                                              <tr>
+                                                <th>#</th>
+                                                <th>Type</th>
+                                                <th>% of Use</th>
+                                              </tr>
+
+                                              {{-- the final loop is to show the items inside of the module --}}
+                                              @foreach($module_content['contents'] as $content_item)
+
+                                                <tr>
+                                                  <td>{{ $content_item['quantity'] }}</td>
+                                                  <td>
+                                                    <img src='//image.eveonline.com/Type/{{ $content_item['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+                                                    {{ $content_item['name'] }}
+                                                  </td>
+                                                  <td>{{ round(( ($content_item['quantity'] * $content_item['volume']) / $module_content['used_volume']) * 100, 0) }}%</td>
+                                                </tr>
+
+                                              @endforeach
+
+                                            </tbody>
+                                          </table>
+
+                                          <ul class="list-unstyled">
+                                            <li>
+                                              Storage capacity is <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
+                                              with {{ $module_content['used_volume'] }}m3 / {{ $module_content['capacity'] }}m3 in use by {{ count($module_content['contents']) }} item(s).<br>
+                                              @if($module_content['cargo_size_bonus']) <span class="text-green">This module is receiving a cargo size bonus from the tower type.</span> @endif
+                                            </li>
+                                            <li>
+                                              <div class="progress">
+                                                <div class="progress-bar progress-bar-default" style="width: {{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%"></div>
+                                              </div>
+                                            </li>
+                                          </ul>
+
+                                        @endif  {{-- contents count --}}
+
+                                        @if(!next($modules) === false)
+                                            <hr> <!-- divide modules -->
+                                        @endif
+
+                                      @endforeach {{-- group modules --}}
+
+                                    </div>
+                                  </div>
+                                </div>  <!-- ./panel -->
+                                <br>
+
+                              </div> <!-- ./panel-group -->
+
+                            @endforeach {{-- starbase other modules --}}
+
+                          @endif
+
+                        </div><!-- /.tab-pane -->
+                      </div><!-- /.tab-content -->
+
+                  </div> <!-- ./tabs for module groups -->
+
+                @endif
+              </div>  <!-- ./tab-pane -->
+
             </div><!-- /.tab-content -->
           </div>
         </div><!-- /.col -->

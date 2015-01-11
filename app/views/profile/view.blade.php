@@ -52,6 +52,15 @@
             </div>
           </div>
 
+          <!-- Select Basic -->
+          <div class="form-group">
+            <label class="col-md-4 control-label" for="selectbasic">Email Notifications</label>
+            <div class="col-md-4">
+              {{ Form::select('email_notifications', array('true' => 'Yes', 'false' => 'No'), $settings['email_notifications'], array('class' => 'form-control')) }}
+              <span class="help-block">Receive copies of notifications via Email</span>
+            </div>
+          </div>
+
           <!-- Button -->
           <div class="form-group">
             <label class="col-md-4 control-label" for="singlebutton"></label>

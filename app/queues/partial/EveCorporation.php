@@ -127,6 +127,10 @@ class Corporation
             $job_record->save();
             EveApi\Corporation\StarbaseDetail::Update($keyID, $vCode);
 
+            $job_record->output = 'Started Titles Update';
+            $job_record->save();
+            EveApi\Corporation\Titles::Update($keyID, $vCode);
+
             $job_record->status = 'Done';
             $job_record->output = null;
             $job_record->save();

@@ -4,11 +4,17 @@
 
 @section('page_content')
 
-  <div class="box">
-    <div class="box-header">
-      <h3 class="box-title">Roles</h3>
-    </div>
-    <div class ="box-body">
+<div class="nav-tabs-custom">
+  <ul class="nav nav-tabs">
+    <li class="active">
+      <a href="#roles" data-toggle="tab">Roles</a>
+    </li>
+    <li>
+      <a href="#titles" data-toggle="tab">Titles</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="roles">
       <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
           <li class="active"><a href="#tab_roles_general" data-toggle="tab">Roles General</a></li>
@@ -45,7 +51,13 @@
                           <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
                           {{ $e->name }}
                         </td>
-                        <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList($e->roleName) }}</td>
+                        <td>
+                          <ul>
+                            @foreach( App\Services\Helpers\Helpers::getSecRolesArray($e->roleID, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        </td>
                       </tr>
 
                     @endforeach
@@ -79,7 +91,13 @@
                           <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
                           {{ $e->name }}
                         </td>
-                        <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList($e->roleName) }}</td>
+                        <td>
+                          <ul>
+                            @foreach( App\Services\Helpers\Helpers::getSecRolesArray($e->roleID, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        </td>
                       </tr>
 
                     @endforeach
@@ -113,7 +131,13 @@
                           <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
                           {{ $e->name }}
                         </td>
-                        <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList($e->roleName) }}</td>
+                        <td>
+                          <ul>
+                            @foreach( App\Services\Helpers\Helpers::getSecRolesArray($e->roleID, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        </td>
                       </tr>
 
                     @endforeach
@@ -147,7 +171,13 @@
                           <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
                           {{ $e->name }}
                         </td>
-                        <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList($e->roleName) }}</td>
+                        <td>
+                          <ul>
+                            @foreach( App\Services\Helpers\Helpers::getSecRolesArray($e->roleID, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        </td>
                       </tr>
 
                     @endforeach
@@ -181,7 +211,13 @@
                           <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
                           {{ $e->name }}
                         </td>
-                        <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList($e->roleName) }}</td>
+                        <td>
+                          <ul>
+                            @foreach( App\Services\Helpers\Helpers::getSecRolesArray($e->roleID, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        </td>
                       </tr>
 
                     @endforeach
@@ -215,7 +251,13 @@
                           <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
                           {{ $e->name }}
                         </td>
-                        <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList($e->roleName) }}</td>
+                        <td>
+                          <ul>
+                            @foreach( App\Services\Helpers\Helpers::getSecRolesArray($e->roleID, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        </td>
                       </tr>
 
                     @endforeach
@@ -249,7 +291,13 @@
                           <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
                           {{ $e->name }}
                         </td>
-                        <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList($e->roleName) }}</td>
+                        <td>
+                          <ul>
+                            @foreach( App\Services\Helpers\Helpers::getSecRolesArray($e->roleID, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        </td>
                       </tr>
 
                     @endforeach
@@ -283,7 +331,13 @@
                           <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
                           {{ $e->name }}
                         </td>
-                        <td>{{ App\Services\Helpers\Helpers::makePrettyMemberRoleList($e->roleName) }}</td>
+                        <td>
+                          <ul>
+                            @foreach( App\Services\Helpers\Helpers::getSecRolesArray($e->roleID, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        </td>
                       </tr>
 
                     @endforeach
@@ -339,7 +393,153 @@
           </div><!-- /.tab-pane -->
         </div><!-- /.tab-content -->
       </div>
-    </div><!-- /.box-body -->
-  </div><!-- /.box -->
+    </div>
+    <div class="tab-pane" id="titles">
+      <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+          @foreach($member_titles_map as $title)
+            @if ( reset($member_titles_map) === $title)
+              <li class="active"><a href="#tab_title_{{ $title->titleID }}" data-toggle="tab">{{ $title->titleName }}</a></li>
+            @else
+              <li><a href="#tab_title_{{ $title->titleID }}" data-toggle="tab">{{ $title->titleName }}</a></li>
+            @endif
+          @endforeach
+        </ul>
+        <div class="tab-content">
+        @foreach($member_titles_map as $title)
+          @if ( reset($member_titles_map) === $title)
+            <div class="tab-pane active" id="tab_title_{{ $title->titleID }}">
+          @else
+            <div class="tab-pane" id="tab_title_{{ $title->titleID }}">
+          @endif
+            <div class="box box-solid box-primary">
+              <div class="box-header">
+                <h3 class="box-title">{{ $title->titleName }}</h3>
+              </div>
+              <div class="box-body no-padding">
+                <table  class="table table-condensed table-hover">
+                  <thead>
+                    <tr>
+                      <th width="20%"></th>
+                      <th>Assigned Permissions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Roles</td>
+                      <td>
+                        @if(count(App\Services\Helpers\Helpers::getSecRolesArray($title->roles, $corporationID)))
+                          <ul>
+                            @foreach(App\Services\Helpers\Helpers::getSecRolesArray($title->roles, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        @endif
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Roles (HQ)</td>
+                      <td>
+                        @if(count(App\Services\Helpers\Helpers::getSecRolesArray($title->rolesAtHQ, $corporationID)))
+                          <ul>
+                            @foreach(App\Services\Helpers\Helpers::getSecRolesArray($title->rolesAtHQ, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        @endif
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Roles (Base)</td>
+                      <td>
+                        @if(count(App\Services\Helpers\Helpers::getSecRolesArray($title->rolesAtBase, $corporationID)))
+                          <ul>
+                            @foreach(App\Services\Helpers\Helpers::getSecRolesArray($title->rolesAtBase, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        @endif
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Roles (other)</td>
+                      <td>
+                        @if(count(App\Services\Helpers\Helpers::getSecRolesArray($title->rolesAtOther, $corporationID)))
+                          <ul>
+                            @foreach(App\Services\Helpers\Helpers::getSecRolesArray($title->rolesAtOther, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        @endif
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Grantable Roles</td>
+                      <td>
+                        @if(count(App\Services\Helpers\Helpers::getSecRolesArray($title->grantableRoles, $corporationID)))
+                          <ul>
+                            @foreach(App\Services\Helpers\Helpers::getSecRolesArray($title->grantableRoles, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        @endif
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Grantable Roles (HQ)</td>
+                      <td>
+                        @if(count(App\Services\Helpers\Helpers::getSecRolesArray($title->grantableRolesAtHQ, $corporationID)))
+                          <ul>
+                            @foreach(App\Services\Helpers\Helpers::getSecRolesArray($title->grantableRolesAtHQ, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        @endif
+                      </td>     
+                    </tr>
+                    <tr>
+                      <td>Grantable Roles (Base)</td>
+                      <td>
+                        @if(count(App\Services\Helpers\Helpers::getSecRolesArray($title->grantableRolesAtBase, $corporationID)))
+                          <ul>
+                            @foreach(App\Services\Helpers\Helpers::getSecRolesArray($title->grantableRolesAtBase, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        @endif
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Grantable Roles (Other)</td>
+                      <td>
+                        @if(count(App\Services\Helpers\Helpers::getSecRolesArray($title->grantableRolesAtOther, $corporationID)))
+                          <ul>
+                            @foreach(App\Services\Helpers\Helpers::getSecRolesArray($title->grantableRolesAtOther, $corporationID) as $e)
+                              <li>{{ $e }}</li>
+                            @endforeach
+                          </ul>
+                        @endif
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div> <!-- ./box-body -->
+              @if(count(App\Services\Helpers\Helpers::getMembersForTitle($corporationID, $title->titleID)))
+                <div class="box-footer">
+                  <p>Assigned Member(s):</p>
+                    <ul>
+                      @foreach(App\Services\Helpers\Helpers::getMembersForTitle($corporationID, $title->titleID) as $e)
+                        <li><a href="{{ action('CharacterController@getView', array('characterID' => $e->characterID)) }}">{{ $e-> name }}</a></li>
+                      @endforeach
+                    </ul>
+                </div>
+              @endif
+            </div><!-- ./box -->
+          </div>
+        @endforeach
+      </div>
+    </div>
+  </div><!-- /.tab-content -->
+</div>
 
 @stop

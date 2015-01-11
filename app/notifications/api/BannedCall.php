@@ -59,9 +59,13 @@ class BannedCall extends BaseNotify
                 // Compile the full notification
                 $notification_type = 'API';
                 $notification_title = 'Banned Call';
-                $notification_text = 'An API key as triggered a banned call. Owner ID: ' .
-                        $banned_call->ownerID . ', Call: ' . $banned_call->api. ', Scope: ' .
-                        $banned_call->scope. ', Reason: ' . $banned_call->reason;
+                $notification_text = 'The SeAT backend has banned the ' . $banned_call->scope . '\\'. $banned_call->api .
+                    ' API call for key ' . $banned_call->ownerID . '. Reason: ' . $banned_call->reason . PHP_EOL .
+                    'Key characters: ' . PHP_EOL;
+
+                // Add some information about the characters on this key
+                foreach (\EveAccountAPIKeyInfoCharacters::where('keyID', $banned_call->ownerID)->get() as $character)
+                    $notification_text .= ' - ' . $character->characterName . PHP_EOL;
 
                 // Send the notification
                 BaseNotify::sendNotification($super_user->id, $notification_type, $notification_title, $notification_text);

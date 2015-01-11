@@ -6,6 +6,8 @@ The following guide attempts to be a very generic walk through for upgrading SeA
 
 ## Upgrading
 
+*Note:* Since version 0.13.0, a new experimental SeAT updater was added that should automate most of the below work. This upgrade option is **not** aware of _any_ version specific upgrade steps and these should still be read before using this tool. For now, the SeAT updater should be considered experimental. If you wish to use this instead of the below manual steps, issue the `php artisan seat:update` command.
+
 * Ensure you have backups ready :D
 * Change directory to your installs root. This may be something like `/var/www/seat`.
 * Place your application into maintenance mode:

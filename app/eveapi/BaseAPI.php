@@ -491,7 +491,7 @@ class BaseApi
     |--------------------------------------------------------------------------
     |
     | Find the planetID and planetName closest to the given coordinates
-    | like findClosestMoon(), but for Planets
+    | like findClosestMoon(), but for Planets and only Customs Offices
     |
     */
 
@@ -499,7 +499,7 @@ class BaseApi
     {
 
         // Get the system location of the itemID
-        $systemID = \EveCorporationAssetList::where('itemID', '=', $itemID)->first();
+        $office = \EveCorporationCustomsOffices::where('itemID', '=', $itemID)->first();
         $nearest_distance = INF; // Placeholder amount
 
         // Prepare some empty responses
@@ -507,7 +507,7 @@ class BaseApi
         $calculatedSystemName = null;
 
         // Find the closest planetID to $x, $x & $z. groupID 7 are planets in the SDE
-        foreach (\EveMapDenormalize::where('groupID', '=', 7)->where('solarSystemID', '=', $systemID->locationID)->get() as $system) {
+        foreach (\EveMapDenormalize::where('groupID', '=', 7)->where('solarSystemID', '=', $office->solarSystemID)->get() as $system) {
 
             // So it looks there are 2 ways of determining the nearest celestial. The sqrt one is
             // aparently a lot more accurate, versus the manhattan one that can be seen in the ECM

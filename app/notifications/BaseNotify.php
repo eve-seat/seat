@@ -25,6 +25,8 @@ SOFTWARE.
 
 namespace Seat\Notifications;
 
+use App\Services\Settings\SettingHelper;
+
 /*
 |--------------------------------------------------------------------------
 | BaseNotify
@@ -124,6 +126,27 @@ class BaseNotify
             $notification->text = $text;
             $notification->hash = $hash;
             $notification->save();
+
+            // Check if the user is configured to receive the
+            // notifications via email
+            if (SettingHelper::getSetting('email_notifications', false, $user_id) == 'true') {
+
+                // Prepare data to be sent along with the email. These
+                // are accessed by their keys in the email template
+                $data = array(
+                    'type' => $type,
+                    'title' => $title,
+                    'text' => $text,
+                    'notification_id' => $notification->id
+                );
+
+                // Send the notifications email
+                \Mail::send('emails.notifications.notify', $data, function($message) use ($user_id, $title) {
+
+                    $message->to(\Auth::findUserById($user_id)->email, \Auth::findUserById($user_id)->username)
+                        ->subject('New SeAT ' . $title . ' notification.');
+                });
+            }
 
             return true;
 

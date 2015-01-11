@@ -23,14 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-namespace App\Services\Validators;
-
-class UserSettingValidator extends Validator
+class EveCorporationTitlemap extends Eloquent
 {
-
-    public static $rules = array(
-        'color_scheme'  => 'required|in:blue,black',
-        'main_character_id' => 'required|numeric',
-        'email_notifications' => 'required|in:true,false',
-    );
+    protected $table = 'corporation_titlemap';
 }

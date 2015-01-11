@@ -109,6 +109,8 @@ class SeatInstall extends Command
             'smtp_hostname'     => '127.0.0.1',
             'smtp_username'     => null,
             'smtp_password'     => null,
+            'smtp_port'         => 25,
+            'smtp_encryption'   => null
         );
 
         $this->info('[+] Welcome to the SeAT v' . \Config::get('seat.version') . ' installer!');
@@ -267,6 +269,8 @@ class SeatInstall extends Command
                 $configuration['smtp_hostname'] = $this->ask('[?] SMTP Hostname (' . $configuration['smtp_hostname'] .'):') ? : $configuration['smtp_hostname'];
                 $configuration['smtp_username'] = $this->ask('[?] SMTP Username (' . $configuration['smtp_username'] .'):') ? : $configuration['smtp_username'];
                 $configuration['smtp_password'] = $this->secret('[?] SMTP Password:') ? : $configuration['smtp_password'];
+                $configuration['smtp_port'] = $this->ask('[?] SMTP Port (' . $configuration['smtp_port'] . '):') ? : $configuration['smtp_port'];
+                $configuration['smtp_encryption'] = $this->ask('[?] SMTP Encryption (' . $configuration['smtp_encryption'] . '):') ? : $configuration['smtp_encryption'];
             }
 
             // Print the values and get confirmation that they are correct
@@ -281,6 +285,8 @@ class SeatInstall extends Command
                 $this->line('[+]    SMTP Host: ' . $configuration['smtp_hostname']);
                 $this->line('[+]    SMTP Username: ' . $configuration['smtp_username']);
                 $this->line('[+]    SMTP Password: ' . str_repeat('*', strlen($configuration['smtp_password'])));
+                $this->line('[+]    SMTP Port: ' . $configuration['smtp_port']);
+                $this->line('[+]    SMTP Encryption: ' . $configuration['smtp_encryption']);
             }
             $this->line('');
 

@@ -58,7 +58,38 @@ class Fuel extends BaseNotify
             return;
 
         // Next, grab the list of starbases that we are aware of
-        $starbases = \EveCorporationStarbaseDetail::all();
+        $starbases = \DB::table('corporation_starbaselist')
+            ->select(
+                'corporation_starbaselist.corporationID',
+                'corporation_starbaselist.itemID',
+                'corporation_starbaselist.moonID',
+                'corporation_starbaselist.state',
+                'corporation_starbaselist.stateTimeStamp',
+                'corporation_starbaselist.onlineTimeStamp',
+                'corporation_starbaselist.onlineTimeStamp',
+                'corporation_starbasedetail.useStandingsFrom',
+                'corporation_starbasedetail.onAggression',
+                'corporation_starbasedetail.onCorporationWar',
+                'corporation_starbasedetail.allowCorporationMembers',
+                'corporation_starbasedetail.allowAllianceMembers',
+                'corporation_starbasedetail.fuelBlocks',
+                'corporation_starbasedetail.strontium',
+                'corporation_starbasedetail.starbaseCharter',
+                'invTypes.typeID',
+                'invTypes.typeName',
+                'mapDenormalize.itemName',
+                'mapDenormalize.security',
+                'invNames.itemName',
+                'map_sovereignty.solarSystemName',
+                'corporation_starbasedetail.updated_at'
+            )
+            ->join('corporation_starbasedetail', 'corporation_starbaselist.itemID', '=', 'corporation_starbasedetail.itemID')
+            ->join('mapDenormalize', 'corporation_starbaselist.locationID', '=', 'mapDenormalize.itemID')
+            ->join('invNames', 'corporation_starbaselist.moonID', '=', 'invNames.itemID')
+            ->join('invTypes', 'corporation_starbaselist.typeID', '=', 'invTypes.typeID')
+            ->leftJoin('map_sovereignty', 'corporation_starbaselist.locationID', '=', 'map_sovereignty.solarSystemID')
+            ->orderBy('invNames.itemName', 'asc')
+            ->get();
 
         // To determine the fuel needed, we need to get some
         // values out there that tell us *how* much fuel
@@ -131,29 +162,17 @@ class Fuel extends BaseNotify
             if (strpos($starbase->typeName, 'Small') !== false) {
 
                 $stront_usage = $stront_small;
-
-                if ($sov_tower)
-                    $usage = $sov_small_usage;
-                else
-                    $usage = $small_usage;
+                $usage = $sov_tower ? $sov_small_usage : $small_usage;
 
             } elseif (strpos($starbase->typeName, 'Medium') !== false) {
 
                 $stront_usage = $stront_medium;
-
-                if ($sov_tower)
-                    $usage = $sov_medium_usage;
-                else
-                    $usage = $medium_usage;
+                $usage = $sov_tower ? $sov_medium_usage : $medium_usage;
 
             } else {
 
                 $stront_usage = $stront_large;
-
-                if ($sov_tower)
-                    $usage = $sov_large_usage;
-                else
-                    $usage = $large_usage;
+                $usage = $sov_tower ? $sov_large_usage : $large_usage;
 
             }
 
@@ -181,17 +200,18 @@ class Fuel extends BaseNotify
                         // Ok! Time to finally get to pushing the
                         // notification out! :D
 
-                        // We will make sure that we don't spam the user
-                        // with notifications, so lets hash the event
-                        // and ensure that its not present in the
-                        // database yet
+                        // Get the corporation name for the notification
+                        $corporation_name = \DB::table('account_apikeyinfo_characters')
+                            ->where('corporationID', $starbase->corporationID)
+                            ->pluck('corporationName');
 
                         // Prepare the total notification
                         $notification_type = 'Starbase';
-                        $notification_title = 'Low Fuel!';
-                        $notification_text = 'One of your starbases has only ' .
-                            $starbase->fuelBlocks . ' fuel blocks left, this will last for ' .
-                            \Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->diffForHumans();
+                        $notification_title = 'Low Fuel Reserve';
+                        $notification_text = 'The ' . $starbase->typeName . ' at ' . $starbase->itemName .
+                            ' owned by ' . $corporation_name . ' has ' . $starbase->fuelBlocks .
+                            ' fuel blocks left. The estimated offline time is ' .
+                            \Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->diffForHumans() . '.';
 
                         // Send the notification
                         BaseNotify::sendNotification($pos_user->id, $notification_type, $notification_title, $notification_text);
@@ -201,18 +221,14 @@ class Fuel extends BaseNotify
             }   // End fuel left over if()
 
             // Check how many starbase charters are left. We
-            // will hace to check the security of the
+            // will have to check the security of the
             // anchored system to ensure we dont
             // spazz out and notifify about
-            // 0sec towers
-            $starbase_sec = \DB::table('mapDenormalize')
-                ->join('corporation_starbaselist', 'corporation_starbaselist.locationID', '=', 'mapDenormalize.solarSystemID')
-                ->where('corporation_starbaselist.itemID', $starbase->itemID)
-                ->pluck('mapDenormalize.security');
-
+            // 0sec towers.
+            //
             // If the security status of the system the tower
             // is anchored in is > 5, check the charters
-            if ($starbase_sec >= 5) {
+            if ($starbase->security >= 5) {
 
                 if(Carbon\Carbon::now()->addHours($starbase->starbaseCharter / 1)->lte(Carbon\Carbon::now()->addDays(3))) {
 
@@ -231,17 +247,18 @@ class Fuel extends BaseNotify
                             // Ok! Time to finally get to pushing the
                             // notification out! :D
 
-                            // We will make sure that we don't spam the user
-                            // with notifications, so lets hash the event
-                            // and ensure that its not present in the
-                            // database yet
+                            // Get the corporation name for the notification
+                            $corporation_name = \DB::table('account_apikeyinfo_characters')
+                                ->where('corporationID', $starbase->corporationID)
+                                ->pluck('corporationName');
 
                             // Prepare the total notification
                             $notification_type = 'Starbase';
-                            $notification_title = 'Low Charter Count!';
-                            $notification_text = 'One of your starbases has only ' .
-                                $starbase->starbaseCharter . ' starbase charters left, this will last for ' .
-                                \Carbon\Carbon::now()->addHours($starbase->starbaseCharter / 1)->diffForHumans();
+                            $notification_title = 'Low Charter Reserve';
+                            $notification_text = 'The ' . $starbase->typeName . ' at ' . $starbase->itemName .
+                                ' owned by ' . $corporation_name . ' has ' . $starbase->fuelBlocks .
+                                ' starbase charters left. The estimated offline time is ' .
+                                \Carbon\Carbon::now()->addHours($starbase->starbaseCharter / 1)->diffForHumans() . '.';
 
                             // Send the notification
                             BaseNotify::sendNotification($pos_user->id, $notification_type, $notification_title, $notification_text);
@@ -249,7 +266,7 @@ class Fuel extends BaseNotify
                         }
                     }
                 }
-            }
+            }   // End charters left over if()
         }
     }
 }

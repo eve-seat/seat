@@ -56,14 +56,14 @@ class KeyCheck extends BaseNotify
             if($seat_key->isOk == 0) {
 
                 // We have a key that is not OK, find
-                // some people to tell about thits!
+                // some people to tell about this!
                 foreach(\Auth::findAllUsersWithAccess('superuser') as $super_user) {
 
                     // Compile the full notification
                     $notification_type = 'API';
                     $notification_title = 'Disabled Key';
-                    $notification_text = 'An API key is no longer okay. KeyID: '. $seat_key->keyID . ', vCode: ' .
-                            $seat_key->vCode . ', lastError: ' . $seat_key->lastError;
+                    $notification_text = 'The SeAT backend has disabled API key '. $seat_key->keyID . '. ' .
+                        'The last error was: ' . $seat_key->lastError;
 
                     // Send the Notification
                     BaseNotify::sendNotification($super_user->id, $notification_type, $notification_title, $notification_text);

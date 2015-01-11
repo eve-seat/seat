@@ -46,11 +46,12 @@
 
                   {{-- If we have some key information, then we have more to display. Lets do that --}}
                   @if (!empty($character_info) && array_key_exists($character->characterID, $character_info))
-                    <td>
-                      {{-- skillpoints --}}
-                      @if (!empty($character_info[$character->characterID]->skillPoints))
+                    {{-- skillpoints --}}
+                    @if (!empty($character_info[$character->characterID]->skillPoints))
+                      <td data-sort="{{ $character_info[$character->characterID]->skillPoints }}">
                         {{ number_format($character_info[$character->characterID]->skillPoints, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }}
                       @else
+                      <td data-sort="0">
                         Unknown
                       @endif
                     </td>

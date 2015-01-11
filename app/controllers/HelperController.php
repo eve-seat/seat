@@ -115,6 +115,7 @@ class HelperController extends BaseController
         // Get the skills from the database
         $skills = DB::table('invTypes')
             ->select(DB::raw('typeId as id'), DB::raw('typeName as text'))
+            ->where('published','=',true)
             ->whereIn('groupID', function($groupQuery) {
 
                 $groupQuery->select('groupID')

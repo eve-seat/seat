@@ -49,6 +49,7 @@ Artisan::add(new \Seat\Commands\SeatGroupSync);
 Artisan::add(new \Seat\Commands\SeatClearCache);
 Artisan::add(new \Seat\Commands\SeatUpdateSDE);
 Artisan::add(new \Seat\Commands\SeatInstall);
+Artisan::add(new \Seat\Commands\SeatUpdate);
 Artisan::add(new \Seat\Commands\SeatUserMigrate);
 
 // Scheduled SeAT Commands

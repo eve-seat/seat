@@ -13,7 +13,7 @@
           <p>From character: {{ $corp->characterName }}</p>
         </div>
         <div class="icon">
-          <img src="http://image.eveonline.com/Corporation/{{ $corp->corporationID }}_32.png" class="img-circle" />
+          <img src="{{ App\Services\Helpers\Helpers::generateEveImage($corp->corporationID, 32) }}" class="img-circle" />
         </div>
         <a href="{{ action('CorporationController@getKillMails', array('corporationID' => $corp->corporationID)) }}" class="small-box-footer">
           View Kill Mails <i class="fa fa-arrow-circle-right"></i>
