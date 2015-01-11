@@ -91,6 +91,9 @@
 
         <div class="col-md-4">
           <div class="nav-tabs-custom">
+          <div class="tab-content">
+            <h4><b>{{ $details->itemName }}</b></h4>
+          </div>
             <ul class="nav nav-tabs">
               <li class="active"><a href="#tab_1{{ $details->itemID }}" data-toggle="tab" id="{{ $details->itemID }}">Tower Info</a></li>
               <li><a href="#tab_2{{ $details->itemID }}" data-toggle="tab">Tower Configuration</a></li>
@@ -98,7 +101,6 @@
             </ul>
             <div class="tab-content">
               <div class="tab-pane active" id="tab_1{{ $details->itemID }}">
-                <h4><b>{{ $details->itemName }}</b></h4>
                 @if ($details->state == 4)
                   <span class="label label-success pull-right">{{ $tower_states[$details->state] }}</span>
                 @else
@@ -260,7 +262,6 @@
                                              @if(!is_null($module_content['module_name']))
                                               <span class="text-muted">(called {{ $module_content['module_name'] }})</span>
                                              @endif
-                                            at {{ $module_content['mapName'] }}
                                             @if($module_content['capacity'] > 0)
                                               is currently <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
                                               with {{ count($module_content['contents']) }} item(s).
@@ -311,14 +312,16 @@
 
                                         @endif  {{-- contents count --}}
 
-                                        <hr> <!-- devide modules -->
+                                        @if(!next($modules) === false)
+                                            <hr> <!-- divide modules -->
+                                        @endif
 
                                       @endforeach {{-- group modules --}}
 
                                     </div>
                                   </div>
-                                </div>  <!-- ./panel -->
-                                <hr>
+                                </div>
+                                <br>
 
                               </div> <!-- ./panel-group -->
 
@@ -360,7 +363,6 @@
                                              @if(!is_null($module_content['module_name']))
                                               <span class="text-muted">(called {{ $module_content['module_name'] }})</span>
                                              @endif
-                                            at {{ $module_content['mapName'] }}
                                             @if($module_content['capacity'] > 0)
                                               is currently <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
                                               with {{ count($module_content['contents']) }} item(s).
@@ -411,14 +413,16 @@
 
                                         @endif  {{-- contents count --}}
 
-                                        <hr> <!-- devide modules -->
+                                        @if(!next($modules) === false)
+                                            <hr> <!-- divide modules -->
+                                        @endif
 
                                       @endforeach {{-- group modules --}}
 
                                     </div>
                                   </div>
                                 </div>  <!-- ./panel -->
-                                <hr>
+                                <br>
 
                               </div> <!-- ./panel-group -->
 
@@ -460,7 +464,6 @@
                                              @if(!is_null($module_content['module_name']))
                                               <span class="text-muted">(called {{ $module_content['module_name'] }})</span>
                                              @endif
-                                            at {{ $module_content['mapName'] }}
                                             @if($module_content['capacity'] > 0)
                                               is currently <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
                                               with {{ count($module_content['contents']) }} item(s).
@@ -511,14 +514,16 @@
 
                                         @endif  {{-- contents count --}}
 
-                                        <hr> <!-- devide modules -->
+                                        @if(!next($modules) === false)
+                                            <hr> <!-- divide modules -->
+                                        @endif
 
                                       @endforeach {{-- group modules --}}
 
                                     </div>
                                   </div>
                                 </div>  <!-- ./panel -->
-                                <hr>
+                                <br>
 
                               </div> <!-- ./panel-group -->
 
