@@ -116,6 +116,12 @@ $(function() {
 
 });
 
+// Fix up the tooltips and popovers on AJAX response
+$(document).ajaxStop(function() {
+  $('[data-toggle="tooltip"]').tooltip();
+  $("[data-toggle='popover']").popover();
+});
+
 /*
  * SIDEBAR MENU
  * ------------
