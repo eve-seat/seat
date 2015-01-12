@@ -17,7 +17,14 @@
           </p>
           <p class="text-center lead">{{ $character->characterName }}</p>
         </div><!-- /.box-body -->
-
+        <div class="box-footer text-center">
+            <a target="_blank" title="View {{ $character->characterName }} on EVEBoard" data-toggle="tooltip" href="http://eveboard.com/pilot/{{ $character->characterName }}" ><img src="{{ URL::asset('assets/img/eveboard.png') }}"/></a>
+            <a target="_blank" title="View {{ $character->characterName }} on EVE Gate" data-toggle="tooltip" href="https://gate.eveonline.com/Profile/{{ $character->characterName }}" ><img src="{{ URL::asset('assets/img/evegate.png') }}"/></a>
+            <a target="_blank" title="View {{ $character->characterName }} on EVE-Kill" data-toggle="tooltip" href="https://eve-kill.net/?a=pilot_detail&plt_external_id={{ $character->characterID }}" ><img src="{{ URL::asset('assets/img/evekill.png') }}"/></a>
+            <a target="_blank" title="View {{ $character->characterName }} on EVE-Search" data-toggle="tooltip" href="http://eve-search.com/search/author/{{ $character->characterName }}" ><img src="{{ URL::asset('assets/img/evesearch.png') }}"/></a>
+            <a target="_blank" title="View {{ $character->characterName }} on EVE WHO" data-toggle="tooltip" href="http://evewho.com/pilot/{{ $character->characterName }}" ><img src="{{ URL::asset('assets/img/evewho.png') }}"/></a>
+            <a target="_blank" title="View {{ $character->characterName }} on zKillboard" data-toggle="tooltip" href="https://zkillboard.com/character/{{ $character->characterID }}/" ><img src="{{ URL::asset('assets/img/zkillboard.png') }}"/></a>
+        </div>
       </div><!-- ./box -->
     </div>
     <div class="col-md-4">
