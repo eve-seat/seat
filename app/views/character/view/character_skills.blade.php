@@ -500,6 +500,32 @@
                                     <tr>
                                         <td data-order="heavyinterdictioncruiser">Heavy Interdiction Cruisers</td>
                                         <td>
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) == 5)
+                                            <span class="label label-success">5</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) == 0)
+                                            <span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) }}</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+                                            <span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) }}</span>
+                                          @else
+                                            <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) }}</span>
+                                          @endif
+
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) > 0)
+                                            {{--*/$skill5 = false;/*--}}
+                                            @foreach( array(3335, 3334, 3332, 3333) as $s)
+                                              @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
+                                                {{--*/$skill5 = true;/*--}}
+                                              @endif
+                                            @endforeach
+                                            @if($skill5 == false)
+                                            <span class="label label-danger">Ship Skill missing!</span>
+                                            @endif
+                                          @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-order="industrialcommandships">Industrial Command Ships</td>
+                                        <td>
                                           @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) == 5)
                                             <span class="label label-success">5</span>
                                           @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) == 0)
