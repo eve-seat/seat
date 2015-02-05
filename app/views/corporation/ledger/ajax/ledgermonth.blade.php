@@ -105,6 +105,7 @@
           <li class="active"><a href="#tab_tax_bounties" data-toggle="tab">Bounty Prizes</a></li>
           <li><a href="#tab_tax_missions" data-toggle="tab">Mission Rewards</a></li>
           <li><a href="#tab_tax_pi" data-toggle="tab">Planetary Interaction</a></li>
+          <li><a href="#tab_tax_incursions" data-toggle="tab">Incursions Payouts</a></li>
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="tab_tax_bounties">
@@ -186,6 +187,49 @@
                 </table>
               </div><!-- /.box-body -->
             </div> <!-- ./box -->
+
+            @else
+              <p class="lead">No Tax Contributor Information Available</p>
+            @endif
+
+          </div><!-- /.tab-pane -->
+          <div class="tab-pane" id="tab_tax_incursions">
+
+            {{-- bounty tax --}}
+            @if (count($incursions_tax) > 0)
+
+              <div class="box box-solid box-primary">
+                <div class="box-header">
+                  <h3 class="box-title">Tax Contributions for Incursions Payouts</h3>
+                </div>
+                <div class="box-body no-padding">
+                  <table class="table table-condensed compact table-hover" id="datatable">
+                    <thead>
+                      <tr>
+                        <th>Contributor</th>
+                        <th>Contribution Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                      @foreach ($incursions_tax as $entry)
+
+                        <tr>
+                          <td>
+                            <a href="{{ action('CharacterController@getView', array('characterID' => $entry->ownerID2 )) }}">
+                              <img src='//image.eveonline.com/Character/{{ $entry->ownerID2 }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+                              {{ $entry->ownerName2 }}
+                            </a>
+                          </td>
+                          <td> <b> {{ number_format($entry->total, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }} ISK </b> </td>
+                        </tr>
+
+                      @endforeach
+
+                    </tbody>
+                  </table>
+                </div><!-- /.box-body -->
+              </div> <!-- ./box -->
 
             @else
               <p class="lead">No Tax Contributor Information Available</p>
