@@ -1102,6 +1102,11 @@ class CorporationController extends BaseController
             ->where('corporation_accountbalance.corporationID', $corporationID)
             ->get();
 
+        $wallet_balances_total = 0;
+        foreach($wallet_balances as $div) {
+            $wallet_balances_total += $div->balance;
+        }
+
         // The overall corporation ledger. We will loop over the wallet divisions
         // and get the ledger calculated for each
         $ledgers = array();
@@ -1172,7 +1177,8 @@ class CorporationController extends BaseController
             ->with('bounty_tax', $bounty_tax)
             ->with('mission_tax', $mission_tax)
             ->with('pi_tax', $pi_tax)
-            ->with('incursions_tax', $incursions_tax);
+            ->with('incursions_tax', $incursions_tax)
+            ->with('wallet_balances_total', $wallet_balances_total);
     }
 
     /*
