@@ -72,6 +72,12 @@
                       @endforeach
 
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" class="text-right"><strong>Total:</strong></td>
+                            <td><strong>{{ number_format($wallet_balances_total, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</strong> ISK</td>
+                        </tr>
+                    </tfoot>
                   </table>
                 </div><!-- /.box-body -->
               </div>
