@@ -1154,6 +1154,16 @@ class CorporationController extends BaseController
             ->orderBy('total', 'desc')
             ->get();
 
+        $incursions_tax = DB::table('corporation_walletjournal')
+            ->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+            ->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+            ->where('corporation_walletjournal.refTypeID', 99) // Ref type id 99: Corporate Reward Payout (yeah, seriously ...)
+            ->where('corporation_walletjournal.ownerName1', "CONCORD") // check if the payout came from CONCORD
+            ->where('corporation_walletjournal.corporationID', $corporationID)
+            ->groupBy('corporation_walletjournal.ownerName2')
+            ->orderBy('total', 'desc')
+            ->get();
+
         return View::make('corporation.ledger.ledger')
             ->with('corporationID', $corporationID)
             ->with('ledger_dates', $ledger_dates)
@@ -1161,7 +1171,8 @@ class CorporationController extends BaseController
             ->with('ledgers', $ledgers)
             ->with('bounty_tax', $bounty_tax)
             ->with('mission_tax', $mission_tax)
-            ->with('pi_tax', $pi_tax);
+            ->with('pi_tax', $pi_tax)
+            ->with('incursions_tax', $incursions_tax);
     }
 
     /*
@@ -1251,13 +1262,26 @@ class CorporationController extends BaseController
             ->orderBy('total', 'desc')
             ->get();
 
+        $incursions_tax = DB::table('corporation_walletjournal')
+            ->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+            ->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+            ->where('corporation_walletjournal.refTypeID', 99) // Ref type id 99: Corporate Reward Payout (yeah, seriously ...)
+            ->where('corporation_walletjournal.ownerName1', "CONCORD") // check if the payout came from CONCORD
+            ->where(DB::raw('MONTH(date)'), $month)
+            ->where(DB::raw('YEAR(date)'), $year)
+            ->where('corporation_walletjournal.corporationID', $corporationID)
+            ->groupBy('corporation_walletjournal.ownerName2')
+            ->orderBy('total', 'desc')
+            ->get();
+
         return View::make('corporation.ledger.ajax.ledgermonth')
             ->with('corporationID', $corporationID)
             ->with('date', $date)
             ->with('ledgers', $ledgers)
             ->with('bounty_tax', $bounty_tax)
             ->with('mission_tax', $mission_tax)
-            ->with('pi_tax', $pi_tax);
+            ->with('pi_tax', $pi_tax)
+            ->with('incursions_tax', $incursions_tax);
     }
 
     /*
