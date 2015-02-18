@@ -1,6 +1,6 @@
 #Troubleshooting SeAT
 
-This guide aims to provide basic troubleshooting tips for SeAT for common problems. At any point if you are unsure or want more help feel free to join the IRC channel `#wcs-pub` IRC channel on coldfront.net where there is normally someone around to help you out. 
+This guide aims to provide basic troubleshooting tips for SeAT for common problems. At any point if you are unsure or want more help feel free to join the `#wcs-pub` IRC channel on coldfront.net where there is normally someone around to help you out.
 
 Table of Contents
 
@@ -13,7 +13,7 @@ Table of Contents
 
 If you believe there might be an issue with the cache, particularly when API keys seem to be having issues, clearing the cache is a safe troubleshooting method which can go a long way in diagnosing or even fixing the problem. 
 
-To clear the cache navigate to the directory you installed SeAT in (likely `var/www/seat`) and run the following command: 
+To clear the cache navigate to the directory you installed SeAT in (likely `/var/www/seat`) and run the following command:
 
 ```bash
 $ php artisan seat:clear-cache
