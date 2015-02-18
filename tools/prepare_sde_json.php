@@ -2,8 +2,8 @@
 
 // Prepare the data that we want represented as JSON
 $d = [
-   'version' => 'rhea-1.0-109013',
-   'url' => 'https://www.fuzzwork.co.uk/dump/rhea-1.0-109013/',
+   'version' => 'tiamat-1.0-110751',
+   'url' => 'https://www.fuzzwork.co.uk/dump/tiamat-1.0-110751/',
    'format' => '.sql.bz2',
    'tables' => [
       'dgmTypeAttributes',
