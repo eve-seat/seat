@@ -32,7 +32,7 @@
       <!-- small box -->
       <div class="small-box bg-blue">
         <div class="inner">
-          <h3>{{ $total_keys }}</h3>
+          <h3>{{ number_format($total_keys, 0, $settings['decimal_seperator'], $settings['thousand_seperator'])}}</h3>
           <p>Total Recorded API Keys</p>
         </div>
         <div class="icon">
@@ -48,7 +48,7 @@
       <!-- small box -->
       <div class="small-box bg-purple">
         <div class="inner">
-          <h3>{{ $total_characters }}</h3>
+          <h3>{{ number_format($total_characters, 0, $settings['decimal_seperator'], $settings['thousand_seperator'])}}</h3>
           <p>Total Character Sheets</p>
         </div>
         <div class="icon">
@@ -64,7 +64,7 @@
       <!-- small box -->
       <div class="small-box bg-green">
         <div class="inner">
-          <h3>{{ number_format($total_isk , 2, '.', ' ') }}</h3>
+          <h3>{{ number_format($total_isk, 2, $settings['decimal_seperator'], $settings['thousand_seperator'])}}</h3>
           <p>Total Recorded ISK</p>
         </div>
         <div class="icon">
@@ -79,7 +79,7 @@
       <!-- small box -->
       <div class="small-box bg-maroon">
         <div class="inner">
-          <h3>{{ number_format($total_skillpoints , 0, '.', ' ') }}</h3>
+          <h3>{{ number_format($total_skillpoints, 0, $settings['decimal_seperator'], $settings['thousand_seperator'])}}</h3>
           <p>Total Recorded Skillpoints</p>
         </div>
         <div class="icon">
