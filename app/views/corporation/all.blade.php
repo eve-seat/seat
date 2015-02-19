@@ -20,7 +20,7 @@
               <th>CEO</th>
               <th>Alliance</th>
               <th>Tax Rate</th>
-              <th>Member Limit</th>
+              <th>Members</th>
               <th>Shares</th>
               <th>Url</th>
               <th></th>
@@ -48,6 +48,7 @@
                       {{ number_format($corporation->taxRate, 1, $settings['decimal_seperator'], $settings['thousand_seperator']) }} %
                   </td>
                   <td>
+                      {{ number_format($corporation->memberCount, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }} /
                       {{ number_format($corporation->memberLimit, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }}
                   </td>
                   <td>
