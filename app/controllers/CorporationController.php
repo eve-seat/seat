@@ -43,6 +43,7 @@ class CorporationController extends BaseController
 		// information
 		$corporations = DB::table('account_apikeyinfo')
 			->leftJoin('seat_keys', 'account_apikeyinfo.keyID', '=', 'seat_keys.keyID')
+			->leftJoin('corporation_corporationsheet', 'account_apikeyinfo_characters.corporationID', '=', 'corporation_corporationsheet.corporationID')
 			->leftJoin('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
 			->where('account_apikeyinfo.type', '=', 'Corporation')
 			->orderBy('seat_keys.isOk', 'asc')
