@@ -22,7 +22,6 @@
               <th>Tax Rate</th>
               <th>Members</th>
               <th>Shares</th>
-              <th>Url</th>
               <th></th>
             </thead>
             <tbody>
@@ -53,9 +52,6 @@
                   </td>
                   <td>
                       {{ number_format($corporation->shares, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }}
-                  </td>
-                  <td>
-                      {{ $corporation->url }}
                   </td>
 
                   {{-- key information --}}
