@@ -46,7 +46,7 @@ class CorporationController extends BaseController
 			->leftJoin('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
 			->where('account_apikeyinfo.type', '=', 'Corporation')
 			->orderBy('seat_keys.isOk', 'asc')
-			->orderBy('account_apikeyinfo.corporationName', 'asc')
+			->orderBy('account_apikeyinfo_characters.corporationName', 'asc')
 			->groupBy('account_apikeyinfo_characters.characterID');
 
 		// Check that we only return characters that the current
