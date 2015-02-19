@@ -28,7 +28,7 @@
 
   <div class="row">
 
-    <div class="col-lg-3 col-xs-12">
+    <div class="col-lg-4 col-xs-12">
       <!-- small box -->
       <div class="small-box bg-blue">
         <div class="inner">
@@ -44,7 +44,7 @@
       </div>
     </div><!-- ./col -->
 
-    <div class="col-lg-3 col-xs-12">
+    <div class="col-lg-4 col-xs-12">
       <!-- small box -->
       <div class="small-box bg-purple">
         <div class="inner">
@@ -60,11 +60,11 @@
       </div>
     </div><!-- ./col -->
 
-    <div class="col-lg-3 col-xs-12">
+    <div class="col-lg-4 col-xs-12">
       <!-- small box -->
       <div class="small-box bg-green">
         <div class="inner">
-          <h3>{{ number_format($total_isk, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
+          <h3>{{ number_format($total_char_isk, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
           <p>Total Recorded ISK</p>
         </div>
         <div class="icon">
@@ -75,7 +75,24 @@
         </a>
       </div>
     </div><!-- ./col -->
-    <div class="col-lg-3 col-xs-12">
+
+    <div class="col-lg-4 col-xs-12">
+      <!-- small box -->
+      <div class="small-box bg-green">
+        <div class="inner">
+          <h3>{{ number_format($total_corp_isk, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
+            <p>Total Recorded ISK</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-money"></i>
+        </div>
+        <a href="{{ action('CorporationController@getListLedgers') }}" class="small-box-footer">
+          All Corp Wallets <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div><!-- ./col -->
+
+    <div class="col-lg-4 col-xs-12">
       <!-- small box -->
       <div class="small-box bg-maroon">
         <div class="inner">
