@@ -28,6 +28,39 @@ use App\Services\Helpers\Helpers;
 class CorporationController extends BaseController
 {
 
+	/*
+	|--------------------------------------------------------------------------
+	| getAll()
+	|--------------------------------------------------------------------------
+	|
+	| Get all of the corporations on record
+	|
+	*/
+	public function getAll()
+	{
+
+		// Query the databse for all the characters and some related
+		// information
+		$corporations = DB::table('account_apikeyinfo')
+			->leftJoin('seat_keys', 'account_apikeyinfo.keyID', '=', 'seat_keys.keyID')
+			->where('account_apikeyinfo.type', '=', 'Corporation')
+			->orderBy('seat_keys.isOk', 'asc')
+			->orderBy('account_apikeyinfo.characterName', 'asc')
+			->groupBy('account_apikeyinfo_characters.characterID');
+
+		// Check that we only return characters that the current
+		// user has access to. SuperUser() automatically
+		// inherits all permissions
+		if (!\Auth::hasAccess('recruiter'))
+			$corporations = $corporations->whereIn('seat_keys.keyID', Session::get('valid_keys'))
+				->get();
+		else
+			$corporations = $corporations->get();
+
+		return View::make('corporation.all')
+			->with('corporations', $corporations);
+	}
+
     /*
     |--------------------------------------------------------------------------
     | getListJournals()

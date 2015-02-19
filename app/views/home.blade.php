@@ -62,6 +62,22 @@
 
     <div class="col-lg-4 col-xs-12">
       <!-- small box -->
+      <div class="small-box bg-purple">
+        <div class="inner">
+          <h3>{{ number_format($total_corporations, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
+          <p>Total Corporation Sheets</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-users"></i>
+        </div>
+        <a href="{{ action('CorporationController@getAll') }}" class="small-box-footer">
+          All Corporations <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div><!-- ./col -->
+
+    <div class="col-lg-4 col-xs-12">
+      <!-- small box -->
       <div class="small-box bg-green">
         <div class="inner">
           <h3>{{ number_format($total_char_isk, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
