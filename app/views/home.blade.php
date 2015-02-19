@@ -68,7 +68,7 @@
           <p>Total Corporation Sheets</p>
         </div>
         <div class="icon">
-          <i class="fa fa-users"></i>
+          <i class="fa fa-building-o"></i>
         </div>
         <a href="{{ action('CorporationController@getAll') }}" class="small-box-footer">
           All Corporations <i class="fa fa-arrow-circle-right"></i>
