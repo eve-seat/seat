@@ -31,7 +31,7 @@
 
                 <tr>
                   <td>
-                      <img src='//image.eveonline.com/Corporation/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+                      <img src='//image.eveonline.com/Corporation/{{ $corporation->corporationID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
                         {{ $corporation->corporationName }} [{{ $corporation->ticker }}]
                   </td>
                   <td>
