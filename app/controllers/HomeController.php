@@ -72,7 +72,7 @@ class HomeController extends BaseController
 		            ->join('account_apikeyinfo', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
 		            ->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
 		            ->where('account_apikeyinfo.type','=','Corporation')
-	                ->where('account_key', '!=', EveCorporationAccountBalance::Dust_Account_Key)->sum('balance');
+	                ->where('accountKey', '!=', EveCorporationAccountBalance::Dust_Account_Key)->sum('balance');
 
                 $total_skillpoints = EveCharacterCharacterSheetSkills::join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet_skills.characterID')
                     ->join('account_apikeyinfo', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
@@ -92,7 +92,7 @@ class HomeController extends BaseController
             $total_keys = SeatKey::count();
             $total_characters = EveCharacterCharacterSheet::count();
             $total_char_isk = EveCharacterCharacterSheet::sum('balance');
-	        $total_corp_isk = EveCorporationAccountBalance::where('account_key', '!=', EveCorporationAccountBalance::Dust_Account_Key)->sum('balance');
+	        $total_corp_isk = EveCorporationAccountBalance::where('accountKey', '!=', EveCorporationAccountBalance::Dust_Account_Key)->sum('balance');
             $total_skillpoints = EveCharacterCharacterSheetSkills::sum('skillpoints');
 
         }
