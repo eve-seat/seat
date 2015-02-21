@@ -81,7 +81,7 @@
       <div class="small-box bg-green">
         <div class="inner">
           <h3>{{ number_format($total_char_isk, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
-          <p>Total Recorded ISK</p>
+          <p>Total Recorded Character ISK</p>
         </div>
         <div class="icon">
           <i class="fa fa-money"></i>
@@ -97,7 +97,7 @@
       <div class="small-box bg-green">
         <div class="inner">
           <h3>{{ number_format($total_corp_isk, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
-            <p>Total Recorded ISK</p>
+            <p>Total Recorded Corporation ISK</p>
         </div>
         <div class="icon">
           <i class="fa fa-money"></i>
