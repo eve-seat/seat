@@ -29,8 +29,10 @@ class UserSettingValidator extends Validator
 {
 
     public static $rules = array(
-        'color_scheme'  => 'required|in:blue,black',
+        'color_scheme' => 'required|in:blue,black',
         'main_character_id' => 'required|numeric',
         'email_notifications' => 'required|in:true,false',
+        'thousand_seperator' => 'in:" ",",","."|size:1',
+        'decimal_seperator' => 'required|in:",","."|size:1',
     );
 }

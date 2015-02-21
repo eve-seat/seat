@@ -30,12 +30,12 @@ class SettingValidator extends Validator
 
     public static $rules = array(
         'app_name' => 'required',
-        'registration_enabled'  => 'required',
-        'required_mask'  => 'required|numeric|min:176693568',
-        'administrative_contact'  => 'required|email',
-        'color_scheme'  => 'required|in:blue,black',
-        'thousand_seperator' => 'required',
-        'decimal_seperator' => 'required',
+        'registration_enabled' => 'required',
+        'required_mask' => 'required|numeric|min:176693568',
+        'administrative_contact' => 'required|email',
+        'color_scheme' => 'required|in:blue,black',
+        'thousand_seperator' => 'in:" ",",","."|size:1',
+        'decimal_seperator' => 'required|in:",","."|size:1',
         'seatscheduled_character' => 'required|in:true,false',
         'seatscheduled_corporation' => 'required|in:true,false',
         'seatscheduled_corporation_assets' => 'required|in:true,false',
