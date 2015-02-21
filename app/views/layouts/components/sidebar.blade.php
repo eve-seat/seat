@@ -59,8 +59,9 @@
             <i class="fa fa-angle-left pull-right"></i>
           </a>
           <ul class="treeview-menu">
+            <li><a href="{{ action('CorporationController@getAll') }}"><i class="fa fa-angle-double-right"></i> All Corporations</a></li>
             @if(\Auth::hasAccess('asset_manager'))
-              <li><a href="{{ action('CorporationController@getListAssets') }}"><i class="fa fa-angle-double-right"></i> Assets</a></li>
+                <li><a href="{{ action('CorporationController@getListAssets') }}"><i class="fa fa-angle-double-right"></i> Assets</a></li>
             @endif
             @if(\Auth::hasAccess('contract_manager'))
               <li><a href="{{ action('CorporationController@getListContracts') }}"><i class="fa fa-angle-double-right"></i> Contracts</a></li>

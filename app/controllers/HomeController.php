@@ -57,16 +57,31 @@ class HomeController extends BaseController
             if (count(Session::get('valid_keys')) > 0) {
 
                 $total_keys = SeatKey::whereIn('keyID', Session::get('valid_keys'))->count();
+
                 $total_characters = EveCharacterCharacterSheet::join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
                     ->join('account_apikeyinfo', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
                     ->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
                     ->where('account_apikeyinfo.type','!=','Corporation')
                     ->count();
-                $total_isk = EveCharacterCharacterSheet::join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
+
+                $total_corporations = EveCorporationCorporationSheet::join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
                     ->join('account_apikeyinfo', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
                     ->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
-                    ->where('account_apikeyinfo.type','!=','Corporation')
-                    ->sum('balance');
+                    ->where('account_apikeyinfo.type','=','Corporation')
+                    ->count();
+
+	            $total_char_isk = EveCharacterCharacterSheet::join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
+		            ->join('account_apikeyinfo', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+		            ->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
+		            ->where('account_apikeyinfo.type','!=','Corporation')
+		            ->sum('balance');
+
+	            $total_corp_isk = EveCorporationAccountBalance::join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet.characterID')
+		            ->join('account_apikeyinfo', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+		            ->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
+		            ->where('account_apikeyinfo.type','=','Corporation')
+	                ->where('accountKey', '!=', EveCorporationAccountBalance::Dust_Account_Key)->sum('balance');
+
                 $total_skillpoints = EveCharacterCharacterSheetSkills::join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'character_charactersheet_skills.characterID')
                     ->join('account_apikeyinfo', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
                     ->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
@@ -75,7 +90,7 @@ class HomeController extends BaseController
 
             } else {
 
-                $total_keys = $total_characters = $total_isk = $total_skillpoints = 0;
+                $total_keys = $total_characters = $total_corporations = $total_char_isk = $total_corp_isk= $total_skillpoints = 0;
 
             }
 
@@ -84,7 +99,9 @@ class HomeController extends BaseController
             // Super user gets all of the data!
             $total_keys = SeatKey::count();
             $total_characters = EveCharacterCharacterSheet::count();
-            $total_isk = EveCharacterCharacterSheet::sum('balance');
+	        $total_corporations = EveCorporationCorporationSheet::count();
+            $total_char_isk = EveCharacterCharacterSheet::sum('balance');
+	        $total_corp_isk = EveCorporationAccountBalance::where('accountKey', '!=', EveCorporationAccountBalance::Dust_Account_Key)->sum('balance');
             $total_skillpoints = EveCharacterCharacterSheetSkills::sum('skillpoints');
 
         }
@@ -93,7 +110,9 @@ class HomeController extends BaseController
             ->with('server', $server)
             ->with('total_keys', $total_keys)
             ->with('total_characters', $total_characters)
-            ->with('total_isk', $total_isk)
+            ->with('total_corporations', $total_corporations)
+            ->with('total_char_isk', $total_char_isk)
+            ->with('total_corp_isk', $total_corp_isk)
             ->with('total_skillpoints', $total_skillpoints);
     }
 }
