@@ -51,6 +51,17 @@
 
               <!-- Prepended text-->
               <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Administrator Contact Email</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::text('administrative_contact', $administrative_contact, array('id' => 'administrative_contact', 'class' => 'form-control'), 'required') }}
+                    <span class="help-block">What is the email address for the SeAT administrator for this installation.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prepended text-->
+              <div class="form-group">
                 <label class="col-md-4 control-label" for="prependedtext">Color Scheme</label>
                 <div class="col-md-6">
                   <div class="input-group">

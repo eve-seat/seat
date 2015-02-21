@@ -29,6 +29,7 @@ use Seat\EveApi\Exception;
 use Pheal\Pheal;
 use Pheal\Core\Config as PhealConfig;
 use Carbon\Carbon;
+use App\Services\Settings\SettingHelper as Settings;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,9 +60,23 @@ class BaseApi
         PhealConfig::getInstance()->cache = new \Pheal\Cache\FileStorage( storage_path(). '/cache/phealcache/' );
         PhealConfig::getInstance()->access = new \Pheal\Access\StaticCheck();
         PhealConfig::getInstance()->log = new \Pheal\Log\FileStorage( storage_path() . '/logs/' );
-        PhealConfig::getInstance()->http_user_agent = 'SeAT ' . \Config::get('seat.version') . 'API Fetcher';
         PhealConfig::getInstance()->api_customkeys = true;
         PhealConfig::getInstance()->http_method = 'curl';
+
+        // Build a meaningful User-Agent for CCP should they need to contact someone
+        $user_agent = 'SeAT ' . \Config::get('seat.version') // Set the Program Identifier
+            . ' API Fetcher at '
+            . \Config::get('app.url');  // Add the Url
+
+        // If the administrative_contact is set, add this to the User-Agent, else use the
+        // default mail_from in the settings
+        if (Settings::getSetting('administrative_contact') == null)
+            $user_agent .= ' Install mail_from: ' . \Config::get('mail.from.name') . ' <' . \Config::get('mail.from.address') . '>';
+        else
+            $user_agent .= ' Administrative Contact: ' . Settings::getSetting('administrative_contact');
+
+        // Set the newly compiled User-Agent
+        PhealConfig::getInstance()->http_user_agent = $user_agent;
 
         // Should the EVE api be determined as 'down', set the cache value for 'eve_api_down'
         // with a expiration of 30 minutes. We will also decrement the current error count

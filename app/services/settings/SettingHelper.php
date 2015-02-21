@@ -45,6 +45,7 @@ class SettingHelper
         'app_name' => 'SeAT',
         'required_mask' => 176693568,
         'registration_enabled' => true,
+        'administrative_contact' => null,
 
         // User personalization
         'color_scheme' => 'blue',

@@ -32,6 +32,7 @@ class SettingValidator extends Validator
         'app_name' => 'required',
         'registration_enabled'  => 'required',
         'required_mask'  => 'required|numeric|min:176693568',
+        'administrative_contact'  => 'required|email',
         'color_scheme'  => 'required|in:blue,black',
         'thousand_seperator' => 'required',
         'decimal_seperator' => 'required',
