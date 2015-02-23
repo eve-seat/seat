@@ -41,7 +41,8 @@ class Helpers
     {
         $corporations = \DB::table('account_apikeyinfo')
             ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
-            ->where('account_apikeyinfo.type', 'Corporation');
+            ->where('account_apikeyinfo.type', 'Corporation')
+	        ->orderBy('account_apikeyinfo_characters.corporationName');
 
         if (!\Auth::isSuperUser() )
             $corporations = $corporations->whereIn('corporationID', \Session::get('corporation_affiliations'))->get();
