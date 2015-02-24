@@ -76,7 +76,11 @@ class APIKeyInfo extends BaseApi
                     // If we are rate limited, set the status of the eveapi
                     // server to 'down' in the cache so that subsequent
                     // calls don't fail because of this.
-                    \Cache::set('eve_api_down', true, 30);
+
+	                // Get time of IP ban in minutes, rounded up to the next whole minute
+	                $time = round(($e->cached_until_unixtime - $e->request_time_unixtime) / 60, 0, PHP_ROUND_HALF_UP);
+
+	                \Cache::set('eve_api_down', true, $time);
                     return;
 
                 // "EVE backend database temporarily disabled.""
