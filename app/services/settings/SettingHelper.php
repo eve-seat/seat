@@ -142,20 +142,22 @@ class SettingHelper
 
                         // Looks like we have a user setting, lets do a
                         // db lookup for it.
-	                    $cache_key = self::getUserSettingCacheKeyPrefix($effective_user_id, $setting_name);
-	                    $setting_value = \Cache::get($cache_key, function() use ($effective_user_id, $setting_name, $cache_key) {
+                        $cache_key = self::getUserSettingCacheKeyPrefix($effective_user_id, $setting_name);
+                        $setting_value = \Cache::get($cache_key, function() use ($effective_user_id, $setting_name, $cache_key) {
 
-		                    $setting_value = \SeatUserSetting::where('user_id', $effective_user_id)
-		                        ->where('setting', $setting_name)
-			                    ->pluck('value');
-		                    \Cache::forever($cache_key, $setting_value);
+                            $setting_value = \SeatUserSetting::where('user_id', $effective_user_id)
+                                ->where('setting', $setting_name)
+                                ->pluck('value');
 
-		                    return $setting_value;
-	                    });
+	                        // cache result
+                            \Cache::forever($cache_key, $setting_value);
+
+                            return $setting_value;
+                        });
 
                         if($setting_value) {
-	                        // Found the user setting, return that!
-	                        return $setting_value;
+                            // Found the user setting, return that!
+                            return $setting_value;
                         }
 
 
@@ -177,20 +179,22 @@ class SettingHelper
 
             // So we dont have a user setting for whatever reason,
             // so lets check the SeAT global settings.
-	        $cache_key = self::getSystemSettingCacheKeyPrefix($setting_name);
-	        $setting_value = \Cache::get($cache_key, function() use ($setting_name, $cache_key) {
+            $cache_key = self::getSystemSettingCacheKeyPrefix($setting_name);
+            $setting_value = \Cache::get($cache_key, function() use ($setting_name, $cache_key) {
 
-		        $setting_value = \SeatSetting::where('setting', $setting_name)->pluck('value');
-		        \Cache::forever($cache_key, $setting_value);
+                $setting_value = \SeatSetting::where('setting', $setting_name)->pluck('value');
 
-		        return $setting_value;
-	        });
+	            // cache result
+                \Cache::forever($cache_key, $setting_value);
+
+                return $setting_value;
+            });
 
             // If we have a database entry for the setting, return
             // that as the value
             if($setting_value) {
-	            // Found the system setting, return that!
-	            return $setting_value;
+                // Found the system setting, return that!
+                return $setting_value;
             }
 
         } catch (\Exception $e) {}
@@ -250,9 +254,9 @@ class SettingHelper
             $user_setting->value = $setting_value;
             $user_setting->save();
 
-	        // cache this value forever to save on DB calls
-	        $cache_key = self::getUserSettingCacheKeyPrefix(\Auth::User()->id, $setting_name);
-	        \Cache::forever($cache_key, $setting_value);
+            // cache this value forever to save on DB calls
+            $cache_key = self::getUserSettingCacheKeyPrefix(\Auth::User()->id, $setting_name);
+            \Cache::forever($cache_key, $setting_value);
 
             // Return as we are done
             return true;
@@ -268,9 +272,9 @@ class SettingHelper
             $global_setting->value = $setting_value;
             $global_setting->save();
 
-	        // cache this value forever to save on DB calls
-	        $cache_key = self::getSystemSettingCacheKeyPrefix($setting_name);
-	        \Cache::forever($cache_key, $setting_value);
+            // cache this value forever to save on DB calls
+            $cache_key = self::getSystemSettingCacheKeyPrefix($setting_name);
+            \Cache::forever($cache_key, $setting_value);
 
             return true;
         }
