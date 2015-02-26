@@ -78,9 +78,9 @@ class APIKeyInfo extends BaseApi
                     // calls don't fail because of this.
 
 	                // Get time of IP ban in minutes, rounded up to the next whole minute
-	                $time = round(($e->cached_until_unixtime - $e->request_time_unixtime) / 60, 0, PHP_ROUND_HALF_UP);
+                    $time = round(($e->cached_until_unixtime - $e->request_time_unixtime) / 60, 0, PHP_ROUND_HALF_UP);
 
-	                \Cache::set('eve_api_down', true, $time);
+                    \Cache::set('eve_api_down', true, $time);
                     return;
 
                 // "EVE backend database temporarily disabled.""
