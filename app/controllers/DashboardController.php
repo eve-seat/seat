@@ -100,6 +100,9 @@ class DashboardController extends BaseController
             $character_assets = DB::table(DB::raw('character_assetlist as a'))
                 ->select(DB::raw(
                     "*, CASE
+                    when a.locationID BETWEEN 66015148 AND 66015151 then
+                        (SELECT s.stationName FROM staStations AS s
+                          WHERE s.stationID=a.locationID-6000000)
                     when a.locationID BETWEEN 66000000 AND 66014933 then
                         (SELECT s.stationName FROM staStations AS s
                           WHERE s.stationID=a.locationID-6000001)
@@ -208,6 +211,9 @@ class DashboardController extends BaseController
             $corporation_assets = DB::table(DB::raw('corporation_assetlist as a'))
                 ->select(DB::raw(
                     "*, CASE
+                    when a.locationID BETWEEN 66015148 AND 66015151 then
+                        (SELECT s.stationName FROM staStations AS s
+                          WHERE s.stationID=a.locationID-6000000)
                     when a.locationID BETWEEN 66000000 AND 66014933 then
                         (SELECT s.stationName FROM staStations AS s
                           WHERE s.stationID=a.locationID-6000001)
