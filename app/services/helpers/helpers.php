@@ -42,7 +42,7 @@ class Helpers
         $corporations = \DB::table('account_apikeyinfo')
             ->join('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
             ->where('account_apikeyinfo.type', 'Corporation')
-	        ->orderBy('account_apikeyinfo_characters.corporationName');
+            ->orderBy('account_apikeyinfo_characters.corporationName');
 
         if (!\Auth::isSuperUser() )
             $corporations = $corporations->whereIn('corporationID', \Session::get('corporation_affiliations'))->get();
@@ -365,7 +365,7 @@ class Helpers
     |--------------------------------------------------------------------------
     | getSecRolesArray()
     |--------------------------------------------------------------------------
-    | 
+    |
     | Converts a String or JSON Array of RoleIDs
     | to an Fancy Role Array with Corporation Division's
     |
@@ -379,7 +379,7 @@ class Helpers
 
     public static function getSecRolesArray($mixed_roles, $corporationID)
     {
-        
+
         if($mixed_roles == '' or $mixed_roles == '[]' or is_null($mixed_roles)) {
             return array("None");
         } else {
@@ -408,14 +408,14 @@ class Helpers
                 ->where('corporationID',$corporationID)
                 ->remember(0.1)
                 ->get();
-            
+
             $divisions_wallet = \DB::table('corporation_corporationsheet_walletdivisions')
                 ->select('accountKey','description')
                 ->orderBy('accountKey')
                 ->where('corporationID',$corporationID)
                 ->remember(0.1)
                 ->get();
-            
+
             foreach ($role_list as $role) {
                 $regex = "/(Hangar|Wallet Division|Container from Hangar)\s(\d)/";
 
