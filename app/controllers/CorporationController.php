@@ -274,6 +274,9 @@ class CorporationController extends BaseController
         $assets = DB::select(
             "SELECT *,
                 CASE
+                  when a.locationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.locationID-6000000)
                   when a.locationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.locationID-6000001)
@@ -434,6 +437,9 @@ class CorporationController extends BaseController
         // Contract list
         $contract_list = DB::select(
             'SELECT *, CASE
+                when a.startStationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.startStationID-6000000)
                 when a.startStationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.startStationID-6000001)
@@ -453,6 +459,9 @@ class CorporationController extends BaseController
                     WHERE m.itemID=a.startStationID) end
                 AS startlocation,
                 CASE
+                when a.endStationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.endStationID-6000000)
                 when a.endStationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.endStationID-6000001)
@@ -1518,6 +1527,9 @@ class CorporationController extends BaseController
         // Corporation Market Orders
         $market_orders = DB::select(
             'SELECT *, CASE
+                when a.stationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.stationID-6000000)
                 when a.stationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.stationID-6000001)
@@ -1727,6 +1739,9 @@ class CorporationController extends BaseController
         $current_jobs = DB::table('corporation_industryjobs as a')
             ->select(DB::raw("
                 *, CASE
+                when a.stationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                     WHERE s.stationID=a.stationID-6000000)
                 when a.stationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                      WHERE s.stationID=a.stationID-6000001)
@@ -1759,6 +1774,9 @@ class CorporationController extends BaseController
         $finished_jobs = DB::table('corporation_industryjobs as a')
             ->select(DB::raw("
                 *, CASE
+                when a.stationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                     WHERE s.stationID=a.stationID-6000000)
                 when a.stationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                      WHERE s.stationID=a.stationID-6000001)

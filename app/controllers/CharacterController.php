@@ -195,6 +195,9 @@ class CharacterController extends BaseController
         $jump_clones = DB::table(DB::raw('character_charactersheet_jumpclones as a'))
             ->select(DB::raw("
                 *, CASE
+                when a.locationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.locationID-6000000)
                 when a.locationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.locationID-6000001)
@@ -490,6 +493,9 @@ class CharacterController extends BaseController
         $assets = DB::table(DB::raw('character_assetlist as a'))
             ->select(DB::raw("
                 *, CASE
+                when a.locationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.locationID-6000000)
                 when a.locationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.locationID-6000001)
@@ -631,6 +637,9 @@ class CharacterController extends BaseController
         $contract_list = DB::table(DB::raw('character_contracts as a'))
             ->select(DB::raw(
                 "*, CASE
+                when a.startStationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.startStationID-6000000)
                 when a.startStationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.startStationID-6000001)
@@ -650,6 +659,9 @@ class CharacterController extends BaseController
                     WHERE m.itemID=a.startStationID) end
                 AS startlocation,
                 CASE
+                when a.endstationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.endStationID-6000000)
                 when a.endStationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.endStationID-6000001)
@@ -775,6 +787,9 @@ class CharacterController extends BaseController
         $market_orders = DB::table(DB::raw('character_marketorders as a'))
             ->select(DB::raw(
                 "*, CASE
+                when a.stationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.stationID-6000000)
                 when a.stationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.stationID-6000001)
@@ -1290,6 +1305,9 @@ class CharacterController extends BaseController
         $assets = DB::table(DB::raw('character_assetlist as a'))
             ->select(DB::raw(
                 "*, CASE
+                when a.locationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.locationID-6000000)
                 when a.locationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.locationID-6000001)
@@ -1385,6 +1403,9 @@ class CharacterController extends BaseController
         $current_jobs = DB::table('character_industryjobs as a')
             ->select(DB::raw("
                 *, CASE
+                when a.stationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.stationID-6000000)
                 when a.stationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.stationID-6000001)
@@ -1412,6 +1433,9 @@ class CharacterController extends BaseController
         $finished_jobs = DB::table('character_industryjobs as a')
             ->select(DB::raw("
                 *, CASE
+                when a.stationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.stationID-6000000)
                 when a.stationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.stationID-6000001)
