@@ -79,6 +79,7 @@ class SettingHelper
     */
 
     static $user_settings = array(
+
         'color_scheme',
         'thousand_seperator',
         'decimal_seperator',
@@ -141,7 +142,10 @@ class SettingHelper
                     try {
 
                         // Looks like we have a user setting, lets do a
-                        // db lookup for it.
+                        // db lookup for it. Before the lookup we
+                        // first prepare a Cache key to use.
+                        // This key will be used to  store
+                        // the resolved value.
                         $cache_key = self::getUserSettingCacheKeyPrefix($effective_user_id, $setting_name);
                         $setting_value = \Cache::get($cache_key, function() use ($effective_user_id, $setting_name, $cache_key) {
 
@@ -155,11 +159,9 @@ class SettingHelper
                             return $setting_value;
                         });
 
-                        if($setting_value) {
-                            // Found the user setting, return that!
+                        // If we found the user setting, return that!
+                        if($setting_value)
                             return $setting_value;
-                        }
-
 
                     } catch (\Exception $e) {}
                 }
@@ -178,7 +180,10 @@ class SettingHelper
         try {
 
             // So we dont have a user setting for whatever reason,
-            // so lets check the SeAT global settings.
+            // so lets check the SeAT global settings. Before
+            // the lookup we first prepare a Cache key to
+            // use. This key will be used to  store
+            // the resolved value.
             $cache_key = self::getSystemSettingCacheKeyPrefix($setting_name);
             $setting_value = \Cache::get($cache_key, function() use ($setting_name, $cache_key) {
 
@@ -192,10 +197,8 @@ class SettingHelper
 
             // If we have a database entry for the setting, return
             // that as the value
-            if($setting_value) {
-                // Found the system setting, return that!
+            if($setting_value)
                 return $setting_value;
-            }
 
         } catch (\Exception $e) {}
 
@@ -317,6 +320,7 @@ class SettingHelper
     */
 
     public static function getUserSettingCacheKeyPrefix($user_id, $setting_name) {
+
         return 'seat.settings.user.'.(int)$user_id.'.'.$setting_name;
     }
 
@@ -330,6 +334,7 @@ class SettingHelper
     */
 
     public static function getSystemSettingCacheKeyPrefix($setting_name) {
+
         return 'seat.settings.system.'.$setting_name;
     }
 
