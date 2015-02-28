@@ -5,7 +5,7 @@
 @section('page_content')
 
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-6">
       <div class="box" id="result">
         <div class="box-header">
           <h3 class="box-title">SeAT Settings</h3>
@@ -82,6 +82,34 @@
                     00
                   </div>
                   <span class="help-block">Set the thousand and decimal character, e.g: 100,000.00</span>
+                </div>
+              </div>
+
+              <legend>Seat Notifications Settings</legend>
+
+              <p>
+                <b>Note:</b> These parameters affect the SeAT Notifications system
+              </p>
+
+              <!-- Prepended text-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Member Inactivity</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::text('seatnotify_member_inactivity_months', $seatnotify_member_inactivity_months, array('class' => 'form-control')) }}
+                    <span class="help-block">After how many months should a character be considered inactive.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Prepended text-->
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="prependedtext">Starbase Fuel Remainder Warning</label>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    {{ Form::text('seatnotify_fuel_warning_days', $seatnotify_fuel_warning_days, array('class' => 'form-control')) }}
+                    <span class="help-block">How many days in advance should a starbase warn about fuel levels.</span>
+                  </div>
                 </div>
               </div>
 

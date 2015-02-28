@@ -55,6 +55,10 @@ class SettingHelper
         'main_character_name' => null,
         'email_notifications' => false,
 
+        // SeAT Notifications
+        'seatnotify_member_inactivity_months' => 1,
+        'seatnotify_fuel_warning_days' => 3,
+
         // SeAT Backend
         'seatscheduled_character' => true,
         'seatscheduled_corporation' => true,
@@ -250,7 +254,13 @@ class SettingHelper
 
             // Everything seems OK, lets find the setting if
             // it already exists, and update its value
-            $user_setting = \SeatUserSetting::firstOrNew(array('setting' => $setting_name, 'user_id' => \Auth::User()->id));
+            $user_setting = \SeatUserSetting::where('user_id', \Auth::User()->id)
+                        ->where('setting', $setting_name)
+                        ->first();
+
+            // Check if this is a new value
+            if(!$user_setting)
+                $user_setting = new \SeatUserSetting;
 
             $user_setting->user_id = $user_id;
             $user_setting->setting = $setting_name;
@@ -269,7 +279,11 @@ class SettingHelper
             // Assuming $user_id was null, we can assume the
             // value should be set globally. So lets get
             // right to it.
-            $global_setting = \SeatSetting::firstOrNew(array('setting' => $setting_name));
+            $global_setting = \SeatSetting::where('setting', $setting_name)
+                        ->first();
+
+            if(!$global_setting)
+                $global_setting = new \SeatSetting;
 
             $global_setting->setting = $setting_name;
             $global_setting->value = $setting_value;

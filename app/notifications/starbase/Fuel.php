@@ -26,6 +26,7 @@ SOFTWARE.
 namespace Seat\Notifications\Starbase;
 
 use Seat\Notifications\BaseNotify;
+use App\Services\Settings\SettingHelper;
 
 /*
 |--------------------------------------------------------------------------
@@ -182,8 +183,14 @@ class Fuel extends BaseNotify
             // we came for and notify someone
 
             // If now plus (the fuel amount devided by the usage) muliplied
-            // by hours is less that 3 days, send a notification
-            if(\Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->lte(\Carbon\Carbon::now()->addDays(3))) {
+            // by hours is less than the configured days, send a
+            // notification
+
+            // Retreive the configured days ...
+            (int)$warning_days = SettingHelper::getSetting('seatnotify_fuel_warning_days');
+
+            // ... and process a notification if required
+            if(\Carbon\Carbon::now()->addHours($starbase->fuelBlocks / $usage)->lte(\Carbon\Carbon::now()->addDays($warning_days))) {
 
                 // OK! We need to tell someone that their towers fuel is
                 // going to be running out soon!
@@ -230,7 +237,7 @@ class Fuel extends BaseNotify
             // is anchored in is > 5, check the charters
             if ($starbase->security >= 5) {
 
-                if(Carbon\Carbon::now()->addHours($starbase->starbaseCharter / 1)->lte(Carbon\Carbon::now()->addDays(3))) {
+                if(Carbon\Carbon::now()->addHours($starbase->starbaseCharter / 1)->lte(Carbon\Carbon::now()->addDays($warning_days))) {
 
                     // OK! We need to tell someone that their towers charters is
                     // going to be running out soon!

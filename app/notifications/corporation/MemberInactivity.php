@@ -26,6 +26,7 @@ SOFTWARE.
 namespace Seat\Notifications\Corporation;
 
 use Seat\Notifications\BaseNotify;
+use App\Services\Settings\SettingHelper;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,9 +63,13 @@ class MemberInactivity extends BaseNotify
         // that can come later :D
         foreach($recruiters as $recruiter) {
 
+            // Do a lookup to see how many months without a login should
+            // be considered as a inactive member
+            (int)$inactive_months = SettingHelper::getSetting('seatnotify_member_inactivity_months');
+
             // Now, get a list of members that have not
             // logged in for 1 month.
-            $members = \EveCorporationMemberTracking::where('logoffDateTime', '<', \DB::raw('date_sub(NOW(), INTERVAL 1 MONTH)'))->get();
+            $members = \EveCorporationMemberTracking::where('logoffDateTime', '<', \DB::raw('date_sub(NOW(), INTERVAL ' . $inactive_months . ' MONTH)'))->get();
 
             // If there are no members, continue
             if (!$members)
@@ -90,7 +95,7 @@ class MemberInactivity extends BaseNotify
                     $notification_type = 'Corporation';
                     $notification_title = 'Member Inactivity';
                     $notification_text = $member->name . ' in ' . $corporation_name . ' has been inactive ' .
-                        'for over a month. The last logon time was ' .
+                        'for ' . $inactive_months . ' month(s). The last logon time was ' .
                         \Carbon\Carbon::parse($member->logonDateTime)->diffFOrHumans() . ' with the last ' .
                         'known location being ' . $member->location . '.';
 

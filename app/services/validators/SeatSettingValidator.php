@@ -36,6 +36,8 @@ class SettingValidator extends Validator
         'color_scheme' => 'required|in:blue,black',
         'thousand_seperator' => 'in:" ",",","."|size:1',
         'decimal_seperator' => 'required|in:",","."|size:1',
+        'seatnotify_member_inactivity_months' => 'required|numeric',
+        'seatnotify_fuel_warning_days' => 'required|numeric',
         'seatscheduled_character' => 'required|in:true,false',
         'seatscheduled_corporation' => 'required|in:true,false',
         'seatscheduled_corporation_assets' => 'required|in:true,false',
