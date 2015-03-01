@@ -72,9 +72,9 @@ class SeatAPIUpdate extends Command
 
         // Call the addToQueue helper to queue jobs for
         // the EVE Server, Map and General EVE info
-        \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Server'), 0, NULL, 'ServerStatus', 'Server');
-        \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Map'), 0, NULL, 'Map', 'Eve');
-        \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Eve'), 0, NULL, 'Eve', 'Eve');
+        \App\Services\Queue\QueueHelper::addToQueue('\Seat\EveQueues\Full\Server', 0, NULL, 'ServerStatus', 'Server');
+        \App\Services\Queue\QueueHelper::addToQueue('\Seat\EveQueues\Full\Map', 0, NULL, 'Map', 'Eve');
+        \App\Services\Queue\QueueHelper::addToQueue('\Seat\EveQueues\Full\Eve', 0, NULL, 'Eve', 'Eve');
 
         // Log the start of the key processing
         \Log::info('Starting job submissions for all keys', array('src' => __CLASS__));
@@ -105,11 +105,11 @@ class SeatAPIUpdate extends Command
 
                     // Do a fresh AccountStatus lookup
                     Account\AccountStatus::update($key->keyID, $key->vCode);
-                    \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Character'), $key->keyID, $key->vCode, 'Character', 'Eve');
+                    \App\Services\Queue\QueueHelper::addToQueue('\Seat\EveQueues\Full\Character', $key->keyID, $key->vCode, 'Character', 'Eve');
                     break;
 
                 case 'Corporation':
-                    \App\Services\Queue\QueueHelper::addToQueue(array('Full', 'Corporation'), $key->keyID, $key->vCode, 'Corporation', 'Eve');
+                    \App\Services\Queue\QueueHelper::addToQueue('\Seat\EveQueues\Full\Corporation', $key->keyID, $key->vCode, 'Corporation', 'Eve');
                     break;
 
                 default:
