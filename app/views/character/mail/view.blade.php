@@ -12,7 +12,7 @@
           <h3 class="box-title">
             All Mail for:
             <a href="{{ action('CharacterController@getView', array('characterID' => $characterID)) }}">
-                {{ Seat\services\helpers\Img::character($characterID, 32, array('class eveIcon medium')) }}
+              {{ Seat\Services\Helpers\Img::character($characterID, 32, array('class eveIcon medium')) }}
             </a>
             {{ $character_name }}
           </h3>
@@ -47,7 +47,7 @@
                   </td>
                   <td>
                     <a href="{{ action('CharacterController@getView', array('characterID' => $message->senderID)) }}">
-                        {{ Seat\services\helpers\Img::character($message->senderID, 16, array('class' => 'img-circle eveIcon small')) }}
+                        {{ Seat\Services\Helpers\Img::character($message->senderID, 16, array('class' => 'img-circle eveIcon small')) }}
                     </a>
                     {{ $message->senderName }}
                   </td>

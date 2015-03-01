@@ -30,17 +30,17 @@
 
                 <tr>
                   <td>
-                      {{ Seat\services\helpers\Img::corporation($corporation->corporationID, 16, array('class' => 'img-circle eveIcon small')) }}
-                      {{ $corporation->corporationName }} [{{ $corporation->ticker }}]
+                    {{ Seat\Services\Helpers\Img::corporation($corporation->corporationID, 16, array('class' => 'img-circle eveIcon small')) }}
+                    {{ $corporation->corporationName }} [{{ $corporation->ticker }}]
                   </td>
                   <td>
                     <a href="{{ action('CharacterController@getView', array('characterID' => $corporation->ceoID)) }}">
-                        {{ Seat\services\helpers\Img::character($corporation->ceoID, 16, array('class' => 'img-circle eveIcon small')) }}
-                        {{ $corporation->ceoName }}
+                      {{ Seat\Services\Helpers\Img::character($corporation->ceoID, 16, array('class' => 'img-circle eveIcon small')) }}
+                      {{ $corporation->ceoName }}
                     </a>
                   </td>
                   <td>
-                      {{ Seat\services\helpers\Img::alliance($corporation->allianceID, 16, array('class' => 'img-circle eveIcon small')) }}
+                      {{ Seat\Services\Helpers\Img::alliance($corporation->allianceID, 16, array('class' => 'img-circle eveIcon small')) }}
                       {{ $corporation->allianceName }}
                   </td>
                   <td>

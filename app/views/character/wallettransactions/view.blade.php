@@ -12,7 +12,7 @@
           <h3 class="box-title">
             Wallet Transactions for:
             <a href="{{ action('CharacterController@getView', array('characterID' => $characterID)) }}">
-                {{ Seat\services\helpers\Img::character($characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+              {{ Seat\Services\Helpers\Img::character($characterID, 16, array('class' => 'img-circle eveIcon small')) }}
             </a>
             {{ $character_name }}
           </h3>
@@ -47,8 +47,8 @@
                     </span>
                   </td>
                   <td>
-                      {{ Seat\services\helpers\Img::type($e->typeID, 16, array('class' => 'eveIcon small')) }}
-                      {{ $e->typeName }}
+                    {{ Seat\Services\Helpers\Img::type($e->typeID, 16, array('class' => 'eveIcon small')) }}
+                    {{ $e->typeName }}
                   </td>
                   <td>{{ $e->quantity }}</td>
                   <td data-sort="{{ $e->price }}">

@@ -31,8 +31,8 @@
                 <tr>
                   <td>
                     <a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID)) }}">
-                        {{ Seat\services\helpers\Img::character($character->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
-                        {{ $character->name }}
+                      {{ Seat\Services\Helpers\Img::character($character->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+                      {{ $character->name }}
                     </a>
                   </td>
                   <td data-sort="{{ $character->startDateTime }}">

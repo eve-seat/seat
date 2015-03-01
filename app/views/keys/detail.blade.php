@@ -87,7 +87,7 @@
               <div class="row">
                 <div class="col-md-4">
                   <a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}">
-                      {{ Seat\services\helpers\Img::character($character->characterID, 64, array('class' => 'img-circle pull-right large')) }}
+                    {{ Seat\Services\Helpers\Img::character($character->characterID, 64, array('class' => 'img-circle pull-right large')) }}
                   </a>
                 </div>
                 <div class="col-md-8">

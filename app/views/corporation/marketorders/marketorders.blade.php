@@ -82,14 +82,14 @@
                         </td>
                         <td>
                           <a href="{{ action('CharacterController@getView', array('characterID' => $order->charID)) }}">
-                              {{ Seat\services\helpers\Img::character($order->charID, 16, array('class' => 'img-circle eveIcon small')) }}
+                            {{ Seat\Services\Helpers\Img::character($order->charID, 16, array('class' => 'img-circle eveIcon small')) }}
                           </a>
                           <span rel="id-to-name">{{ $order->charID }}</span>
                         </td>
                         <td>{{ $order->location }}</td>
                         <td>
-                            {{ Seat\services\helpers\Img::type($order->typeID, 16, array('class' => 'eveIcon small')) }}
-                            {{ $order->typeName }}
+                          {{ Seat\Services\Helpers\Img::type($order->typeID, 16, array('class' => 'eveIcon small')) }}
+                          {{ $order->typeName }}
                         </td>
                         <td>{{ $order->volRemaining }}/{{ $order->volEntered }}</td>
                         <td>{{ $order->minVolume }}</td>

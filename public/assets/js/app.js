@@ -311,12 +311,12 @@ function performSearch(q) {
  * @param content
  */
 function setupLazyLoader(content) {
-	if (typeof content != 'undefined') {
-		$("img.img-lazy-load:not(.img-unveiled,:hidden)", content).unveil();
-	}
-	else {
-		$("img.img-lazy-load:not(.img-unveiled,:hidden)").unveil();
-	}
+    if (typeof content != 'undefined') {
+        $("img.img-lazy-load:not(.img-unveiled,:hidden)", content).unveil();
+    }
+    else {
+        $("img.img-lazy-load:not(.img-unveiled,:hidden)").unveil();
+    }
 }
 
 // Prevent the search form from being submitted

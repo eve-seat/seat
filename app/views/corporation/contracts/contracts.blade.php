@@ -49,12 +49,12 @@
                             <tbody style="border-top:0px solid #FFF">
                               <tr class="item-container">
                                 <td style="width: 200px">
-                                    {{ Seat\services\helpers\Img::html($contract['issuerID'], 16, array('class' => 'img-circle eveIcon small')) }}
+                                  {{ Seat\Services\Helpers\Img::html($contract['issuerID'], 16, array('class' => 'img-circle eveIcon small')) }}
                                   <span rel="id-to-name">{{ $contract['issuerID'] }}</span>
                                 </td>
                                 <td style="width: 200px">
                                   @if ($contract['assigneeID'] <> 0)
-                                        {{ Seat\services\helpers\Img::html($contract['assigneeID'], 16, array('class' => 'img-circle eveIcon small')) }}
+                                      {{ Seat\Services\Helpers\Img::html($contract['assigneeID'], 16, array('class' => 'img-circle eveIcon small')) }}
                                     <span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
                                   @else
                                     Unknown Assignee
@@ -110,7 +110,7 @@
                                   <i class="fa fa-clock-o" data-original-title=" {{ $contract['dateCompleted'] }}" title="" data-toggle="tooltip"></i>
                                   Completed: <b>{{ Carbon\Carbon::parse($contract['dateCompleted'])->diffForHumans() }}</b>
                                   by
-                                    {{ Seat\services\helpers\Img::html($contract['acceptorID'], 16, array('class' => 'img-circle eveIcon small')) }}
+                                    {{ Seat\Services\Helpers\Img::html($contract['acceptorID'], 16, array('class' => 'img-circle eveIcon small')) }}
                                     <b><span rel="id-to-name">{{ $contract['acceptorID'] }}</span></b>
                                 </li>
                               @endif
@@ -147,8 +147,8 @@
                                         <li style="list-style:none;">
                                           {{-- Check if it's a item request or not --}}
                                           @if($content['included'] == 1)
-                                                {{ Seat\services\helpers\Img::type($content['typeID'], 16, array('class' => 'eveIcon small')) }}
-                                                <span>{{ number_format($content['quantity'], 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }} x {{ $content['typeName'] }}</span>
+                                            {{ Seat\Services\Helpers\Img::type($content['typeID'], 16, array('class' => 'eveIcon small')) }}
+                                            <span>{{ number_format($content['quantity'], 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }} x {{ $content['typeName'] }}</span>
                                           @endif
                                         </li>
 
@@ -168,7 +168,7 @@
                                         <li style="list-style:none;">
                                           {{-- Check if it's a item request or not --}}
                                           @if($content['included'] == 0)
-                                            {{ Seat\services\helpers\Img::type($content['typeID'], 16, array('class' => 'eveIcon small')) }}
+                                            {{ Seat\Services\Helpers\Img::type($content['typeID'], 16, array('class' => 'eveIcon small')) }}
                                             <span>{{ number_format($content['quantity'], 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }} x {{ $content['typeName'] }}</span>
                                           @endif
                                         </li>
@@ -221,13 +221,13 @@
                             <tbody style="border-top:0px solid #FFF">
                               <tr class="item-container">
                                 <td style="width: 200px">
-                                    {{ Seat\services\helpers\Img::html($contract['issuerID'], 16, array('class' => 'img-circle eveIcon small')) }}
-                                    <span rel="id-to-name">{{ $contract['issuerID'] }}</span>
+                                  {{ Seat\Services\Helpers\Img::html($contract['issuerID'], 16, array('class' => 'img-circle eveIcon small')) }}
+                                  <span rel="id-to-name">{{ $contract['issuerID'] }}</span>
                                 </td>
                                 <td style="width: 200px">
                                   @if ($contract['assigneeID'] <> 0)
-                                        {{ Seat\services\helpers\Img::html($contract['assigneeID'], 16, array('class' => 'img-circle eveIcon small')) }}
-                                        <span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
+                                    {{ Seat\Services\Helpers\Img::html($contract['assigneeID'], 16, array('class' => 'img-circle eveIcon small')) }}
+                                    <span rel="id-to-name">{{ $contract['assigneeID'] }}</span>
                                   @else
                                     Unknown Assignee
                                   @endif
@@ -289,7 +289,7 @@
                                   <i class="fa fa-clock-o" data-original-title=" {{ $contract['dateAccepted'] }}" title="" data-toggle="tooltip"></i>
                                   Accepted: <b>{{ Carbon\Carbon::parse($contract['dateAccepted'])->diffForHumans() }}</b>
                                   by
-                                    {{ Seat\services\helpers\Img::html($contract['acceptorID'], 16, array('class' => 'img-circle eveIcon small')) }}
+                                    {{ Seat\Services\Helpers\Img::html($contract['acceptorID'], 16, array('class' => 'img-circle eveIcon small')) }}
                                     <b><span rel="id-to-name">{{ $contract['acceptorID'] }}</span></b>
                                 </li>
                               @endif

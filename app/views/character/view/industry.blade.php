@@ -64,17 +64,17 @@
                         </div>
                       </td>
                       <td>
-                          {{ Seat\services\helpers\Img::character($job->installerID, 16, array('class' => 'img-circle eveIcon small')) }}
-                          {{ $job->installerName }}
+                        {{ Seat\Services\Helpers\Img::character($job->installerID, 16, array('class' => 'img-circle eveIcon small')) }}
+                        {{ $job->installerName }}
                       </td>
                       <td>{{ $job->runs }}</td>
                       <td>
-                          {{ Seat\services\helpers\Img::type($job->blueprintTypeID, 16, array('class' => 'eveIcon small')) }}
-                          {{ $job->blueprintTypeName }}
+                        {{ Seat\Services\Helpers\Img::type($job->blueprintTypeID, 16, array('class' => 'eveIcon small')) }}
+                        {{ $job->blueprintTypeName }}
                       </td>
                       <td>
-                          {{ Seat\services\helpers\Img::type($job->productTypeID, 16, array('class' => 'eveIcon small')) }}
-                          {{ $job->productTypeName }}
+                        {{ Seat\Services\Helpers\Img::type($job->productTypeID, 16, array('class' => 'eveIcon small')) }}
+                        {{ $job->productTypeName }}
                       </td>
                       <td>{{ $job->location }}</td>
                     </tr>
@@ -125,17 +125,17 @@
                         @endif
                       </td>
                       <td>
-                          {{ Seat\services\helpers\Img::character($job->installerID, 16, array('class' => 'img-circle eveIcon small')) }}
-                          {{ $job->installerName }}
+                        {{ Seat\Services\Helpers\Img::character($job->installerID, 16, array('class' => 'img-circle eveIcon small')) }}
+                        {{ $job->installerName }}
                       </td>
                       <td>{{ $job->runs }}</td>
                       <td>
-                          {{ Seat\services\helpers\Img::type($job->blueprintTypeID, 32, array('class' => 'eveIcon medium')) }}
-                          {{ $job->blueprintTypeName }}
+                        {{ Seat\Services\Helpers\Img::type($job->blueprintTypeID, 32, array('class' => 'eveIcon medium')) }}
+                        {{ $job->blueprintTypeName }}
                       </td>
                       <td>
-                          {{ Seat\services\helpers\Img::type($job->productTypeID, 32, array('class' => 'eveIcon medium')) }}
-                          {{ $job->productTypeName }}
+                        {{ Seat\Services\Helpers\Img::type($job->productTypeID, 32, array('class' => 'eveIcon medium')) }}
+                        {{ $job->productTypeName }}
                       </td>
                       <td>{{ $job->location }}</td>
                     </tr>

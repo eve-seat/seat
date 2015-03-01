@@ -17,7 +17,7 @@
 
         <tr>
           <td>
-              {{ Seat\services\helpers\Img::type($result->typeID, 16, array('class' => 'eveIcon small')) }}
+            {{ Seat\Services\Helpers\Img::type($result->typeID, 16, array('class' => 'eveIcon small')) }}
           </td>
           <td>{{ $result->typeID }}</td>
           <td>{{ $result->typeName }}</td>

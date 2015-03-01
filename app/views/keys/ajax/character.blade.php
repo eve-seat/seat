@@ -87,7 +87,7 @@
 
       <div class="row">
         <div class="col-md-2">
-            {{ Seat\services\helpers\Img::character($character->characterID, 128, array('class' => 'img-thumbnail eveIcon xlarge')) }}
+          {{ Seat\Services\Helpers\Img::character($character->characterID, 128, array('class' => 'img-thumbnail eveIcon xlarge')) }}
         </div>
         <div class="col-md-6">
           <blockquote>

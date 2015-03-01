@@ -30,9 +30,8 @@
                 <th>Sec</th>
                 <th>Offline Estimate</th>
                 <th>
-
-                    {{ Seat\services\helpers\Img::type('4051', 32, array('style' => 'width: 18px;height: 18px;')) }}
-                    Fuel Level
+                  {{ Seat\Services\Helpers\Img::type('4051', 32, array('style' => 'width: 18px;height: 18px;')) }}
+                  Fuel Level
                 </th>
                 <th>State</th>
                 <th></th>
@@ -44,13 +43,13 @@
 
                 <tr>
                   <td>
-                      {{ Seat\services\helpers\Img::type($details->typeID, 32, array('style' => 'width: 18px;height: 18px;', )) }}
-                      {{ $details->typeName }}
+                    {{ Seat\Services\Helpers\Img::type($details->typeID, 32, array('style' => 'width: 18px;height: 18px;', )) }}
+                    {{ $details->typeName }}
                   </td>
                   <td><b>{{ $starbase_names[$details->itemID] }}</b></td>
                   <td>{{ $details->itemName }}</td>
                   <td>
-                      <b>{{ $details->onlineTimeStamp }}</b> ({{ Carbon\Carbon::parse($details->onlineTimeStamp)->diffForHumans() }})
+                    <b>{{ $details->onlineTimeStamp }}</b> ({{ Carbon\Carbon::parse($details->onlineTimeStamp)->diffForHumans() }})
                   </td>
                   <td>{{ number_format($details->security, 1, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</td>
                   <td>
@@ -181,8 +180,8 @@
                     </tr>
                     <tr>
                       <td>
-                          {{ Seat\services\helpers\Img::type('4051', 32, array('style' => 'width: 18px;height: 18px;', )) }}
-                          <b>Fuel Blocks @if($details->security >= 0.5)+ Charters @endif:</b> {{ ($details->starbaseCharter) + ($details->fuelBlocks * 5) }} m3 / {{ $bay_sizes[$details->typeID]['fuelBay'] }} m3
+                        {{ Seat\Services\Helpers\Img::type('4051', 32, array('style' => 'width: 18px;height: 18px;', )) }}
+                        <b>Fuel Blocks @if($details->security >= 0.5)+ Charters @endif:</b> {{ ($details->starbaseCharter) + ($details->fuelBlocks * 5) }} m3 / {{ $bay_sizes[$details->typeID]['fuelBay'] }} m3
                       </td>
                       <td>
                         <div class="progress">
@@ -193,8 +192,8 @@
                     </tr>
                     <tr>
                       <td>
-                          {{ Seat\services\helpers\Img::type('16275', 32, array('style' => 'width: 18px;height: 18px;')) }}
-                          <b>Strontium:</b> {{ ($details->strontium * 3) }} m3 / {{ $bay_sizes[$details->typeID]['strontBay'] }} m3
+                        {{ Seat\Services\Helpers\Img::type('16275', 32, array('style' => 'width: 18px;height: 18px;')) }}
+                        <b>Strontium:</b> {{ ($details->strontium * 3) }} m3 / {{ $bay_sizes[$details->typeID]['strontBay'] }} m3
                       </td>
                       <td>
                         <div class="progress">
@@ -260,11 +259,11 @@
 
                                         <ul class="list-unstyled">
                                           <li>
-                                              {{ Seat\services\helpers\Img::type($module_content['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
-                                              <b>{{ $module_group_name }}</b>
-                                             @if(!is_null($module_content['module_name']))
+                                            {{ Seat\Services\Helpers\Img::type($module_content['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
+                                            <b>{{ $module_group_name }}</b>
+                                            @if(!is_null($module_content['module_name']))
                                               <span class="text-muted">(called {{ $module_content['module_name'] }})</span>
-                                             @endif
+                                            @endif
                                             @if($module_content['capacity'] > 0)
                                               is currently <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
                                               with {{ count($module_content['contents']) }} item(s).
@@ -289,8 +288,8 @@
                                                 <tr>
                                                   <td>{{ $content_item['quantity'] }}</td>
                                                   <td>
-                                                      {{ Seat\services\helpers\Img::type($content_item['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
-                                                      {{ $content_item['name'] }}
+                                                    {{ Seat\Services\Helpers\Img::type($content_item['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
+                                                    {{ $content_item['name'] }}
                                                   </td>
                                                   <td>{{ round(( ($content_item['quantity'] * $content_item['volume']) / $module_content['used_volume']) * 100, 0) }}%</td>
                                                 </tr>
@@ -361,11 +360,11 @@
 
                                         <ul class="list-unstyled">
                                           <li>
-                                              {{ Seat\services\helpers\Img::type($module_content['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
-                                              <b>{{ $module_group_name }}</b>
-                                             @if(!is_null($module_content['module_name']))
+                                            {{ Seat\Services\Helpers\Img::type($module_content['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
+                                            <b>{{ $module_group_name }}</b>
+                                            @if(!is_null($module_content['module_name']))
                                               <span class="text-muted">(called {{ $module_content['module_name'] }})</span>
-                                             @endif
+                                            @endif
                                             @if($module_content['capacity'] > 0)
                                               is currently <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
                                               with {{ count($module_content['contents']) }} item(s).
@@ -390,8 +389,8 @@
                                                 <tr>
                                                   <td>{{ $content_item['quantity'] }}</td>
                                                   <td>
-                                                      {{ Seat\services\helpers\Img::type($content_item['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
-                                                      {{ $content_item['name'] }}
+                                                    {{ Seat\Services\Helpers\Img::type($content_item['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
+                                                    {{ $content_item['name'] }}
                                                   </td>
                                                   <td>{{ round(( ($content_item['quantity'] * $content_item['volume']) / $module_content['used_volume']) * 100, 0) }}%</td>
                                                 </tr>
@@ -462,12 +461,11 @@
 
                                         <ul class="list-unstyled">
                                           <li>
-                                              {{ Seat\services\helpers\Img::type($module_content['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
-
-                                              <b>{{ $module_group_name }}</b>
-                                             @if(!is_null($module_content['module_name']))
+                                            {{ Seat\Services\Helpers\Img::type($module_content['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
+                                            <b>{{ $module_group_name }}</b>
+                                            @if(!is_null($module_content['module_name']))
                                               <span class="text-muted">(called {{ $module_content['module_name'] }})</span>
-                                             @endif
+                                            @endif
                                             @if($module_content['capacity'] > 0)
                                               is currently <b>{{ round(($module_content['used_volume'] / $module_content['capacity']) * 100, 0) }}%</b> full
                                               with {{ count($module_content['contents']) }} item(s).
@@ -492,9 +490,8 @@
                                                 <tr>
                                                   <td>{{ $content_item['quantity'] }}</td>
                                                   <td>
-                                                      {{ Seat\services\helpers\Img::type($content_item['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
-
-                                                      {{ $content_item['name'] }}
+                                                    {{ Seat\Services\Helpers\Img::type($content_item['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
+                                                    {{ $content_item['name'] }}
                                                   </td>
                                                   <td>{{ round(( ($content_item['quantity'] * $content_item['volume']) / $module_content['used_volume']) * 100, 0) }}%</td>
                                                 </tr>

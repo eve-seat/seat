@@ -42,8 +42,8 @@
                     </span>
                   </td>
                   <td>
-                      {{ Seat\services\helpers\Img::type($e->typeID, 16, array('class' => 'eveIcon small')) }}
-                      {{ $e->typeName }}
+                    {{ Seat\Services\Helpers\Img::type($e->typeID, 16, array('class' => 'eveIcon small')) }}
+                    {{ $e->typeName }}
                   </td>
                   <td>{{ $e->quantity }}</td>
                   <td data-sort="{{ $e->price }}">{{ number_format($e->price, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }} ISK</td>

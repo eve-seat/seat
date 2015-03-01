@@ -22,8 +22,8 @@
 
                   <tr>
                     <td>
-                        {{ Seat\services\helpers\Img::html($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
-                        {{ $standing->fromName }}
+                      {{ Seat\Services\Helpers\Img::html($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
+                      {{ $standing->fromName }}
                     </td>
                     <td>{{ $standing->standing }}</td>
                   </tr>
@@ -47,8 +47,8 @@
 
                   <tr>
                     <td>
-                        {{ Seat\services\helpers\Img::html($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
-                        {{ $standing->fromName }}
+                      {{ Seat\Services\Helpers\Img::html($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
+                      {{ $standing->fromName }}
                     </td>
                     <td>{{ $standing->standing }}</td>
                   </tr>
@@ -72,8 +72,8 @@
 
                   <tr>
                     <td>
-                        {{ Seat\services\helpers\Img::html($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
-                        {{ $standing->fromName }}
+                      {{ Seat\Services\Helpers\Img::html($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
+                      {{ $standing->fromName }}
                     </td>
                     <td>{{ $standing->standing }}</td>
                   </tr>

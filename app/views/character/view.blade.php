@@ -13,28 +13,28 @@
       <div class="box box-primary">
         <div class="box-body">
           <p class="text-center">
-              {{ Seat\services\helpers\Img::character($character->characterID, 256, array('class' => 'img-circle eveIcon xxlarge')) }}
+            {{ Seat\Services\Helpers\Img::character($character->characterID, 256, array('class' => 'img-circle eveIcon xxlarge')) }}
           </p>
           <p class="text-center lead">{{ $character->characterName }}</p>
         </div><!-- /.box-body -->
         <div class="box-footer text-center">
             <a target="_blank" title="View {{ $character->characterName }} on EVEBoard" data-toggle="tooltip" href="http://eveboard.com/pilot/{{ $character->characterName }}" >
-                <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/eveboard.png') }}" />
+              <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/eveboard.png') }}" />
             </a>
             <a target="_blank" title="View {{ $character->characterName }} on EVE Gate" data-toggle="tooltip" href="https://gate.eveonline.com/Profile/{{ $character->characterName }}" >
-                <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/evekill.png') }}" />
+              <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/evekill.png') }}" />
             </a>
             <a target="_blank" title="View {{ $character->characterName }} on EVE-Kill" data-toggle="tooltip" href="https://eve-kill.net/?a=pilot_detail&plt_external_id={{ $character->characterID }}" >
-                <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/evekill.png') }}" />
+              <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/evekill.png') }}" />
             </a>
             <a target="_blank" title="View {{ $character->characterName }} on EVE-Search" data-toggle="tooltip" href="http://eve-search.com/search/author/{{ $character->characterName }}" >
-                <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/evesearch.png') }}" />
+              <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/evesearch.png') }}" />
             </a>
             <a target="_blank" title="View {{ $character->characterName }} on EVE WHO" data-toggle="tooltip" href="http://evewho.com/pilot/{{ $character->characterName }}" >
-                <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/evewho.png') }}" />
+              <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/evewho.png') }}" />
             </a>
             <a target="_blank" title="View {{ $character->characterName }} on zKillboard" data-toggle="tooltip" href="https://zkillboard.com/character/{{ $character->characterID }}/" >
-                <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/zkillboard.png') }}" />
+              <img src='{{ URL::asset('assets/img/bg.png') }}' data-src="{{ URL::asset('assets/img/zkillboard.png') }}" />
             </a>
         </div>
       </div><!-- ./box -->
@@ -49,7 +49,7 @@
               <div class="row">
                 <a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}" style="color:inherit;">
                   <div class="col-md-4">
-                      {{ Seat\services\helpers\Img::character($alt->characterID, 32, array('class' => 'img-circle eveIcon medium')) }}
+                    {{ Seat\Services\Helpers\Img::character($alt->characterID, 32, array('class' => 'img-circle eveIcon medium')) }}
                   </div>
                   <div class="col-md-8">
                     <ul class="list-unstyled">
@@ -90,8 +90,8 @@
                     @foreach ($other_alts as $person)
                       <li>
                         <a href="{{ action('CharacterController@getView', array('characterID' => $person->characterID)) }}">
-                            {{ Seat\services\helpers\Img::character($person->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
-                            {{ $person->characterName }}
+                          {{ Seat\Services\Helpers\Img::character($person->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+                          {{ $person->characterName }}
                         </a>
                       </li>
                     @endforeach

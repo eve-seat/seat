@@ -43,19 +43,19 @@
                         <tbody>
                           <tr>
                             <td>
-                                {{ Seat\services\helpers\Img::type($route->sourceTypeID, 16, array('class' => 'eveIcon small')) }}
-                                {{ $route->sourceTypeName }}
+                              {{ Seat\Services\Helpers\Img::type($route->sourceTypeID, 16, array('class' => 'eveIcon small')) }}
+                              {{ $route->sourceTypeName }}
                             </td>
                             <td>
-                                {{ Seat\services\helpers\Img::type($route->contentTypeID, 16, array('class' => 'eveIcon small')) }}
-                                {{ $route->contentTypeName }} ({{ $route->quantity }})
+                              {{ Seat\Services\Helpers\Img::type($route->contentTypeID, 16, array('class' => 'eveIcon small')) }}
+                              {{ $route->contentTypeName }} ({{ $route->quantity }})
                             </td>
                             <td>@if($route->cycleTime != 0){{ $route->cycleTime }} minutes @endif</td>
                             <td>@if($route->quantityPerCycle != 0){{ $route->quantityPerCycle }} @endif</td>
                             <td>@if( date('Y-m-d H:i:s') < ($route->expiryTime)){{ Carbon\Carbon::parse($route->expiryTime)->diffForHumans() }}@else No Active Cycle @endif</td>
                             <td>
-                                {{ Seat\services\helpers\Img::type($route->destinationTypeID, 16, array('class' => 'eveIcon small')) }}
-                                {{ $route->destinationTypeName }}
+                              {{ Seat\Services\Helpers\Img::type($route->destinationTypeID, 16, array('class' => 'eveIcon small')) }}
+                              {{ $route->destinationTypeName }}
                             </td>
                           </tr>
                         </tbody>
@@ -88,13 +88,13 @@
                         <tbody>
                           <tr>
                             <td>
-                                {{ Seat\services\helpers\Img::type($link->sourceTypeID, 16, array('class' => 'eveIcon small')) }}
-                                {{ $link->sourceTypeName }}
+                              {{ Seat\Services\Helpers\Img::type($link->sourceTypeID, 16, array('class' => 'eveIcon small')) }}
+                              {{ $link->sourceTypeName }}
                             </td>
                             <td>{{ $link->linkLevel }}</td>
                             <td>
-                                {{ Seat\services\helpers\Img::type($link->destinationTypeID, 16, array('class' => 'eveIcon small')) }}
-                                {{ $link->destinationTypeName }}
+                              {{ Seat\Services\Helpers\Img::type($link->destinationTypeID, 16, array('class' => 'eveIcon small')) }}
+                              {{ $link->destinationTypeName }}
                             </td>
                           </tr>
                         </tbody>
@@ -124,8 +124,8 @@
                         <tbody>
                           <tr>
                             <td>
-                                {{ Seat\services\helpers\Img::type($installation->typeID, 16, array('class' => 'eveIcon small')) }}
-                                {{ $installation->typeName }}
+                              {{ Seat\Services\Helpers\Img::type($installation->typeID, 16, array('class' => 'eveIcon small')) }}
+                              {{ $installation->typeName }}
                             </td>
                           </tr>
                         </tbody>

@@ -17,8 +17,8 @@
         <tr>
           <td>
             <a href="{{ action('CharacterController@getView', array('characterID' => $result->characterID)) }}">
-                {{ Seat\services\helpers\Img::character($result->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
-                {{ $result->characterName }}
+              {{ Seat\Services\Helpers\Img::character($result->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+              {{ $result->characterName }}
             </a>
           </td>
           <td>{{ $result->corporationName }}</td>

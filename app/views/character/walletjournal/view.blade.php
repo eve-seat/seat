@@ -12,7 +12,7 @@
           <h3 class="box-title">
             Wallet Journal for:
             <a href="{{ action('CharacterController@getView', array('characterID' => $characterID)) }}">
-                {{ Seat\services\helpers\Img::character($characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+              {{ Seat\Services\Helpers\Img::character($characterID, 16, array('class' => 'img-circle eveIcon small')) }}
             </a>
             {{ $character_name }}
           </h3>
@@ -47,12 +47,12 @@
                   </td>
                   <td>{{ $e->refTypeName }}</td>
                   <td>
-                      {{ Seat\services\helpers\Img::html($e->ownerID1, 16, array('class' => 'img-circle eveIcon small')) }}
-                      {{ $e->ownerName1 }}
+                    {{ Seat\Services\Helpers\Img::html($e->ownerID1, 16, array('class' => 'img-circle eveIcon small')) }}
+                    {{ $e->ownerName1 }}
                   </td>
                   <td>
-                      {{ Seat\services\helpers\Img::html($e->ownerID2, 16, array('class' => 'img-circle eveIcon small')) }}
-                      {{ $e->ownerName2 }}
+                    {{ Seat\Services\Helpers\Img::html($e->ownerID2, 16, array('class' => 'img-circle eveIcon small')) }}
+                    {{ $e->ownerName2 }}
                   </td>
                   <td>{{ $e->argName1 }}</td>
                   <td data-sort="{{ $e->amount }}">

@@ -31,8 +31,8 @@
                     <tr>
                       <td>
                         <a href="{{ action('CharacterController@getView', array('characterID' => $killmail->characterID)) }}">
-                            {{ Seat\services\helpers\Img::character($killmail->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
-                            {{ $killmail->characterName }}
+                          {{ Seat\Services\Helpers\Img::character($killmail->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+                          {{ $killmail->characterName }}
                           {{-- if the characterID == victim characterID, then this is a loss --}}
                           @if($killmail->corporationID == $corporationID)
                             <span class="text-danger"><i>(loss!)</i></span>
@@ -41,8 +41,8 @@
                       </td>
                       <td>
                         <a href="https://zkillboard.com/kill/{{ $killmail->killID }}/" target="_blank">
-                            {{ Seat\services\helpers\Img::type($killmail->shipTypeID, 16, array('class' => 'eveIcon small')) }}
-                            {{ $killmail->typeName }}
+                          {{ Seat\Services\Helpers\Img::type($killmail->shipTypeID, 16, array('class' => 'eveIcon small')) }}
+                          {{ $killmail->typeName }}
                         </a>
                       </td>
                       <td>

@@ -13,7 +13,7 @@
           <p>From character: {{ $corp->characterName }}</p>
         </div>
         <div class="icon">
-            {{ Seat\services\helpers\Img::corporation($corp->corporationID, 32, array('class' => 'img-circle eveIcon medium')) }}
+            {{ Seat\Services\Helpers\Img::corporation($corp->corporationID, 32, array('class' => 'img-circle eveIcon medium')) }}
         </div>
         <a href="{{ action('CorporationController@getMemberTracking', array('corporationID' => $corp->corporationID)) }}" class="small-box-footer">
           View Member Tracking <i class="fa fa-arrow-circle-right"></i>

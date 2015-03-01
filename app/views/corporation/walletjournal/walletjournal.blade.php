@@ -48,12 +48,12 @@
                   <td>{{ $e->description }}</td>
                   <td>{{ $e->refTypeName }}</td>
                   <td>
-                      {{ Seat\services\helpers\Img::html($e->ownerID1, 16, array('class' => 'img-circle eveIcon small')) }}
-                      {{ $e->ownerName1 }}
+                    {{ Seat\Services\Helpers\Img::html($e->ownerID1, 16, array('class' => 'img-circle eveIcon small')) }}
+                    {{ $e->ownerName1 }}
                   </td>
                   <td>
-                      {{ Seat\services\helpers\Img::html($e->ownerID2, 16, array('class' => 'img-circle eveIcon small')) }}
-                      {{ $e->ownerName2 }}
+                    {{ Seat\Services\Helpers\Img::html($e->ownerID2, 16, array('class' => 'img-circle eveIcon small')) }}
+                    {{ $e->ownerName2 }}
                   </td>
                   <td>{{ $e->argName1 }}</td>
                   <td data-sort="{{ $e->amount }}">

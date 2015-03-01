@@ -138,13 +138,13 @@
       var search_location = "{{ action('DashboardController@getSearch') }}";
 
       $(document).ready(function() {
+        setupLazyLoader();
+        $(window).on('shown.bs.tab', function(){
           setupLazyLoader();
-          $(window).on('shown.bs.tab', function(){
-              setupLazyLoader();
-          });
-          $( document ).ajaxComplete(function() {
-              setupLazyLoader();
-          });
+        });
+        $( document ).ajaxComplete(function() {
+          setupLazyLoader();
+        });
       });
 
     </script>
