@@ -71,7 +71,7 @@
 
       <div class="row">
         <div class="col-md-2">
-          <img src='//image.eveonline.com/Character/{{ $character->characterID }}_128.jpg' class='img-thumbnail'>
+            {{ Seat\services\helpers\Img::character($character->characterID, 128, array('class' => 'img-thumbnail eveIcon xlarge')) }}
         </div>
         <div class="col-md-6">
           <blockquote>

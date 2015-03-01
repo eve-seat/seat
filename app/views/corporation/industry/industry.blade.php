@@ -71,10 +71,19 @@
                             </div>
                           </div>
                         </td>
-                        <td><img src="//image.eveonline.com/Character/{{ $job->installerID }}_32.jpg" class='img-circle' /> {{ $job->installerName }}</td>
+                        <td>
+                            {{ Seat\services\helpers\Img::character($job->installerID, 16, array('class' => 'img-circle eveIcon small')) }}
+                            {{ $job->installerName }}
+                        </td>
                         <td>{{ $job->runs }}</td>
-                        <td><img src="//image.eveonline.com/Type/{{ $job->blueprintTypeID }}_32.png" /> {{ $job->blueprintTypeName }}</td>
-                        <td><img src="//image.eveonline.com/Type/{{ $job->productTypeID }}_32.png" /> {{ $job->productTypeName }}</td>
+                        <td>
+                            {{ Seat\services\helpers\Img::type($job->blueprintTypeID, 16, array('class' => 'eveIcon small')) }}
+                            {{ $job->blueprintTypeName }}
+                        </td>
+                        <td>
+                            {{ Seat\services\helpers\Img::type($job->productTypeID, 16, array('class' => 'eveIcon small')) }}
+                            {{ $job->productTypeName }}
+                        </td>
                         <td>{{ $job->location }}</td>
                       </tr>
 
@@ -124,10 +133,19 @@
                             <span class="label bg-aqua">Invention</span>
                           @endif
                         </td>
-                        <td><img src="//image.eveonline.com/Character/{{ $job->installerID }}_32.jpg"> {{ $job->installerName }}</td>
+                        <td>
+                            {{ Seat\services\helpers\Img::character($job->installerID, 16, array('class' => 'img-circle eveIcon small')) }}
+                            {{ $job->installerName }}
+                        </td>
                         <td>{{ $job->runs }}</td>
-                        <td><img src="//image.eveonline.com/Type/{{ $job->blueprintTypeID }}_32.png" /> {{ $job->blueprintTypeName }}</td>
-                        <td><img src="//image.eveonline.com/Type/{{ $job->productTypeID }}_32.png" /> {{ $job->productTypeName }}</td>
+                        <td>
+                            {{ Seat\services\helpers\Img::type($job->blueprintTypeID, 16, array('class' => 'eveIcon small')) }}
+                            {{ $job->blueprintTypeName }}
+                        </td>
+                        <td>
+                            {{ Seat\services\helpers\Img::type($job->productTypeID, 16, array('class' => 'eveIcon small')) }}
+                            {{ $job->productTypeName }}
+                        </td>
                         <td>{{ $job->location }}</td>
                       </tr>
 

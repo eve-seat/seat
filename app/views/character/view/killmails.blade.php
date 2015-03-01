@@ -27,7 +27,7 @@
                     <tr>
                       <td>
                         <a href="{{ action('CharacterController@getView', array('characterID' => $killmail->characterID)) }}">
-                          <img src='//image.eveonline.com/Character/{{ $killmail->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+                          {{ Seat\services\helpers\Img::character($killmail->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
                           {{ $killmail->characterName }}
                           {{-- if the characterID == victim characterID, then this is a loss --}}
                           @if($killmail->characterID == $characterID)
@@ -37,7 +37,7 @@
                       </td>
                       <td>
                         <a href="https://zkillboard.com/kill/{{ $killmail->killID }}/" target="_blank">
-                          <img src='//image.eveonline.com/Type/{{ $killmail->shipTypeID }}_32.png' class='img-circle' style='width: 18px;height: 18px;'>
+                          {{ Seat\services\helpers\Img::type($killmail->shipTypeID, 16, array('class' => 'eveIcon small')) }}
                           {{ $killmail->typeName }}
                         </a>
                       </td>

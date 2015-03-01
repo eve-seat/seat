@@ -40,8 +40,8 @@
                       <tr>
                         <td>
                           <a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID)) }}">
-                            <img src='//image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
-                            {{ App\Services\Helpers\Helpers::highlightKeyword($character->characterName, $keyword) }}
+                              {{ Seat\services\helpers\Img::character($character->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+                              {{ App\Services\Helpers\Helpers::highlightKeyword($character->characterName, $keyword) }}
                           </a>
                         </td>
                         <td>{{ $character->corporationName }}</td>
@@ -82,8 +82,8 @@
                       <tr>
                         <td>
                           <a href="{{ action('CharacterController@getView', array('characterID' => $character_asset->characterID)) }}">
-                            <img src='//image.eveonline.com/Character/{{ $character_asset->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
-                            {{ $character_asset->characterName }}
+                              {{ Seat\services\helpers\Img::character($character_asset->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+                              {{ $character_asset->characterName }}
                           </a>
                         </td>
                         <td>{{ $character_asset->corporationName }}</td>
@@ -124,8 +124,8 @@
                       <tr>
                         <td>
                           <a href="{{ action('CharacterController@getView', array('characterID' => $character_contact->characterID)) }}">
-                            <img src='//image.eveonline.com/Character/{{ $character_contact->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
-                            {{ $character_contact->characterName }}
+                              {{ Seat\services\helpers\Img::character($character_contact->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+                              {{ $character_contact->characterName }}
                           </a>
                         </td>
                         <td>{{ $character_contact->corporationName }}</td>
@@ -171,8 +171,8 @@
                       <tr>
                         <td>
                           <a href="{{ action('CharacterController@getView', array('characterID' => $message->senderID)) }}">
-                            <img src='//image.eveonline.com/Character/{{ $message->senderID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
-                            {{ App\Services\Helpers\Helpers::highlightKeyword($message->senderName, $keyword) }}
+                              {{ Seat\services\helpers\Img::character($message->senderID, 16, array('class' => 'img-circle eveIcon small')) }}
+                              {{ App\Services\Helpers\Helpers::highlightKeyword($message->senderName, $keyword) }}
                           </a>
                         </td>
                         <td>{{ App\Services\Helpers\Helpers::highlightKeyword($message->title, $keyword) }}</td>
@@ -214,8 +214,8 @@
                       <tr>
                         <td>
                           <a href="{{ action('CharacterController@getView', array('characterID' => $standing->characterID)) }}">
-                            <img src='//image.eveonline.com/Character/{{ $standing->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
-                            {{ App\Services\Helpers\Helpers::highlightKeyword($standing->characterName, $keyword) }}
+                              {{ Seat\services\helpers\Img::character($standing->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+                              {{ App\Services\Helpers\Helpers::highlightKeyword($standing->characterName, $keyword) }}
                           </a>
                         </td>
                         <td>{{ $standing->corporationName }}</td>

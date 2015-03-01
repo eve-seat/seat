@@ -31,8 +31,8 @@
                 <tr>
                   <td>
                     <a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID)) }}">
-                      <img src='//image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
-                    {{ $character->characterName }}
+                        {{ Seat\services\helpers\Img::character($character->characterID, 32, array('class' => 'img-circle eveIcon small')) }}
+                        {{ $character->characterName }}
                     </a>
                   </td>
                   <td>{{ $character->corporationName }}</td>

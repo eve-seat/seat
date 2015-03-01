@@ -40,7 +40,7 @@
             <div class="col-md-12 btn-group">
               <a href="{{ action('CharacterController@getView', array('characterID' => $personData[0]['main']->characterID )) }}" class="btn btn-default" style="width: 90%; text-align: left;">
                 <span data-toggle="tooltip" title="" data-original-title="{{ $personData[0]['main']->characterName }}">
-                  <img src='//image.eveonline.com/Character/{{ $personData[0]['main']->characterID }}_32.jpg' class='img-circle'>
+                    {{ Seat\services\helpers\Img::character($personData[0]['main']->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
                 </span>
                 {{ str_limit($personData[0]['main']->characterName, 30, $end = '...') }}
                 <small class="text-muted">({{ count($personData) }} keys)</small>
@@ -64,8 +64,8 @@
 
                       <li>
                         <a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}" style="color:inherit;">
-                          <img src='//image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
-                          {{ $character->characterName }}
+                            {{ Seat\services\helpers\Img::character($character->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+                            {{ $character->characterName }}
                         </a>
                         @if ($personData[0]['main']->characterID <> $character->characterID)
                           <a href="{{ action('ApiKeyController@getSetGroupMain', array('personid' => $personData[0]['personID'], 'characterid' => $character->characterID)) }}" class="pull-right">Set as Main</a>
@@ -108,7 +108,7 @@
 
                 <li>
                   <a href="{{ action('CharacterController@getView', array('characterID' => $character->characterID )) }}">
-                    <img src='//image.eveonline.com/Character/{{ $character->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+                      {{ Seat\services\helpers\Img::character($character->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
                   </a>
                   {{ $character->characterName }}
                   <a href="{{ action('ApiKeyController@getNewGroup', array('keyID' => $key, 'characterID' => $character->characterID )) }}" class="pull-right">Use as Main for new Group</a>
