@@ -84,7 +84,7 @@ class BaseApi
         // cache
         if (\Cache::get('eve_api_error_count') >= \Config::get('seat.error_limit')) {
 
-            \Cache::set('eve_api_down', true, 30);
+            \Cache::put('eve_api_down', true, 30);
             \Cache::decrement('eve_api_error_count', 10);
         }
 
