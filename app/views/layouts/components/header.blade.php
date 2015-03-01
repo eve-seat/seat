@@ -57,11 +57,11 @@
               <li class="user-header bg-black">
             @endif
               {{-- See SettingHelper why this has to be more than 1 --}}
-              @if($settings['main_character_id'] > 1)
-                <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $settings['main_character_id'], 64) }}" class="img-circle" alt="User Image" />
-              @else
-                <img src="//image.eveonline.com/Character/1_64.jpg" class="img-circle" alt="User Image" />
-              @endif
+                @if($settings['main_character_id'] > 1)
+                  {{ Seat\services\helpers\Img::character($settings['main_character_id'], 16, array('class' => 'img-circle eveIcon small')) }}
+                @else
+                  {{ Seat\services\helpers\Img::character('1', 16, array('class' => 'img-circle eveIcon small')) }}
+                @endif
                 <p>
                   {{ \Auth::User()->email }}
                   <small>Joined: {{ \Auth::User()->created_at }}</small>

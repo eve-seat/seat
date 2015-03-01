@@ -82,14 +82,14 @@
                         </td>
                         <td>
                           <a href="{{ action('CharacterController@getView', array('characterID' => $order->charID)) }}">
-                            <img src='//image.eveonline.com/Character/{{ $order->charID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+                              {{ Seat\services\helpers\Img::character($order->charID, 16, array('class' => 'img-circle eveIcon small')) }}
                           </a>
                           <span rel="id-to-name">{{ $order->charID }}</span>
                         </td>
                         <td>{{ $order->location }}</td>
                         <td>
-                          <img src='//image.eveonline.com/Type/{{ $order->typeID }}_32.png' style='width: 18px;height: 18px;'>
-                          {{ $order->typeName }}
+                            {{ Seat\services\helpers\Img::type($order->typeID, 16, array('class' => 'eveIcon small')) }}
+                            {{ $order->typeName }}
                         </td>
                         <td>{{ $order->volRemaining }}/{{ $order->volEntered }}</td>
                         <td>{{ $order->minVolume }}</td>

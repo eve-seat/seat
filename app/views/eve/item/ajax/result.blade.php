@@ -16,7 +16,9 @@
       @foreach ($items as $result)
 
         <tr>
-          <td><img src='//image.eveonline.com/Type/{{ $result->typeID }}_32.png' style='width: 18px;height: 18px;'></td>
+          <td>
+              {{ Seat\services\helpers\Img::type($result->typeID, 16, array('class' => 'eveIcon small')) }}
+          </td>
           <td>{{ $result->typeID }}</td>
           <td>{{ $result->typeName }}</td>
           <td>{{ $result->description }}</td>
