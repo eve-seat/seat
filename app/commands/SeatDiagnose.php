@@ -72,9 +72,9 @@ class SeatDiagnose extends Command
         $this->line('');
 
         // It is important to run the command as the user that the workers are running as.
-	// This way, the checks that ensure file permissions are right are executed
-	// properly. If this is not the case, notify the user
-        
+        // This way, the checks that ensure file permissions are right are executed
+        // properly. If this is not the case, notify the user
+
         $this->comment('If you are not already doing so, it is recommended that you run this as the user the workers are running as.');
         $this->comment('Eg: `sudo -u apache php artisan seat:diagnose`.');
         $this->comment('This helps to check whether the permissions are correct.');
