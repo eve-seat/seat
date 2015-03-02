@@ -291,7 +291,12 @@
                                                     {{ Seat\Services\Helpers\Img::type($content_item['typeID'], 32, array('style' => 'width: 18px;height: 18px;', )) }}
                                                     {{ $content_item['name'] }}
                                                   </td>
-                                                  <td>{{ round(( ($content_item['quantity'] * $content_item['volume']) / $module_content['used_volume']) * 100, 0) }}%</td>
+                                                  {{-- Report 0% if the used_volume is 0.  This can happen if there's just a bookmarks in a CHA. --}}
+                                                  @if($module_content['used_volume'] > 0)
+                                                    <td>{{ round(( ($content_item['quantity'] * $content_item['volume']) / $module_content['used_volume']) * 100, 0) }}%</td>
+                                                  @else
+                                                    <td>0%</td>
+                                                  @endif
                                                 </tr>
 
                                               @endforeach
