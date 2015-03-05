@@ -64,6 +64,9 @@ class SettingsController extends BaseController
             ->with('decimal_seperator', Settings::getSetting('decimal_seperator', true))
             ->with('required_mask', Settings::getSetting('required_mask', true))
             ->with('registration_enabled', Settings::getSetting('registration_enabled', true))
+            ->with('administrative_contact', Settings::getSetting('administrative_contact', true))
+            ->with('seatnotify_member_inactivity_months', Settings::getSetting('seatnotify_member_inactivity_months', true))
+            ->with('seatnotify_fuel_warning_days', Settings::getSetting('seatnotify_fuel_warning_days', true))
             ->with('seatscheduled_character', Settings::getSetting('seatscheduled_character', true))
             ->with('seatscheduled_corporation', Settings::getSetting('seatscheduled_corporation', true))
             ->with('seatscheduled_corporation_assets', Settings::getSetting('seatscheduled_corporation_assets', true))
@@ -99,6 +102,11 @@ class SettingsController extends BaseController
             Settings::setSetting('decimal_seperator', Input::get('decimal_seperator'));
             Settings::setSetting('required_mask', Input::get('required_mask'));
             Settings::setSetting('registration_enabled', Input::get('registration_enabled'));
+            Settings::setSetting('administrative_contact', Input::get('administrative_contact'));
+
+            // SeAT Notifications
+            Settings::setSetting('seatnotify_member_inactivity_months', Input::get('seatnotify_member_inactivity_months'));
+            Settings::setSetting('seatnotify_fuel_warning_days', Input::get('seatnotify_fuel_warning_days'));
 
             // SeAT Queues
             Settings::setSetting('seatscheduled_character', Input::get('seatscheduled_character'));

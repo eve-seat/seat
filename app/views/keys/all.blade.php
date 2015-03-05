@@ -45,7 +45,7 @@
                   @foreach($key['characters'] as $char)
 
                     <a href="{{ action('CharacterController@getView', array('characterID' => $char['characterID'])) }}">
-                      <img src='//image.eveonline.com/Character/{{ $char['characterID'] }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+                      {{ Seat\Services\Helpers\Img::character($char['characterID'], 16, array('class' => 'img-circle eveIcon small')) }}
                       {{ $char['characterName'] }}
                     </a>
 

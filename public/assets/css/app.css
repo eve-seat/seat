@@ -144,6 +144,34 @@ h6,
 img {
   max-width: 100%important;
 }
+img.eveIcon {
+
+}
+img.eveIcon.small {
+	margin-top: -3px;
+	width:16px;
+	height:16px;
+}
+img.eveIcon.medium {
+	margin-top: -3px;
+	width:32px;
+	height:32px;
+}
+img.eveIcon.large {
+	margin-top: -3px;
+	width:64px;
+	height:64px;
+}
+img.eveIcon.xlarge {
+	margin-top: -3px;
+	width:128px;
+	height:128px;
+}
+img.eveIcon.xxlarge {
+	margin-top: -3px;
+	width:256px;
+	height:256px;
+}
 .sort-highlight {
   background: #f4f4f4;
   border: 1px dashed #ddd;
@@ -558,10 +586,6 @@ body > .header .logo .icon {
 }
 .user-panel:after {
   clear: both;
-}
-.user-panel > .image > img {
-  width: 45px;
-  height: 45px;
 }
 .user-panel > .info {
   font-weight: 600;

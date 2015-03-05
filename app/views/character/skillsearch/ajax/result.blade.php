@@ -17,7 +17,7 @@
         <tr>
           <td>
             <a href="{{ action('CharacterController@getView', array('characterID' => $result->characterID)) }}">
-              <img src='//image.eveonline.com/Character/{{ $result->characterID }}_32.jpg' class='img-circle' style='width: 18px;height: 18px;'>
+              {{ Seat\Services\Helpers\Img::character($result->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
               {{ $result->characterName }}
             </a>
           </td>

@@ -28,11 +28,11 @@
 
   <div class="row">
 
-    <div class="col-lg-3 col-xs-12">
+    <div class="col-lg-4 col-xs-12">
       <!-- small box -->
       <div class="small-box bg-blue">
         <div class="inner">
-          <h3>{{ $total_keys }}</h3>
+          <h3>{{ number_format($total_keys, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
           <p>Total Recorded API Keys</p>
         </div>
         <div class="icon">
@@ -44,11 +44,11 @@
       </div>
     </div><!-- ./col -->
 
-    <div class="col-lg-3 col-xs-12">
+    <div class="col-lg-4 col-xs-12">
       <!-- small box -->
       <div class="small-box bg-purple">
         <div class="inner">
-          <h3>{{ $total_characters }}</h3>
+          <h3>{{ number_format($total_characters, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
           <p>Total Character Sheets</p>
         </div>
         <div class="icon">
@@ -60,12 +60,28 @@
       </div>
     </div><!-- ./col -->
 
-    <div class="col-lg-3 col-xs-12">
+    <div class="col-lg-4 col-xs-12">
+      <!-- small box -->
+      <div class="small-box bg-purple">
+        <div class="inner">
+          <h3>{{ number_format($total_corporations, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
+          <p>Total Corporation Sheets</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-building-o"></i>
+        </div>
+        <a href="{{ action('CorporationController@getAll') }}" class="small-box-footer">
+          All Corporations <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div><!-- ./col -->
+
+    <div class="col-lg-4 col-xs-12">
       <!-- small box -->
       <div class="small-box bg-green">
         <div class="inner">
-          <h3>{{ number_format($total_isk , 2, '.', ' ') }}</h3>
-          <p>Total Recorded ISK</p>
+          <h3>{{ number_format($total_char_isk, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
+          <p>Total Recorded Character ISK</p>
         </div>
         <div class="icon">
           <i class="fa fa-money"></i>
@@ -75,11 +91,28 @@
         </a>
       </div>
     </div><!-- ./col -->
-    <div class="col-lg-3 col-xs-12">
+
+    <div class="col-lg-4 col-xs-12">
+      <!-- small box -->
+      <div class="small-box bg-green">
+        <div class="inner">
+          <h3>{{ number_format($total_corp_isk, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
+            <p>Total Recorded Corporation ISK</p>
+        </div>
+        <div class="icon">
+          <i class="fa fa-money"></i>
+        </div>
+        <a href="{{ action('CorporationController@getListLedgers') }}" class="small-box-footer">
+          All Corp Wallets <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div><!-- ./col -->
+
+    <div class="col-lg-4 col-xs-12">
       <!-- small box -->
       <div class="small-box bg-maroon">
         <div class="inner">
-          <h3>{{ number_format($total_skillpoints , 0, '.', ' ') }}</h3>
+          <h3>{{ number_format($total_skillpoints, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</h3>
           <p>Total Recorded Skillpoints</p>
         </div>
         <div class="icon">

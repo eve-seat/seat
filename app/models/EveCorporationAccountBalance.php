@@ -26,5 +26,7 @@ SOFTWARE.
 class EveCorporationAccountBalance extends Eloquent
 {
 
+	const Dust_Account_Key = 10000;
+
     protected $table = 'corporation_accountbalance';
 }

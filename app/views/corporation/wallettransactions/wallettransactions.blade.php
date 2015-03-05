@@ -42,7 +42,7 @@
                     </span>
                   </td>
                   <td>
-                    <img src='//image.eveonline.com/Type/{{ $e->typeID }}_32.png' style='width: 18px;height: 18px;'>
+                    {{ Seat\Services\Helpers\Img::type($e->typeID, 16, array('class' => 'eveIcon small')) }}
                     {{ $e->typeName }}
                   </td>
                   <td>{{ $e->quantity }}</td>

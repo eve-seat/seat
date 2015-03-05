@@ -28,6 +28,41 @@ use App\Services\Helpers\Helpers;
 class CorporationController extends BaseController
 {
 
+	/*
+	|--------------------------------------------------------------------------
+	| getAll()
+	|--------------------------------------------------------------------------
+	|
+	| Get all of the corporations on record
+	|
+	*/
+	public function getAll()
+	{
+
+		// Query the databse for all the characters and some related
+		// information
+		$corporations = DB::table('account_apikeyinfo')
+			->leftJoin('seat_keys', 'account_apikeyinfo.keyID', '=', 'seat_keys.keyID')
+			->leftJoin('account_apikeyinfo_characters', 'account_apikeyinfo.keyID', '=', 'account_apikeyinfo_characters.keyID')
+			->leftJoin('corporation_corporationsheet', 'account_apikeyinfo_characters.corporationID', '=', 'corporation_corporationsheet.corporationID')
+			->where('account_apikeyinfo.type', '=', 'Corporation')
+			->orderBy('seat_keys.isOk', 'asc')
+			->orderBy('account_apikeyinfo_characters.corporationName', 'asc')
+			->groupBy('account_apikeyinfo_characters.characterID');
+
+		// Check that we only return characters that the current
+		// user has access to. SuperUser() automatically
+		// inherits all permissions
+		if (!\Auth::hasAccess('recruiter'))
+			$corporations = $corporations->whereIn('seat_keys.keyID', Session::get('valid_keys'))
+				->get();
+		else
+			$corporations = $corporations->get();
+
+		return View::make('corporation.all')
+			->with('corporations', $corporations);
+	}
+
     /*
     |--------------------------------------------------------------------------
     | getListJournals()
@@ -239,6 +274,9 @@ class CorporationController extends BaseController
         $assets = DB::select(
             "SELECT *,
                 CASE
+                  when a.locationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.locationID-6000000)
                   when a.locationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.locationID-6000001)
@@ -399,6 +437,9 @@ class CorporationController extends BaseController
         // Contract list
         $contract_list = DB::select(
             'SELECT *, CASE
+                when a.startStationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.startStationID-6000000)
                 when a.startStationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.startStationID-6000001)
@@ -418,6 +459,9 @@ class CorporationController extends BaseController
                     WHERE m.itemID=a.startStationID) end
                 AS startlocation,
                 CASE
+                when a.endStationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.endStationID-6000000)
                 when a.endStationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.endStationID-6000001)
@@ -1102,6 +1146,11 @@ class CorporationController extends BaseController
             ->where('corporation_accountbalance.corporationID', $corporationID)
             ->get();
 
+        $wallet_balances_total = 0;
+        foreach($wallet_balances as $div) {
+            $wallet_balances_total += $div->balance;
+        }
+
         // The overall corporation ledger. We will loop over the wallet divisions
         // and get the ledger calculated for each
         $ledgers = array();
@@ -1154,6 +1203,16 @@ class CorporationController extends BaseController
             ->orderBy('total', 'desc')
             ->get();
 
+        $incursions_tax = DB::table('corporation_walletjournal')
+            ->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+            ->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+            ->where('corporation_walletjournal.refTypeID', 99) // Ref type id 99: Corporate Reward Payout (yeah, seriously ...)
+            ->where('corporation_walletjournal.ownerName1', "CONCORD") // check if the payout came from CONCORD
+            ->where('corporation_walletjournal.corporationID', $corporationID)
+            ->groupBy('corporation_walletjournal.ownerName2')
+            ->orderBy('total', 'desc')
+            ->get();
+
         return View::make('corporation.ledger.ledger')
             ->with('corporationID', $corporationID)
             ->with('ledger_dates', $ledger_dates)
@@ -1161,7 +1220,9 @@ class CorporationController extends BaseController
             ->with('ledgers', $ledgers)
             ->with('bounty_tax', $bounty_tax)
             ->with('mission_tax', $mission_tax)
-            ->with('pi_tax', $pi_tax);
+            ->with('pi_tax', $pi_tax)
+            ->with('incursions_tax', $incursions_tax)
+            ->with('wallet_balances_total', $wallet_balances_total);
     }
 
     /*
@@ -1251,13 +1312,26 @@ class CorporationController extends BaseController
             ->orderBy('total', 'desc')
             ->get();
 
+        $incursions_tax = DB::table('corporation_walletjournal')
+            ->select('ownerID2', 'ownerName2', DB::raw('SUM(corporation_walletjournal.amount) total'))
+            ->leftJoin('eve_reftypes', 'corporation_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
+            ->where('corporation_walletjournal.refTypeID', 99) // Ref type id 99: Corporate Reward Payout (yeah, seriously ...)
+            ->where('corporation_walletjournal.ownerName1', "CONCORD") // check if the payout came from CONCORD
+            ->where(DB::raw('MONTH(date)'), $month)
+            ->where(DB::raw('YEAR(date)'), $year)
+            ->where('corporation_walletjournal.corporationID', $corporationID)
+            ->groupBy('corporation_walletjournal.ownerName2')
+            ->orderBy('total', 'desc')
+            ->get();
+
         return View::make('corporation.ledger.ajax.ledgermonth')
             ->with('corporationID', $corporationID)
             ->with('date', $date)
             ->with('ledgers', $ledgers)
             ->with('bounty_tax', $bounty_tax)
             ->with('mission_tax', $mission_tax)
-            ->with('pi_tax', $pi_tax);
+            ->with('pi_tax', $pi_tax)
+            ->with('incursions_tax', $incursions_tax);
     }
 
     /*
@@ -1453,6 +1527,9 @@ class CorporationController extends BaseController
         // Corporation Market Orders
         $market_orders = DB::select(
             'SELECT *, CASE
+                when a.stationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                      WHERE s.stationID=a.stationID-6000000)
                 when a.stationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                       WHERE s.stationID=a.stationID-6000001)
@@ -1662,6 +1739,9 @@ class CorporationController extends BaseController
         $current_jobs = DB::table('corporation_industryjobs as a')
             ->select(DB::raw("
                 *, CASE
+                when a.stationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                     WHERE s.stationID=a.stationID-6000000)
                 when a.stationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                      WHERE s.stationID=a.stationID-6000001)
@@ -1694,6 +1774,9 @@ class CorporationController extends BaseController
         $finished_jobs = DB::table('corporation_industryjobs as a')
             ->select(DB::raw("
                 *, CASE
+                when a.stationID BETWEEN 66015148 AND 66015151 then
+                    (SELECT s.stationName FROM staStations AS s
+                     WHERE s.stationID=a.stationID-6000000)
                 when a.stationID BETWEEN 66000000 AND 66014933 then
                     (SELECT s.stationName FROM staStations AS s
                      WHERE s.stationID=a.stationID-6000001)

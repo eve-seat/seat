@@ -77,6 +77,7 @@
                         <li class="active"><a href="#standard" data-toggle="tab">Core</a></li>
                         <li><a href="#tech2" data-toggle="tab">Tech 2</a></li>
                         <li><a href="#tech3" data-toggle="tab">Tech 3</a></li>
+                        <li><a href="#ore" data-toggle="tab">ORE</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="standard">
@@ -500,17 +501,17 @@
                                     <tr>
                                         <td data-order="heavyinterdictioncruiser">Heavy Interdiction Cruisers</td>
                                         <td>
-                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) == 5)
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) == 5)
                                             <span class="label label-success">5</span>
-                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) == 0)
-                                            <span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) }}</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) == 0)
+                                            <span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) }}</span>
                                           @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
-                                            <span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) }}</span>
+                                            <span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) }}</span>
                                           @else
-                                            <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) }}</span>
+                                            <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) }}</span>
                                           @endif
 
-                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) > 0)
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28609) > 0)
                                             {{--*/$skill5 = false;/*--}}
                                             @foreach( array(3335, 3334, 3332, 3333) as $s)
                                               @if(App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) == 5)
@@ -753,6 +754,148 @@
                                           @endif
                                             </td>
                                         @endforeach
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div><!-- /. tab-pane -->
+                        <div class="tab-pane" id="ore">
+                            <table class="table table-condensed compact table-hover" id="datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Ship</th>
+                                        <th>Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td data-order="industrialcommandships">Industrial Command Ships</td>
+                                        <td>
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) == 5)
+                                            <span class="label label-success">5</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) == 0)
+                                            <span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) }}</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+                                            <span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) }}</span>
+                                          @else
+                                            <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 29637) }}</span>
+                                          @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-order="capitalindustrialships">Capital Industrial Ships</td>
+                                        <td>
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28374) == 5)
+                                            <span class="label label-success">5</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28374) == 0)
+                                            <span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28374) }}</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+                                            <span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28374) }}</span>
+                                          @else
+                                            <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 28374) }}</span>
+                                          @endif
+                                          @if ((App\Services\Helpers\Helpers::findSkillLevel($character_skills, 20533) < 2) || (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 3456) < 1))
+                                            <span class="label label-danger">Secondary Skill missing!</span>
+                                          @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-order="orefreighter">ORE Freighter</td>
+                                        <td>
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 34327) == 5)
+                                            <span class="label label-success">5</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 34327) == 0)
+                                            <span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 34327) }}</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+                                            <span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 34327) }}</span>
+                                          @else
+                                            <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 34327) }}</span>
+                                          @endif
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 20342) < 1)
+                                            <span class="label label-danger">Secondary Skill missing!</span>
+                                          @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-order="miningfrigate">Mining Frigate</td>
+                                        <td>
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 32918) == 5)
+                                            <span class="label label-success">5</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 32918) == 0)
+                                            <span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 32918) }}</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+                                            <span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 32918) }}</span>
+                                          @else
+                                            <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 32918) }}</span>
+                                          @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-order="expeditionfrigate">Expedition Frigates</td>
+                                        <td>
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 33856) == 5)
+                                            <span class="label label-success">5</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 33856) == 0)
+                                            <span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 33856) }}</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+                                            <span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 33856) }}</span>
+                                          @else
+                                            <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 33856) }}</span>
+                                          @endif
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 32918) < 5)
+                                            <span class="label label-danger">Secondary Skill missing!</span>
+                                          @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-order="oreindustrial">ORE Industrial</td>
+                                        <td>
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 3184) == 5)
+                                            <span class="label label-success">5</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 3184) == 0)
+                                            <span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 3184) }}</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+                                            <span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 3184) }}</span>
+                                          @else
+                                            <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 3184) }}</span>
+                                          @endif
+                                          @if ((App\Services\Helpers\Helpers::findSkillLevel($character_skills, 3402) < 2) || (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 25863) < 1))
+                                            <span class="label label-danger">Secondary Skill missing!</span>
+                                          @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-order="exhumer">Exhumer</td>
+                                        <td>
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 22551) == 5)
+                                            <span class="label label-success">5</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 22551) == 0)
+                                            <span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 22551) }}</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+                                            <span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 22551) }}</span>
+                                          @else
+                                            <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 22551) }}</span>
+                                          @endif
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 17940) < 5)
+                                            <span class="label label-danger">Secondary Skill missing!</span>
+                                          @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td data-order="miningbarge">Mining Barge</td>
+                                        <td>
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 17940) == 5)
+                                            <span class="label label-success">5</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 17940) == 0)
+                                            <span class="label label-default">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 17940) }}</span>
+                                          @elseif (App\Services\Helpers\Helpers::findSkillLevel($character_skills, $s) <= 2)
+                                            <span class="label label-danger">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 17940) }}</span>
+                                          @else
+                                            <span class="label label-primary">{{ App\Services\Helpers\Helpers::findSkillLevel($character_skills, 17940) }}</span>
+                                          @endif
+                                          @if (App\Services\Helpers\Helpers::findSkillLevel($character_skills, 3410) < 3)
+                                            <span class="label label-danger">Secondary Skill missing!</span>
+                                          @endif
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

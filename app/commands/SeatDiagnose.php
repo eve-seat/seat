@@ -71,21 +71,20 @@ class SeatDiagnose extends Command
         $this->info('Running SeAT ' . \Config::get('seat.version') . ' Diagnostics');
         $this->line('');
 
-        // It is important to run the command as the user that the
-        // workers are running as. This allows for the checks
-        // for file permissions to logs to be checked
-        // correctly. Lets notify the user about
-        // this
-        $this->comment('If you are not already doing so, it is reccomended that you run this as the user the workers are running as.');
-        $this->comment('Eg: `sudo -u apache /usr/bin/php /var/www/seat/artisan seat:diagnose`.');
-        $this->comment('This allows you to ensure the correct permissions are in place as required.');
+        // It is important to run the command as the user that the workers are running as.
+        // This way, the checks that ensure file permissions are right are executed
+        // properly. If this is not the case, notify the user
+
+        $this->comment('If you are not already doing so, it is recommended that you run this as the user the workers are running as.');
+        $this->comment('Eg: `sudo -u apache php artisan seat:diagnose`.');
+        $this->comment('This helps to check whether the permissions are correct.');
         $this->line('');
 
         // Go ahead and get the configuration information using
         // the \Config helper and print that
         $this->info('SeAT configuration:');
         if (\Config::get('app.debug'))
-            $this->comment('[warning] Debug Mode On: Yes. It is reccomended that you set this to false in app/config/app.php');
+            $this->comment('[warning] Debug Mode On: Yes. It is recommended that you set this to false in app/config/app.php');
         else
             $this->line('[ok] Debug Mode On: No');
         $this->line('Url: ' . \Config::get('app.url'));

@@ -45,6 +45,7 @@ class SettingHelper
         'app_name' => 'SeAT',
         'required_mask' => 176693568,
         'registration_enabled' => true,
+        'administrative_contact' => null,
 
         // User personalization
         'color_scheme' => 'blue',
@@ -53,6 +54,10 @@ class SettingHelper
         'main_character_id' => 1,
         'main_character_name' => null,
         'email_notifications' => false,
+
+        // SeAT Notifications
+        'seatnotify_member_inactivity_months' => 1,
+        'seatnotify_fuel_warning_days' => 3,
 
         // SeAT Backend
         'seatscheduled_character' => true,
@@ -78,6 +83,7 @@ class SettingHelper
     */
 
     static $user_settings = array(
+
         'color_scheme',
         'thousand_seperator',
         'decimal_seperator',
@@ -140,14 +146,25 @@ class SettingHelper
                     try {
 
                         // Looks like we have a user setting, lets do a
-                        // db lookup for it.
-                        $setting_value = \SeatUserSetting::where('user_id', $effective_user_id)
+                        // db lookup for it. Before the lookup we
+                        // first prepare a Cache key to use.
+                        // This key will be used to  store
+                        // the resolved value.
+                        $cache_key = self::getUserSettingCacheKeyPrefix($effective_user_id, $setting_name);
+                        $setting_value = \Cache::get($cache_key, function() use ($effective_user_id, $setting_name, $cache_key) {
+
+                            $setting_value = \SeatUserSetting::where('user_id', $effective_user_id)
                                 ->where('setting', $setting_name)
                                 ->pluck('value');
 
-                        if($setting_value)
+	                        // cache result
+                            \Cache::forever($cache_key, $setting_value);
 
-                            // Found the user setting, return that!
+                            return $setting_value;
+                        });
+
+                        // If we found the user setting, return that!
+                        if($setting_value)
                             return $setting_value;
 
                     } catch (\Exception $e) {}
@@ -167,9 +184,20 @@ class SettingHelper
         try {
 
             // So we dont have a user setting for whatever reason,
-            // so lets check the SeAT global settings.
-            $setting_value = \SeatSetting::where('setting', $setting_name)
-                            ->pluck('value');
+            // so lets check the SeAT global settings. Before
+            // the lookup we first prepare a Cache key to
+            // use. This key will be used to  store
+            // the resolved value.
+            $cache_key = self::getSystemSettingCacheKeyPrefix($setting_name);
+            $setting_value = \Cache::get($cache_key, function() use ($setting_name, $cache_key) {
+
+                $setting_value = \SeatSetting::where('setting', $setting_name)->pluck('value');
+
+	            // cache result
+                \Cache::forever($cache_key, $setting_value);
+
+                return $setting_value;
+            });
 
             // If we have a database entry for the setting, return
             // that as the value
@@ -239,6 +267,10 @@ class SettingHelper
             $user_setting->value = $setting_value;
             $user_setting->save();
 
+            // cache this value forever to save on DB calls
+            $cache_key = self::getUserSettingCacheKeyPrefix(\Auth::User()->id, $setting_name);
+            \Cache::forever($cache_key, $setting_value);
+
             // Return as we are done
             return true;
 
@@ -256,6 +288,10 @@ class SettingHelper
             $global_setting->setting = $setting_name;
             $global_setting->value = $setting_value;
             $global_setting->save();
+
+            // cache this value forever to save on DB calls
+            $cache_key = self::getSystemSettingCacheKeyPrefix($setting_name);
+            \Cache::forever($cache_key, $setting_value);
 
             return true;
         }
@@ -286,6 +322,34 @@ class SettingHelper
         // Once we have everything set, return
         return $calculated_settings;
 
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | getUserSettingCacheKeyPrefix()
+    |--------------------------------------------------------------------------
+    |
+    | Get cache prefix for user settings
+    |
+    */
+
+    public static function getUserSettingCacheKeyPrefix($user_id, $setting_name) {
+
+        return 'seat.settings.user.'.(int)$user_id.'.'.$setting_name;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | getSystemSettingCacheKeyPrefix()
+    |--------------------------------------------------------------------------
+    |
+    | Get cache prefix for user settings
+    |
+    */
+
+    public static function getSystemSettingCacheKeyPrefix($setting_name) {
+
+        return 'seat.settings.system.'.$setting_name;
     }
 
 }

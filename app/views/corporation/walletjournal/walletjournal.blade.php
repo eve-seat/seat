@@ -48,11 +48,11 @@
                   <td>{{ $e->description }}</td>
                   <td>{{ $e->refTypeName }}</td>
                   <td>
-                    <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->ownerID1, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                    {{ Seat\Services\Helpers\Img::html($e->ownerID1, 16, array('class' => 'img-circle eveIcon small')) }}
                     {{ $e->ownerName1 }}
                   </td>
                   <td>
-                    <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->ownerID2, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                    {{ Seat\Services\Helpers\Img::html($e->ownerID2, 16, array('class' => 'img-circle eveIcon small')) }}
                     {{ $e->ownerName2 }}
                   </td>
                   <td>{{ $e->argName1 }}</td>

@@ -19,7 +19,7 @@
         <div class="box-body">
           <div class="row">
             <div class="col-md-3">
-              <img src='//image.eveonline.com/Character/{{ $character_info->characterID }}_256.jpg' class='img-circle pull-right'>
+              {{ Seat\Services\Helpers\Img::character($character_info->characterID, 128, array('class' => 'img-circle pull-right eveIcon xlarge')) }}
             </div>
             <div class="col-md-4">
               <div class="box box-solid">
@@ -70,7 +70,7 @@
               @foreach($employment_history as $employment)
 
                 <li>
-                  <img src='https://image.eveonline.com/Corporation/{{ $employment->corporationID }}_32.png' class='img-circle'>
+                  {{ Seat\Services\Helpers\Img::corporation($employment->corporationID, 16, array('class' => 'img-circle eveIcon small')) }}
                   Joined <b><span rel="id-to-name">{{ $employment->corporationID }}</span></b> on {{ $employment->startDate }} ({{ Carbon\Carbon::parse($employment->startDate)->diffForHumans() }})
                 </li>
 

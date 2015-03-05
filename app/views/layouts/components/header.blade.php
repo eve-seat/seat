@@ -58,9 +58,9 @@
             @endif
               {{-- See SettingHelper why this has to be more than 1 --}}
               @if($settings['main_character_id'] > 1)
-                <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $settings['main_character_id'], 32) }}" class="img-circle" alt="User Image" />
+                {{ Seat\Services\Helpers\Img::character($settings['main_character_id'], 64, array('class' => 'img-circle eveIcon large'), false) }}
               @else
-                <img src="//image.eveonline.com/Character/1_32.jpg" class="img-circle" alt="User Image" />
+                {{ Seat\Services\Helpers\Img::character('1', 16, array('class' => 'img-circle eveIcon small')) }}
               @endif
                 <p>
                   {{ \Auth::User()->email }}

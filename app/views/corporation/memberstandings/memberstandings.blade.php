@@ -24,7 +24,7 @@
 
                 <tr>
                   <td>
-                    <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $standing->fromID, 32) }}" class='img-circle' style='width: 18px;height: 18px;'>
+                    {{ Seat\Services\Helpers\Img::html($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
                     {{ $standing->fromName }}
                   </td>
                   <td>{{ number_format($standing->standing, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</td>
@@ -50,7 +50,7 @@
 
                 <tr>
                   <td>
-                    <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $standing->fromID, 32) }}" class='img-circle' style='width: 18px;height: 18px;'>
+                    {{ Seat\Services\Helpers\Img::character($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
                     {{ $standing->fromName }}
                   </td>
                   <td>{{ number_format($standing->standing, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</td>
@@ -76,7 +76,7 @@
 
                 <tr>
                   <td>
-                    <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $standing->fromID, 32) }}" class='img-circle' style='width: 18px;height: 18px;'>
+                    {{ Seat\Services\Helpers\Img::html($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
                     {{ $standing->fromName }}
                   </td>
                   <td>{{ number_format($standing->standing, 2, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</td>

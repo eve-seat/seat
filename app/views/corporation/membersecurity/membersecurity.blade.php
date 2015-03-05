@@ -48,7 +48,7 @@
 
                       <tr>
                         <td>
-                          <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                          {{ Seat\Services\Helpers\Img::character($e->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
                           {{ $e->name }}
                         </td>
                         <td>
@@ -88,7 +88,7 @@
 
                       <tr>
                         <td>
-                          <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                          {{ Seat\Services\Helpers\Img::character($e->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
                           {{ $e->name }}
                         </td>
                         <td>
@@ -128,7 +128,7 @@
 
                       <tr>
                         <td>
-                          <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                          {{ Seat\Services\Helpers\Img::character($e->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
                           {{ $e->name }}
                         </td>
                         <td>
@@ -168,7 +168,7 @@
 
                       <tr>
                         <td>
-                          <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                          {{ Seat\Services\Helpers\Img::character($e->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
                           {{ $e->name }}
                         </td>
                         <td>
@@ -208,7 +208,7 @@
 
                       <tr>
                         <td>
-                          <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                          {{ Seat\Services\Helpers\Img::character($e->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
                           {{ $e->name }}
                         </td>
                         <td>
@@ -248,7 +248,7 @@
 
                       <tr>
                         <td>
-                          <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                          {{ Seat\Services\Helpers\Img::character($e->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
                           {{ $e->name }}
                         </td>
                         <td>
@@ -288,7 +288,7 @@
 
                       <tr>
                         <td>
-                          <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                          {{ Seat\Services\Helpers\Img::character($e->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
                           {{ $e->name }}
                         </td>
                         <td>
@@ -328,7 +328,7 @@
 
                       <tr>
                         <td>
-                          <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'>
+                          {{ Seat\Services\Helpers\Img::character($e->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
                           {{ $e->name }}
                         </td>
                         <td>
@@ -373,10 +373,12 @@
 
                       <tr>
                         <td>
-                          <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->characterID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'> {{ $e->characterName }}
+                          {{ Seat\Services\Helpers\Img::character($e->characterID, 16, array('class' => 'img-circle eveIcon small')) }}
+                          {{ $e->characterName }}
                         </td>
                         <td>
-                          <img src='{{ App\Services\Helpers\Helpers::generateEveImage($e->issuerID, 32) }}' class='img-circle' style='width: 18px;height: 18px;'> {{ $e->issuerName }}
+                          {{ Seat\Services\Helpers\Img::html($e->issuerID, 16, array('class' => 'img-circle eveIcon small')) }}
+                          {{ $e->issuerName }}
                         </td>
                         <td>{{ $e->roleLocationType }}</td>
                         <td>{{ $e->changeTime }}</td>
@@ -495,7 +497,7 @@
                             @endforeach
                           </ul>
                         @endif
-                      </td>     
+                      </td>
                     </tr>
                     <tr>
                       <td>Grantable Roles (Base)</td>

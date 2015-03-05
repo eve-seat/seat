@@ -22,7 +22,7 @@
 
                   <tr>
                     <td>
-                      <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $standing->fromID, 32) }}" class='img-circle' style='width: 18px;height: 18px;'>
+                      {{ Seat\Services\Helpers\Img::html($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
                       {{ $standing->fromName }}
                     </td>
                     <td>{{ $standing->standing }}</td>
@@ -47,7 +47,7 @@
 
                   <tr>
                     <td>
-                      <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $standing->fromID, 32) }}" class='img-circle' style='width: 18px;height: 18px;'>
+                      {{ Seat\Services\Helpers\Img::html($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
                       {{ $standing->fromName }}
                     </td>
                     <td>{{ $standing->standing }}</td>
@@ -72,7 +72,7 @@
 
                   <tr>
                     <td>
-                      <img src="{{ App\Services\Helpers\Helpers::generateEveImage( $standing->fromID, 32) }}" class='img-circle' style='width: 18px;height: 18px;'>
+                      {{ Seat\Services\Helpers\Img::html($standing->fromID, 16, array('class' => 'img-circle eveIcon small')) }}
                       {{ $standing->fromName }}
                     </td>
                     <td>{{ $standing->standing }}</td>

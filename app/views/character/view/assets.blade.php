@@ -40,7 +40,7 @@
                             <td>{{ App\Services\Helpers\Helpers::formatBigNumber($asset['quantity']) }}</td>
                             <td colspan="2">
                               <span data-toggle="tooltip" title="" data-original-title="{{ number_format($asset['quantity'], 0) }} x {{ $asset['typeName'] }}">
-                                <img src='//image.eveonline.com/Type/{{ $asset['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+                                {{ Seat\Services\Helpers\Img::type($asset['typeID'], 16, array('class' => 'eveIcon small')) }}
                                 {{ str_limit($asset['typeName'], 35, $end = '...') }} {{ isset($asset['contents']) ? "(". count($asset['contents']) . ")" : "" }}
                               </span>
                             </td>
@@ -78,7 +78,7 @@
                                 <td style="width: 18px;"></td>
                                 <td>
                                   <span data-toggle="tooltip" title="" data-original-title="{{ number_format($content['quantity'], 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }} x {{ $content['typeName'] }}">
-                                    <img src='//image.eveonline.com/Type/{{ $content['typeID'] }}_32.png' style='width: 18px;height: 18px;'>
+                                    {{ Seat\Services\Helpers\Img::type($content['typeID'], 16, array('class' => 'eveIcon small')) }}
                                     {{ str_limit($content['typeName'], 30, $end = '...') }}
                                   </span>
                                 </td>
