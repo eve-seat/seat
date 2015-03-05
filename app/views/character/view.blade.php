@@ -49,7 +49,7 @@
               <div class="row">
                 <a href="{{ action('CharacterController@getView', array('characterID' => $alt->characterID )) }}" style="color:inherit;">
                   <div class="col-md-4">
-                    {{ Seat\Services\Helpers\Img::character($alt->characterID, 32, array('class' => 'img-circle eveIcon medium')) }}
+                    {{ Seat\Services\Helpers\Img::character($alt->characterID, 32, array('class' => 'img-circle eveIcon large')) }}
                   </div>
                   <div class="col-md-8">
                     <ul class="list-unstyled">
