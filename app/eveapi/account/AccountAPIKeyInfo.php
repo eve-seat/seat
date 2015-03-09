@@ -145,7 +145,7 @@ class APIKeyInfo extends BaseApi
                 // We got a problem we don't know what to do with, so log
                 // and throw the exception so that the can debug it.
                 default:
-                    \Log::error('Call to APIKeyInfo for ' . $keyID . ' failed with: ' $e->getCode() . ':' . $e->getMessage(), array('src' => __CLASS__));
+                    \Log::error('Call to APIKeyInfo for ' . $keyID . ' failed with: ' . $e->getCode() . ':' . $e->getMessage(), array('src' => __CLASS__));
                     throw $e;
                     break;
             }
