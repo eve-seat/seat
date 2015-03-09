@@ -151,7 +151,7 @@
             @endif
 
           </div><!-- /.tab-pane -->
-          <div class="tab-pane active" id="tab_tax_missions">
+          <div class="tab-pane" id="tab_tax_missions">
 
           {{-- mission tax --}}
           @if (count($mission_tax) > 0)

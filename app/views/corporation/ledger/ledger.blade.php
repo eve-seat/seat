@@ -313,14 +313,10 @@
                   @endif
 
                 </div><!-- /.tab-pane -->
-              </div><!-- /.tab-content -->
+                <div class="tab-pane" id="tab_tax_incursions">
 
-            </div> <!-- ./nav-tabs -->
-          </div><!-- /.tab-pane -->
-              <div class="tab-pane" id="tab_tax_incursions">
-
-                {{-- bounty tax --}}
-                @if (count($incursions_tax) > 0)
+                  {{-- bounty tax --}}
+                  @if (count($incursions_tax) > 0)
 
                     <div class="box box-solid box-primary">
                       <div class="box-header">
@@ -359,6 +355,10 @@
                   @endif
 
                 </div><!-- /.tab-pane -->
+              </div><!-- /.tab-content -->
+
+            </div> <!-- ./nav-tabs -->
+          </div><!-- /.tab-pane -->
         </div><!-- /.tab-content -->
       </div>
 
