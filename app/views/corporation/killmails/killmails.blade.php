@@ -12,7 +12,7 @@
       <div class="box-body no-padding">
         <div class="row">
 
-          @foreach (array_chunk($killmails, (count($killmails) / 2) > 1 ? count($killmails) / 2 : 2) as $killmail_list)
+          @foreach (array_chunk($killmails, (count($killmails) / 2) > 1 ? ceil(count($killmails) / 2) : 2) as $killmail_list)
 
             <div class="col-md-6">
               <table class="table table-hover table-condensed">

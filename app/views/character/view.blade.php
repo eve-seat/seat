@@ -83,7 +83,7 @@
           @if (count($people) > 0)
             <div class="row">
 
-              @foreach (array_chunk($people, (count($people) / 2) > 1 ? count($people) / 2 : 2) as $other_alts)
+              @foreach (array_chunk($people, (count($people) / 2) > 1 ? ceil(count($people) / 2) : 2) as $other_alts)
 
                 <div class="col-md-6">
                   <ul class="list-unstyled">
