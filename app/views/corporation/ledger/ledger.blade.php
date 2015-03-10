@@ -10,7 +10,7 @@
       <div style="margin-top: 15px;">
         <ul class="nav nav-pills nav-stacked" id="available-ledgers">
           <li class="header">Summarized Ledger</li>
-          <li class="active"><a href="{{ action('CorporationController@getLedgerSummary', array('corporationID' => $corporationID)) }}"><i class="fa fa-calendar-o"></i> Today ( {{ Carbon\Carbon::now()->toDateString() }} )</a></li>
+          <li class="active"><a href="{{ action('CorporationController@getLedgerSummary', array('corporationID' => $corporationID)) }}"><i class="fa fa-calendar-o"></i> Data up to now ( {{ Carbon\Carbon::now()->toDateString() }} )</a></li>
           <li class="header">Available Ledgers</li>
 
           @foreach ($ledger_dates as $ledger_date)
@@ -313,14 +313,10 @@
                   @endif
 
                 </div><!-- /.tab-pane -->
-              </div><!-- /.tab-content -->
+                <div class="tab-pane" id="tab_tax_incursions">
 
-            </div> <!-- ./nav-tabs -->
-          </div><!-- /.tab-pane -->
-              <div class="tab-pane" id="tab_tax_incursions">
-
-                {{-- bounty tax --}}
-                @if (count($incursions_tax) > 0)
+                  {{-- bounty tax --}}
+                  @if (count($incursions_tax) > 0)
 
                     <div class="box box-solid box-primary">
                       <div class="box-header">
@@ -359,6 +355,10 @@
                   @endif
 
                 </div><!-- /.tab-pane -->
+              </div><!-- /.tab-content -->
+
+            </div> <!-- ./nav-tabs -->
+          </div><!-- /.tab-pane -->
         </div><!-- /.tab-content -->
       </div>
 

@@ -64,6 +64,65 @@ class APIKeyInfo extends BaseApi
             // Source: https://api.eveonline.com/Eve/ErrorList.xml.aspx
             switch ($e->getCode()) {
 
+                // "API key authentication failure."
+                case 202:
+                // "Authentication failure."
+                case 203:
+                case 204:
+                // "Authentication failure."
+                case 205:
+                // "Authentication failure."
+                case 210:
+                // "Authentication failure (final pass)."
+                case 212:
+                    // The API is probably entirely wrong.
+                    BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
+                    return;
+
+                // "Invalid Corporation Key. Key owner does not fullfill role
+                // requirements anymore."
+                case 220:
+                    // Owner of the corporation key doesnt have hes roles anymore?
+                    BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
+                    return;
+
+                // "Illegal page request! Please verify the access granted by the key you are using!."
+                case 221:
+                    // Not 100% sure how to handle this one. This call has no
+                    // access mask requirement...
+                    return;
+
+                // "Key has expired. Contact key owner for access renewal."
+                case 222:
+                    // We have a invalid key. Expired or deleted.
+                    BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
+                    return;
+
+                // "Authentication failure. Legacy API keys can no longer be
+                // used. Please create a new key on support.eveonline.com
+                // and make sure your application supports Customizable
+                // API Keys."
+                case 223:
+                    // The API we are working with is waaaaaay too old.
+                    BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
+                    return;
+
+                // "Web site database temporarily disabled."
+                case 901:
+                    // The EVE API Database is apparently down, so mark the
+                    // server as 'down' in the cache so that subsequent
+                    // calls don't fail because of this.
+                    \Cache::put('eve_api_down', true, 30);
+                    return;
+
+                // "EVE backend database temporarily disabled.""
+                case 902:
+                    // The EVE API Database is apparently down, so mark the
+                    // server as 'down' in the cache so that subsequent
+                    // calls don't fail because of this.
+                    \Cache::put('eve_api_down', true, 30);
+                    return;
+
                 // "Your IP address has been temporarily blocked because it
                 // is causing too many errors. See the cacheUntil
                 // timestamp for when it will be opened again.
@@ -83,53 +142,10 @@ class APIKeyInfo extends BaseApi
                     \Cache::put('eve_api_down', true, $time);
                     return;
 
-                // "EVE backend database temporarily disabled.""
-                case 902:
-                    // The EVE API Database is apparently down, so mark the
-                    // server as 'down' in the cache so that subsequent
-                    // calls don't fail because of this.
-                    \Cache::put('eve_api_down', true, 30);
-                    return;
-
-                // "Web site database temporarily disabled."
-                case 901:
-                    // The EVE API Database is apparently down, so mark the
-                    // server as 'down' in the cache so that subsequent
-                    // calls don't fail because of this.
-                    \Cache::put('eve_api_down', true, 30);
-                    return;
-
-                // "Authentication failure. Legacy API keys can no longer be
-                // used. Please create a new key on support.eveonline.com
-                // and make sure your application supports Customizable
-                // API Keys."
-                case 223:
-                    // The API we are working with is waaaaaay too old.
-                    BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
-                    return;
-
-                // "Key has expired. Contact key owner for access renewal."
-                case 222:
-                    // We have a invalid key. Expired or deleted.
-                    BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
-                    return;
-
-                // "Illegal page request! Please verify the access granted by the key you are using!."
-                case 221:
-                    // Not 100% sure how to handle this one. This call has no
-                    // access mask requirement...
-                    return;
-
-                // "Invalid Corporation Key. Key owner does not fullfill role
-                // requirements anymore."
-                case 220:
-                    // Owner of the corporation key doesnt have hes roles anymore?
-                    BaseApi::disableKey($keyID, $e->getCode() . ': ' . $e->getMessage());
-                    return;
-
-                // We got a problem we don't know what to do with, so
-                // throw the exception so that the can debug it.
+                // We got a problem we don't know what to do with, so log
+                // and throw the exception so that the can debug it.
                 default:
+                    \Log::error('Call to APIKeyInfo for ' . $keyID . ' failed with: ' . $e->getCode() . ':' . $e->getMessage(), array('src' => __CLASS__));
                     throw $e;
                     break;
             }

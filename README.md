@@ -16,9 +16,6 @@ A 'job' can be defined as a set of categorized API calls to update certain part 
 
 The SeAT backend can be run completely independant (without the frontend) and simply used to keep the database up to date, using the data in our own tools.
 
-### Demo Site ###
-You can test out SeAT at [http://eveseat.com/](http://eveseat.com/)
-
 ### Screenshots and More Information ###
 Check out the SeAT [feature page](http://eve-seat.github.io/) for a visual taste of what SeAT has to offer, as well as a feature breakdown.
 
