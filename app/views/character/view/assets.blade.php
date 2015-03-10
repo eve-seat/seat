@@ -19,7 +19,7 @@
             <div class="box-body no-padding">
               <div class="row">
 
-                @foreach (array_chunk($assets, (count($assets) / 2) > 1 ? count($assets) / 2 : 2) as $column)
+                @foreach (array_chunk($assets, (count($assets) / 2) > 1 ? ceil (count ($assets) / 2) : 2) as $column)
 
                 <div class="col-md-6">
                   <table class="table table-hover table-condensed">
