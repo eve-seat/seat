@@ -73,7 +73,7 @@ class ApiKeyController extends BaseController
             ->leftJoin('banned_calls', 'seat_keys.keyID', '=', 'banned_calls.ownerID');
 
         // If the current user is not a admin, only get the keys that they own
-        if (!\Auth::isSuperUser())
+        if (!\Auth::hasAccess('api_key_list'))
             $keys = $keys->where('seat_keys.user_id', \Auth::User()->id);
 
         // And complete the query
@@ -287,7 +287,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser())
+        if (!\Auth::hasAccess('api_key_detail'))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -342,7 +342,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser())
+        if (!\Auth::hasAccess('api_key_update'))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -402,7 +402,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser())
+        if (!\Auth::hasAccess('api_key_enable_disable'))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -434,13 +434,9 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser())
+        if (!\Auth::hasAccess('api_key_delete'))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
-
-        // Ensure the user is allowed to delete this key
-        if (!\Auth::hasAccess('key_manager'))
-            App::abort(404);
 
         // Get the full key and vCode
         $key = SeatKey::where('keyID', $keyID)->first();
@@ -640,7 +636,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this is SuperUser
-        if (!\Auth::isSuperUser())
+        if (!\Auth::hasAccess('api_key_mass_enable'))
             App::abort(404);
 
         // Trash all of the banned calls information
@@ -669,9 +665,9 @@ class ApiKeyController extends BaseController
     public function getPeople()
     {
 
-        // Prepare the people information. Super admins get to see
-        // everything, where users should only see their own stuff
-        if (\Auth::isSuperUser()) {
+        // Prepare the people information. 'people_groups_view_all' permissions
+        // get to see everything, where users should only see their own stuff
+        if (!\Auth::hasAccess('people_groups_view_all')) {
 
             // SUUPER ADMIN Show all the things
             $people = array();
@@ -744,7 +740,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser())
+        if (!\Auth::hasAccess('people_groups_create'))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -793,7 +789,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser())
+        if (!\Auth::hasAccess('people_groups_edit'))
             if (!in_array(Input::get('affected-key'), Session::get('valid_keys')))
                 App::abort(404);
 
@@ -832,7 +828,7 @@ class ApiKeyController extends BaseController
     {
 
         // Ensure that this user may access the data for $keyID
-        if (!\Auth::isSuperUser())
+        if (!\Auth::hasAccess('people_groups_edit'))
             if (!in_array($keyID, Session::get('valid_keys')))
                 App::abort(404);
 
@@ -870,6 +866,10 @@ class ApiKeyController extends BaseController
 
     public function getSetGroupMain($personid, $characterid)
     {
+
+        // Ensure that this user may access the data for $keyID
+        if (!\Auth::hasAccess('people_groups_edit'))
+            App::abort(404);
 
         // Lets do some quick checks to ensure that the person exists
         if (!SeatPeople::where('personID', $personid)->first())

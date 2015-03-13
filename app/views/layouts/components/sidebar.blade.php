@@ -52,46 +52,60 @@
         </ul>
       </li>
       {{-- Check that the user has any actual roles that relates to a corporation --}}
-      @if(\Auth::hasAnyAccess(array('asset_manager', 'contract_manger', 'market_manager', 'pos_manager', 'recruiter', 'wallet_manager')))
+      @if(\Auth::hasAnyAccess(
+        array(
+          'corporation_list_all',
+          'corporation_assets',
+          )
+        )
+      )
         <li class="treeview @if (Request::is('corporation/*')) active @endif">
           <a href="#">
             <i class="fa  fa-group"></i> <span>Corporations</span>
             <i class="fa fa-angle-left pull-right"></i>
           </a>
           <ul class="treeview-menu">
-            <li><a href="{{ action('CorporationController@getAll') }}"><i class="fa fa-angle-double-right"></i> All Corporations</a></li>
-            @if(\Auth::hasAccess('asset_manager'))
+            @if(\Auth::hasAccess('corporation_list_all'))
+              <li><a href="{{ action('CorporationController@getAll') }}"><i class="fa fa-angle-double-right"></i> All Corporations</a></li>
+            @endif
+            @if(\Auth::hasAccess('corporation_assets'))
               <li><a href="{{ action('CorporationController@getListAssets') }}"><i class="fa fa-angle-double-right"></i> Assets</a></li>
             @endif
-            @if(\Auth::hasAccess('contract_manager'))
+            @if(\Auth::hasAccess('corporation_contracts'))
               <li><a href="{{ action('CorporationController@getListContracts') }}"><i class="fa fa-angle-double-right"></i> Contracts</a></li>
             @endif
-            @if(\Auth::hasAccess('pos_manager'))
+            @if(\Auth::hasAccess('corporation_poco'))
               <li><a href="{{ action('CorporationController@getListCustomsOffices') }}"><i class="fa fa-angle-double-right"></i> Customs Offices</a></li>
             @endif
-            @if(\Auth::hasAccess('asset_manager'))
+            @if(\Auth::hasAccess('corporation_industry'))
               <li><a href="{{ action('CorporationController@getListIndustry') }}"><i class="fa fa-angle-double-right"></i> Industry</a></li>
             @endif
-            @if(\Auth::hasAccess('recruiter'))
+            @if(\Auth::hasAccess('corporation_killmails'))
               <li><a href="{{ action('CorporationController@getListKillMails') }}"><i class="fa fa-angle-double-right"></i> Kill Mails</a></li>
             @endif
-            @if (\Auth::hasAccess('market_manager'))
+            @if (\Auth::hasAccess('corporation_market_orders'))
               <li><a href="{{ action('CorporationController@getListMarketOrders') }}"><i class="fa fa-angle-double-right"></i> Market Orders</a></li>
             @endif
-            @if (\Auth::hasAccess('recruiter'))
+            @if (\Auth::hasAccess('corporation_member_security'))
               <li><a href="{{ action('CorporationController@getListMemberSecurity') }}"><i class="fa fa-angle-double-right"></i> Member Security</a></li>
+            @endif
+            @if (\Auth::hasAccess('corporation_member_tracking'))
               <li><a href="{{ action('CorporationController@getListMemberTracking') }}"><i class="fa fa-angle-double-right"></i> Member Tracking</a></li>
             @endif
-            @if (\Auth::hasAccess('recruiter'))
+            @if (\Auth::hasAccess('corporation_member_standings'))
               <li><a href="{{ action('CorporationController@getListMemberStandings') }}"><i class="fa fa-angle-double-right"></i> Standings</a></li>
             @endif
-            @if(\Auth::hasAccess('pos_manager'))
+            @if(\Auth::hasAccess('corporation_star_bases'))
               <li><a href="{{ action('CorporationController@getListStarbase') }}"><i class="fa fa-angle-double-right"></i> Starbases</a></li>
             @endif
 
-            @if (\Auth::hasAccess('wallet_manager'))
+            @if (\Auth::hasAccess('corporation_wallet_journal'))
               <li><a href="{{ action('CorporationController@getListJournals') }}"><i class="fa fa-angle-double-right"></i> Wallet Journal</a></li>
+            @endif
+            @if (\Auth::hasAccess('corporation_ledger'))
               <li><a href="{{ action('CorporationController@getListLedgers') }}"><i class="fa fa-angle-double-right"></i> Wallet Ledger</a></li>
+            @endif
+            @if (\Auth::hasAccess('corporation_wallet_transactions'))
               <li><a href="{{ action('CorporationController@getListTransactions') }}"><i class="fa fa-angle-double-right"></i> Wallet Transactions</a></li>
             @endif
           </ul>

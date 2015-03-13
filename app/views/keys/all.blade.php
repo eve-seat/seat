@@ -9,7 +9,7 @@
       <h3 class="box-title">
         All API Keys @if (count($key_info) > 0) ({{ count($key_info) }}) @endif
       </h3>
-      @if (\Auth::hasAccess('key_manager'))
+      @if (\Auth::hasAccess('api_key_mass_enable'))
         <div class="box-tools">
           <a href="{{ action('ApiKeyController@getRemoveAllBans') }}" class="btn btn-default btn-sm pull-right">
             <i class="fa fa-refresh"></i> Enable All Keys and Clear Bans
@@ -65,7 +65,7 @@
               </td>
               <td>
                 <a href="{{ action('ApiKeyController@getDetail', array('keyID' => $key['keyID'])) }}" class="btn btn-default btn-xs"><i class="fa fa-cog"></i> Key Details</a>
-                @if (\Auth::hasAccess('key_manager'))
+                @if (\Auth::hasAccess('api_key_delete'))
                   <a a-keep-data="{{ action('ApiKeyController@getDeleteKey', array('keyID' => $key['keyID'])) }}" a-delete-data="{{ action('ApiKeyController@getDeleteKey', array('keyID' => $key['keyID'], 'delete_all_info'=> true)) }}" a-key-id="{{ $key['keyID'] }}" class="btn btn-danger btn-xs delete-key"><i class="fa fa-times"></i> Delete</a>
                 @endif
               </td>

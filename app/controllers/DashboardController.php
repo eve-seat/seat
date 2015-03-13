@@ -85,7 +85,7 @@ class DashboardController extends BaseController
                 ->where('characterName', 'like', '%' . Input::get('q') . '%');
 
             // Ensure we only get result for characters we have access to
-            if (!\Auth::hasAccess('recruiter'))
+            if (!\Auth::hasAccess('search_all_characters'))
                 $characters = $characters->whereIn('seat_keys.keyID', Session::get('valid_keys'))
                     ->get();
             else
@@ -125,7 +125,7 @@ class DashboardController extends BaseController
                 ->join('account_apikeyinfo_characters', 'account_apikeyinfo_characters.characterID', '=', 'a.characterID');
 
             // If the user is not a superuser, filter the results down to keys they own
-            if (!\Auth::isSuperUser() )
+            if (!\Auth::hasAccess('search_all_character_assets'))
                 $character_assets = $character_assets->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
             // Complete the search
@@ -145,7 +145,7 @@ class DashboardController extends BaseController
                 ->where('character_contactlist.contactName', 'like', '%' . Input::get('q') . '%');
 
             // Ensure we only get result for characters we have access to
-            if (!\Auth::hasAccess('recruiter'))
+            if (!\Auth::hasAccess('search_all_character_contact_lists'))
                 $character_contactlist = $character_contactlist->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'))
                     ->get();
             else
@@ -167,7 +167,7 @@ class DashboardController extends BaseController
                 });
 
             // Ensure we only get result for characters we have access to
-            if (!\Auth::hasAccess('recruiter'))
+            if (!\Auth::hasAccess('search_all_character_mail'))
                 $character_mail = $character_mail->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
             $character_mail = $character_mail
@@ -186,7 +186,7 @@ class DashboardController extends BaseController
                 ->where('character_standings_factions.fromName', 'like', '%' . Input::get('q') . '%');
 
             // Ensure we only get result for characters we have access to
-            if (!\Auth::hasAccess('recruiter'))
+            if (!\Auth::hasAccess('search_all_character_standings'))
                 $character_standings = $character_standings->whereIn('account_apikeyinfo_characters.keyID', Session::get('valid_keys'));
 
             $character_standings = $character_standings
@@ -235,7 +235,7 @@ class DashboardController extends BaseController
                 ->join('invTypes', 'a.typeID', '=', 'invTypes.typeID');
 
             // If the user is not a superuser, filter the results down to keys they own
-            if (!\Auth::hasAccess('asset_manager'))
+            if (!\Auth::hasAccess('search_all_corporation_assets'))
                 $corporation_assets = $corporation_assets->whereIn('a.corporationID', Session::get('corporation_affiliations'));
 
             // Complete the search
@@ -253,7 +253,7 @@ class DashboardController extends BaseController
                 ->where('corporation_standings_factions.fromName', 'like', '%' . Input::get('q') . '%');
 
             // Ensure we only get result for characters we have access to
-            if (!\Auth::hasAccess('recruiter'))
+            if (!\Auth::hasAccess('search_all_corporation_standings'))
                 $corporation_standings = $corporation_standings->whereIn('corporation_standings_factions.corporationID', Session::get('corporation_affiliations'));
 
             $corporation_standings = $corporation_standings
