@@ -479,7 +479,7 @@ Route::filter('acl.corporation', function()
         }
 
         // If affiliation is also important, then we will check this too.
-        if (!in_array($parameters[0], Session::get('corporation_affiliations')) && !\Auth::hasAnyAccess($permissions)) {
+        if (!in_array($parameters[0], Session::get('corporation_affiliations')) || !\Auth::hasAnyAccess($permissions)) {
 
             // Write to the security log and 403
             Event::fire('security.log', array(14, 'Missing permission(s): ' . implode(',', $permissions) . ' and corporation affiliation.'));
