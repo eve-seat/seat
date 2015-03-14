@@ -105,12 +105,16 @@ class UserController extends BaseController
 
             $user->save();
 
+            // Write to the security log
+            Event::fire('security.log', array(1, null, $user->username));
+
             // After user is saved and has a user_id
             // we can add it to the admin group if necessary
             if (Input::get('is_admin') == 'yes') {
 
                 $adminGroup = \Auth::findGroupByName('Administrators');
                 Auth::addUserToGroup($user, $adminGroup);
+
             }
 
             return Redirect::action('UserController@getAll')
@@ -168,6 +172,9 @@ class UserController extends BaseController
         // Attempt to authenticate using the user->id
         Auth::loginUsingId($userID);
 
+        // Write to the security log
+        Event::fire('security.log', array(15, null, $user->username));
+
         return Redirect::action('HomeController@showIndex')
             ->with('warning', 'You are now impersonating ' . $user->email);
     }
@@ -219,6 +226,9 @@ class UserController extends BaseController
             $thisGroup = Auth::findGroupByName(str_replace("_", " ", $group));
             Auth::addUserToGroup($user, $thisGroup);
         }
+
+        // Write to the security log
+        Event::fire('security.log', array(5, null, $user->username));
 
         if ($user->save())
             return Redirect::action('UserController@getDetail', array($user->getKey()))

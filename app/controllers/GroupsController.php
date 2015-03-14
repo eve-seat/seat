@@ -112,6 +112,9 @@ class GroupsController extends BaseController
         $group->permissions = serialize($permissions);
         $group->save();
 
+        // Write to the security log
+        Event::fire('security.log', array(8, 'Modified ' . $group->name));
+
         if ($group->save())
             return Redirect::action('GroupsController@getDetail', $groupID)
                 ->with('success', 'Permissions updated!');

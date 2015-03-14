@@ -106,5 +106,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface
         return $this->hasMany('SeatLoginHistory');
     }
 
+    public function security_logs()
+    {
+        return $this->hasMany('SecurityLog');
+    }
 
 }

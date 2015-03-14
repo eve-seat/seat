@@ -30,6 +30,41 @@ class CorporationController extends BaseController
 
     /*
     |--------------------------------------------------------------------------
+    | __construct()
+    |--------------------------------------------------------------------------
+    |
+    | Sets up the class to ensure that CSRF tokens are validated on the POST
+    | verb. Also defines the required permission per controller.
+    |
+    */
+
+    public function __construct()
+    {
+
+        // csrf
+        $this->beforeFilter('csrf', array('on' => 'post'));
+
+        // acls checks
+        $this->beforeFilter('acl.corporation:corporation_wallet_journal',array('only' => 'getJournal'));
+        $this->beforeFilter('acl.corporation:corporation_wallet_transactions',array('only' => 'getTransactions'));
+        $this->beforeFilter('acl.corporation:corporation_member_tracking',array('only' => 'getMemberTracking'));
+        $this->beforeFilter('acl.corporation:corporation_assets',array('only' => 'getAssets'));
+        $this->beforeFilter('acl.corporation:corporation_contracts',array('only' => 'getContracts'));
+        $this->beforeFilter('acl.corporation:corporation_star_bases',array('only' => 'getStarbase'));
+        $this->beforeFilter('acl.corporation:corporation_ledger',array('only' => 'getLedgerSummary'));
+        $this->beforeFilter('acl.corporation:corporation_ledger',array('only' => 'getLedgerMonth'));
+        $this->beforeFilter('acl.corporation:corporation_wallet_journal',array('only' => 'getWalletDelta'));
+        $this->beforeFilter('acl.corporation:corporation_member_security',array('only' => 'getMemberSecurity'));
+        $this->beforeFilter('acl.corporation:corporation_market_orders',array('only' => 'getMarketOrders'));
+        $this->beforeFilter('acl.corporation:corporation_member_standings',array('only' => 'getMemberStandings'));
+        $this->beforeFilter('acl.corporation:corporation_killmails',array('only' => 'getKillMails'));
+        $this->beforeFilter('acl.corporation:corporation_industry',array('only' => 'getIndustry'));
+        $this->beforeFilter('acl.corporation:corporation_poco',array('only' => 'getCustomsOffices'));
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | getAll()
     |--------------------------------------------------------------------------
     |
@@ -96,10 +131,6 @@ class CorporationController extends BaseController
     public function getJournal($corporationID)
     {
 
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_wallet_journal'))
-                App::abort(404);
-
         $corporation_name = DB::table('account_apikeyinfo_characters')
             ->where('corporationID', $corporationID)
             ->first();
@@ -151,10 +182,6 @@ class CorporationController extends BaseController
     public function getTransactions($corporationID)
     {
 
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_wallet_transactions'))
-                App::abort(404);
-
         $corporation_name = DB::table('account_apikeyinfo_characters')
             ->where('corporationID', $corporationID)
             ->first();
@@ -203,10 +230,6 @@ class CorporationController extends BaseController
 
     public function getMemberTracking($corporationID)
     {
-
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_member_tracking'))
-                App::abort(404);
 
         $members = DB::table(DB::raw('corporation_member_tracking as cmt'))
             ->select(DB::raw('cmt.characterID, cmt.name, cmt.startDateTime, cmt.title, cmt.logonDateTime, cmt.logoffDateTime, cmt.location, cmt.shipType, k.keyID, k.isOk'))
@@ -261,10 +284,6 @@ class CorporationController extends BaseController
 
     public function getAssets($corporationID)
     {
-
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_assets'))
-                App::abort(404);
 
         $corporation_name = DB::table('account_apikeyinfo_characters')
             ->where('corporationID', $corporationID)
@@ -425,10 +444,6 @@ class CorporationController extends BaseController
 
     public function getContracts($corporationID)
     {
-
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_contracts'))
-                App::abort(404);
 
         $corporation_name = DB::table('account_apikeyinfo_characters')
             ->where('corporationID', $corporationID)
@@ -597,10 +612,6 @@ class CorporationController extends BaseController
 
     public function getStarbase($corporationID)
     {
-
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_star_bases'))
-                App::abort(404);
 
         // The basic strategy here is that we will first try and get
         // as much information as possible about the starbases.
@@ -1119,10 +1130,6 @@ class CorporationController extends BaseController
     public function getLedgerSummary($corporationID)
     {
 
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_ledger'))
-                App::abort(404);
-
         // Get the month/year data
         $available_dates = DB::table('corporation_walletjournal')
             ->select(DB::raw('DISTINCT(MONTH(date)) AS month, YEAR(date) AS year'))
@@ -1240,10 +1247,6 @@ class CorporationController extends BaseController
     public function getLedgerMonth($corporationID, $date)
     {
 
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_ledger'))
-                App::abort(404);
-
         // TODO: Add check to ensure corporation exists
 
         // Parse the date
@@ -1347,10 +1350,6 @@ class CorporationController extends BaseController
     public function getWalletDelta($corporationID)
     {
 
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_wallet_journal'))
-                App::abort(404);
-
         $wallet_daily_delta = DB::table('corporation_walletjournal')
             ->select(DB::raw('DATE(`date`) as day, IFNULL( SUM( amount ), 0 ) AS daily_delta'))
             ->where('corporationID', $corporationID)
@@ -1393,10 +1392,6 @@ class CorporationController extends BaseController
 
     public function getMemberSecurity($corporationID)
     {
-
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_member_security'))
-                App::abort(404);
 
         $member_roles = DB::table('corporation_msec_roles as cmr')
             ->select(DB::raw('characterID, name, GROUP_CONCAT(roleID SEPARATOR \',\') AS roleID'))
@@ -1516,10 +1511,6 @@ class CorporationController extends BaseController
     public function getMarketOrders($corporationID)
     {
 
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_market_orders'))
-                App::abort(404);
-
         $corporation_name = DB::table('account_apikeyinfo_characters')
             ->where('corporationID', $corporationID)
             ->first();
@@ -1619,10 +1610,6 @@ class CorporationController extends BaseController
     public function getMemberStandings($corporationID)
     {
 
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_member_standings'))
-                App::abort(404);
-
         $corporation_name = DB::table('account_apikeyinfo_characters')
             ->where('corporationID', $corporationID)
             ->first();
@@ -1682,10 +1669,6 @@ class CorporationController extends BaseController
     public function getKillMails($corporationID)
     {
 
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_killmails'))
-                App::abort(404);
-
         $corporation_name = DB::table('account_apikeyinfo_characters')
             ->where('corporationID', $corporationID)
             ->first();
@@ -1736,12 +1719,6 @@ class CorporationController extends BaseController
 
     public function getIndustry($corporationID)
     {
-
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs
-        if (!\Auth::isSuperUser())
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_industry'))
-                App::abort(404);
 
         // Get current working jobs
         $current_jobs = DB::table('corporation_industryjobs as a')
@@ -1857,10 +1834,6 @@ class CorporationController extends BaseController
 
     public function getCustomsOffices($corporationID)
     {
-
-        if (!\Auth::isSuperUser() )
-            if (!in_array($corporationID, Session::get('corporation_affiliations')) && !\Auth::hasAccess('corporation_poco'))
-                App::abort(404);
 
         // Get the name of the corporation in question
         $corporation_name = DB::table('account_apikeyinfo_characters')

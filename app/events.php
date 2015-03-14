@@ -65,3 +65,83 @@ Event::listen('auth.login', function($user) {
     // Save the login history for the user
     $user->logins()->save($history);
 });
+
+/*
+|--------------------------------------------------------------------------
+| security.log
+|--------------------------------------------------------------------------
+|
+| Log security events to the database.
+|
+| This security log event can be fired with:
+|   Event::fire('security.log', array(7, 'Test Message', 'bob'));
+|
+*/
+
+Event::listen('security.log', function($event_id, $message = null, $triggered_for = null) {
+
+    // Lets define a few known event types. Logging on an event
+    // should be as trivial as:
+    //  Event::fire('security.log', array(3));
+    $security_event_ids = array(
+
+        // Users
+        1 => 'An Administrator has created a new user',
+        2 => 'A new user has been registered',
+        3 => 'A user account has been activated',
+        4 => 'A user has been deleted',
+        5 => 'A user has been modified',
+
+        // Groups
+        6 => 'A group has been created',
+        7 => 'A group has been deleted',
+        8 => 'A group has been modified',
+
+        // Users to groups
+        9 => 'A user has been added to a group',
+        10 => 'A user has been removed from a group',
+
+        // Permissions to Groups
+        11 => 'A permission was added to a group',
+        12 => 'A permission has been revoked from a group',
+
+        // Failed login
+        13 => 'Account has failed successful login more than 3 times',
+
+        // Failed ACL check
+        14 => 'User failed critical permissions check',
+
+        // Impersonation
+        15 => 'A user has been impersonated',
+
+        // Session
+        16 => 'A user has signed in',
+        17 => 'A user has signed out'
+
+    );
+
+    // Check that this is a known eventID
+    if (!array_key_exists($event_id, $security_event_ids))
+        throw new \Exception('Tried to log a unknown security event id.');
+
+    // Prepare the security event log entry...
+    $log_entry = new SecurityLog;
+    $log_entry->event_type_id = $event_id;
+    $log_entry->triggered_by = \Auth::user()->username;
+    $log_entry->triggered_for = $triggered_for;
+    $log_entry->path = Request::path();
+    $log_entry->message = implode('. ', array($security_event_ids[$event_id], $message));
+    $log_entry->user_ip = Request::getClientIp();
+    $log_entry->user_agent = Request::header('User-Agent');
+    $log_entry->valid_keys = implode(',', Session::get('valid_keys'));
+    $log_entry->corporation_affiliations = implode(',', Session::get('corporation_affiliations'));
+
+    // ... and attach it to the user that caused it
+    \Auth::User()->security_logs()->save($log_entry);
+
+    // If we want to track the last event_id, we will encrypt it
+    // in a cached value to pull into say a view or something
+    // later.
+    Cache::put('last_error_ref', Crypt::encrypt($log_entry->id), 5);
+
+});

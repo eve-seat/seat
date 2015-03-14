@@ -70,6 +70,9 @@ class SessionController extends BaseController
             else
                 $welcome_message = 'This looks like your first login! Welcome :)';
 
+            // Write to the security log
+            Event::fire('security.log', array(16, null));
+
             // Return the view with the information
             return Redirect::intended('/')
                 ->with('success', $welcome_message);
@@ -148,6 +151,10 @@ class SessionController extends BaseController
 
     public function getSignOut()
     {
+
+        // Write to the security log
+        Event::fire('security.log', array(17, null));
+
         Auth::logout();
 
         return Redirect::action('SessionController@getSignIn')

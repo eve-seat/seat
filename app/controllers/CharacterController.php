@@ -28,6 +28,46 @@ class CharacterController extends BaseController
 
     /*
     |--------------------------------------------------------------------------
+    | __construct()
+    |--------------------------------------------------------------------------
+    |
+    | Sets up the class to ensure that CSRF tokens are validated on the POST
+    | verb. Also defines the required permission per controller.
+    |
+    */
+
+    public function __construct()
+    {
+
+        // csrf
+        $this->beforeFilter('csrf', array('on' => 'post'));
+
+        // acls checks
+        $this->beforeFilter('acl.character:character_view_summary',array('only' => 'getAjaxCharacterSheet'));
+        $this->beforeFilter('acl.character:character_skills',array('only' => 'getAjaxSkills'));
+        $this->beforeFilter('acl.character:character_wallet_journal',array('only' => 'getAjaxWalletJournal'));
+        $this->beforeFilter('acl.character:character_wallet_transactions',array('only' => 'getAjaxWalletTransactions'));
+        $this->beforeFilter('acl.character:character_mail',array('only' => 'getAjaxMail'));
+        $this->beforeFilter('acl.character:character_notifications',array('only' => 'getAjaxNotifications'));
+        $this->beforeFilter('acl.character:character_assets',array('only' => 'getAjaxAssets'));
+        $this->beforeFilter('acl.character:character_contacts',array('only' => 'getAjaxContacts'));
+        $this->beforeFilter('acl.character:character_contracts',array('only' => 'getAjaxContracts'));
+        $this->beforeFilter('acl.character:character_market_orders',array('only' => 'getAjaxMarketOrders'));
+        $this->beforeFilter('acl.character:character_calendar',array('only' => 'getAjaxCalendarEvents'));
+        $this->beforeFilter('acl.character:character_standings',array('only' => 'getAjaxStandings'));
+        $this->beforeFilter('acl.character:character_killmails',array('only' => 'getAjaxKillMails'));
+        $this->beforeFilter('acl.character:character_research_agents',array('only' => 'getAjaxResearchAgents'));
+        $this->beforeFilter('acl.character:character_pi',array('only' => 'getAjaxPlanetaryInteraction'));
+        $this->beforeFilter('acl.character:character_wallet_journal',array('only' => 'getFullWalletJournal'));
+        $this->beforeFilter('acl.character:character_wallet_transactions',array('only' => 'getFullWalletTransactions'));
+        $this->beforeFilter('acl.character:character_mail',array('only' => 'getFullMail'));
+        $this->beforeFilter('acl.character:character_wallet_journal',array('only' => 'getWalletDelta'));
+        $this->beforeFilter('acl.character:character_industry',array('only' => 'getAjaxIndustry'));
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | getAll()
     |--------------------------------------------------------------------------
     |
@@ -157,12 +197,6 @@ class CharacterController extends BaseController
         if(count($character) <= 0)
             App::abort(404);
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_view_summary'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         $character = DB::table('account_apikeyinfo_characters')
             ->leftJoin('account_apikeyinfo', 'account_apikeyinfo_characters.keyID', '=', 'account_apikeyinfo.keyID')
             ->leftJoin('seat_keys', 'account_apikeyinfo_characters.keyID', '=', 'seat_keys.keyID')
@@ -256,12 +290,6 @@ class CharacterController extends BaseController
         if(count($character) <= 0)
             App::abort(404);
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_skills'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         // Thanks to the db being pretty WTF, we will just do some things™ and get an
         // array ready for all the skills. Essentially, we will use this as the main
         // loop for our skill presentation in the view
@@ -320,12 +348,6 @@ class CharacterController extends BaseController
         if(count($character) <= 0)
             App::abort(404);
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_wallet_journal'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         // Get the wallet journal
         $wallet_journal = DB::table('character_walletjournal')
             ->join('eve_reftypes', 'character_walletjournal.refTypeID', '=', 'eve_reftypes.refTypeID')
@@ -361,12 +383,6 @@ class CharacterController extends BaseController
         if(count($character) <= 0)
             App::abort(404);
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_wallet_transactions'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         // Get the Wallet transactions
         $wallet_transactions = DB::table('character_wallettransactions')
             ->where('characterID', $characterID)
@@ -401,12 +417,6 @@ class CharacterController extends BaseController
         if(count($character) <= 0)
             App::abort(404);
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_mail'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         // Get the Mail
         $mail = DB::table('character_mailmessages')
             ->where('characterID', $characterID)
@@ -440,12 +450,6 @@ class CharacterController extends BaseController
         // Check if whave knowledge of this character, else, 404
         if(count($character) <= 0)
             App::abort(404);
-
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_notifications'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
 
         // Get the Notifications
         $notifications = DB::table('character_notifications')
@@ -482,12 +486,6 @@ class CharacterController extends BaseController
         // Check if whave knowledge of this character, else, 404
         if(count($character) <= 0)
             App::abort(404);
-
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_assets'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
 
         // Get the assets
         $assets = DB::table(DB::raw('character_assetlist as a'))
@@ -589,12 +587,6 @@ class CharacterController extends BaseController
         if(count($character) <= 0)
             App::abort(404);
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_contacts'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         // Get the contact list
         $contact_list = DB::table('character_contactlist')
             ->where('characterID', $characterID)
@@ -626,12 +618,6 @@ class CharacterController extends BaseController
         // Check if whave knowledge of this character, else, 404
         if(count($character) <= 0)
             App::abort(404);
-
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_contracts'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
 
         // Character contract list
         $contract_list = DB::table(DB::raw('character_contracts as a'))
@@ -777,12 +763,6 @@ class CharacterController extends BaseController
         if(count($character) <= 0)
             App::abort(404);
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_market_orders'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         // Get the market orders
         $market_orders = DB::table(DB::raw('character_marketorders as a'))
             ->select(DB::raw(
@@ -854,12 +834,6 @@ class CharacterController extends BaseController
         if(count($character) <= 0)
             App::abort(404);
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_calendar'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         // Character calendar events
         $calendar_events = DB::table('character_upcomingcalendarevents')
             ->where('characterID', $characterID)
@@ -891,12 +865,6 @@ class CharacterController extends BaseController
         // Check if whave knowledge of this character, else, 404
         if(count($character) <= 0)
             App::abort(404);
-
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. . SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_standings'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
 
         // Standings
         $agent_standings = DB::table('character_standings_agents')
@@ -940,12 +908,6 @@ class CharacterController extends BaseController
         if(count($character) <= 0)
             App::abort(404);
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_killmails'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         // Killmails
         $killmails = DB::table('character_killmails')
             ->select(DB::raw('*, `mapDenormalize`.`itemName` AS solarSystemName'))
@@ -982,12 +944,6 @@ class CharacterController extends BaseController
         if(count($character) <= 0)
             App::abort(404);
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_research_agents'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         // Get the research agents
         $research = DB::table('character_research')
             ->join('invNames', 'character_research.agentID', '=', 'invNames.itemID')
@@ -1021,12 +977,6 @@ class CharacterController extends BaseController
         // Check if whave knowledge of this character, else, 404
         if(count($character) <= 0)
             App::abort(404);
-
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_pi'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
 
         // Gather the information and add to the array
         $routes = DB::table('character_planetary_pins as source')
@@ -1126,12 +1076,6 @@ class CharacterController extends BaseController
     public function getFullWalletJournal($characterID)
     {
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_wallet_journal'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         $character_name = DB::table('account_apikeyinfo_characters')
             ->where('characterID', $characterID)
             ->pluck('characterName');
@@ -1160,12 +1104,6 @@ class CharacterController extends BaseController
     public function getFullWalletTransactions($characterID)
     {
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_wallet_transactions'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         $character_name = DB::table('account_apikeyinfo_characters')
             ->where('characterID', $characterID)
             ->pluck('characterName');
@@ -1192,12 +1130,6 @@ class CharacterController extends BaseController
 
     public function getFullMail($characterID)
     {
-
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_mail'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
 
         $character_name = DB::table('account_apikeyinfo_characters')
             ->where('characterID', $characterID)
@@ -1357,12 +1289,6 @@ class CharacterController extends BaseController
     public function getWalletDelta($characterID)
     {
 
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_wallet_journal'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
-
         $wallet_daily_delta = DB::table('character_walletjournal')
             ->select(DB::raw('DATE(`date`) as day, IFNULL( SUM( amount ), 0 ) AS daily_delta'))
             ->where('characterID', $characterID)
@@ -1392,12 +1318,6 @@ class CharacterController extends BaseController
         // Check if whave knowledge of this character, else, 404
         if(count($character) <= 0)
             App::abort(404);
-
-        // Next, check if the current user has access. Superusers may see all the things,
-        // normal users may only see their own stuffs. . SuperUser() inherits 'recruiter'
-        if (!\Auth::hasAccess('character_industry'))
-            if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $characterID)->pluck('keyID'), Session::get('valid_keys')))
-                App::abort(404);
 
         // Get current working jobs
         $current_jobs = DB::table('character_industryjobs as a')

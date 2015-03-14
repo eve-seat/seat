@@ -111,8 +111,13 @@ Route::filter('auth', function()
 
 Route::filter('auth.superuser', function()
 {
-    if (!\Auth::check() || !\Auth::isSuperUser())
+    if (!\Auth::check() || !\Auth::isSuperUser())  {
+
+        // Write to the security log and 401
+        Event::fire('security.log', array(14, 'Missing permission: SuperUser.'));
+
         return Redirect::to('/');
+    }
 });
 
 // filter to check api app authentication
@@ -226,6 +231,259 @@ Route::filter('key.required', function()
             if (!\Auth::isSuperUser() && count(Session::get('valid_keys')) <= 0)
                 return Redirect::action('ApiKeyController@getNewKey')
                     ->with('warning', 'No API Keys are defined to show you any information. Please enter at least one.');
+        }
+    }
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Controller Acl Filter: acl.apikey
+|--------------------------------------------------------------------------
+|
+| These filters are strict ACL checks. If these fail, it should be
+| considered as a access control circumvention attempt.
+| Permissions are checked on a hasAnyAccess basis, so
+| pipe delimitation should be considered like a OR.
+|
+| Generally, users will have access to their own stuff by default. Owner-
+| ship is defined by the fact that you 'own' a key. However, you may
+| receive extra permissions to see more/all other information.
+|
+| SuperUsers inherit all permissions.
+*/
+
+Route::filter('acl.apikey', function()
+{
+
+    // Read the parameters from the URL. Sadly we seem to get
+    // these back in a shitty format such as:
+    //  array(2) { ["one"]=> string(6) "385298" ["two"]=> string(1) "4" }
+    // Using keys such as one, two... We will use array_values just to
+    // re-index this crap.
+    //
+    // These parameters are used in a later check if we want to ensure
+    // that the user is trying to access information and has owner-
+    // ship of the key.
+    $parameters = array_values(\Route::current()->parameters());
+
+    // Lovely hack to pass by reference the args off the controller
+    // beforeFilter. They are defined as filter:perm1|perm2
+    //
+    // We will reserve the word "ignore_ownership" as an indication
+    // that only the permissions check should occur.
+    $args = func_get_args();
+    $permissions = explode('|', array_pop($args));
+
+    // If the super user role is required, the we can technically
+    // ignore all of the rest of the checks.
+    if(in_array('super', $permissions)) {
+
+        if (!\Auth::isSuperUser()) {
+
+            // Write to the security log and 401
+            Event::fire('security.log', array(14, 'Missing permission: SuperUser.'));
+            return View::make('errors.403');
+        }
+    }
+
+    // Check if we have any of the permissions
+    if (!\Auth::hasAnyAccess($permissions)) {
+
+        // So the user does not have the permission that they need.
+        // However, if they they have ownership of a key then
+        // they may still continue. Some routes may want
+        // to not have this check, so if not, then we
+        // will just throw the error here. Otherwise
+        // check the ownership.
+        //
+        // We reserved the "ignore_ownership" word from the args
+        // for this check.
+        if (in_array('ignore_ownership', $permissions)) {
+
+            Event::fire('security.log', array(14, 'Missing permission(s): ' . implode(',', $permissions) . '.'));
+            return View::make('errors.403');
+        }
+
+        // Assuming we did not have any of the permissions, and key
+        // ownership should be considered, lets check that. For
+        // this filter, we will pop the keyID off the params
+        // that we got earlier as the _fist_ (0) parameter.
+        if (!in_array($parameters[0], Session::get('valid_keys'))) {
+
+            // Write to the security log and 403
+            Event::fire('security.log', array(14, 'Missing permission(s): ' . implode(',', $permissions) . ' and key ownership.'));
+            return View::make('errors.403');
+        }
+    }
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Controller Acl Filter: acl.character
+|--------------------------------------------------------------------------
+|
+| These filters are strict ACL checks. If these fail, it should be
+| considered as a access control circumvention attempt.
+| Permissions are checked on a hasAnyAccess basis, so
+| pipe delimitation should be considered like a OR.
+|
+| Generally, users will have access to their own stuff by default. Owner-
+| ship is defined by the fact that you 'own' a key. However, you may
+| receive extra permissions to see more/all other information.
+|
+| SuperUsers inherit all permissions.
+*/
+
+Route::filter('acl.character', function()
+{
+
+    // Read the parameters from the URL. Sadly we seem to get
+    // these back in a shitty format such as:
+    //  array(2) { ["one"]=> string(6) "385298" ["two"]=> string(1) "4" }
+    // Using keys such as one, two... We will use array_values just to
+    // re-index this crap.
+    //
+    // These parameters are used in a later check if we want to ensure
+    // that the user is trying to access information and has owner-
+    // ship of the key.
+    $parameters = array_values(\Route::current()->parameters());
+
+    // Lovely hack to pass by reference the args off the controller
+    // beforeFilter. They are defined as filter:perm1|perm2
+    //
+    // We will reserve the word "ignore_ownership" as an indication
+    // that only the permissions check should occur.
+    $args = func_get_args();
+    $permissions = explode('|', array_pop($args));
+
+    // If the super user role is required, the we can technically
+    // ignore all of the rest of the checks.
+    if(in_array('super', $permissions)) {
+
+        if (!\Auth::isSuperUser()) {
+
+            // Write to the security log and 401
+            Event::fire('security.log', array(14, 'Missing permission: SuperUser.'));
+            return View::make('errors.403');
+        }
+    }
+
+    // Check if we have any of the permissions
+    if (!\Auth::hasAnyAccess($permissions)) {
+
+        // So the user does not have the permission that they need.
+        // However, if they they have ownership of a key then
+        // they may still continue. Some routes may want
+        // to not have this check, so if not, then we
+        // will just throw the error here. Otherwise
+        // check the ownership.
+        //
+        // We reserved the "ignore_ownership" word from the args
+        // for this check.
+        if (in_array('ignore_ownership', $permissions)) {
+
+            Event::fire('security.log', array(14, 'Missing permission(s): ' . implode(',', $permissions) . '.'));
+            return View::make('errors.403');
+        }
+
+        // Assuming we did not have any of the permissions, and key
+        // ownership should be considered, lets check that. For
+        // this filter, we will pop the characterID off the
+        // params that we got earlier as the _fist_ (0)
+        // parameter.
+        if (!in_array(EveAccountAPIKeyInfoCharacters::where('characterID', $parameters[0])->pluck('keyID'), Session::get('valid_keys'))) {
+
+            // Write to the security log and 403
+            Event::fire('security.log', array(14, 'Missing permission(s): ' . implode(',', $permissions) . ' and key ownership.'));
+            return View::make('errors.403');
+        }
+    }
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Controller Acl Filter: acl.character
+|--------------------------------------------------------------------------
+|
+| These filters are strict ACL checks. If these fail, it should be
+| considered as a access control circumvention attempt.
+| Permissions are checked on a hasAnyAccess basis, so
+| pipe delimitation should be considered like a OR.
+|
+| Generally, users will have access to their own stuff by default. Owner-
+| ship is defined by the fact that you 'own' a key. However, you may
+| receive extra permissions to see more/all other information.
+|
+| SuperUsers inherit all permissions.
+*/
+
+Route::filter('acl.corporation', function()
+{
+
+    // Read the parameters from the URL. Sadly we seem to get
+    // these back in a shitty format such as:
+    //  array(2) { ["one"]=> string(6) "385298" ["two"]=> string(1) "4" }
+    // Using keys such as one, two... We will use array_values just to
+    // re-index this crap.
+    //
+    // These parameters are used in a later check if we want to ensure
+    // that the user is trying to access information and has the
+    // correct corporation affiliations
+    $parameters = array_values(\Route::current()->parameters());
+
+    // Lovely hack to pass by reference the args off the controller
+    // beforeFilter. They are defined as filter:perm1|perm2
+    //
+    // We will reserve the word "ignore_affiliation" as an indication
+    // that only the permissions check should occur.
+    $args = func_get_args();
+    $permissions = explode('|', array_pop($args));
+
+    // If the super user role is required, the we can technically
+    // ignore all of the rest of the checks.
+    if(in_array('super', $permissions)) {
+
+        if (!\Auth::isSuperUser()) {
+
+            // Write to the security log and 401
+            Event::fire('security.log', array(14, 'Missing permission: SuperUser.'));
+            return View::make('errors.403');
+        }
+    }
+
+    // For corporations, we check first of the use is not by
+    // any chance a super user. If so, then we can skip
+    // the rest of the checks.
+    if (!\Auth::isSuperUser()) {
+
+        // So the user does not have the SuperUser permission.
+        // However, if they are affiliated with the corp
+        // and have the permission they may access the
+        // resource. It is possible that a filter
+        // should ignore the affiliation though.
+        //
+        // We reserved the "ignore_affiliation" word from the args
+        // for this check.
+        if (in_array('ignore_affiliation', $permissions)) {
+
+            // So we are not phased about the corporation affiliation,
+            // lets simply check the permission
+            if (!\Auth::hasAnyAccess($permissions)) {
+
+                Event::fire('security.log', array(14, 'Missing permission(s): ' . implode(',', $permissions) . '.'));
+                return View::make('errors.403');
+            }
+        }
+
+        // If affiliation is also important, then we will check this too.
+        if (!in_array($parameters[0], Session::get('corporation_affiliations')) && !\Auth::hasAnyAccess($permissions)) {
+
+            // Write to the security log and 403
+            Event::fire('security.log', array(14, 'Missing permission(s): ' . implode(',', $permissions) . ' and corporation affiliation.'));
+            return View::make('errors.403');
         }
     }
 

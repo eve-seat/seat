@@ -41,13 +41,28 @@ class ApiKeyController extends BaseController
     |--------------------------------------------------------------------------
     |
     | Sets up the class to ensure that CSRF tokens are validated on the POST
-    | verb
+    | verb. Also defines the required permission per controller.
     |
     */
 
     public function __construct()
     {
+
+        // csrf
         $this->beforeFilter('csrf', array('on' => 'post'));
+
+        // acls checks
+        $this->beforeFilter('acl.apikey:api_key_detail',array('only' => 'getDetail'));
+        $this->beforeFilter('acl.apikey:api_key_update', array('only' => 'getUpdateJob'));
+        $this->beforeFilter('acl.apikey:api_key_enable_disable', array('only' => 'getEnableKey'));
+        $this->beforeFilter('acl.apikey:api_key_delete', array('only' => 'getDeleteKey'));
+        $this->beforeFilter('acl.apikey:api_key_mass_enable|ignore_ownership', array('only' => 'getRemoveAllBans'));
+        $this->beforeFilter('acl.apikey:people_groups_create', array('only' => 'getNewGroup'));
+        $this->beforeFilter('acl.apikey:people_groups_edit|ignore_ownership', array('only' => 'postAddToGroup'));
+        $this->beforeFilter('acl.apikey:people_groups_edit', array('only' => 'getDeleteFromGroup'));
+        $this->beforeFilter('acl.apikey:people_groups_edit|ignore_ownership', array('only' => 'getSetGroupMain'));
+        $this->beforeFilter('acl.apikey:super', array('only' => 'postTransferOwnership'));
+
     }
 
     /*
@@ -286,11 +301,6 @@ class ApiKeyController extends BaseController
     public function getDetail($keyID)
     {
 
-        // Ensure that this user may access the data for $keyID
-        if (!\Auth::hasAccess('api_key_detail'))
-            if (!in_array($keyID, Session::get('valid_keys')))
-                App::abort(404);
-
         $key_information = DB::table('seat_keys')
             ->select(
                 'seat_keys.keyID', 'seat_keys.vCode', 'seat_keys.isOk', 'seat_keys.lastError',
@@ -340,11 +350,6 @@ class ApiKeyController extends BaseController
 
     public function getUpdateJob($keyID)
     {
-
-        // Ensure that this user may access the data for $keyID
-        if (!\Auth::hasAccess('api_key_update'))
-            if (!in_array($keyID, Session::get('valid_keys')))
-                App::abort(404);
 
         // Get the full key and vCode
         $key = SeatKey::where('keyID', $keyID)->first();
@@ -401,11 +406,6 @@ class ApiKeyController extends BaseController
     public function getEnableKey($keyID)
     {
 
-        // Ensure that this user may access the data for $keyID
-        if (!\Auth::hasAccess('api_key_enable_disable'))
-            if (!in_array($keyID, Session::get('valid_keys')))
-                App::abort(404);
-
         // Get the full key and vCode
         $key = SeatKey::where('keyID', $keyID)->first();
 
@@ -432,11 +432,6 @@ class ApiKeyController extends BaseController
 
     public function getDeleteKey($keyID, $delete_all_info = false)
     {
-
-        // Ensure that this user may access the data for $keyID
-        if (!\Auth::hasAccess('api_key_delete'))
-            if (!in_array($keyID, Session::get('valid_keys')))
-                App::abort(404);
 
         // Get the full key and vCode
         $key = SeatKey::where('keyID', $keyID)->first();
@@ -635,10 +630,6 @@ class ApiKeyController extends BaseController
     public function getRemoveAllBans()
     {
 
-        // Ensure that this is SuperUser
-        if (!\Auth::hasAccess('api_key_mass_enable'))
-            App::abort(404);
-
         // Trash all of the banned calls information
         EveBannedCall::truncate();
 
@@ -739,11 +730,6 @@ class ApiKeyController extends BaseController
     public function getNewGroup($keyID, $characterID)
     {
 
-        // Ensure that this user may access the data for $keyID
-        if (!\Auth::hasAccess('people_groups_create'))
-            if (!in_array($keyID, Session::get('valid_keys')))
-                App::abort(404);
-
         // Check that the key and character ids exist and is valid
         if (!\SeatKey::where('keyID', $keyID) || !\EveAccountAPIKeyInfoCharacters::where('characterID', $characterID))
             App::abort(404);
@@ -788,11 +774,6 @@ class ApiKeyController extends BaseController
     public function postAddToGroup()
     {
 
-        // Ensure that this user may access the data for $keyID
-        if (!\Auth::hasAccess('people_groups_edit'))
-            if (!in_array(Input::get('affected-key'), Session::get('valid_keys')))
-                App::abort(404);
-
         // Lets do some quick checks to ensure that the key and person exist
         if (!SeatPeople::where('personID', Input::get('personid'))->first() || !SeatKey::where('keyID', Input::get('affected-key'))->first())
             return Redirect::action('ApiKeyController@getPeople')
@@ -826,11 +807,6 @@ class ApiKeyController extends BaseController
 
     public function getDeleteFromGroup($keyID)
     {
-
-        // Ensure that this user may access the data for $keyID
-        if (!\Auth::hasAccess('people_groups_edit'))
-            if (!in_array($keyID, Session::get('valid_keys')))
-                App::abort(404);
 
         // Lets do some quick checks to ensure that the key exists
         if (!SeatPeople::where('keyID', $keyID)->first())
@@ -867,10 +843,6 @@ class ApiKeyController extends BaseController
     public function getSetGroupMain($personid, $characterid)
     {
 
-        // Ensure that this user may access the data for $keyID
-        if (!\Auth::hasAccess('people_groups_edit'))
-            App::abort(404);
-
         // Lets do some quick checks to ensure that the person exists
         if (!SeatPeople::where('personID', $personid)->first())
             return Redirect::action('ApiKeyController@getPeople')
@@ -904,10 +876,6 @@ class ApiKeyController extends BaseController
 
     public function postTransferOwnership()
     {
-
-        // Ensure that this user is a super admin
-        if (!\Auth::isSuperUser())
-            App::abort(404);
 
         // Find the API Key and user...
         $key_information  = SeatKey::where('keyID', Input::get('keyID'))->first();

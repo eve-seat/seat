@@ -25,6 +25,8 @@ SOFTWARE.
 
 namespace App\Services\Auth;
 
+use Event;
+
 /*
 |--------------------------------------------------------------------------
 | The SeAT 'cushion' Authentication Driver
@@ -110,6 +112,9 @@ class SeatGuard extends \Illuminate\Auth\Guard
         // .. and save
         $group->save();
 
+        // Write to the security log
+        Event::fire('security.log', array(6, $group->name . ' created.'));
+
         return $group;
     }
 
@@ -129,6 +134,9 @@ class SeatGuard extends \Illuminate\Auth\Guard
 
         // Delete the actual group
         $group->delete();
+
+        // Write to the security log
+        Event::fire('security.log', array(7, $group->name . ' deleted.'));
 
         return true;
     }
@@ -158,6 +166,9 @@ class SeatGuard extends \Illuminate\Auth\Guard
             $user_group->save();
         }
 
+        // Write to the security log
+        Event::fire('security.log', array(9, 'Added to ' . $group->name . '.', $user->username));
+
         return true;
     }
 
@@ -175,6 +186,11 @@ class SeatGuard extends \Illuminate\Auth\Guard
         \GroupUserPivot::where('user_id', '=', $user->id)
             ->where('group_id', '=', $group->id)
             ->delete();
+
+        // Write to the security log
+        Event::fire('security.log', array(10, 'Removed from ' . $group->name . '.', $user->username));
+
+        return true;
     }
 
     /*
