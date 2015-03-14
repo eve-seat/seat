@@ -169,11 +169,11 @@ class UserController extends BaseController
         // Find the user
         $user = Auth::findUserById($userID);
 
-        // Attempt to authenticate using the user->id
-        Auth::loginUsingId($userID);
-
         // Write to the security log
         Event::fire('security.log', array(15, null, $user->username));
+
+        // Attempt to authenticate using the user->id
+        Auth::loginUsingId($userID);
 
         return Redirect::action('HomeController@showIndex')
             ->with('warning', 'You are now impersonating ' . $user->email);
