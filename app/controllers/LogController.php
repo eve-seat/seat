@@ -62,5 +62,26 @@ class LogController extends BaseController
 
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | postLookupSecurityEvent()
+    |--------------------------------------------------------------------------
+    |
+    | Lookup a user provided event
+    |
+    */
+
+    public function postLookupSecurityEvent()
+    {
+
+        $event = DB::table('security_log')
+            ->where('id', Crypt::decrypt(Input::get('event')))
+            ->orderBy('created_at', 'desc')
+            ->paginate(50);
+
+        return View::make('logs.security')
+            ->with('logs', $event);
+
+    }
 
 }
