@@ -96,12 +96,45 @@
         </div>
         <div class="panel-footer">
           The <b>Super User</b> Permissions inherits <b>all</b> permissions!
+          <a data-toggle="modal" data-target="#permissions-breakdown" id="access-log" class="pull-right"><i class="fa fa-th-list"></i> Permission Details</a>
         </div>
       </div>
-
     </div>
-
   </div>
+
+  <!-- account access-log modal modal -->
+  <div class="modal fade" id="permissions-breakdown" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><i class="fa fa-th-list"></i> Permission Descriptions</h4>
+        </div>
+        <div class="modal-body">
+
+          <table class="table table-condensed">
+            <tbody>
+              <tr>
+                <th>Permission</th>
+                <th>Description</th>
+              </tr>
+
+              @foreach ($available_permissions as $permission)
+
+                <tr>
+                  <td>{{ ucwords(str_replace("_", " ", $permission->permission)) }}</td>
+                  <td>{{ $permission->description }}</td>
+                </tr>
+
+              @endforeach
+
+            </tbody>
+          </table>
+
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 
 @stop
 
