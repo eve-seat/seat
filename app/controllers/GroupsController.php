@@ -105,10 +105,12 @@ class GroupsController extends BaseController
     public function postUpdateGroup($groupID)
     {
 
-        $permissions = Input::except('_token');
-        $available_permissions = SeatPermissions::all();
-        $group = \Auth::findGroupById($groupID);
+        // Take the permissions from the POST, flip the keys and
+        // make them all 1, assuming there was something to
+        // work with
+        $permissions = count(Input::get('permissions')) > 0 ? array_map(function() { return 1; }, (array_flip(Input::get('permissions')))) : array();
 
+        $group = \Auth::findGroupById($groupID);
         $group->permissions = serialize($permissions);
         $group->save();
 

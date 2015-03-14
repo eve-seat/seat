@@ -1,56 +1,67 @@
 @extends('layouts.masterLayout')
 
-@section('html_title', 'All Groups')
+@section('html_title', 'SeAT User Groups')
 
 @section('page_content')
 
+  <!-- build the global row-->
   <div class="row">
 
+    <!-- split the row up into 2, so that we have the new application form on the right -->
     <div class="col-md-8">
-      <div class="box">
-        <div class="box-header">
-          <h3 class="box-title">Groups</h3>
-        </div>
 
-        <div class="box-body">
-          <table class="table table-condensed compact table-hover" id="datatable">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Group Name</th>
-                <th>Number of Users</th>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                <b>All SeAT Groups</b>
+              </h3>
+            </div>
+            <div class="panel-body">
 
-              @foreach($groups as $group)
-              <tr>
-                <td>{{ $group->id }}</td>
-                <td>{{ $group->name }}</td>
-                <td>{{ $counter[$group->name] }}</td>
-                <td><a href="{{ action('GroupsController@getDetail', array('groupID' => $group->id)) }}" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> Edit</a></td>
-                <td><a a-delete-group="{{ action('GroupsController@getDeleteGroup', array('groupID' => $group->id)) }}" a-group-name="{{ $group->name }}" class="btn btn-danger btn-xs delete-group"><i class="fa fa-times"></i> Delete</a></td>
-              </tr>
-              @endforeach
+              <table class="table table-condensed compact table-hover" id="datatable">
+                <thead>
+                  <th>ID</th>
+                  <th>Group Name</th>
+                  <th>Number of Users</th>
+                  <th></th>
+                  <th></th>
+                </thead>
+                <tbody>
 
-            </tbody>
-          </table>
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
-    </div>
+                  @foreach($groups as $group)
+                  <tr>
+                    <td>{{ $group->id }}</td>
+                    <td>{{ $group->name }}</td>
+                    <td>{{ $counter[$group->name] }}</td>
+                    <td><a href="{{ action('GroupsController@getDetail', array('groupID' => $group->id)) }}" class="btn btn-default btn-xs"><i class="fa fa-pencil"></i> Edit</a></td>
+                    <td><a a-delete-group="{{ action('GroupsController@getDeleteGroup', array('groupID' => $group->id)) }}" a-group-name="{{ $group->name }}" class="btn btn-danger btn-xs delete-group"><i class="fa fa-times"></i> Delete</a></td>
+                  </tr>
+                  @endforeach
 
+                </tbody>
+              </table>
+
+            </div>
+
+          </div>
+
+        </div> <!-- col-md-12 -->
+      </div> <!-- row -->
+
+    </div> <!-- global col-md-8 -->
     <div class="col-md-4">
-      <div class="box">
-        <div class="box-header">
-          <h3 class="box-title">Add New Group</h3>
-        </div>
 
-        <div class="box-body table-responsive">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <b>Add a New Group</b>
+          </h3>
+        </div>
+        <div class="panel-body">
 
           {{ Form::open(array('action' => 'GroupsController@postNewGroup', 'class' => 'form-horizontal')) }}
-
             <fieldset>
 
               <div class="form-group">
@@ -65,19 +76,24 @@
               <!-- Button -->
               <div class="form-group">
                 <label class="col-md-4 control-label" for="singlebutton"></label>
-                <div class="col-md-6">
-                  {{ Form::submit('Add Group', array('class' => 'btn bg-olive btn-block')) }}
+                <div class="col-md-4">
+                  <button id="singlebutton" name="singlebutton" class="btn btn-primary"><i class="fa fa-plus"></i> Add New Application</button>
                 </div>
               </div>
 
             </fieldset>
 
-          {{ Form::close() }}
+          {{ Form::close()}}
 
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
+        </div>
+        <div class="panel-footer">
+          A new group will have no permissions assigned
+        </div>
+      </div>
+
     </div>
-  </div>
+
+  </div> <!-- global row -->
 
 @stop
 

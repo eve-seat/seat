@@ -5,82 +5,102 @@
 @section('page_content')
 
   <div class="row">
+
     <div class="col-md-6">
-      <div class="box">
 
-        <div class="box-header">
-          <h3 class="box-title">Current Members</h3>
-        </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                <b>Current Members</b>
+              </h3>
+            </div>
+            <div class="panel-body">
 
-        <div class="box-body">
-          <table class="table table-condensed compact table-hover" id="datatable">
-            <thead>
-              <tr>
+              <table class="table table-condensed compact table-hover" id="datatable">
+                <thead>
                 <th>User</th>
                 <th></th>
-              </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
 
-              @foreach($users as $user)
+                  @foreach($users as $user)
 
-                <tr>
-                  <td>{{ $user->username }} ({{ $user->email }})</td>
-                  <td><a a-remove-user="{{ action('GroupsController@getRemoveUser', array('userID' => $user->id, 'groupID' => $group->id)) }}" a-user-name="{{ $user->username }} ({{ $user->email }})" a-remove-user-from="{{ $group->name }}" class="btn btn-danger btn-xs remove-user"><i class="fa fa-times"></i> Remove from group</a></td>
-                </tr>
+                    <tr>
+                      <td>{{ $user->username }} ({{ $user->email }})</td>
+                      <td>
+                        <a a-remove-user="{{ action('GroupsController@getRemoveUser', array('userID' => $user->id, 'groupID' => $group->id)) }}" a-user-name="{{ $user->username }} ({{ $user->email }})" a-remove-user-from="{{ $group->name }}" class="btn btn-danger btn-xs pull-right remove-user">
+                          <i class="fa fa-times"></i> Remove from group</a>
+                        </td>
+                    </tr>
 
-              @endforeach
+                  @endforeach
 
-            </tbody>
-          </table>
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
-    </div>
+                </tbody>
+              </table>
+
+            </div>
+
+          </div>
+
+        </div> <!-- col-md-12 -->
+      </div> <!-- row -->
+
+    </div> <!-- global col-md-8 -->
 
     <div class="col-md-6">
-      <div class="box">
 
-        <div class="box-header">
-          <h3 class="box-title">Group Permissions</h3>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <b>Update Group Permissions</b>
+          </h3>
         </div>
-
-        <div class="box-body table-responsive">
+        <div class="panel-body">
 
           {{ Form::open(array('action' => array('GroupsController@postUpdateGroup', $group->id), 'class' => 'form-horizontal')) }}
 
             <fieldset>
 
-              @foreach ($available_permissions as $permission)
-
-                <div class="form-group">
-                  <label class="col-md-6 control-label" for="singlebutton">{{ ucwords(str_replace("_", " ", $permission->permission)) }}</label>
-                  <div class="form-group">
-                    {{ Form::checkbox($permission->permission, '1', (isset($has_permissions[$permission->permission]) ? true : false)) }}
-                  </div>
-                </div>
-
-              @endforeach
-
+              <!-- Select Multiple -->
               <div class="form-group">
-                <label class="col-md-6 control-label" for="singlebutton">Super User</label>
-                <div class="form-group">
-                  {{ Form::checkbox('superuser', '1', (isset($has_permissions['superuser']) ? true : false)) }}
+                <label class="col-md-4 control-label" for="permissions">Group Permissions</label>
+                <div class="col-md-4">
+                  <select id="permissions" name="permissions[]" class="form-control" multiple="multiple">
+
+                    @foreach ($available_permissions as $permission)
+
+                      <option value="{{ $permission->permission }}"{{{ isset($has_permissions[$permission->permission]) ? 'selected' : '' }}} >
+                        {{ ucwords(str_replace("_", " ", $permission->permission)) }}
+                      </option>
+
+                    @endforeach
+
+                  </select>
                 </div>
               </div>
 
               <!-- Button -->
-
-              <div class="col-md-6">
-                {{ Form::submit('Update Group Permissions', array('class' => 'btn bg-olive btn-block')) }}
+              <div class="form-group">
+                <label class="col-md-4 control-label" for="singlebutton"></label>
+                <div class="col-md-4">
+                  <button id="singlebutton" name="singlebutton" class="btn btn-primary"><i class="fa fa-plus"></i> Update group permissions</button>
+                </div>
               </div>
 
             </fieldset>
 
-          {{ Form::close() }}
+          {{ Form::close()}}
 
-        </div><!-- /.box-body -->
-      </div><!-- /.box -->
+        </div>
+        <div class="panel-footer">
+          The <b>Super User</b> Permissions inherits <b>all</b> permissions!
+        </div>
+      </div>
+
     </div>
+
   </div>
 
 @stop
@@ -88,6 +108,9 @@
 @section('javascript')
 
   <script type="text/javascript">
+
+    $("#permissions").select2();
+
     $(document).on("click", ".remove-user", function(e) {
 
       // Save the links

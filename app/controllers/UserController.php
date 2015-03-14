@@ -211,20 +211,23 @@ class UserController extends BaseController
         if (Input::get('password') != '')
             $user->password = Hash::make(Input::get('password'));
 
-        $groups = Input::except('_token', 'username', 'password', 'first_name', 'last_name', 'userID', 'email');
+        $groups = Input::get('groups');
 
         // Delete all the permissions the user has now
         \GroupUserPivot::where('user_id', '=', $user->id)
             ->delete();
 
-        // Restore the permissions.
+        // Restore the permissions if there are any defined.
         //
         // NB Todo. Check that we not revoking 'Administrors' access from
         // the site admin
-        foreach($groups as $group => $value) {
+        if (count($groups) > 0) {
 
-            $thisGroup = Auth::findGroupByName(str_replace("_", " ", $group));
-            Auth::addUserToGroup($user, $thisGroup);
+            foreach($groups as $key => $group) {
+
+                $thisGroup = Auth::findGroupByName(str_replace("_", " ", $group));
+                Auth::addUserToGroup($user, $thisGroup);
+            }
         }
 
         // Write to the security log

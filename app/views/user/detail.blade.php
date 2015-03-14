@@ -45,16 +45,23 @@
             </div>
           </div>
 
-          @foreach ($availableGroups as $availableGroup)
+          <!-- Select Multiple -->
+          <div class="form-group">
+            <label class="col-md-4 control-label" for="groups">Group Memberships</label>
+            <div class="col-md-4">
+              <select id="groups" name="groups[]" class="form-control" multiple="multiple">
 
-            <div class="form-group">
-              <label class="col-md-6 control-label" for="singlebutton">{{ $availableGroup->name }}</label>
-              <div class="form-group">
-                {{ Form::checkbox($availableGroup->name, '1', (isset($hasGroups[$availableGroup->name]) ? true : false)) }}
-              </div>
+                @foreach ($availableGroups as $availableGroup)
+
+                  <option value="{{ $availableGroup->name }}"{{{ isset($hasGroups[$availableGroup->name]) ? 'selected' : '' }}} >
+                    {{ ucwords(str_replace("_", " ", $availableGroup->name)) }}
+                  </option>
+
+                @endforeach
+
+              </select>
             </div>
-
-          @endforeach
+          </div>
 
           <!-- Button -->
           <div class="form-group">
@@ -69,5 +76,15 @@
 
     </div><!-- /.box-body -->
   </div><!-- /.box -->
+
+@stop
+
+@section('javascript')
+
+  <script type="text/javascript">
+
+    $("#groups").select2();
+
+  </script>
 
 @stop
