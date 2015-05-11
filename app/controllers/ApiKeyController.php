@@ -658,7 +658,7 @@ class ApiKeyController extends BaseController
 
         // Prepare the people information. 'people_groups_view_all' permissions
         // get to see everything, where users should only see their own stuff
-        if (!\Auth::hasAccess('people_groups_view_all')) {
+        if (\Auth::hasAccess('people_groups_view_all')) {
 
             // SUUPER ADMIN Show all the things
             $people = array();
