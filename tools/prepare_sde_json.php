@@ -2,8 +2,8 @@
 
 // Prepare the data that we want represented as JSON
 $d = [
-   'version' => 'tiamat-1.0-110751',
-   'url' => 'https://www.fuzzwork.co.uk/dump/tiamat-1.0-110751/',
+   'version' => 'carnyx-1.0-113321',
+   'url' => 'https://www.fuzzwork.co.uk/dump/sdecarnyx-1.0-113321/',
    'format' => '.sql.bz2',
    'tables' => [
       'dgmTypeAttributes',
