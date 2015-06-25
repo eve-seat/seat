@@ -1,4 +1,4 @@
-## SeAT - Simple (or Stupid) EVE Online API Tool ##
+﻿## SeAT - Simple (or Stupid) EVE Online API Tool ##
 
 ### Introduction ###
 SeAT is a EVE Online™ Corporation / API Key Management Tool written in PHP using the [Laravel][1] Framework. This guide attempts to detail the process in order to successfully get a new installation setup, configured and ready to use. Lets dive right in.
@@ -474,7 +474,7 @@ Once it is installed, we also want it to start when the server boots, so lets do
 ln -s '/usr/lib/systemd/system/supervisord.service' '/etc/systemd/system/multi-user.target.wants/supervisord.service'
 ```
 
-We now have to configure the actual workers that `supervisord` will manage. We do this by adding a new configuration file to `/etc/supervisor/conf.d/` called `seat.ini` A sample configuration for this file is located in `docs/` and at the end of this paragraph. Note that the number of workers that we want to start is set by the `numprocs` settings.
+We now have to configure the actual workers that `supervisord` will manage. We do this by adding a new configuration file to `/etc/supervisord.d/` called `seat.ini` A sample configuration for this file is located in `docs/` and at the end of this paragraph. Note that the number of workers that we want to start is set by the `numprocs` settings.
 
 ```bash
 [program:seat]
