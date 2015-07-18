@@ -16,7 +16,7 @@
           <dt>Server Online</dt>
           <dd>{{ $server->serverOpen }}</dd>
           <dt>Online Players</dt>
-          <dd>{{ $server->onlinePlayers }}</dd>
+          <dd>{{ number_format($server->onlinePlayers, 0, $settings['decimal_seperator'], $settings['thousand_seperator']) }}</dd>
           <dt>Last Checked</dt>
           <dd>{{ Carbon\Carbon::parse($server->currentTime)->diffForHumans() }}</dd>
         </dl>
