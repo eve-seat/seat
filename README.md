@@ -1,3 +1,6 @@
+# *UPDATE.* Version 1x is out! Get it [here](https://github.com/eveseat/seat).  
+# This code is no longer maintained. It was a beta after all ;)
+
 ## SeAT - Simple (or Stupid) EVE Online API Tool ##
 [![Latest Stable Version](https://poser.pugx.org/eve-seat/seat/v/stable.svg)](https://packagist.org/packages/eve-seat/seat) [![Latest Unstable Version](https://poser.pugx.org/eve-seat/seat/v/unstable.svg)](https://packagist.org/packages/eve-seat/seat) [![License](https://poser.pugx.org/eve-seat/seat/license.svg)](https://packagist.org/packages/eve-seat/seat)
 
