@@ -18,7 +18,6 @@
           <h4>If you are totally stuck, have feature ideas etc, use the following channels to get into contact!</h4>
           <ul>
             <li><a href="http://eve-seat.github.io/seat/">SeAT</a> the SeAT Project</li>
-            <li><a href="https://kiwiirc.com/client/irc.coldfront.net/?nick=seat_user%7C?#wcs-pub">IRC</a> <b>(preferred method)</b> for general information and help</li>
             <li><a href="https://github.com/eve-seat/seat/tree/master/docs">Documentation</a> for install &amp; upgrade guides</li>
             <li><a href="https://forums.eveonline.com/default.aspx?g=posts&t=336800&find=unread">EVE-O Forum Post</a> for general information and help</li>
             <li><a href="https://github.com/eve-seat/seat/issues">Github Issues</a> for SeAT specific errors</li>
