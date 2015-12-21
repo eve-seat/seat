@@ -34,7 +34,7 @@ There is a metric ton of information pulled via the API that is not yet exposed 
 A much longer term goal would be to get the system to such a state where corporation members are able to register and view thier own keys and administrators are able to delegate roles such as recruiters etc.
 
 ### Contact ###
-You can get hold of me via Twitter [@qu1ckkkk](https://twitter.com/qu1ckkkk), ingame character [qu1ckkkk](http://evewho.com/pilot/qu1ckkkk) or on [IRC](https://kiwiirc.com/client/irc.coldfront.net/?nick=seat_user|?#wcs-pub) at #wcs-pub on irc.coldfront.net
+You can get hold of me via Twitter [@qu1ckkkk](https://twitter.com/qu1ckkkk), ingame character [qu1ckkkk](http://evewho.com/pilot/qu1ckkkk)
 
   [1]: http://laravel.com/
 
